@@ -68,6 +68,7 @@ const AddPickupdetails = ({navigation}) => {
       // Handle errors here
     }
   };
+  console.log('first')
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
