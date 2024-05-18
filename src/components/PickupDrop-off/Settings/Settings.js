@@ -34,7 +34,7 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('AddressBook')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
             <Text style={styles.titleStatus}>3 addresses</Text>
             <AntDesign name="right" size={13} color="#909090" />

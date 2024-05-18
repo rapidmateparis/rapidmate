@@ -12,7 +12,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {Dropdown} from 'react-native-element-dropdown';
 import {colors} from '../../colors';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import ChoosePhotoByCameraGallaryModal from '../common component/ChoosePhotoByCameraGallaryModal';
+import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,

@@ -11,14 +11,26 @@ import {
 } from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
 
 const LoaderForDriver = ({navigation}) => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = (vehicleDetails) => {
+    setModalVisible(!isModalVisible);
+  };
+
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5'}}
       contentContainerStyle={styles.scrollViewContainer}>
-      <View style={{width: 350, height: 500, position: 'relative', marginVertical: 40,}}>
+      <View
+        style={{
+          width: 350,
+          height: 500,
+          position: 'relative',
+          marginVertical: 40,
+        }}>
         <ImageBackground
           source={require('../../image/Driver-Bg.png')}
           style={styles.background}>
@@ -36,7 +48,8 @@ const LoaderForDriver = ({navigation}) => {
           </View>
         </ImageBackground>
       </View>
-      <View style={{width: '100%', height: "100%", position: 'absolute', top: 0}}>
+      <View
+        style={{width: '100%', height: '100%', position: 'absolute', top: 0}}>
         <ImageBackground
           style={{
             width: '100%',
@@ -44,11 +57,16 @@ const LoaderForDriver = ({navigation}) => {
           }}
           source={require('../../image/Driver-Bg2.png')}
         />
-        
       </View>
-      <TouchableOpacity style={styles.requestTouch}>
-          <Text style={styles.cancelRequest}>Cancel request</Text>
-        </TouchableOpacity>
+      <TouchableOpacity onPress={()=>toggleModal()} style={styles.requestTouch}>
+        <Text style={styles.cancelRequest}>Cancel request</Text>
+      </TouchableOpacity>
+
+      {/* CancellationModal Modal  */}
+      <CancellationModal
+        isModalVisible={isModalVisible}
+        setModalVisible={setModalVisible}
+      />
     </ScrollView>
   );
 };
@@ -71,10 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,
-  },
-  loaderMap: {
-    width: 215,
-    height: 215,
+    paddingTop: 50,
   },
   text: {
     color: colors.text,
@@ -85,14 +100,14 @@ const styles = StyleSheet.create({
   },
   subText: {
     color: colors.text,
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     textAlign: 'center',
   },
   cancelRequest: {
     color: colors.secondary,
     fontSize: 14,
-    fontFamily: 'Montserrat-Medium', 
+    fontFamily: 'Montserrat-Medium',
   },
   requestTouch: {
     borderWidth: 1,

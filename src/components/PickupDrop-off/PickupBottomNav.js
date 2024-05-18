@@ -16,20 +16,24 @@ import PickupOrderPreview from './PickupOrderPreview';
 import PickupAddress from './PickupAddress';
 import LoaderForDriver from './LoaderForDriver';
 import OrderConfirm from './OrderConfirmed';
-import GoogleMapScreen from '../common component/MapAddress';
+import GoogleMapScreen from '../commonComponent/MapAddress';
 import MapPickupAddress from './MapPickupAddress';
 import Settings from './Settings/Settings';
 import Notifications from './Settings/Notifications';
-import Home from './Home';
+import PickupHome from './PickupHome';
+import VehicleDimensionsModal from '../commonComponent/VehicleDimensions';
+import OrderPickup from './OrderPickup';
+import DeliveryBoySignup from '../DeliveryBoy/DeliveryBoySignup';
+
 
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
   return (
     <Bottom.Navigator>
       <Bottom.Screen
-        key="Home"
+        key="PickupHome"
         name="Home"
-        component={Home}
+        component={PickupHome}
         options={{
           headerShown: false,
           tabBarIcon: tabInfo => {

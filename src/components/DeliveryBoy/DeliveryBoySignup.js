@@ -11,18 +11,23 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dropdown} from 'react-native-element-dropdown';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {colors} from '../../colors';
+import CheckBox from '@react-native-community/checkbox';
 // import DropDownDropdown from '../common component/dropdown';
 
-const PickupSignup = ({navigation}) => {
+const DeliveryBoySignup = ({navigation}) => {
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [name, setName] = useState(false);
+  const [lastname, setLastname] = useState(false);
+  const [email, setEmail] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
+  const [siret, setSiret] = useState('');
   const [openDropDown, setOpenDropDown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
@@ -47,21 +52,59 @@ const PickupSignup = ({navigation}) => {
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{paddingHorizontal: 15, marginTop: 10}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '85%'}}>
             <Text style={[styles.logInText, {color: colors.text}]}>
-              Pickup & Drop-off{' '}
+              Delivery Boy{' '}
               <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
             </Text>
             <Text style={styles.loginAccessText}>
-              Let’s create your profile so you can have a complete experience of
+              Let’s create your profile so you can have complete experience of
               the app.
             </Text>
           </View>
-          <Image source={require('../../image/location-map.png')} />
+          <Image source={require('../../image/DeliveryBoy-Icon.png')} />
         </View>
         <View style={styles.logFormView}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <View style={styles.nameInputDiv}>
+              <AntDesign
+                name="user"
+                size={20}
+                color="#131314"
+                style={{marginTop: 13}}
+              />
+              <TextInput
+                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+                placeholder="First Name"
+                placeholderTextColor="#999"
+                value={name}
+                onChangeText={text => setName(text)}
+              />
+            </View>
+
+            <View style={styles.nameInputDiv}>
+              <AntDesign
+                name="user"
+                size={20}
+                color="#131314"
+                style={{marginTop: 13}}
+              />
+              <TextInput
+                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+                placeholder="Last Name"
+                placeholderTextColor="#999"
+                value={lastname}
+                onChangeText={text => setLastname(text)}
+              />
+            </View>
+          </View>
           <View style={styles.textInputDiv}>
             <AntDesign
               name="mail"
@@ -73,14 +116,15 @@ const PickupSignup = ({navigation}) => {
               style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
               placeholder="Email"
               placeholderTextColor="#999"
-              value={''}
+              value={email}
+              onChangeText={text => setEmail(text)}
             />
           </View>
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={22} color="#131314" />
             <TextInput
               style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
-              placeholder="New Password"
+              placeholder="Password"
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
               value={password}
@@ -99,7 +143,7 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="lock" size={22} color="#131314" />
             <TextInput
               style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
-              placeholder="Confirm New Password"
+              placeholder="Confirm Password"
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
@@ -177,39 +221,97 @@ const PickupSignup = ({navigation}) => {
               )}
             />
           </View>
-          <View>
-            <Text style={styles.accountType}>Create account as:</Text>
-            <TouchableOpacity
-              style={[
-                styles.accountCard,
-                selectedAccountType === 'individual' && styles.selectedCard,
-              ]}
-              onPress={() => handleAccountTypeSelection('individual')}>
-              <AntDesign name="user" size={20} color="#131314" />
-              <Text style={styles.accountTitle}>Individual</Text>
-              {selectedAccountType === 'individual' && (
-                <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={21} color={colors.white} />
-                </View>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.accountCard,
-                selectedAccountType === 'company' && styles.selectedCard,
-              ]}
-              onPress={() => handleAccountTypeSelection('company')}>
-              <Image source={require('../../image/bulding.png')} />
-              <Text style={styles.accountTitle}>Company</Text>
-              {selectedAccountType === 'company' && (
-                <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={21} color={colors.white} />
-                </View>
-              )}
-            </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <View style={styles.containerCity}>
+              <Dropdown
+                data={data}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Ain' : '...'}
+                searchPlaceholder="Search.."
+                value={dropdownCountryValue}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={item => {
+                  setDropdownCountryValue(item.value);
+                  setIsFocus(false);
+                }}
+                renderLeftIcon={() => (
+                  <FontAwesome6
+                    style={{marginRight: 10}}
+                    name="globe"
+                    size={21}
+                    color={colors.text}
+                  />
+                )}
+              />
+            </View>
+
+            <View style={styles.containerCity}>
+              <Dropdown
+                data={data}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'ambérieu-e...' : '...'}
+                searchPlaceholder="Search.."
+                value={dropdownCountryValue}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={item => {
+                  setDropdownCountryValue(item.value);
+                  setIsFocus(false);
+                }}
+                renderLeftIcon={() => (
+                  <FontAwesome6
+                    style={{marginRight: 10}}
+                    name="globe"
+                    size={21}
+                    color={colors.text}
+                  />
+                )}
+              />
+            </View>
+          </View>
+          <View style={styles.textInputDiv}>
+            <Ionicons
+              name="location-outline"
+              size={22}
+              color="#131314"
+              style={{marginTop: 13}}
+            />
+            <TextInput
+              style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+              placeholder="Siret"
+              placeholderTextColor="#999"
+              value={siret}
+              onChangeText={text => setSiret(text)}
+            />
+          </View>
+
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              disabled={false}
+              value={toggleCheckBox}
+              onValueChange={newValue => setToggleCheckBox(newValue)}
+              style={{alignSelf: 'flex-start'}}
+            />
+            <Text style={styles.checkboxText}>
+              We collect this data for the purposes of processing your
+              application to become a courier. By clicking this box, you
+              acknowledge that you have read and understood the <TouchableOpacity><Text style={styles.pirvacyTextBold}>Privacy Policy</Text></TouchableOpacity>
+            </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddPickupdetails')}
+            onPress={() => navigation.navigate('AddVehicle')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
@@ -217,7 +319,7 @@ const PickupSignup = ({navigation}) => {
             onPress={() => navigation.navigate('LogInScreen')}
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
-              Already have an account yet?{' '}
+              Already have an account?{' '}
               <Text style={{color: colors.primary}}>Login</Text>
             </Text>
           </TouchableOpacity>
@@ -229,11 +331,11 @@ const PickupSignup = ({navigation}) => {
 
 const styles = StyleSheet.create({
   logInText: {
-    fontSize: 21,
+    fontSize: 18,
     fontFamily: 'Montserrat-Bold',
   },
   loginAccessText: {
-    fontSize: 14,
+    fontSize: 11,
     fontFamily: 'Montserrat-Regular',
     color: '#000',
     width: '95%',
@@ -241,13 +343,12 @@ const styles = StyleSheet.create({
   },
   logFormView: {
     backgroundColor: '#fff',
-    marginTop: 20,
-    paddingTop: 30,
+    paddingTop: 20,
   },
   textInputDiv: {
     flexDirection: 'row',
     borderRadius: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#2C303336',
@@ -291,7 +392,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#2C303336',
@@ -318,7 +419,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 5,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     paddingVertical: 15,
     marginBottom: 20,
     borderWidth: 1,
@@ -348,8 +449,40 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     paddingHorizontal: 10,
     borderRadius: 5,
-    marginBottom: 10,
+    marginBottom: 20,
+  },
+  nameInputDiv: {
+    width: '48%',
+    flexDirection: 'row',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#2C303336',
+  },
+  containerCity: {
+    width: '48%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  checkboxText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular', 
+    color: colors.text,
+    marginLeft: 5,
+  },
+  pirvacyTextBold: {
+    fontFamily: 'Montserrat-Bold',  
+    color: colors.primary,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    marginTop: 25,
   },
 });
 
-export default PickupSignup;
+export default DeliveryBoySignup;

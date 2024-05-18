@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from './colors';
 import LoginSignup from './components/register/LoginSignup';
 import LogInScreen from './components/register/LogInScreen';
@@ -13,21 +14,27 @@ import PasswordRecovery from './components/register/PasswordRecovery';
 import Main from './drawer/Main';
 import DrawerNavigator from './drawer/DrawerNavigator';
 import ProfileChoose from './components/register/ProfileChoose';
-import PickupBottomNav from './components/Pickup & drop-off/PickupBottomNav';
-import AddPickupdetails from './components/Pickup & drop-off/AddPickupDetails';
-import PickupOrderPreview from './components/Pickup & drop-off/PickupOrderPreview';
-import PickupSignup from './components/Pickup & drop-off/PickupSignup';
-import PickupPayment from './components/Pickup & drop-off/PickupPayment';
-import PickupAddress from './components/Pickup & drop-off/PickupAddress';
-import LoaderForDriver from './components/Pickup & drop-off/LoaderForDriver';
-import OrderConfirm from './components/Pickup & drop-off/OrderConfirmed';
-import MapDropAddress from './components/Pickup & drop-off/MapDropAddress';
-import MapPickupAddress from './components/Pickup & drop-off/MapPickupAddress';
-import NotificationSetting from './components/Pickup & drop-off/Settings/NotificationSetting';
-import Wallet from './components/Pickup & drop-off/Settings/Wallet';
-import DeliveryDetails from './components/Pickup & drop-off/DeliveryDetails';
-import History from './components/Pickup & drop-off/History';
-import Home from './components/Pickup & drop-off/Home';
+import PickupBottomNav from './components/PickupDrop-off/PickupBottomNav';
+import AddPickupdetails from './components/PickupDrop-off/AddPickupDetails';
+import PickupOrderPreview from './components/PickupDrop-off/PickupOrderPreview';
+import PickupSignup from './components/PickupDrop-off/PickupSignup';
+import PickupPayment from './components/PickupDrop-off/PickupPayment';
+import PickupAddress from './components/PickupDrop-off/PickupAddress';
+import LoaderForDriver from './components/PickupDrop-off/LoaderForDriver';
+import OrderConfirm from './components/PickupDrop-off/OrderConfirmed';
+import MapDropAddress from './components/PickupDrop-off/MapDropAddress';
+import MapPickupAddress from './components/PickupDrop-off/MapPickupAddress';
+import NotificationSetting from './components/PickupDrop-off/Settings/NotificationSetting';
+import Notifications from './components/PickupDrop-off/Settings/Notifications';
+import Wallet from './components/PickupDrop-off/Settings/Wallet';
+import DeliveryDetails from './components/PickupDrop-off/DeliveryDetails';
+import History from './components/PickupDrop-off/History';
+import PickupHome from './components/PickupDrop-off/PickupHome';
+import AddressBook from './components/PickupDrop-off/Settings/AddressBook';
+import DeliveryBoySignup from './components/DeliveryBoy/DeliveryBoySignup';
+import AddVehicle from './components/DeliveryBoy/AddVehicle';
+import DeliveryboyBottomNav from './components/DeliveryBoy/DeliveryboyBottomNav';
+import DeliveryboyDeliveryDetails from './components/DeliveryBoy/DeliveryboyDeliveryDetails';
 
 const Stack = createStackNavigator();
 
@@ -36,8 +43,8 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="PickupBottomNav"
-          component={PickupBottomNav}
+          name="DeliveryboyBottomNav"
+          component={DeliveryboyBottomNav}
           options={{headerShown: false}}
         />
         <Stack.Screen
@@ -356,6 +363,34 @@ const AppNavigator = () => {
           })}
         />
         <Stack.Screen
+          name="Notifications"
+          component={Notifications}
+          options={({navigation}) => ({
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{paddingLeft: 10}}>
+                <MaterialIcons
+                  name="keyboard-backspace"
+                  size={30}
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+            ),
+            headerTitle: 'Notifications',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+          })}
+        />
+        <Stack.Screen
           name="Wallet"
           component={Wallet}
           options={({navigation}) => ({
@@ -426,9 +461,143 @@ const AppNavigator = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="Home"
-          component={Home}
+          name="PickupHome"
+          component={PickupHome}
           options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="AddressBook"
+          component={AddressBook}
+          options={({navigation}) => ({
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{paddingLeft: 10}}>
+                <MaterialIcons
+                  name="keyboard-backspace"
+                  size={30}
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+            ),
+            headerTitle: 'Address book',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+            headerRight: () => (
+              <TouchableOpacity style={{paddingRight: 10}}>
+                <AntDesign
+                  name="plus"
+                  size={25}
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+            ),
+          })}
+        />
+
+        {/* DeliveryBoy Start here  */}
+
+        <Stack.Screen
+          name="DeliveryBoySignup"
+          component={DeliveryBoySignup}
+          options={({navigation}) => ({
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{paddingLeft: 10}}>
+                <MaterialIcons
+                  name="keyboard-backspace"
+                  size={30}
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+            ),
+            headerTitle: '',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+          })}
+        />
+        <Stack.Screen
+          name="AddVehicle"
+          component={AddVehicle}
+          options={({navigation}) => ({
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{paddingLeft: 10}}>
+                <MaterialIcons
+                  name="keyboard-backspace"
+                  size={25}
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+            ),
+            headerTitle: 'Add Vehicle',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+          })}
+        />
+        <Stack.Screen
+          name="DeliveryboyDeliveryDetails"
+          component={DeliveryboyDeliveryDetails}
+          options={({navigation}) => ({
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{paddingLeft: 10}}>
+                <MaterialIcons
+                  name="keyboard-backspace"
+                  size={30}
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+            ),
+            headerTitle: 'Delivery Details',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+            headerRight: () => (
+              <TouchableOpacity style={{paddingRight: 10}}>
+                <Ionicons
+                  name="settings-outline"
+                  size={25}
+                  color={colors.text}
+                />
+              </TouchableOpacity>
+            ),
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>

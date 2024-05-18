@@ -33,7 +33,7 @@ const PasswordRecovery = ({navigation}) => {
             <View style={styles.textInputDiv}>
               <AntDesign
                 name="mail"
-                size={22}
+                size={18}
                 color="#131314"
                 style={{marginTop: 13}}
               />
@@ -60,11 +60,11 @@ const PasswordRecovery = ({navigation}) => {
 
 const styles = StyleSheet.create({
   logInText: {
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Montserrat-SemiBold',
   },
   loginAccessText: {
-    fontSize: 15,
+    fontSize: 13,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
     marginTop: 5,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     borderColor: '#2C303336',
   },
   loginput: {
-    fontSize: 17,
+    fontSize: 16,
     paddingHorizontal: 10,
     width: '90%',
   },

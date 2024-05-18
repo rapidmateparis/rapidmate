@@ -12,9 +12,11 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MapLiveTracking from '../commonComponent/MapLiveTracking';
 import {colors} from '../../colors';
 
-const Home = ({navigation}) => {
+const PickupHome = ({navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
 
@@ -38,8 +40,53 @@ const Home = ({navigation}) => {
               This is your Rapidmate dashboard!
             </Text>
           </View>
-          <View>
+          <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
             <EvilIcons name="bell" size={40} color="#000" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.requestPickup}>
+          <View style={styles.pickcard}>
+            <Text style={styles.packageRequst}>Request a Pick up</Text>
+            <Text style={styles.packageDiscription}>
+              Avail any service for fixed time and location
+            </Text>
+          </View>
+          <View>
+            <Image source={require('../../image/package-girl.png')} />
+          </View>
+        </View>
+
+        <View style={styles.requestPickup}>
+          <View>
+            <Image source={require('../../image/package-boy.png')} />
+          </View>
+          <View style={styles.pickcard}>
+            <Text style={styles.packageRequst}>Request a Drop off</Text>
+            <Text style={styles.packageDiscription}>
+              Avail any service for fixed time and location
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.requestPickupPack}>
+          <View style={styles.packagePack}>
+            <Text style={styles.packageRequst}>Schedule your delivery</Text>
+            <Text style={styles.packageDiscription}>
+              Avail any service for fixed time and location
+            </Text>
+            <View style={styles.specialDiscount}>
+              <MaterialCommunityIcons
+                name="brightness-percent"
+                size={15}
+                color="#FF0058"
+              />
+              <Text style={styles.discountPercentage}>15% OFF</Text>
+            </View>
+          </View>
+          <View style={styles.packingCardImgas}>
+            <Image source={require('../../image/package-packing.png')} />
+            <Image style={styles.timingIcon} source={require('../../image/timing-icon.png')} />
           </View>
         </View>
 
@@ -118,6 +165,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 15,
   },
   userWelcome: {
     fontSize: 20,
@@ -140,7 +188,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   recentlyInfo: {
-    marginTop: 460,
+    marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -217,6 +265,90 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  requestPickup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.white,
+    padding: 18,
+    borderRadius: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.16)',
+    shadowOffset: {
+      width: 0,
+      height: 0.0625,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 0.5, // for Android
+    marginBottom: 7,
+    marginTop: 7,
+    marginRight: 10,
+  },
+  packageRequst: {
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  packageDiscription: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.text,
+    marginVertical: 5,
+  },
+  requestPickupPack: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: colors.white,
+    paddingHorizontal: 18,
+    paddingBottom: 20,
+    paddingTop: 45,
+    borderRadius: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.16)',
+    shadowOffset: {
+      width: 0,
+      height: 0.0625,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 0.5, // for Android
+    marginBottom: 7,
+    marginTop: 7,
+    marginRight: 10,
+  },
+  pickcard: {
+    width: '65%',
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+  },
+  packagePack: {
+    width: '67%',
+    paddingHorizontal: 10,
+    paddingTop: 0,
+    paddingBottom: 50,
+  },
+  specialDiscount: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF00580F',
+    width: 80,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 10,
+    marginTop: 7,
+  },
+  discountPercentage: {
+    fontSize: 10,
+    fontFamily: 'Montserrat-Medium', 
+    color: colors.secondary,
+    paddingLeft: 4,
+  },
+  packingCardImgas: {
+    position: 'relative',
+  },
+  timingIcon: {
+    position: 'absolute',
+    top: '-10%',
+    left: '30%',
+  },
 });
 
-export default Home;
+export default PickupHome;

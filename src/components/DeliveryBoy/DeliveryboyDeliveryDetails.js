@@ -10,45 +10,57 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../colors';
-import MapDeliveryDetails from '../common component/MapDeliveryDetails';
+import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 
-const DeliveryDetails = ({navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
-
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
-  };
-
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-  };
-
+const DeliveryboyDeliveryDetails = ({navigation}) => {
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
-        <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails />
-        </View>
-        <View style={styles.driverCard}>
-          <Image
-            style={styles.driverImga}
-            source={require('../../image/driver.jpeg')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>John Doe</Text>
-            <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
-          </View>
-        </View>
-
         <View style={styles.packageCard}>
-          <Image source={require('../../image/package-img.png')} />
+          <Image source={require('../../image/Pickup-Package-Icon.png')} />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
-            <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
-            </Text>
+            <View style={styles.pickupCardHeader}>
+              <Text style={styles.dropInfo}>Pickup information</Text>
+              <Image source={require('../../image/Track-Icon.png')} />
+            </View>
+            <View style={styles.companyInfosmain}>
+              <View style={{width: '65%'}}>
+                <Text style={styles.companyInfo}>Company Name</Text>
+                <Text style={styles.dropInfo}>
+                  22 Rue de la Liberté, Paris, Île-de-France.
+                </Text>
+              </View>
+              <View style={styles.contactInfoIcons}>
+                <TouchableOpacity style={{marginRight: 10}}>
+                  <Image source={require('../../image/chat-icon.png')} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Image source={require('../../image/call-icon.png')} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.borderShowOff} />
+
+            <View style={styles.packageBasicInfo}>
+              <Text style={styles.headingOTP}>OTP</Text>
+              <Text style={styles.subheadingOTP}>123456</Text>
+            </View>
+
+            <View style={styles.borderShowOff} />
+
+            <View style={styles.packageBasicInfo}>
+              <Text style={styles.headingOTP}>When?</Text>
+              <Text style={styles.subheadingOTP}>Today, 04:30 PM</Text>
+            </View>
+
+            <View style={styles.borderShowOff} />
+
+            <View style={styles.packageBasicInfo}>
+              <Text style={styles.headingOTP}>Package photo</Text>
+              <Image style={styles.packagePhoto} source={require('../../image/PackagePhoto.png')}/>
+            </View>
+
           </View>
         </View>
 
@@ -92,10 +104,20 @@ const DeliveryDetails = ({navigation}) => {
         </View>
 
         <View style={styles.packageInformationCard}>
-             <Text style={styles.packageTitle}>Package information</Text>
-             <Text style={styles.orderdetails}>Order ID:<Text style={styles.detailsId}>20394</Text></Text>
-             <Text style={styles.orderdetails}>Comments:<Text style={styles.detailsId}>Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea sed.</Text></Text>
-             <Text style={styles.orderdetails}>Vehicle:<Text style={styles.detailsId}>Pickup truck</Text></Text>
+          <Text style={styles.packageTitle}>Package information</Text>
+          <Text style={styles.orderdetails}>
+            Order ID:<Text style={styles.detailsId}>20394</Text>
+          </Text>
+          <Text style={styles.orderdetails}>
+            Comments:
+            <Text style={styles.detailsId}>
+              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
+              sed.
+            </Text>
+          </Text>
+          <Text style={styles.orderdetails}>
+            Vehicle:<Text style={styles.detailsId}>Pickup truck</Text>
+          </Text>
         </View>
       </View>
     </ScrollView>
@@ -135,21 +157,6 @@ const styles = StyleSheet.create({
     elevation: 0.5, // for Android
     marginBottom: 7,
     marginTop: 7,
-  },
-  driverImga: {
-    width: 40,
-    height: 40,
-    borderRadius: 30,
-  },
-  driverName: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
-    color: colors.text,
-  },
-  truckInfo: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: '#131314',
   },
   dropInfo: {
     fontSize: 12,
@@ -248,7 +255,7 @@ const styles = StyleSheet.create({
   },
   orderdetails: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
     color: colors.subText,
     marginVertical: 3,
   },
@@ -256,6 +263,42 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },
+  pickupCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  contactInfoIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  companyInfosmain: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  borderShowOff: {
+    borderWidth: 1,
+    borderColor: '#f1f1f1',
+    marginVertical: 10,
+  },
+  packageBasicInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headingOTP: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  subheadingOTP: {
+    fontSize: 16,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.text,
+  },
+  packagePhoto: {
+    width: 45,
+  },
 });
 
-export default DeliveryDetails;
+export default DeliveryboyDeliveryDetails;

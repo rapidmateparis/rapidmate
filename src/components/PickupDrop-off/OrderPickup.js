@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import GoogleMapScreen from '../common component/MapAddress';
+import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 
-const OrderConfirm = ({navigation}) => {
+const OrderPickup = ({navigation}) => {
   const orderId = '9AS68D7G698GH';
   const otp = '123456'; // Sample OTP
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
@@ -66,7 +66,9 @@ const OrderConfirm = ({navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
       <View>
         <View>
-          <Text style={styles.mainTitle}>Your order is on its way!</Text>
+          <Text style={styles.mainTitle}>
+            Delivery boy is on the way to pick your order up
+          </Text>
           <View style={styles.textContainer}>
             <Text style={styles.oderIdText}>Order ID: </Text>
             <TouchableOpacity onPress={handleCopyOrderId}>
@@ -115,7 +117,7 @@ const OrderConfirm = ({navigation}) => {
           <View style={{paddingTop: 250, paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>Delivering to</Text>
+                <Text style={styles.DeliveringText}>Pickup from</Text>
                 <Text style={styles.subAddress}>
                   1901 Thornridge Cir. Shiloh, California
                 </Text>
@@ -127,9 +129,19 @@ const OrderConfirm = ({navigation}) => {
 
             <View style={styles.driverCard}>
               <View style={{position: 'relative'}}>
-                <Image style={{width: 60, height: 60, borderRadius: 30,}} source={require('../../image/driver.jpeg')} />
                 <Image
-                  style={{position: 'absolute', bottom: 1, left: 40, height: 40, width: 40, borderRadius: 30,}}
+                  style={{width: 60, height: 60, borderRadius: 30}}
+                  source={require('../../image/driver.jpeg')}
+                />
+                <Image
+                  style={{
+                    position: 'absolute',
+                    bottom: 1,
+                    left: 40,
+                    height: 40,
+                    width: 40,
+                    borderRadius: 30,
+                  }}
                   source={require('../../image/Drivers-Truck.jpg')}
                 />
               </View>
@@ -165,6 +177,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     textAlign: 'center',
     marginBottom: 10,
+    paddingHorizontal: 40,
   },
   textContainer: {
     flexDirection: 'row',
@@ -265,4 +278,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrderConfirm;
+export default OrderPickup;

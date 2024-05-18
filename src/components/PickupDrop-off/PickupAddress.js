@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,17 +10,25 @@ import {
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../../colors';
-import MapAddress from '../common component/MapAddress';
+import { colors } from '../../colors';
+import VehicleDimensionsModal from '../commonComponent/VehicleDimensions';
+import MapAddress from '../commonComponent/MapAddress';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
 
-const PickupAddress = ({navigation}) => {
+const PickupAddress = ({ navigation }) => {
+  const [isModalVisible, setModalVisible] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedVehiclePrice, setSelectedVehiclePrice] = useState(null);
+  const [vehicleDetails, setVehicleDetails] = useState();
+
+  const toggleModal = (vehicleDetails) => {
+    setVehicleDetails(vehicleDetails);
+    setModalVisible(!isModalVisible);
+  };
 
   const vehicleData = [
     {
@@ -40,6 +48,10 @@ const PickupAddress = ({navigation}) => {
       capacity: '1000 liters',
       price: '€50/km',
       image: MiniTruckImage,
+      length: '24 Feet',
+      height: '12 Feet',
+      width: '8 Feet',
+      url: '../../image/modal-minitruck.png'
     },
     {
       name: 'Mini Van',
@@ -56,11 +68,9 @@ const PickupAddress = ({navigation}) => {
   ];
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{width: '100%', height: 500, position: 'relative'}}>
-        {/* Google Map Start Here  */}
+    <View style={{ width: '100%', backgroundColor: '#FBFAF5' }}>
+      <View style={{ width: '100%', height: 500, position: 'relative' }}>
         <MapAddress />
-        {/* Google Map End Here  */}
         <View style={styles.dateCard}>
           <EvilIcons name="calendar" size={25} color="#000" />
           <Text style={styles.dateCardText}>When do you need it?</Text>
@@ -76,7 +86,7 @@ const PickupAddress = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{ paddingHorizontal: 15 }}>
         <View>
           <View style={styles.chooseVehicleCard}>
             <View
@@ -93,7 +103,7 @@ const PickupAddress = ({navigation}) => {
               )}
             </View>
             <ScrollView horizontal={true}>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 {vehicleData.map((vehicle, index) => (
                   <TouchableOpacity
                     key={index}
@@ -102,13 +112,18 @@ const PickupAddress = ({navigation}) => {
                       setSelectedVehiclePrice(vehicle.price);
                     }}
                     style={styles.cardVehicle}>
-                    <View
-                      style={
-                        selectedVehicle === vehicle.name
-                          ? styles.selectedCard
-                          : styles.cardImages
-                      }>
-                      <Image style={{height: 62}} source={vehicle.image} />
+                    <View style={styles.allVehicleCard}>
+                      <View
+                        style={
+                          selectedVehicle === vehicle.name
+                            ? styles.selectedCard
+                            : styles.cardImages
+                        }>
+                        <TouchableOpacity onPress={()=>toggleModal(vehicle)} style={styles.infoIcons}>
+                          <Image source={require('../../image/info.png')} />
+                        </TouchableOpacity>
+                        <Image style={{ height: 62 }} source={vehicle.image} />
+                      </View>
                     </View>
                     <Text style={styles.vehicleTypeName}>{vehicle.name}</Text>
                     <Text style={styles.vehicleCap}>{vehicle.capacity}</Text>
@@ -125,7 +140,9 @@ const PickupAddress = ({navigation}) => {
           <AntDesign name="arrowright" size={20} color="#000000" />
         </TouchableOpacity>
       </View>
-    </ScrollView>
+      {/* Open Vehicle Dimensions Modal Button */}
+      <VehicleDimensionsModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} vehicleDetails={vehicleDetails} />
+    </View>
   );
 };
 
@@ -172,10 +189,10 @@ const styles = StyleSheet.create({
   },
   cardImages: {
     backgroundColor: colors.white,
-    padding: 10,
+    padding: 13,
     borderWidth: 1,
     borderColor: '#2C303336',
-    borderRadius: 7,
+    borderRadius: 10,
   },
   vehicleTypeName: {
     fontSize: 14,
@@ -195,10 +212,10 @@ const styles = StyleSheet.create({
     color: colors.secondary,
   },
   selectedCard: {
-    padding: 10,
+    padding: 13,
     borderWidth: 1,
-    borderRadius: 7,
-    borderColor: 'yellow', // or any other color you prefer
+    borderRadius: 10,
+    borderColor: colors.secondary,
   },
   continueBtn: {
     flexDirection: 'row',
@@ -213,6 +230,26 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
     fontSize: 15,
+  },
+  allVehicleCard: {
+    position: 'relative',
+  },
+  infoIcons: {
+    position: 'absolute',
+    top: '0%',
+    right: '0%',
+  },
+  modalButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: colors.text,
+    fontSize: 16,
+    fontFamily: 'Montserrat-Medium',
   },
 });
 
