@@ -12,17 +12,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 
-const DeliveryDetails = ({navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
-
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
-  };
-
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-  };
+const DeliveryboyMainDeliveryDetails = ({navigation}) => {
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -30,14 +20,15 @@ const DeliveryDetails = ({navigation}) => {
         <View style={{width: '100%', height: 250}}>
           <MapDeliveryDetails />
         </View>
-        <View style={styles.driverCard}>
-          <Image
-            style={styles.driverImga}
-            source={require('../../image/driver.jpeg')}
-          />
+
+        <View style={styles.packageCard}>
+          <Image source={require('../../image/Pickup-Package-Icon.png')} />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>John Doe</Text>
-            <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
+            <Text style={styles.dropInfo}>Pickup information</Text>
+            <Text style={styles.companyInfo}>Company Name</Text>
+            <Text style={styles.dropInfo}>
+              22 Rue de la Liberté, Paris, Île-de-France.
+            </Text>
           </View>
         </View>
 
@@ -103,23 +94,6 @@ const DeliveryDetails = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  driverCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    padding: 10,
-    borderRadius: 5,
-    shadowColor: 'rgba(0, 0, 0, 0.16)',
-    shadowOffset: {
-      width: 0,
-      height: 0.0625,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    elevation: 0.5, // for Android
-    marginBottom: 7,
-    marginTop: 7,
-  },
   packageCard: {
     flexDirection: 'row',
     backgroundColor: colors.white,
@@ -135,21 +109,6 @@ const styles = StyleSheet.create({
     elevation: 0.5, // for Android
     marginBottom: 7,
     marginTop: 7,
-  },
-  driverImga: {
-    width: 40,
-    height: 40,
-    borderRadius: 30,
-  },
-  driverName: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
-    color: colors.text,
-  },
-  truckInfo: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: '#131314',
   },
   dropInfo: {
     fontSize: 12,
@@ -258,4 +217,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeliveryDetails;
+export default DeliveryboyMainDeliveryDetails;

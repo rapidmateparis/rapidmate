@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, TextInput} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
-import {TextInput} from 'react-native-gesture-handler';
 
 function PlaningFilterModal({setModalVisible, isModalVisible}) {
   const toggleModal = () => {
