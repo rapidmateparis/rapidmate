@@ -93,9 +93,9 @@ const DeliveryDetails = ({navigation}) => {
 
         <View style={styles.packageInformationCard}>
              <Text style={styles.packageTitle}>Package information</Text>
-             <Text style={styles.orderdetails}>Order ID: <Text style={styles.detailsId}>20394</Text></Text>
-             <Text style={styles.orderdetails}>Comments: <Text style={styles.detailsId}>Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea sed.</Text></Text>
-             <Text style={styles.orderdetails}>Vehicle: <Text style={styles.detailsId}>Pickup truck</Text></Text>
+             <Text style={styles.orderdetails}>Order ID:<Text style={styles.detailsId}>20394</Text></Text>
+             <Text style={styles.orderdetails}>Comments:<Text style={styles.detailsId}>Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea sed.</Text></Text>
+             <Text style={styles.orderdetails}>Vehicle:<Text style={styles.detailsId}>Pickup truck</Text></Text>
         </View>
       </View>
     </ScrollView>

@@ -10,7 +10,6 @@ import DeliveryboyHome from './DeliveryboyHome';
 import Planning from './Planning';
 import DeliveryboyHistory from './DeliverboyHistory';
 import DeliveryBoySignup from './DeliveryBoySignup';
-import DeliveryPackageRequest from './DeliveryPackageRequest';
 
 const Bottom = createBottomTabNavigator();
 const DeliveryboyBottomNav = ({navigation}) => {
@@ -60,10 +59,10 @@ const DeliveryboyBottomNav = ({navigation}) => {
           },
         }}
       />
-      <Bottom.Screen
-        key="DeliveryPackageRequest"
+      {/* <Bottom.Screen
+        key="PickupAddress"
         name="Requst"
-        component={DeliveryPackageRequest}
+        component={PickupAddress}
         options={{
           headerShown: false,
           tabBarIcon: tabInfo => {
@@ -81,7 +80,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
             );
           },
         }}
-      />
+      /> */}
       <Bottom.Screen
         key="DeliveryboyHistory"
         name="History"

@@ -5,7 +5,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
 import {colors} from './colors';
 import LoginSignup from './components/register/LoginSignup';
 import LogInScreen from './components/register/LogInScreen';
@@ -36,8 +35,6 @@ import DeliveryBoySignup from './components/DeliveryBoy/DeliveryBoySignup';
 import AddVehicle from './components/DeliveryBoy/AddVehicle';
 import DeliveryboyBottomNav from './components/DeliveryBoy/DeliveryboyBottomNav';
 import DeliveryboyDeliveryDetails from './components/DeliveryBoy/DeliveryboyDeliveryDetails';
-import DeliveryboyMainDeliveryDetails from './components/DeliveryBoy/DeliveryboyMainDeliveryDetails';
-import DeliveryPackageRequest from './components/DeliveryBoy/DeliveryPackageRequest';
 
 const Stack = createStackNavigator();
 
@@ -497,7 +494,11 @@ const AppNavigator = () => {
             },
             headerRight: () => (
               <TouchableOpacity style={{paddingRight: 10}}>
-                <AntDesign name="plus" size={25} color={colors.text} />
+                <AntDesign
+                  name="plus"
+                  size={25}
+                  color={colors.text}
+                />
               </TouchableOpacity>
             ),
           })}
@@ -597,53 +598,6 @@ const AppNavigator = () => {
               </TouchableOpacity>
             ),
           })}
-        />
-        <Stack.Screen
-          name="DeliveryboyMainDeliveryDetails"
-          component={DeliveryboyMainDeliveryDetails}
-          options={({navigation}) => ({
-            headerLeft: () => (
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={{paddingLeft: 10}}>
-                <MaterialIcons
-                  name="keyboard-backspace"
-                  size={30}
-                  color={colors.text}
-                />
-              </TouchableOpacity>
-            ),
-            headerTitle: 'Delivery Details',
-            headerTitleStyle: {
-              fontFamily: 'Montserrat-SemiBold',
-              fontSize: 16,
-            },
-            headerTintColor: colors.text,
-            headerTitleAlign: 'center',
-            headerStyle: {
-              borderBottomWidth: 0,
-              elevation: 0,
-            },
-            headerRight: () => (
-              <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity style={{paddingRight: 10}}>
-                  <Ionicons
-                    name="settings-outline"
-                    size={25}
-                    color={colors.text}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={{paddingRight: 10}}>
-                  <Feather name="download" size={25} color={colors.text} />
-                </TouchableOpacity>
-              </View>
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="DeliveryPackageRequest"
-          component={DeliveryPackageRequest}
-          options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>

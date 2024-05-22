@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {colors} from '../../colors';
 import LinearGradient from 'react-native-linear-gradient';
+import {ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ProfileChoose = ({navigation}) => {
