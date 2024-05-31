@@ -40,12 +40,13 @@ const PickupHome = ({navigation}) => {
               This is your Rapidmate dashboard!
             </Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Notifications')}>
             <EvilIcons name="bell" size={40} color="#000" />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.requestPickup}>
+        <TouchableOpacity style={styles.requestPickup}>
           <View style={styles.pickcard}>
             <Text style={styles.packageRequst}>Request a Pick up</Text>
             <Text style={styles.packageDiscription}>
@@ -55,9 +56,9 @@ const PickupHome = ({navigation}) => {
           <View>
             <Image source={require('../../image/package-girl.png')} />
           </View>
-        </View>
+        </TouchableOpacity>
 
-        <View style={styles.requestPickup}>
+        <TouchableOpacity style={styles.requestPickup}>
           <View>
             <Image source={require('../../image/package-boy.png')} />
           </View>
@@ -67,9 +68,9 @@ const PickupHome = ({navigation}) => {
               Avail any service for fixed time and location
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
-        <View style={styles.requestPickupPack}>
+        <TouchableOpacity style={styles.requestPickupPack}>
           <View style={styles.packagePack}>
             <Text style={styles.packageRequst}>Schedule your delivery</Text>
             <Text style={styles.packageDiscription}>
@@ -86,19 +87,34 @@ const PickupHome = ({navigation}) => {
           </View>
           <View style={styles.packingCardImgas}>
             <Image source={require('../../image/package-packing.png')} />
-            <Image style={styles.timingIcon} source={require('../../image/timing-icon.png')} />
+            <Image
+              style={styles.timingIcon}
+              source={require('../../image/timing-icon.png')}
+            />
           </View>
-        </View>
+        </TouchableOpacity>
 
-        <View style={styles.recentlyInfo}>
+        <TouchableOpacity style={styles.requestPickup}>
+          <View>
+            <Image source={require('../../image/PackageMove-img.png')} />
+          </View>
+          <View style={styles.pickcard}>
+            <Text style={styles.packageRequst}>Request a Mover</Text>
+            <Text style={styles.packageDiscription}>
+              Avail service of our professional packer & movers
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Recently delivered</Text>
           <View style={styles.allinfoSee}>
             <Text style={styles.seAllText}>See All</Text>
             <AntDesign name="right" size={15} color="#000" />
           </View>
-        </View>
+        </View> */}
 
-        <ScrollView horizontal={true}>
+        {/* <ScrollView horizontal={true}>
           <View style={styles.allDeleveryCard}>
             <View style={styles.packageDetailCard}>
               <View style={styles.packageHeader}>
@@ -154,7 +170,7 @@ const PickupHome = ({navigation}) => {
               </View>
             </View>
           </View>
-        </ScrollView>
+        </ScrollView> */}
       </View>
     </ScrollView>
   );
@@ -337,7 +353,7 @@ const styles = StyleSheet.create({
   },
   discountPercentage: {
     fontSize: 10,
-    fontFamily: 'Montserrat-Medium', 
+    fontFamily: 'Montserrat-Medium',
     color: colors.secondary,
     paddingLeft: 4,
   },

@@ -11,15 +11,18 @@ import Planning from './Planning';
 import DeliveryboyHistory from './DeliverboyHistory';
 import DeliveryBoySignup from './DeliveryBoySignup';
 import DeliveryPackageRequest from './DeliveryPackageRequest';
+import DeliveryPackageScheduleRequest from './DeliveryPackageScheduleRequest';
+import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
+import LoaderForDriver from '../PickupDrop-off/LoaderForDriver';
 
 const Bottom = createBottomTabNavigator();
 const DeliveryboyBottomNav = ({navigation}) => {
   return (
     <Bottom.Navigator>
       <Bottom.Screen
-        key="DeliveryBoySignup"
+        key="LoaderForDriver"
         name="Home"
-        component={DeliveryBoySignup}
+        component={LoaderForDriver}
         options={{
           headerShown: false,
           tabBarIcon: tabInfo => {
@@ -84,7 +87,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
       />
       <Bottom.Screen
         key="DeliveryboyHistory"
-        name="History"
+        name="Orders"
         component={DeliveryboyHistory}
         options={{
           headerShown: false,
@@ -104,10 +107,10 @@ const DeliveryboyBottomNav = ({navigation}) => {
           },
         }}
       />
-      {/* <Bottom.Screen
-        key="Settings"
+      <Bottom.Screen
+        key="DeliveryboySettings"
         name="Account"
-        component={Settings}
+        component={DeliveryboySettings}
         options={{
           headerLeft: () => (
             <TouchableOpacity
@@ -120,7 +123,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               />
             </TouchableOpacity>
           ),
-          headerTitle: 'Settings',
+          headerTitle: 'Account',
           headerTitleStyle: {
             fontFamily: 'Montserrat-SemiBold',
             fontSize: 16,
@@ -147,7 +150,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
             );
           },
         }}
-      /> */}
+      />
     </Bottom.Navigator>
   );
 };

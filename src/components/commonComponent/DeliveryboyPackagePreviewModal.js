@@ -4,14 +4,14 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 
-function DeliveryboyPackagePreviewModal({setModalVisible, isModalVisible}) {
+function DeliveryboyPackagePreviewModal({setImageModalVisible, isImageModalVisible}) {
   const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+    setImageModalVisible(!isImageModalVisible);
   };
 
   return (
     <View style={{flex: 1}}>
-      <Modal isVisible={isModalVisible}>
+      <Modal isVisible={isImageModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerTitle}>View photo</Text>

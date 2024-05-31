@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { colors } from '../../colors';
+import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
+import {colors} from '../../colors';
 
-function CancellationModal({ setModalVisible, isModalVisible, vehicleDetails }) {
+function CancellationModal({setModalVisible, isModalVisible}) {
   const [selectedReason, setSelectedReason] = useState(null);
+  const navigation = useNavigation(); // Initialize navigation using useNavigation hook
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -23,14 +25,16 @@ function CancellationModal({ setModalVisible, isModalVisible, vehicleDetails }) 
         style={[styles.reasonItem, isSelected && styles.selectedReason]}
         onPress={() => handleReasonSelect(reason)}>
         {!isSelected && <View style={styles.circle} />}
-        {isSelected && <AntDesign name="checkcircle" size={20} color={colors.primary} />}
+        {isSelected && (
+          <AntDesign name="checkcircle" size={20} color={colors.primary} />
+        )}
         <Text style={styles.CancellationReasonText}>{reason}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
@@ -48,7 +52,9 @@ function CancellationModal({ setModalVisible, isModalVisible, vehicleDetails }) 
               'It is taking too long',
             ].map(reason => renderReason(reason))}
           </View>
-          <TouchableOpacity style={styles.buttonCard}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('PickupOrderCancelled')}
+            style={styles.buttonCard}>
             <Text style={styles.okButton}>Submit</Text>
           </TouchableOpacity>
         </View>

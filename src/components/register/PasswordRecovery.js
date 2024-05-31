@@ -23,23 +23,23 @@ const PasswordRecovery = ({navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
         <Text style={[styles.logInText, {color: colors.text}]}>
-          Verify It's You
+          Forgot password
         </Text>
         <Text style={styles.loginAccessText}>
-          Please enter your email address linked to your account.
+          Please confirm your email address, we will send OTP there
         </Text>
         <View>
           <View style={styles.logFormView}>
             <View style={styles.textInputDiv}>
               <AntDesign
                 name="mail"
-                size={18}
+                size={15}
                 color="#131314"
-                style={{marginTop: 13}}
+                style={{marginTop: 16}}
               />
               <TextInput
-                style={[styles.loginput, {fontFamily: 'Montserrat-Regular',}]}
-                placeholder="Email Address"
+                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+                placeholder="Email"
                 placeholderTextColor="#999"
                 value={email}
                 onChangeText={text => setEmail(text)}
@@ -47,9 +47,12 @@ const PasswordRecovery = ({navigation}) => {
             </View>
             <TouchableOpacity
               //   onPress={handleResetPassword}
-              onPress={() => navigation.navigate('ForgotPassword')}
+              onPress={() => navigation.navigate('AddressBook')}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-              <Text style={{fontSize: 18, color: colors.text, fontFamily: 'Montserrat-Medium',}}>Next</Text>
+              <Text
+                style={styles.submitBtn}>
+                Submit
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -71,19 +74,18 @@ const styles = StyleSheet.create({
   },
   logFormView: {
     backgroundColor: '#fff',
-    marginTop: 20,
     paddingTop: 30,
   },
   textInputDiv: {
     flexDirection: 'row',
     borderRadius: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#2C303336',
   },
   loginput: {
-    fontSize: 16,
+    fontSize: 13,
     paddingHorizontal: 10,
     width: '90%',
   },
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: 20,
+    marginTop: '20%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -107,6 +109,11 @@ const styles = StyleSheet.create({
   signUpText: {
     fontSize: 16,
     color: '#000',
+  },
+  submitBtn: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: 'Montserrat-Medium',
   },
 });
 

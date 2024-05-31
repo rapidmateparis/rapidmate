@@ -23,7 +23,7 @@ const AddVehicle = ({navigation}) => {
           style={styles.gradient}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}>
-          <TouchableOpacity style={styles.addressCard}>
+          <TouchableOpacity  onPress={() => navigation.navigate('ChooseDeliveryType')} style={styles.addressCard}>
             <Image source={require('../../image/Cycle-Icon.png')} />
             <View style={{marginLeft: 10, flex: 1}}>
               <Text style={styles.paymentPlateform}>Cycle</Text>

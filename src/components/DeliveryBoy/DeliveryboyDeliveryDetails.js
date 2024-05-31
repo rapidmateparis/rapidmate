@@ -13,6 +13,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
+import DeliveryboySubmitOTPModal from '../commonComponent/DeliveryboySubmitOTPModal';
 
 const DeliveryboyDeliveryDetails = ({navigation}) => {
   const [delivered, setDelivered] = useState(false);
@@ -21,10 +22,16 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
     setDelivered(true);
   };
 
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
+  const [isOTPModalVisible, setOTPModalVisible] = useState(false);
   const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+    setImageModalVisible(!isImageModalVisible);
   };
+  const toggleModalOTP = () => {
+    setOTPModalVisible(!isOTPModalVisible);
+  };
+ 
+ 
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -193,7 +200,8 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
         </View>
         {!delivered && (
           <TouchableOpacity
-            onPress={handleMarkAsDelivered}
+            // onPress={handleMarkAsDelivered}
+            onPress={() => toggleModalOTP()}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Mark as Delivered</Text>
           </TouchableOpacity>
@@ -201,8 +209,12 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
       </View>
       {/* Modal start here  */}
       <DeliveryboyPackagePreviewModal
-        isModalVisible={isModalVisible}
-        setModalVisible={setModalVisible}
+        isImageModalVisible={isImageModalVisible}
+        setImageModalVisible={setImageModalVisible}
+      />
+      <DeliveryboySubmitOTPModal
+        isOTPModalVisible={isOTPModalVisible}
+        setOTPModalVisible={setOTPModalVisible}
       />
     </ScrollView>
   );

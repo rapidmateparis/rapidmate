@@ -12,7 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dropdown} from 'react-native-element-dropdown';
 
-function EditAddressModal({editModalVisible, setEditModalVisible}) {
+function AddNewAddressModal({isModalVisible, setModalVisible}) {
   const [address, setAddress] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
@@ -24,7 +24,7 @@ function EditAddressModal({editModalVisible, setEditModalVisible}) {
   const [isFocus, setIsFocus] = useState(false);
 
   const toggleModal = () => {
-    setEditModalVisible(!editModalVisible);
+    setModalVisible(!isModalVisible);
   };
 
   const data = [
@@ -34,10 +34,10 @@ function EditAddressModal({editModalVisible, setEditModalVisible}) {
 
   return (
     <View style={{flex: 1}}>
-      <Modal isVisible={editModalVisible}>
+      <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Edit address</Text>
+            <Text style={styles.headerTitle}>Add New address</Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
@@ -365,4 +365,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditAddressModal;
+export default AddNewAddressModal;

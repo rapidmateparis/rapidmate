@@ -16,7 +16,7 @@ import {colors} from '../../colors';
 
 const OrderPickup = ({navigation}) => {
   const orderId = '9AS68D7G698GH';
-  const otp = '123456'; // Sample OTP
+  const otp = '123456';
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
   const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
@@ -113,8 +113,13 @@ const OrderPickup = ({navigation}) => {
         </View>
         <ImageBackground
           style={{width: '100%'}}
-          source={require('../../image/orderConfirm-Bg.png')}>
-          <View style={{paddingTop: 250, paddingHorizontal: 20}}>
+          source={require('../../image/DeliveryRequest-bg.png')}>
+            <View style={styles.boxCard}>
+                <Image source={require('../../image/Delivery-Box-Imga.png')}/>
+                <Image style={styles.cloud1} source={require('../../image/Cloud-Graphic.png')}/>
+                <Image style={styles.cloud2} source={require('../../image/Cloud-Graphic.png')}/>
+            </View>
+          <View style={{paddingTop: '20%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Pickup from</Text>
@@ -275,6 +280,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat-Medium',
     textAlign: 'center',
+  },
+  boxCard: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: '20%',
+    position: 'relative',
+  },
+  cloud1: {
+    position: 'absolute',
+    left: '5%',
+    top: '20%',
+  },
+  cloud2: {
+    position: 'absolute',
+    right: '5%',
+    top: '50%',
   },
 });
 

@@ -9,14 +9,13 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import CancellationModal from '../commonComponent/CancellationModal';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import SwipeButtonComponent from '../commonComponent/SwipeButton';
+import ScheduledDeliverySwipe from '../commonComponent/ScheduledDeliverySwipe';
 
-const DeliveryPackageRequest = ({navigation}) => {
-  const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
+const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
+  const [deliveryTime, setDeliveryTime] = useState(90 * 60); // 90 minutes in seconds
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -34,12 +33,13 @@ const DeliveryPackageRequest = ({navigation}) => {
   }, []);
 
   const formatTime = timeInSeconds => {
-    const minutes = Math.floor(timeInSeconds / 60);
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
     const seconds = timeInSeconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(
       2,
       '0',
-    )}`;
+    )}:${String(seconds).padStart(2, '0')}`;
   };
 
   return (
@@ -48,12 +48,12 @@ const DeliveryPackageRequest = ({navigation}) => {
         <View style={styles.container}>
           <Image
             style={styles.loaderMap}
-            source={require('../../image/Big-Package.png')}
+            source={require('../../image/Big-Calender.png')}
           />
-          <Text style={styles.maintext}>New delivery request!</Text>
+          <Text style={styles.maintext}>Scheduled delivery alert</Text>
           <Text style={styles.subText}>
-            Accept or reject in:{' '}
-            <Text style={styles.timerCount}>{formatTime(deliveryTime)}</Text>
+            You have a scheduled delivery in
+            <Text style={styles.timerCount}> 1 hour</Text>, are you ready?
           </Text>
         </View>
         <ImageBackground
@@ -62,27 +62,13 @@ const DeliveryPackageRequest = ({navigation}) => {
           <View style={styles.addressCard}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>Pickup from</Text>
-                <Text style={styles.subAddress}>
-                  1901 Thornridge Cir. Shiloh, California
-                </Text>
-                <Text style={styles.distance}>0.3 km away</Text>
-              </View>
-              <View>
-                <Image
-                  style={styles.mapAddress}
-                  source={require('../../image/dummyMap.png')}
-                />
-              </View>
-            </View>
-
-            <View style={styles.devileryMap}>
-              <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>Deliver to</Text>
-                <Text style={styles.subAddress}>
-                  1901 Thornridge Cir. Shiloh, California
-                </Text>
-                <Text style={styles.distance}>2.5 km away from pickup</Text>
+                <View style={{padding: 15}}>
+                  <Text style={styles.DeliveringText}>Pickup from</Text>
+                  <Text style={styles.subAddress}>
+                    1901 Thornridge Cir. Shiloh, California
+                  </Text>
+                  <Text style={styles.distance}>0.3 km away</Text>
+                </View>
               </View>
               <View>
                 <Image
@@ -92,7 +78,7 @@ const DeliveryPackageRequest = ({navigation}) => {
               </View>
             </View>
           </View>
-          <SwipeButtonComponent />
+          <ScheduledDeliverySwipe />
         </ImageBackground>
       </View>
     </ScrollView>
@@ -110,7 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingTop: 80,
+    paddingTop: '35%',
   },
   maintext: {
     color: colors.text,
@@ -129,19 +115,12 @@ const styles = StyleSheet.create({
   timerCount: {
     color: colors.text,
     fontSize: 14,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: 'Montserrat-Bold',
   },
   cancelRequest: {
     color: colors.secondary,
     fontSize: 14,
     fontFamily: 'Montserrat-Medium',
-  },
-  requestTouch: {
-    borderWidth: 1,
-    borderColor: colors.secondary,
-    borderRadius: 5,
-    paddingHorizontal: 90,
-    paddingVertical: 10,
   },
   devileryMap: {
     flexDirection: 'row',
@@ -161,7 +140,6 @@ const styles = StyleSheet.create({
   },
   Delivering: {
     flex: 1,
-    padding: 15,
   },
   DeliveringText: {
     fontSize: 14,
@@ -175,7 +153,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   addressCard: {
-    marginTop: 120,
+    marginTop: '36%',
     paddingHorizontal: 15,
   },
   distance: {
@@ -187,6 +165,59 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
   },
+  requestOverview: {
+    fontSize: 24,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  requestOverviewInfo: {
+    color: colors.text,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+  },
+  overViewCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  borderShowoff: {
+    borderWidth: 0.5,
+    borderColor: '#000',
+    borderStyle: 'dashed',
+    width: 20,
+    marginHorizontal: 5,
+  },
+  schaduleInfo: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.text,
+  },
+  schaduleDateTime: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  scheduleDateTimeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  timeSlotDetails: {
+    fontSize: 10,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.secondary,
+  },
+  moreDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: '#fff2f6',
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
 });
 
-export default DeliveryPackageRequest;
+export default DeliveryboyScheduledDeliveryAlert;

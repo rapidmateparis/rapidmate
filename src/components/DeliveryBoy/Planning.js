@@ -11,6 +11,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Octicons from 'react-native-vector-icons/Octicons';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {colors} from '../../colors';
 import PlaningFilterModal from '../commonComponent/PlaningFilterModal';
@@ -32,13 +33,18 @@ const Planning = ({navigation}) => {
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{flex: 1}}>
-        <View style={{paddingHorizontal: 15, marginTop: 10,}}>
+      <View style={{backgroundColor: '#fff',}}>
+        <View style={{paddingHorizontal: 15, paddingVertical: 10,}}>
           <View style={styles.header}>
             <Text style={styles.headerText}>Planning</Text>
-            <TouchableOpacity onPress={()=>toggleModal()}>
-              <AntDesign name="filter" size={30} color={colors.secondary} />
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity onPress={() => toggleModal()}>
+                <AntDesign name="filter" size={25} color={colors.secondary} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('DeliveryboySetAvailability')} style={styles.availbilityBt}>
+                <Text style={styles.availabilityText}>Set availability</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -56,10 +62,10 @@ const Planning = ({navigation}) => {
               selected: true,
               disableTouchEvent: true,
             },
-            '2024-05-13': {marked: true, dotColor: colors.secondary,},
-            '2024-05-14': {marked: true, dotColor: colors.secondary,},
-            '2024-05-15': {marked: true, dotColor: colors.secondary,},
-            '2024-05-16': {marked: true, dotColor: colors.secondary,},
+            '2024-05-13': {marked: true, dotColor: colors.primary},
+            '2024-05-14': {marked: true, dotColor: colors.MountainMeadow},
+            '2024-05-15': {marked: true, dotColor: colors.CuriousBlue},
+            '2024-05-16': {marked: true, dotColor: colors.Wisteria},
             // '2024-05-17': {selected: true, marked: true, dotColor: colors.secondary, selectedColor: 'yellow'},
           }}
           theme={{
@@ -74,6 +80,31 @@ const Planning = ({navigation}) => {
           }}
         />
       </View>
+      <View style={styles.mainColorCard}>
+        <View style={styles.colorCardWise}>
+          <Octicons name="dot-fill" size={20} color={colors.primary} />
+          <Text style={styles.colorWiseText}>Restaurant</Text>
+        </View>
+
+        <View style={styles.colorCardWise}>
+          <Octicons name="dot-fill" size={20} color={colors.MountainMeadow} />
+          <Text style={styles.colorWiseText}>Supermarkets</Text>
+        </View>
+
+        <View style={styles.colorCardWise}>
+          <Octicons name="dot-fill" size={20} color={colors.CuriousBlue} />
+          <Text style={styles.colorWiseText}>E-Commerce</Text>
+        </View>
+
+      </View>
+
+      <View style={styles.mainColorCard}>
+        <View style={styles.colorCardWise}>
+          <Octicons name="dot-fill" size={20} color={colors.Wisteria} />
+          <Text style={styles.colorWiseText}>Packers & Movers</Text>
+        </View>
+      </View>
+
       <View style={{flex: 1}}>
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
           <View style={styles.packageDetailCard}>
@@ -131,7 +162,6 @@ const Planning = ({navigation}) => {
               <Text style={styles.valueMoney}>For National Inc.</Text>
             </View>
           </View>
-
         </View>
       </View>
       {/* Modal start here  */}
@@ -219,7 +249,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 10,
-
   },
   orderId: {
     fontSize: 12,
@@ -228,7 +257,7 @@ const styles = StyleSheet.create({
   },
   valueMoney: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
     color: colors.text,
   },
   listText: {
@@ -244,8 +273,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
   },
-  calenderCard: {
-    marginVertical: 10,
+  availbilityBt: {
+    backgroundColor: colors.secondary,
+    borderRadius: 25,
+    padding: 8,
+    marginLeft: 10,
+  },
+  availabilityText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.white,
+  },
+  colorWiseText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+    marginHorizontal: 8,
+  },
+  colorCardWise: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mainColorCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    paddingVertical: 3,
   },
 });
 

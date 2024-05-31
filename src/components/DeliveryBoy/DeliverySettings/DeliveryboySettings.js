@@ -11,7 +11,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 
-const Settings = ({navigation}) => {
+const DeliveryboySettings = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
   return (
@@ -21,7 +21,7 @@ const Settings = ({navigation}) => {
           <View>
             <Image
               style={styles.profileImg}
-              source={require('../../../image/settings-profile.jpeg')}
+              source={require('../../../image/DeliveryBoy-Icon.png')}
             />
           </View>
           <View style={{marginLeft: 15}}>
@@ -34,7 +34,9 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('AddressBook')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AddressBook')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
             <Text style={styles.titleStatus}>3 addresses</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -42,28 +44,45 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('Wallet')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryPreferance')}
+            style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Manage delivery preferance</Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Wallet')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Payment methods</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('DeliveryDetails')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryboyTransactions')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Billing details</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('PickupChangePassword')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('History')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Change password</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('NotificationSetting')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('NotificationSetting')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Notifications</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -85,14 +104,18 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('AboutUs')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>About us</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('FAQs')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('FAQs')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>FAQs</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -167,4 +190,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Settings;
+export default DeliveryboySettings;

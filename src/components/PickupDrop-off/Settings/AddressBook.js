@@ -13,12 +13,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../../colors';
 import EditAddressModal from '../../commonComponent/EditAddressModal';
+import AddNewAddressModal from '../../commonComponent/AddNewAddressModal';
 
 const AddressBook = ({navigation}) => {
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const toggleModal = vehicleDetails => {
-    setModalVisible(!isModalVisible);
+    setEditModalVisible(!editModalVisible);
   };
+
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -31,7 +33,7 @@ const AddressBook = ({navigation}) => {
               18 Avenue Henri et Louise de Vilmorin, 91370, Verrières-le-Buisson
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>toggleModal()}>
+          <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
               style={{marginTop: 15}}
               name="edit-2"
@@ -49,7 +51,7 @@ const AddressBook = ({navigation}) => {
               18 Avenue Henri et Louise de Vilmorin, 91370, Verrières-le-Buisson
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>toggleModal()}>
+          <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
               style={{marginTop: 15}}
               name="edit-2"
@@ -67,7 +69,7 @@ const AddressBook = ({navigation}) => {
               18 Avenue Henri et Louise de Vilmorin, 91370, Verrières-le-Buisson
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>toggleModal()}>
+          <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
               style={{marginTop: 15}}
               name="edit-2"
@@ -85,7 +87,7 @@ const AddressBook = ({navigation}) => {
               18 Avenue Henri et Louise de Vilmorin, 91370, Verrières-le-Buisson
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>toggleModal()}>
+          <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
               style={{marginTop: 15}}
               name="edit-2"
@@ -99,9 +101,10 @@ const AddressBook = ({navigation}) => {
       {/* Modal here  */}
 
       <EditAddressModal
-        isModalVisible={isModalVisible}
-        setModalVisible={setModalVisible}
+        editModalVisible={editModalVisible}
+        setEditModalVisible={setEditModalVisible}
       />
+
     </ScrollView>
   );
 };
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5, // for Android
-   marginTop: 15,
+    marginTop: 15,
   },
   cardTitle: {
     fontSize: 14,
