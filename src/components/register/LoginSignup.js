@@ -99,11 +99,11 @@ const styles = StyleSheet.create({
   pageDirections: {
     textAlign: 'center',
     fontFamily: 'Montserrat-Medium',
-    fontSize: 18,
+    fontSize: 14,
     color: '#000',
   },
   companyName: {
-    fontSize: 40,
+    fontSize: 35,
     fontFamily: 'Montserrat-Bold',
     marginTop: 20,
   },
@@ -139,7 +139,9 @@ const styles = StyleSheet.create({
   },
   loginDisclemar: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 12,
+    paddingHorizontal: 25,
+    lineHeight: 20,
     fontFamily: 'Montserrat-Medium',
   },
 });

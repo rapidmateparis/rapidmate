@@ -115,34 +115,13 @@ const AddPickupVehicle = ({navigation}) => {
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
-                size={22}
+                size={15}
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text
-                style={{color: '#999', marginLeft: 5, paddingTop: 10, flex: 1}}>
-                Tap to upload
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: '#FFC72B26',
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  marginTop: 8,
-                }}>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontFamily: 'Montserrat-Regular',
-                    borderRightWidth: 1,
-                    paddingRight: 5,
-                    borderColor: '#2C30331A',
-                  }}>
-                  image.jpeg
-                </Text>
+              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+               <View style={styles.docPathCard}>
+                <Text style={styles.docPath}>image.jpeg</Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>
@@ -152,34 +131,13 @@ const AddPickupVehicle = ({navigation}) => {
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
-                size={22}
+                size={15}
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text
-                style={{color: '#999', marginLeft: 5, paddingTop: 10, flex: 1}}>
-                Tap to upload
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: '#FFC72B26',
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  marginTop: 8,
-                }}>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontFamily: 'Montserrat-Regular',
-                    borderRightWidth: 1,
-                    paddingRight: 5,
-                    borderColor: '#2C30331A',
-                  }}>
-                  image.jpeg
-                </Text>
+              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+               <View style={styles.docPathCard}>
+                <Text style={styles.docPath}>image.jpeg</Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>
@@ -189,34 +147,13 @@ const AddPickupVehicle = ({navigation}) => {
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
-                size={22}
+                size={15}
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text
-                style={{color: '#999', marginLeft: 5, paddingTop: 10, flex: 1}}>
-                Tap to upload
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: '#FFC72B26',
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  marginTop: 8,
-                }}>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontFamily: 'Montserrat-Regular',
-                    borderRightWidth: 1,
-                    paddingRight: 5,
-                    borderColor: '#2C30331A',
-                  }}>
-                  image.jpeg
-                </Text>
+              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+              <View style={styles.docPathCard}>
+                <Text style={styles.docPath}>image.jpeg</Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>
@@ -227,41 +164,20 @@ const AddPickupVehicle = ({navigation}) => {
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
-                size={22}
+                size={15}
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text
-                style={{color: '#999', marginLeft: 5, paddingTop: 10, flex: 1}}>
-                Tap to upload
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: '#FFC72B26',
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  marginTop: 8,
-                }}>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontFamily: 'Montserrat-Regular',
-                    borderRightWidth: 1,
-                    paddingRight: 5,
-                    borderColor: '#2C30331A',
-                  }}>
-                  image.jpeg
-                </Text>
+              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+              <View style={styles.docPathCard}>
+                <Text style={styles.docPath}>image.jpeg</Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate('PickupOrderPreview')}
+            onPress={() => navigation.navigate('ChooseDeliveryType')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
@@ -324,7 +240,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },
@@ -412,6 +328,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderColor: '#ccc',
     borderRadius: 5,
+    fontSize: 12,
     padding: 10,
     fontFamily: 'Montserrat-Regular',
   },
@@ -437,6 +354,31 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     marginTop: 15,
+  },
+  tapUploadDoc: {
+    color: '#999',
+    marginLeft: 5,
+    paddingTop: 10,
+    flex: 1,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+  },
+  docPath: {
+    color: colors.text,
+    fontFamily: 'Montserrat-Regular',
+    borderRightWidth: 1,
+    paddingRight: 5,
+    fontSize: 12,
+    borderColor: '#2C30331A',
+  },
+  docPathCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFC72B26',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginTop: 8,
   },
 });
 

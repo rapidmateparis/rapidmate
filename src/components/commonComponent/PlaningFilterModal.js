@@ -204,6 +204,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     width: 180,
     borderRadius: 8,
+    color: colors.text,
     backgroundColor: colors.primary,
     paddingVertical: 12,
     textAlign: 'center',

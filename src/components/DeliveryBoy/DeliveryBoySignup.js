@@ -32,6 +32,8 @@ const DeliveryBoySignup = ({navigation}) => {
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -76,12 +78,12 @@ const DeliveryBoySignup = ({navigation}) => {
             <View style={styles.nameInputDiv}>
               <AntDesign
                 name="user"
-                size={20}
+                size={18}
                 color="#131314"
                 style={{marginTop: 13}}
               />
               <TextInput
-                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+                style={styles.loginput}
                 placeholder="First Name"
                 placeholderTextColor="#999"
                 value={name}
@@ -92,12 +94,12 @@ const DeliveryBoySignup = ({navigation}) => {
             <View style={styles.nameInputDiv}>
               <AntDesign
                 name="user"
-                size={20}
+                size={18}
                 color="#131314"
                 style={{marginTop: 13}}
               />
               <TextInput
-                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+                style={styles.loginput}
                 placeholder="Last Name"
                 placeholderTextColor="#999"
                 value={lastname}
@@ -108,12 +110,12 @@ const DeliveryBoySignup = ({navigation}) => {
           <View style={styles.textInputDiv}>
             <AntDesign
               name="mail"
-              size={22}
+              size={18}
               color="#131314"
               style={{marginTop: 13}}
             />
             <TextInput
-              style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.loginput}
               placeholder="Email"
               placeholderTextColor="#999"
               value={email}
@@ -121,9 +123,9 @@ const DeliveryBoySignup = ({navigation}) => {
             />
           </View>
           <View style={styles.inputContainer}>
-            <AntDesign name="lock" size={22} color="#131314" />
+            <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
-              style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.input}
               placeholder="Password"
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
@@ -134,15 +136,15 @@ const DeliveryBoySignup = ({navigation}) => {
               onPress={() => togglePasswordVisibility('password')}>
               <Feather
                 name={passwordVisible ? 'eye' : 'eye-off'}
-                size={20}
+                size={15}
                 color="#131314"
               />
             </TouchableOpacity>
           </View>
           <View style={styles.inputContainer}>
-            <AntDesign name="lock" size={22} color="#131314" />
+            <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
-              style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.input}
               placeholder="Confirm Password"
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
@@ -153,7 +155,7 @@ const DeliveryBoySignup = ({navigation}) => {
               onPress={() => togglePasswordVisibility('confirmPassword')}>
               <Feather
                 name={confirmPasswordVisible ? 'eye' : 'eye-off'}
-                size={20}
+                size={15}
                 color="#131314"
               />
             </TouchableOpacity>
@@ -186,7 +188,7 @@ const DeliveryBoySignup = ({navigation}) => {
               </View>
             </View>
             <TextInput
-              style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.input}
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
@@ -215,7 +217,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 <FontAwesome6
                   style={{marginRight: 10}}
                   name="globe"
-                  size={21}
+                  size={18}
                   color={colors.text}
                 />
               )}
@@ -247,7 +249,7 @@ const DeliveryBoySignup = ({navigation}) => {
                   <FontAwesome6
                     style={{marginRight: 10}}
                     name="globe"
-                    size={21}
+                    size={18}
                     color={colors.text}
                   />
                 )}
@@ -274,7 +276,7 @@ const DeliveryBoySignup = ({navigation}) => {
                   <FontAwesome6
                     style={{marginRight: 10}}
                     name="globe"
-                    size={21}
+                    size={18}
                     color={colors.text}
                   />
                 )}
@@ -284,12 +286,12 @@ const DeliveryBoySignup = ({navigation}) => {
           <View style={styles.textInputDiv}>
             <Ionicons
               name="location-outline"
-              size={22}
+              size={18}
               color="#131314"
               style={{marginTop: 13}}
             />
             <TextInput
-              style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.loginput}
               placeholder="Siret"
               placeholderTextColor="#999"
               value={siret}
@@ -307,7 +309,10 @@ const DeliveryBoySignup = ({navigation}) => {
             <Text style={styles.checkboxText}>
               We collect this data for the purposes of processing your
               application to become a courier. By clicking this box, you
-              acknowledge that you have read and understood the <TouchableOpacity><Text style={styles.pirvacyTextBold}>Privacy Policy</Text></TouchableOpacity>
+              acknowledge that you have read and understood the{' '}
+              <TouchableOpacity>
+                <Text style={styles.pirvacyTextBold}>Privacy Policy</Text>
+              </TouchableOpacity>
             </Text>
           </View>
           <TouchableOpacity
@@ -354,9 +359,10 @@ const styles = StyleSheet.create({
     borderColor: '#2C303336',
   },
   loginput: {
-    fontSize: 15,
+    fontSize: 12,
     paddingHorizontal: 10,
     width: '90%',
+    fontFamily: 'Montserrat-Regular',
   },
   mobileNumberInput: {
     flexDirection: 'row',
@@ -375,7 +381,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },
@@ -384,7 +390,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signUpText: {
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#000',
   },
@@ -404,9 +410,10 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12,
     paddingHorizontal: 10,
     color: colors.text,
+    fontFamily: 'Montserrat-Regular',
   },
   accountType: {
     fontFamily: 'Montserrat-Regular',
@@ -471,12 +478,12 @@ const styles = StyleSheet.create({
   },
   checkboxText: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
     color: colors.text,
     marginLeft: 5,
   },
   pirvacyTextBold: {
-    fontFamily: 'Montserrat-Bold',  
+    fontFamily: 'Montserrat-Bold',
     color: colors.primary,
   },
   checkboxContainer: {

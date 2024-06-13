@@ -50,7 +50,7 @@ const PickupPayment = ({navigation}) => {
         <View style={styles.inputContainer}>
           <Image source={require('../../image/ticket-discount.png')} />
           <TextInput
-            style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
+            style={styles.input}
             placeholder="Promo code"
             placeholderTextColor="#999"
           />
@@ -58,11 +58,11 @@ const PickupPayment = ({navigation}) => {
             style={{
               backgroundColor: colors.secondary,
               paddingHorizontal: 20,
-              paddingVertical: 15,
+              paddingVertical: 13,
               borderTopRightRadius: 10,
               borderBottomEndRadius: 10,
             }}>
-            <AntDesign name="check" size={25} color="#fff" />
+            <AntDesign name="check" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
 
@@ -81,15 +81,12 @@ const PickupPayment = ({navigation}) => {
         </View>
       </View>
       <View style={styles.ProceedCard}>
-        <Text
-          style={{
-            color: colors.text,
-            fontSize: 22,
-            fontFamily: 'Montserrat-Bold',
-          }}>
+        <Text style={styles.proceedPayment}>
           <Text>€</Text>34.00
         </Text>
-        <Text style={styles.PayText}>Proceed to pay</Text>
+        <TouchableOpacity  onPress={() => navigation.navigate('LoaderForDriver')}>
+          <Text style={styles.PayText}>Proceed to pay</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -116,13 +113,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   vehicleName: {
-    fontSize: 17,
+    fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
   vehicleCapacity: {
     color: colors.subText,
-    fontSize: 13,
+    fontSize: 12,
+    marginVertical: 2,
     fontFamily: 'Montserrat-Regular',
   },
   pickupCard: {
@@ -199,8 +197,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   totalAmount: {
-    fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 12,
+    fontFamily: 'Montserrat-Bold',
     color: colors.text,
   },
   inputContainer: {
@@ -225,13 +223,14 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 17,
+    fontSize: 14,
     paddingHorizontal: 10,
     color: colors.text,
+    fontFamily: 'Montserrat-Regular',
   },
   selectPaymentMethod: {
     fontFamily: 'Montserrat-Regular',
-    fontSize: 14,
+    fontSize: 12,
     color: colors.text,
   },
   discountCard: {
@@ -244,7 +243,7 @@ const styles = StyleSheet.create({
   },
   discountInfo: {
     color: colors.secondary,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
   },
   ProceedCard: {
@@ -255,16 +254,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: '70%',
   },
   PayText: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 30,
-    paddingVertical: 18,
-    fontSize: 16,
+    paddingVertical: 15,
+    fontSize: 14,
     fontFamily: 'Montserrat-Medium',
     borderRadius: 8,
     color: colors.text,
     opacity: 0.7,
+  },
+  proceedPayment: {
+    color: colors.text,
+    fontSize: 20,
+    fontFamily: 'Montserrat-Bold',
   },
 });
 

@@ -29,7 +29,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
         </View>
 
         <View style={{paddingHorizontal: 15}}>
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -41,7 +41,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -53,7 +53,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -65,7 +65,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -77,7 +77,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -89,7 +89,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -101,7 +101,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -113,7 +113,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -125,7 +125,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -137,7 +137,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -294,18 +294,20 @@ const styles = StyleSheet.create({
     borderColor: '#737C7B26',
     padding: 10,
     borderRadius: 8,
+    color: colors.text,
     backgroundColor: colors.white,
   },
   dateText: {
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     marginBottom: 5,
+    color: colors.text,
   },
   siftDate: {
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
-    marginVertical: 15,
+    marginBottom: 5,
   },
   dateTimeSift: {
     fontSize: 14,
@@ -324,8 +326,12 @@ const styles = StyleSheet.create({
     borderColor: '#737C7B26',
     padding: 10,
     borderRadius: 8,
+    color: colors.text,
     backgroundColor: colors.white,
     width: '48%',
+  },
+  dateTimeCard: {
+    marginVertical: 10,
   },
 });
 

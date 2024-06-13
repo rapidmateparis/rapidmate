@@ -6,24 +6,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
-import HomeScreen from '../../bottom/HomeScreen';
-import Pickup2 from '../../bottom/Pickup2';
-import LogInScreen from '../register/LogInScreen';
-import LoginSignup from '../register/LoginSignup';
-import ForgotPassword from '../register/ForgotPassword';
-import PickupSignup from './PickupSignup';
-import PickupOrderPreview from './PickupOrderPreview';
 import PickupAddress from './PickupAddress';
-import LoaderForDriver from './LoaderForDriver';
-import OrderConfirm from './OrderConfirmed';
-import GoogleMapScreen from '../commonComponent/MapAddress';
-import MapPickupAddress from './MapPickupAddress';
 import Settings from './Settings/Settings';
 import Notifications from './Settings/Notifications';
 import PickupHome from './PickupHome';
-import VehicleDimensionsModal from '../commonComponent/VehicleDimensions';
-import OrderPickup from './OrderPickup';
-import DeliveryBoySignup from '../DeliveryBoy/DeliveryBoySignup';
+import History from './History';
 
 
 const Bottom = createBottomTabNavigator();
@@ -119,9 +106,9 @@ const PickupBottomNav = ({navigation}) => {
         }}
       />
       <Bottom.Screen
-        key="LoaderForDriver"
+        key="History"
         name="Orders"
-        component={LoaderForDriver}
+        component={History}
         options={{
           headerShown: false,
           tabBarIcon: tabInfo => {

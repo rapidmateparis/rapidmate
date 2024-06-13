@@ -35,7 +35,6 @@ const PasswordRecovery = ({navigation}) => {
                 name="mail"
                 size={15}
                 color="#131314"
-                style={{marginTop: 16}}
               />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
@@ -47,7 +46,7 @@ const PasswordRecovery = ({navigation}) => {
             </View>
             <TouchableOpacity
               //   onPress={handleResetPassword}
-              onPress={() => navigation.navigate('AddressBook')}
+              onPress={() => navigation.navigate('ForgotPassword')}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
               <Text
                 style={styles.submitBtn}>
@@ -78,6 +77,7 @@ const styles = StyleSheet.create({
   },
   textInputDiv: {
     flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 5,
     paddingHorizontal: 15,
     marginBottom: 20,

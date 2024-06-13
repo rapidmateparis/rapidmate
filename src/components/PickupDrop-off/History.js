@@ -138,10 +138,10 @@ const TodayList = () => {
   );
 };
 
-const PastList = () => {
+const PastList = ({navigation}) => {
   return (
     <ScrollView>
-      <View style={styles.scrollViewContainer}>
+      {/* <View style={styles.scrollViewContainer}>
         <View
           style={{
             width: 350,
@@ -160,10 +160,17 @@ const PastList = () => {
             </Text>
           </View>
         </View>
-      </View>
-      {/* <View style={{flex: 1}}>
-        <View style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5',}}>
-          <View style={styles.packageDetailCard}>
+      </View> */}
+      <View style={{flex: 1}}>
+        <View
+          style={{
+            paddingHorizontal: 15,
+            paddingTop: 5,
+            backgroundColor: '#FBFAF5',
+          }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryDetails')}
+            style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
               <Image source={require('../../image/package-medium-icon.png')} />
               <Text style={styles.deliveryTime}>
@@ -191,7 +198,7 @@ const PastList = () => {
               <Text style={styles.orderId}>Order ID: 98237469</Text>
               <Text style={styles.valueMoney}>€34.00</Text>
             </View>
-          </View>
+          </TouchableOpacity>
 
           <View style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
@@ -253,7 +260,7 @@ const PastList = () => {
             </View>
           </View>
         </View>
-      </View> */}
+      </View>
     </ScrollView>
   );
 };
@@ -274,13 +281,18 @@ const Past = () => {
   );
 };
 
-function History() {
+function History({navigation}) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
 
   return (
     <View style={{flex: 1}}>
-      <View style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5',}}>
+      <View
+        style={{
+          paddingHorizontal: 15,
+          paddingTop: 5,
+          backgroundColor: '#FBFAF5',
+        }}>
         {/* Your Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
@@ -316,7 +328,9 @@ function History() {
           tabBarStyle: {backgroundColor: '#fff'},
         }}>
         <Tab.Screen name="Ongoing" component={Ongoing} />
-        <Tab.Screen name="Past" component={Past} />
+        <Tab.Screen name="Past">
+          {() => <PastList navigation={navigation} />}
+        </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}
     </View>

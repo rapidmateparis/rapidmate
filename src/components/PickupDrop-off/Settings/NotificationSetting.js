@@ -24,7 +24,7 @@ const NotificationSetting = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+    <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.addressCard}>
           <View style={styles.bookAddress}>
@@ -32,7 +32,7 @@ const NotificationSetting = ({navigation}) => {
             <TouchableOpacity onPress={togglePushNotifications}>
               <MaterialCommunityIcons
                 name={pushNotifications ? 'toggle-switch' : 'toggle-switch-off'}
-                size={45}
+                size={50}
                 color={pushNotifications ? '#FFC72B' : '#D3D3D3'}
               />
             </TouchableOpacity>
@@ -45,7 +45,7 @@ const NotificationSetting = ({navigation}) => {
             <TouchableOpacity onPress={togglePromoEmails}>
               <MaterialCommunityIcons
                 name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
-                size={45}
+                size={50}
                 color={promoEmails ? '#FFC72B' : '#D3D3D3'}
               />
             </TouchableOpacity>

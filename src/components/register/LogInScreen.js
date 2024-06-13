@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { colors } from '../../colors';
+import {colors} from '../../colors';
 
-const LogInScreen = ({ navigation }) => {
+const LogInScreen = ({navigation}) => {
   const [emailPhone, setEmailPhone] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false); // State to track password visibility
@@ -52,66 +52,59 @@ const LogInScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
-      <View style={{ paddingHorizontal: 15 }}>
-        <Text style={[styles.logInText, { color: colors.text }]}>Login</Text>
+    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
+      <View style={{paddingHorizontal: 15}}>
+        <Text style={styles.logInText}>Login</Text>
         <Text style={styles.loginAccessText}>
           Please login to your account and pick up where you left!
         </Text>
         <View>
           <View style={styles.logFormView}>
             <View style={styles.textInputDiv}>
-              <AntDesign
-                name="user"
-                size={22}
-                color="#131314"
-                style={{ marginTop: 13 }}
-              />
+              <AntDesign name="user" size={18} color="#131314" />
               <TextInput
-                style={[styles.loginput, {fontFamily: 'Montserrat-Regular',}]}
+                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                 placeholder="Email/Phone"
                 placeholderTextColor="#999"
                 value={emailPhone}
-                onChangeText={(text) => setEmailPhone(text)}
+                onChangeText={text => setEmailPhone(text)}
               />
             </View>
             <View style={styles.textInputDiv}>
-              <AntDesign
-                name="lock"
-                size={22}
-                color="#131314"
-                style={{ marginTop: 15 }}
-              />
+              <AntDesign name="lock" size={18} color="#131314" />
               <TextInput
-                style={[styles.loginput, {fontFamily: 'Montserrat-Regular',}]}
+                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                 placeholder="Password"
                 placeholderTextColor="#999"
                 secureTextEntry={!passwordVisible} // Use the secureTextEntry prop based on passwordVisible state
                 value={password}
-                onChangeText={(text) => setPassword(text)}
+                onChangeText={text => setPassword(text)}
               />
               <TouchableOpacity onPress={togglePasswordVisibility}>
                 <Feather
                   name={passwordVisible ? 'eye' : 'eye-off'} // Change the icon based on passwordVisible state
-                  size={20}
+                  size={15}
                   color="#131314"
-                  style={{ marginTop: 15 }}
                 />
               </TouchableOpacity>
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate('PasswordRecovery')}>
-              <Text style={[styles.forgotPasswordText, {color: colors.text}]}>Forgot your password?</Text>
+              <Text style={[styles.forgotPasswordText, {color: colors.text}]}>
+                Forgot your password?
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.logbutton, {backgroundColor: colors.primary}]} onPress={handleLogin}>
-              <Text style={{ fontSize: 18, color: colors.text, fontFamily: 'Montserrat-Medium'}}>Login</Text>
+            <TouchableOpacity
+              style={[styles.logbutton, {backgroundColor: colors.primary}]}
+              onPress={handleLogin}>
+              <Text style={styles.loginBtn}>Login</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate('ProfileChoose')}
               style={styles.signUpContainer}>
               <Text style={styles.signUpText}>
-              Don’t have an account yet?{' '}
-                <Text style={{color: colors.primary,}}>Register</Text>
+                Don’t have an account yet?{' '}
+                <Text style={{color: colors.primary}}>Register</Text>
               </Text>
             </TouchableOpacity>
           </View>
@@ -123,11 +116,12 @@ const LogInScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   logInText: {
-    fontSize: 22,
-    fontFamily: 'Montserrat-SemiBold'
+    fontSize: 20,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
   },
   loginAccessText: {
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     color: '#000',
     width: '70%',
@@ -140,39 +134,46 @@ const styles = StyleSheet.create({
   },
   textInputDiv: {
     flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#2C303336',
   },
   loginput: {
-    fontSize: 17,
+    fontSize: 12,
     paddingHorizontal: 10,
     width: '90%',
+    fontFamily: 'Montserrat-Regular',
   },
   forgotPasswordText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     marginBottom: 20,
     textAlign: 'right',
   },
   logbutton: {
     width: '100%',
-    marginTop: 20,
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
   },
   signUpContainer: {
-    marginTop: 240,
+    marginTop: '80%',
     alignItems: 'center',
   },
   signUpText: {
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#000',
+  },
+  loginBtn: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: 'Montserrat-Medium',
   },
 });
 

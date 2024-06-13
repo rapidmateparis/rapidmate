@@ -134,12 +134,10 @@ const PickupAddress = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <View style={styles.continueBtn}>
+      <TouchableOpacity onPress={() => navigation.navigate('AddPickupdetails')} style={styles.continueBtn}>
         <Text style={styles.continueText}>Continue to order details</Text>
-        <TouchableOpacity>
           <AntDesign name="arrowright" size={20} color="#000000" />
-        </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
       {/* Open Vehicle Dimensions Modal Button */}
       <VehicleDimensionsModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} vehicleDetails={vehicleDetails} />
     </View>

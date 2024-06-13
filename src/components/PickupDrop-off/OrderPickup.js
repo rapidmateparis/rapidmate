@@ -165,7 +165,7 @@ const OrderPickup = ({navigation}) => {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.trackOrderBtn}>
+            <TouchableOpacity onPress={() => navigation.navigate('OrderConfirm')} style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>Track order</Text>
             </TouchableOpacity>
           </View>

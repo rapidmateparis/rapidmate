@@ -21,7 +21,7 @@ const DeliveryboySettings = ({navigation}) => {
           <View>
             <Image
               style={styles.profileImg}
-              source={require('../../../image/DeliveryBoy-Icon.png')}
+              source={require('../../../image/Selfie.png')}
             />
           </View>
           <View style={{marginLeft: 15}}>
@@ -97,7 +97,7 @@ const DeliveryboySettings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Help</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -105,7 +105,7 @@ const DeliveryboySettings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}
+            onPress={() => navigation.navigate('AddPickupdetails')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>About us</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -122,7 +122,7 @@ const DeliveryboySettings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('DeliveryBoySignup')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

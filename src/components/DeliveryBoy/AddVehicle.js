@@ -9,7 +9,6 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -23,7 +22,9 @@ const AddVehicle = ({navigation}) => {
           style={styles.gradient}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}>
-          <TouchableOpacity  onPress={() => navigation.navigate('ChooseDeliveryType')} style={styles.addressCard}>
+          <TouchableOpacity
+
+            style={styles.addressCard}>
             <Image source={require('../../image/Cycle-Icon.png')} />
             <View style={{marginLeft: 10, flex: 1}}>
               <Text style={styles.paymentPlateform}>Cycle</Text>
@@ -131,10 +132,10 @@ const AddVehicle = ({navigation}) => {
         </LinearGradient>
 
         <TouchableOpacity
-            onPress={() => navigation.navigate('')}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
+          onPress={() => navigation.navigate('AddPickupVehicle')}
+          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
     borderRadius: 10,
-    marginBottom: 15,
+    marginVertical: 10,
   },
   addressCard: {
     flexDirection: 'row',
@@ -169,14 +170,15 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '15%',
+    marginTop: 50,
+    marginBottom: 20,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },

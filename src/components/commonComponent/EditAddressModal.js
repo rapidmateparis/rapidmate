@@ -350,6 +350,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
   },
   dottedLine: {

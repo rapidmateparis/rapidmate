@@ -23,7 +23,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {usePickupAddress} from '../commonComponent/StoreContext';
 import {useDropAddress} from '../commonComponent/StoreContext';
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
-import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
+// import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Custom Marker Components
 const MyCustomMarkerView = () => (

@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   addressCard: {
-    marginTop: 30,
+    marginTop: '17%',
     paddingHorizontal: 15,
   },
   distance: {

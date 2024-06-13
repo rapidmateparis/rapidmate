@@ -29,7 +29,6 @@ const ChooseDeliveryType = ({navigation}) => {
             style={styles.profileCard}
             onPress={() => {
               handleOptionSelect('ShiftWise');
-              navigation.navigate('DeliveryboyThanksPage');
             }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
@@ -49,9 +48,7 @@ const ChooseDeliveryType = ({navigation}) => {
                   source={require('../../image/Calender-icon2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Shift wise
-                  </Text>
+                  <Text style={styles.roleTypeText}>Shift wise</Text>
                   <Text style={styles.roleText}>
                     You will set your availability for a time period on select
                     days
@@ -81,7 +78,6 @@ const ChooseDeliveryType = ({navigation}) => {
             style={styles.profileCard}
             onPress={() => {
               handleOptionSelect('PickupDrop');
-              navigation.navigate('PickupSignup');
             }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
@@ -101,9 +97,7 @@ const ChooseDeliveryType = ({navigation}) => {
                   source={require('../../image/Location-Icon2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Pickup & Drop-off
-                  </Text>
+                  <Text style={styles.roleTypeText}>Pickup & Drop-off</Text>
                   <Text style={styles.roleText}>
                     Accept deliveries any time of the day
                   </Text>
@@ -132,7 +126,6 @@ const ChooseDeliveryType = ({navigation}) => {
             style={styles.profileCard}
             onPress={() => {
               handleOptionSelect('Both');
-              navigation.navigate('AddPickupVehicle');
             }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
@@ -152,9 +145,7 @@ const ChooseDeliveryType = ({navigation}) => {
                   source={require('../../image/Calender-Both2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Both
-                  </Text>
+                  <Text style={styles.roleTypeText}>Both</Text>
                   <Text style={styles.roleText}>
                     Work as shift wise and pickup/dropoff both
                   </Text>
@@ -179,7 +170,7 @@ const ChooseDeliveryType = ({navigation}) => {
             </LinearGradient>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
+        <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyThanksPage')}
           style={[
             styles.logbutton,
             {
@@ -189,21 +180,8 @@ const ChooseDeliveryType = ({navigation}) => {
             },
             !isOptionSelected && styles.disabledButton, // Apply additional styles when option is not selected
           ]}
-          disabled={!isOptionSelected}
-          onPress={() => {
-            if (isOptionSelected) {
-              // Proceed with the action
-              // navigation.navigate('ForgotPassword');
-            }
-          }}>
-          <Text
-            style={{
-              fontSize: 18,
-              color: colors.text,
-              fontFamily: 'Montserrat-Medium',
-            }}>
-            Continue
-          </Text>
+          disabled={!isOptionSelected}>
+          <Text style={styles.continueBt}>Continue</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -245,16 +223,18 @@ const styles = StyleSheet.create({
     width: '65%',
   },
   roleText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
+    color: colors.text,
   },
   roleTypeText: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
   },
   logbutton: {
     width: '100%',
-    marginTop: 40,
+    marginTop: '40%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -265,12 +245,17 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     width: '100%',
-    marginTop: 40,
+    marginTop: '40%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FCF9EA',
+  },
+  continueBt: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: 'Montserrat-Medium',
   },
 });
 

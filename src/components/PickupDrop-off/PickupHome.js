@@ -295,8 +295,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5, // for Android
-    marginBottom: 7,
-    marginTop: 7,
+    marginBottom: 10,
+    marginTop: 10,
     marginRight: 10,
   },
   packageRequst: {

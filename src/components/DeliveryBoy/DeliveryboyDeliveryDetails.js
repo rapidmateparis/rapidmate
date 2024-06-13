@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },

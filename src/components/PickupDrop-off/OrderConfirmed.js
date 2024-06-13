@@ -112,7 +112,7 @@ const OrderConfirm = ({navigation}) => {
         <ImageBackground
           style={{width: '100%'}}
           source={require('../../image/orderConfirm-Bg.png')}>
-          <View style={{paddingTop: 250, paddingHorizontal: 20}}>
+          <View style={{paddingTop: '71%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Delivering to</Text>
@@ -148,7 +148,7 @@ const OrderConfirm = ({navigation}) => {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.trackOrderBtn}>
+            <TouchableOpacity onPress={() => navigation.navigate('PickupDeliveryCompleted')} style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>Track order</Text>
             </TouchableOpacity>
           </View>

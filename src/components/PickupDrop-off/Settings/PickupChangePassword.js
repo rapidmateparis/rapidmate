@@ -61,7 +61,7 @@ const PickupChangePassword = ({navigation}) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.forgotPasswordLink}>
+          <TouchableOpacity onPress={() => navigation.navigate('PasswordRecovery')} style={styles.forgotPasswordLink}>
             <Text style={styles.forgotText}>Forgot your password?</Text>
           </TouchableOpacity>
 
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   buttonText: {
-    fontSize: 17,
+    fontSize: 14,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
   },

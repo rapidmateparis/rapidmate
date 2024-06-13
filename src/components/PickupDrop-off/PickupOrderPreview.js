@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
 
   vehicleDetails: {
     color: colors.text,
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
   },
   semiTruckDetails: {
@@ -169,13 +169,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   vehicleName: {
-    fontSize: 17,
+    fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
   vehicleCapacity: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
   },
   pickupCard: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   contactInfo: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     marginLeft: 3,
     color: colors.text,
@@ -216,12 +216,12 @@ const styles = StyleSheet.create({
   },
   pickupNotes: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
   },
   bookininfo: {
     fontFamily: 'Montserrat-Regular',
-    fontSize: 14,
+    fontSize: 12,
     color: colors.text,
   },
   checkboxContainer: {
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 0.5, // for Android
     marginBottom: 5,
-    marginTop: 5,
+    marginTop: 15,
   },
   locationAddress: {
     flexDirection: 'row',

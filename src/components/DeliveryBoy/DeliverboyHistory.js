@@ -16,7 +16,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = () => {
+const TodayList = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   return (
@@ -42,8 +42,15 @@ const TodayList = () => {
         </View>
       </View> */}
       <View style={{flex: 1}}>
-        <View style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5',}}>
-          <View style={styles.packageDetailCard}>
+        <View
+          style={{
+            paddingHorizontal: 15,
+            paddingTop: 5,
+            backgroundColor: '#FBFAF5',
+          }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}
+            style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
               <Image source={require('../../image/package-medium-icon.png')} />
               <Text style={styles.deliveryTime}>
@@ -75,7 +82,7 @@ const TodayList = () => {
               <Text style={styles.orderId}>For National Inc.</Text>
               <Text style={styles.valueMoney}>€34.00</Text>
             </View>
-          </View>
+          </TouchableOpacity>
 
           <View style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
@@ -125,7 +132,7 @@ const TodayList = () => {
             </View>
           </View>
 
-          <View style={styles.packageDetailCard}>
+          <TouchableOpacity onPress={() => navigation.navigate('NewDeliveryPackageRequest')} style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
               <Image source={require('../../image/package-medium-icon.png')} />
               <Text style={styles.deliveryTime}>
@@ -157,7 +164,178 @@ const TodayList = () => {
               <Text style={styles.orderId}>For National Inc.</Text>
               <Text style={styles.valueMoney}>€34.00</Text>
             </View>
-          </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('DeliveryDetailsMultipleOrder')} style={styles.packageDetailCard}>
+            <View style={styles.packageHeader}>
+              <Image source={require('../../image/package-medium-icon.png')} />
+              <Text style={styles.deliveryTime}>
+                Delivered on Apr 19, 2024 at 11:30 AM
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <Ionicons name="location-outline" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                From <Text style={styles.Location}>North Street, ABC</Text>
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <MaterialIcons name="my-location" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+              </Text>
+            </View>
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>Order ID: 98237469</Text>
+              <Text style={styles.orderId}>For National Inc.</Text>
+            </View>
+
+            <View style={styles.borderShow}></View>
+
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>For National Inc.</Text>
+              <Text style={styles.valueMoney}>€34.00</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyShiftDetails')} style={styles.packageDetailCard}>
+            <View style={styles.packageHeader}>
+              <Image source={require('../../image/package-medium-icon.png')} />
+              <Text style={styles.deliveryTime}>
+                Delivered on Apr 19, 2024 at 11:30 AM
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <Ionicons name="location-outline" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                From <Text style={styles.Location}>North Street, ABC</Text>
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <MaterialIcons name="my-location" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+              </Text>
+            </View>
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>Order ID: 98237469</Text>
+              <Text style={styles.orderId}>For National Inc.</Text>
+            </View>
+
+            <View style={styles.borderShow}></View>
+
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>For National Inc.</Text>
+              <Text style={styles.valueMoney}>€34.00</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyShiftStaredRequest')} style={styles.packageDetailCard}>
+            <View style={styles.packageHeader}>
+              <Image source={require('../../image/package-medium-icon.png')} />
+              <Text style={styles.deliveryTime}>
+                Delivered on Apr 19, 2024 at 11:30 AM
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <Ionicons name="location-outline" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                From <Text style={styles.Location}>North Street, ABC</Text>
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <MaterialIcons name="my-location" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+              </Text>
+            </View>
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>Order ID: 98237469</Text>
+              <Text style={styles.orderId}>For National Inc.</Text>
+            </View>
+
+            <View style={styles.borderShow}></View>
+
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>For National Inc.</Text>
+              <Text style={styles.valueMoney}>€34.00</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('DeliveryPackageRequest')} style={styles.packageDetailCard}>
+            <View style={styles.packageHeader}>
+              <Image source={require('../../image/package-medium-icon.png')} />
+              <Text style={styles.deliveryTime}>
+                Delivered on Apr 19, 2024 at 11:30 AM
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <Ionicons name="location-outline" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                From <Text style={styles.Location}>North Street, ABC</Text>
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <MaterialIcons name="my-location" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+              </Text>
+            </View>
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>Order ID: 98237469</Text>
+              <Text style={styles.orderId}>For National Inc.</Text>
+            </View>
+
+            <View style={styles.borderShow}></View>
+
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>For National Inc.</Text>
+              <Text style={styles.valueMoney}>€34.00</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('DeliveryPackageScheduleRequest')} style={styles.packageDetailCard}>
+            <View style={styles.packageHeader}>
+              <Image source={require('../../image/package-medium-icon.png')} />
+              <Text style={styles.deliveryTime}>
+                Delivered on Apr 19, 2024 at 11:30 AM
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <Ionicons name="location-outline" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                From <Text style={styles.Location}>North Street, ABC</Text>
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <MaterialIcons name="my-location" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+              </Text>
+            </View>
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>Order ID: 98237469</Text>
+              <Text style={styles.orderId}>For National Inc.</Text>
+            </View>
+
+            <View style={styles.borderShow}></View>
+
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>For National Inc.</Text>
+              <Text style={styles.valueMoney}>€34.00</Text>
+            </View>
+          </TouchableOpacity>
+
         </View>
       </View>
     </ScrollView>
@@ -305,7 +483,8 @@ const DeliveryboyHistory = ({navigation}) => {
 
   return (
     <View style={{flex: 1}}>
-      <View style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#fff',}}>
+      <View
+        style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#fff'}}>
         {/* Your Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
@@ -341,7 +520,9 @@ const DeliveryboyHistory = ({navigation}) => {
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
           tabBarStyle: {backgroundColor: '#fff'},
         }}>
-        <Tab.Screen name="Ongoing" component={Ongoing} />
+        <Tab.Screen name="Ongoing">
+          {() => <TodayList navigation={navigation} />}
+        </Tab.Screen>
         <Tab.Screen name="Past" component={Past} />
       </Tab.Navigator>
       {/* End of Tab Navigator */}

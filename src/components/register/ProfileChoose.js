@@ -16,11 +16,9 @@ const ProfileChoose = ({navigation}) => {
   const isOptionSelected = selectedOption !== null;
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: '#fff',}}>
       <View style={styles.contentContainer}>
-        <Text style={[styles.logInText, {color: colors.text}]}>
-          Choose profile
-        </Text>
+        <Text style={styles.logInText}>Choose profile</Text>
         <Text style={styles.loginAccessText}>
           Before creating your profile, please select your role on this app.
         </Text>
@@ -41,10 +39,7 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image
-                  style={{width: 50, height: 50}}
-                  source={require('../../image/home.png')}
-                />
+                <Image source={require('../../image/home.png')} />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={[styles.roleTypeText, {color: colors.text}]}>
@@ -55,14 +50,14 @@ const ProfileChoose = ({navigation}) => {
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
+                      width: 25,
+                      height: 25,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={24}
+                      size={18}
                       color={colors.white}
                     />
                   </View>
@@ -75,7 +70,7 @@ const ProfileChoose = ({navigation}) => {
             style={styles.profileCard}
             onPress={() => {
               handleOptionSelect('PickupDrop');
-              navigation.navigate('PickupSignup');
+              // navigation.navigate('PickupSignup');
             }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
@@ -90,10 +85,7 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image
-                  style={{width: 50, height: 50}}
-                  source={require('../../image/home.png')}
-                />
+                <Image source={require('../../image/MapWithLocation.png')} />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={[styles.roleTypeText, {color: colors.text}]}>
@@ -104,14 +96,14 @@ const ProfileChoose = ({navigation}) => {
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
+                      width: 25,
+                      height: 25,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={24}
+                      size={18}
                       color={colors.white}
                     />
                   </View>
@@ -136,28 +128,23 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image
-                  style={{width: 50, height: 50}}
-                  source={require('../../image/home.png')}
-                />
+                <Image source={require('../../image/Deliveryboy1x.png')} />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Delivery boy
-                  </Text>
+                  <Text style={styles.roleTypeText}>Delivery boy</Text>
                 </View>
                 {selectedOption === 'DeliveryBoy' && (
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
+                      width: 25,
+                      height: 25,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={24}
+                      size={18}
                       color={colors.white}
                     />
                   </View>
@@ -179,13 +166,18 @@ const ProfileChoose = ({navigation}) => {
           disabled={!isOptionSelected}
           onPress={() => {
             if (isOptionSelected) {
-              // Proceed with the action
-              // navigation.navigate('ForgotPassword');
+              if (selectedOption === 'PickupDrop') {
+                navigation.navigate('PickupSignup');
+              } else if (selectedOption === 'Enterprise') {
+                navigation.navigate('EnterpriseSignup');
+              } else if (selectedOption === 'DeliveryBoy') {
+                navigation.navigate('DeliveryBoySignup');
+              }
             }
           }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 14,
               color: colors.text,
               fontFamily: 'Montserrat-Medium',
             }}>
@@ -211,13 +203,14 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   logInText: {
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
   loginAccessText: {
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
+    width: '80%',
     fontFamily: 'Montserrat-Regular',
     marginTop: 5,
   },
@@ -232,16 +225,18 @@ const styles = StyleSheet.create({
     width: '65%',
   },
   roleText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
+    color: colors.text,
   },
   roleTypeText: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
   },
   logbutton: {
     width: '100%',
-    marginTop: 40,
+    marginTop: '40%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -252,7 +247,7 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     width: '100%',
-    marginTop: 40,
+    marginTop: '40%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',

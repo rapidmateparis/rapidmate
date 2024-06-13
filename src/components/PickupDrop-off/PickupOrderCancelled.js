@@ -42,7 +42,7 @@ const PickupOrderCancelled = ({navigation}) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('PickupDeliveryCompleted')}
+          onPress={() => navigation.navigate('OrderPickup')}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Order again</Text>
         </TouchableOpacity>
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     textAlign: 'center',
+    paddingHorizontal: 50,
   },
   cancelRequest: {
     color: colors.secondary,

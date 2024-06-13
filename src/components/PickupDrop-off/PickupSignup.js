@@ -65,29 +65,19 @@ const PickupSignup = ({navigation}) => {
         </View>
         <View style={styles.logFormView}>
           <View style={styles.textInputDiv}>
-            <AntDesign
-              name="user"
-              size={22}
-              color="#131314"
-              style={{marginTop: 13}}
-            />
+            <AntDesign name="user" size={18} color="#131314" />
             <TextInput
               style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-              placeholder="Email"
+              placeholder="Name"
               placeholderTextColor="#999"
               value={name}
               onChangeText={text => setName(text)}
             />
           </View>
           <View style={styles.textInputDiv}>
-            <AntDesign
-              name="mail"
-              size={22}
-              color="#131314"
-              style={{marginTop: 13}}
-            />
+            <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
-              style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.loginput}
               placeholder="Email"
               placeholderTextColor="#999"
               value={email}
@@ -95,7 +85,7 @@ const PickupSignup = ({navigation}) => {
             />
           </View>
           <View style={styles.inputContainer}>
-            <AntDesign name="lock" size={22} color="#131314" />
+            <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
               placeholder="New Password"
@@ -108,15 +98,15 @@ const PickupSignup = ({navigation}) => {
               onPress={() => togglePasswordVisibility('password')}>
               <Feather
                 name={passwordVisible ? 'eye' : 'eye-off'}
-                size={20}
+                size={15}
                 color="#131314"
               />
             </TouchableOpacity>
           </View>
           <View style={styles.inputContainer}>
-            <AntDesign name="lock" size={22} color="#131314" />
+            <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
-              style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.input}
               placeholder="Confirm New Password"
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
@@ -127,7 +117,7 @@ const PickupSignup = ({navigation}) => {
               onPress={() => togglePasswordVisibility('confirmPassword')}>
               <Feather
                 name={confirmPasswordVisible ? 'eye' : 'eye-off'}
-                size={20}
+                size={15}
                 color="#131314"
               />
             </TouchableOpacity>
@@ -160,7 +150,7 @@ const PickupSignup = ({navigation}) => {
               </View>
             </View>
             <TextInput
-              style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
+              style={styles.input}
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
@@ -189,7 +179,7 @@ const PickupSignup = ({navigation}) => {
                 <FontAwesome6
                   style={{marginRight: 10}}
                   name="globe"
-                  size={21}
+                  size={18}
                   color={colors.text}
                 />
               )}
@@ -207,7 +197,7 @@ const PickupSignup = ({navigation}) => {
               <Text style={styles.accountTitle}>Individual</Text>
               {selectedAccountType === 'individual' && (
                 <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={21} color={colors.white} />
+                  <MaterialIcons name="check" size={15} color={colors.white} />
                 </View>
               )}
             </TouchableOpacity>
@@ -221,13 +211,13 @@ const PickupSignup = ({navigation}) => {
               <Text style={styles.accountTitle}>Company</Text>
               {selectedAccountType === 'company' && (
                 <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={21} color={colors.white} />
+                  <MaterialIcons name="check" size={15} color={colors.white} />
                 </View>
               )}
             </TouchableOpacity>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddPickupdetails')}
+            onPress={() => navigation.navigate('PickupBottomNav')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
@@ -238,6 +228,10 @@ const PickupSignup = ({navigation}) => {
               Already have an account yet?{' '}
               <Text style={{color: colors.primary}}>Login</Text>
             </Text>
+
+            <View>
+               <Text style={styles.termOfRapidmate}>By signing up you agree to <Text style={{color: colors.primary}}>Privacy policy</Text> & <Text style={{color: colors.primary}}>Terms</Text> of RapidMate</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -260,18 +254,20 @@ const styles = StyleSheet.create({
   logFormView: {
     backgroundColor: '#fff',
     marginTop: 20,
-    paddingTop: 30,
   },
   textInputDiv: {
     flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#2C303336',
   },
   loginput: {
-    fontSize: 15,
+    fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.text,
     paddingHorizontal: 10,
     width: '90%',
   },
@@ -292,16 +288,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },
   signUpContainer: {
-    marginVertical: 30,
+    marginVertical: 20,
     alignItems: 'center',
   },
   signUpText: {
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#000',
   },
@@ -309,7 +305,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#2C303336',
@@ -321,15 +317,16 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 14,
     paddingHorizontal: 10,
     color: colors.text,
+    fontFamily: 'Montserrat-Regular',
   },
   accountType: {
     fontFamily: 'Montserrat-Regular',
     marginBottom: 20,
     marginTop: 10,
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
   },
   accountCard: {
@@ -349,13 +346,13 @@ const styles = StyleSheet.create({
   accountTitle: {
     flex: 1,
     fontFamily: 'Montserrat-Medium',
-    fontSize: 15,
+    fontSize: 14,
     marginLeft: 5,
   },
   checkIcon: {
     backgroundColor: colors.primary,
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
     padding: 2,
     borderRadius: 15,
   },
@@ -367,6 +364,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     marginBottom: 10,
+  },
+  termOfRapidmate: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+    textAlign: 'center',
+    marginTop: 10,
+    marginHorizontal: 50,
+    lineHeight: 20,
   },
 });
 

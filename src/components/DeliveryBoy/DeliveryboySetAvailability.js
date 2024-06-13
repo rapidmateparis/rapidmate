@@ -9,21 +9,20 @@ import {
   Image,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Octicons from 'react-native-vector-icons/Octicons';
-import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {colors} from '../../colors';
-import PlaningFilterModal from '../commonComponent/PlaningFilterModal';
 import CheckBox from '@react-native-community/checkbox';
 
 const DeliveryboySetAvailability = ({navigation}) => {
   const [fromtime, setFromtime] = useState('');
+  const [totime, setTotime] = useState('');
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  const [checktoggleCheckBox, setChecktoggleCheckBox] = useState(true);
+  const [toggleCheckBox20, setToggleCheckBox20] = useState(false);
+  const [toggleCheckBox21, setToggleCheckBox21] = useState(false);
+  const [timeSlots20, setTimeSlots20] = useState([]);
+  const [timeSlots21, setTimeSlots21] = useState([]);
+  const [week, setWeek] = useState(1);
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -33,35 +32,44 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  // Function to handle right arrow click
+  const handleNextWeek = () => {
+    if (week < 4) {
+      setWeek(week + 1); // Increment the week number if less than 4
+    }
   };
 
-  const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  const handlePreviousWeek = () => {
+    if (week > 1) {
+      setWeek(week - 1); // Decrement the week number if greater than 1
+    }
   };
-  const [selected, setSelected] = useState('');
+
+  const handleAddSlot20 = () => {
+    setTimeSlots20([...timeSlots20, {from: '', to: ''}]);
+  };
+
+  const handleAddSlot21 = () => {
+    setTimeSlots21([...timeSlots21, {from: '', to: ''}]);
+  };
 
   return (
     <>
       <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
         <View style={{padding: 15, backgroundColor: '#fff'}}>
           <View style={styles.header}>
-            <TouchableOpacity style={styles.slideBt}>
+            <TouchableOpacity
+              onPress={handlePreviousWeek}
+              style={styles.slideBt}>
               <AntDesign name="arrowleft" size={20} color={colors.text} />
             </TouchableOpacity>
 
             <View>
               <Text style={styles.monthByYear}>May 2024</Text>
-              <Text style={styles.weekFillter}>Week 1</Text>
+              <Text style={styles.weekFillter}>Week {week}</Text>
             </View>
 
-            <TouchableOpacity style={styles.slideBt}>
+            <TouchableOpacity onPress={handleNextWeek} style={styles.slideBt}>
               <AntDesign name="arrowright" size={20} color={colors.text} />
             </TouchableOpacity>
           </View>
@@ -81,195 +89,332 @@ const DeliveryboySetAvailability = ({navigation}) => {
         </View>
         <View>
           <View style={{paddingHorizontal: 15}}>
-            <View style={styles.notFilledCard}>
-              <View style={styles.disabledCheckCard}>
-                <CheckBox
-                  disabled={false}
-                  value={toggleCheckBox}
-                  onValueChange={newValue => setToggleCheckBox(newValue)}
-                  style={styles.checkBox}
-                  tintColors={{true: '#FFC72B', false: '#000000'}}
-                />
-                <Text style={styles.dateForShift}>
-                  Monday <Text style={styles.dayWiseShift}>20 February</Text>,
-                  2024
-                </Text>
+            <View>
+              <View style={styles.notFilledCard}>
+                <View style={styles.disabledCheckCard}>
+                  <CheckBox
+                    disabled={false}
+                    value={toggleCheckBox20}
+                    onValueChange={newValue => setToggleCheckBox20(newValue)}
+                    style={styles.checkBox}
+                    tintColors={{true: '#FFC72B', false: '#000000'}}
+                  />
+                  <Text style={styles.dateForShift}>
+                    Monday <Text style={styles.dayWiseShift}>20 February</Text>,
+                    2024
+                  </Text>
+                </View>
+
+                {toggleCheckBox20 ? (
+                  <View style={styles.bothActionBtn}>
+                    <TouchableOpacity style={styles.enabledPasteBt}>
+                      <Text style={styles.enabledPasteText}>Paste</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.copyCardBt}>
+                      <Text style={styles.enabledPasteText}>Copy</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.bothActionBtn}>
+                    <TouchableOpacity style={styles.disablePasteBt}>
+                      <Text style={styles.disablePasteText}>Paste</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.disablePasteBt}>
+                      <Text style={styles.disablePasteText}>Copy</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
 
-              <View>
-                <TouchableOpacity style={styles.disablePasteBt}>
-                  <Text style={styles.disablePasteText}>Paste</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+              <View style={styles.selectTimeCard}>
+                <View style={styles.textInputDiv}>
+                  <TextInput
+                    style={styles.loginput}
+                    placeholder="From HH:MM"
+                    placeholderTextColor="#999"
+                    value={fromtime}
+                    onChangeText={text => setFromtime(text)}
+                    editable={toggleCheckBox20} // Conditionally set editable based on toggleCheckBox state
+                  />
+                  <TouchableOpacity disabled={!toggleCheckBox20}>
+                    <MaterialCommunityIcons
+                      name="clock-time-four"
+                      size={20}
+                      color={toggleCheckBox20 ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
+                      style={{marginTop: 15}}
+                    />
+                  </TouchableOpacity>
+                </View>
 
-            <View style={styles.selectTimeCard}>
-              <View style={styles.textInputDiv}>
-                <TextInput
-                  style={styles.loginput}
-                  placeholder="From HH:MM"
-                  placeholderTextColor="#999"
-                  value={fromtime}
-                  onChangeText={text => setFromtime(text)}
-                />
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="clock-time-four"
+                <View style={styles.textInputDiv}>
+                  <TextInput
+                    style={styles.loginput}
+                    placeholder="From HH:MM"
+                    placeholderTextColor="#999"
+                    value={totime}
+                    onChangeText={text => setTotime(text)}
+                    editable={toggleCheckBox20} // Conditionally set editable based on toggleCheckBox state
+                  />
+                  <TouchableOpacity disabled={!toggleCheckBox20}>
+                    <MaterialCommunityIcons
+                      name="clock-time-four"
+                      size={20}
+                      color={toggleCheckBox20 ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
+                      style={{marginTop: 15}}
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity
+                  style={[
+                    styles.plusNewCardDisabled,
+                    toggleCheckBox20
+                      ? styles.plusNewCardEnabled
+                      : styles.plusNewCardDisabled,
+                  ]}
+                  onPress={toggleCheckBox20 ? handleAddSlot20 : null}>
+                  <AntDesign
+                    name="plus"
                     size={20}
-                    color="#D4D4D4"
+                    color="#000"
                     style={{marginTop: 15}}
                   />
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.textInputDiv}>
-                <TextInput
-                  style={styles.loginput}
-                  placeholder="From HH:MM"
-                  placeholderTextColor="#999"
-                  value={fromtime}
-                  onChangeText={text => setFromtime(text)}
-                />
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="clock-time-four"
-                    size={20}
-                    color="#D4D4D4"
-                    style={{marginTop: 15}}
-                  />
-                </TouchableOpacity>
-              </View>
+              {timeSlots20.map((slot, index) => (
+                <View key={index} style={styles.selectTimeCard}>
+                  <View style={styles.textInputDiv}>
+                    <TextInput
+                      style={styles.loginput}
+                      placeholder="From HH:MM"
+                      placeholderTextColor="#999"
+                      value={slot.from}
+                      onChangeText={text =>
+                        setTimeSlots20(
+                          timeSlots20.map((item, idx) =>
+                            idx === index ? {...item, from: text} : item,
+                          ),
+                        )
+                      }
+                    />
+                    <TouchableOpacity>
+                      <MaterialCommunityIcons
+                        name="clock-time-four"
+                        size={20}
+                        color="#D4D4D4"
+                        style={{marginTop: 15}}
+                      />
+                    </TouchableOpacity>
+                  </View>
 
-              <TouchableOpacity style={styles.plusNewCardDisabled}>
-                <AntDesign
-                  name="plus"
-                  size={20}
-                  color="#000"
-                  style={{marginTop: 15}}
-                />
-              </TouchableOpacity>
+                  <View style={styles.textInputDiv}>
+                    <TextInput
+                      style={styles.loginput}
+                      placeholder="To HH:MM"
+                      placeholderTextColor="#999"
+                      value={slot.to}
+                      onChangeText={text =>
+                        setTimeSlots20(
+                          timeSlots20.map((item, idx) =>
+                            idx === index ? {...item, to: text} : item,
+                          ),
+                        )
+                      }
+                    />
+                    <TouchableOpacity>
+                      <MaterialCommunityIcons
+                        name="clock-time-four"
+                        size={20}
+                        color="#D4D4D4"
+                        style={{marginTop: 15}}
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.deleteCard}
+                    onPress={() =>
+                      setTimeSlots20(
+                        timeSlots20.filter((_, idx) => idx !== index),
+                      )
+                    }>
+                    <AntDesign
+                      name="delete"
+                      size={20}
+                      color="#FF0058"
+                      style={{marginTop: 15}}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
 
             <View style={styles.borderShowOff} />
 
-            <View style={styles.notFilledCard}>
-              <View style={styles.disabledCheckCard}>
-                <CheckBox
-                  disabled={false}
-                  value={checktoggleCheckBox}
-                  onValueChange={newValue => setChecktoggleCheckBox(newValue)}
-                  style={styles.checkBox}
-                  tintColors={{true: '#FFC72B', false: '#000000'}}
-                />
-                <Text style={styles.dateForShift}>
-                  Monday <Text style={styles.dayWiseShift}>20 February</Text>,
-                  2024
-                </Text>
+            <View>
+              <View style={styles.notFilledCard}>
+                <View style={styles.disabledCheckCard}>
+                  <CheckBox
+                    disabled={false}
+                    value={toggleCheckBox21}
+                    onValueChange={newValue => setToggleCheckBox21(newValue)}
+                    style={styles.checkBox}
+                    tintColors={{true: '#FFC72B', false: '#000000'}}
+                  />
+                  <Text style={styles.dateForShift}>
+                    Monday <Text style={styles.dayWiseShift}>21 February</Text>,
+                    2024
+                  </Text>
+                </View>
+
+                {toggleCheckBox21 ? (
+                  <View style={styles.bothActionBtn}>
+                    <TouchableOpacity style={styles.enabledPasteBt}>
+                      <Text style={styles.enabledPasteText}>Paste</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.copyCardBt}>
+                      <Text style={styles.enabledPasteText}>Copy</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.bothActionBtn}>
+                    <TouchableOpacity style={styles.disablePasteBt}>
+                      <Text style={styles.disablePasteText}>Paste</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.disablePasteBt}>
+                      <Text style={styles.disablePasteText}>Copy</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
 
-              <View style={styles.bothActionBtn}>
-                <TouchableOpacity style={styles.enabledPasteBt}>
-                  <Text style={styles.enabledPasteText}>Paste</Text>
-                </TouchableOpacity>
+              <View style={styles.selectTimeCard}>
+                <View style={styles.textInputDiv}>
+                  <TextInput
+                    style={styles.loginput}
+                    placeholder="From HH:MM"
+                    placeholderTextColor="#999"
+                    value={fromtime}
+                    onChangeText={text => setFromtime(text)}
+                    editable={toggleCheckBox21} // Conditionally set editable based on toggleCheckBox state
+                  />
+                  <TouchableOpacity disabled={!toggleCheckBox21}>
+                    <MaterialCommunityIcons
+                      name="clock-time-four"
+                      size={20}
+                      color={toggleCheckBox21 ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
+                      style={{marginTop: 15}}
+                    />
+                  </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity style={styles.copyCardBt}>
-                  <Text style={styles.enabledPasteText}>Copy</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+                <View style={styles.textInputDiv}>
+                  <TextInput
+                    style={styles.loginput}
+                    placeholder="From HH:MM"
+                    placeholderTextColor="#999"
+                    value={totime}
+                    onChangeText={text => setTotime(text)}
+                    editable={toggleCheckBox21} // Conditionally set editable based on toggleCheckBox state
+                  />
+                  <TouchableOpacity disabled={!toggleCheckBox21}>
+                    <MaterialCommunityIcons
+                      name="clock-time-four"
+                      size={20}
+                      color={toggleCheckBox21 ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
+                      style={{marginTop: 15}}
+                    />
+                  </TouchableOpacity>
+                </View>
 
-            <View style={styles.selectTimeCard}>
-              <View style={styles.textInputDiv}>
-                <TextInput
-                  style={styles.loginput}
-                  placeholder="10:00 AM"
-                  placeholderTextColor="#999"
-                  value={fromtime}
-                  onChangeText={text => setFromtime(text)}
-                />
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="clock-time-four"
+                <TouchableOpacity
+                  style={[
+                    styles.plusNewCardDisabled,
+                    toggleCheckBox21
+                      ? styles.plusNewCardEnabled
+                      : styles.plusNewCardDisabled,
+                  ]}
+                  onPress={toggleCheckBox21 ? handleAddSlot21 : null}>
+                  <AntDesign
+                    name="plus"
                     size={20}
-                    color="#D4D4D4"
+                    color="#000"
                     style={{marginTop: 15}}
                   />
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.textInputDiv}>
-                <TextInput
-                  style={styles.loginput}
-                  placeholder="2:00 PM"
-                  placeholderTextColor="#999"
-                  value={fromtime}
-                  onChangeText={text => setFromtime(text)}
-                />
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="clock-time-four"
-                    size={20}
-                    color="#D4D4D4"
-                    style={{marginTop: 15}}
-                  />
-                </TouchableOpacity>
-              </View>
+              {timeSlots21.map((slot, index) => (
+                <View key={index} style={styles.selectTimeCard}>
+                  <View style={styles.textInputDiv}>
+                    <TextInput
+                      style={styles.loginput}
+                      placeholder="From HH:MM"
+                      placeholderTextColor="#999"
+                      value={slot.from}
+                      onChangeText={text =>
+                        setTimeSlots21(
+                          timeSlots21.map((item, idx) =>
+                            idx === index ? {...item, from: text} : item,
+                          ),
+                        )
+                      }
+                    />
+                    <TouchableOpacity>
+                      <MaterialCommunityIcons
+                        name="clock-time-four"
+                        size={20}
+                        color="#D4D4D4"
+                        style={{marginTop: 15}}
+                      />
+                    </TouchableOpacity>
+                  </View>
 
-              <TouchableOpacity style={styles.deleteCard}>
-                <AntDesign
-                  name="delete"
-                  size={20}
-                  color="#FF0058"
-                  style={{marginTop: 15}}
-                />
-              </TouchableOpacity>
-            </View>
+                  <View style={styles.textInputDiv}>
+                    <TextInput
+                      style={styles.loginput}
+                      placeholder="To HH:MM"
+                      placeholderTextColor="#999"
+                      value={slot.to}
+                      onChangeText={text =>
+                        setTimeSlots21(
+                          timeSlots21.map((item, idx) =>
+                            idx === index ? {...item, to: text} : item,
+                          ),
+                        )
+                      }
+                    />
+                    <TouchableOpacity>
+                      <MaterialCommunityIcons
+                        name="clock-time-four"
+                        size={20}
+                        color="#D4D4D4"
+                        style={{marginTop: 15}}
+                      />
+                    </TouchableOpacity>
+                  </View>
 
-            <View style={styles.selectTimeCard}>
-              <View style={styles.textInputDiv}>
-                <TextInput
-                  style={styles.loginput}
-                  placeholder="From HH:MM"
-                  placeholderTextColor="#999"
-                  value={fromtime}
-                  onChangeText={text => setFromtime(text)}
-                />
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="clock-time-four"
-                    size={20}
-                    color="#FF0058"
-                    style={{marginTop: 15}}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.textInputDiv}>
-                <TextInput
-                  style={styles.loginput}
-                  placeholder="From HH:MM"
-                  placeholderTextColor="#999"
-                  value={fromtime}
-                  onChangeText={text => setFromtime(text)}
-                />
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="clock-time-four"
-                    size={20}
-                    color="#FF0058"
-                    style={{marginTop: 15}}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity style={styles.plusNewCardEnable}>
-                <AntDesign
-                  name="plus"
-                  size={20}
-                  color="#000"
-                  style={{marginTop: 15}}
-                />
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.deleteCard}
+                    onPress={() =>
+                      setTimeSlots21(
+                        timeSlots21.filter((_, idx) => idx !== index),
+                      )
+                    }>
+                    <AntDesign
+                      name="delete"
+                      size={20}
+                      color="#FF0058"
+                      style={{marginTop: 15}}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
 
             <View style={styles.borderShowOff} />
@@ -281,7 +426,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
         <TouchableOpacity style={styles.logbutton}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.saveBTn}>
+        <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyScheduledDeliveryAlert')} style={styles.saveBTn}>
           <Text style={styles.okButton}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -476,6 +621,7 @@ const styles = StyleSheet.create({
     borderColor: '#D4D4D4',
     borderRadius: 20,
     padding: 5,
+    marginLeft: 10,
   },
   disablePasteText: {
     fontSize: 12,
@@ -515,6 +661,13 @@ const styles = StyleSheet.create({
   },
   plusNewCardDisabled: {
     backgroundColor: '#D4D4D4',
+    paddingHorizontal: 15,
+    paddingBottom: 14,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  plusNewCardEnabled: {
+    backgroundColor: '#FFC72B',
     paddingHorizontal: 15,
     paddingBottom: 14,
     borderRadius: 10,
@@ -578,7 +731,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 0.5, // for Android
     marginTop: 1,
-    
   },
   logbutton: {
     width: '45%',

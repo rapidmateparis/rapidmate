@@ -55,14 +55,14 @@ const DeliveryPreferance = ({navigation}) => {
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
+                      width: 25,
+                      height: 25,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={24}
+                      size={18}
                       color={colors.white}
                     />
                   </View>
@@ -75,7 +75,6 @@ const DeliveryPreferance = ({navigation}) => {
             style={styles.profileCard}
             onPress={() => {
               handleOptionSelect('PickupDrop');
-              navigation.navigate('PickupSignup');
             }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
@@ -106,14 +105,14 @@ const DeliveryPreferance = ({navigation}) => {
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
+                      width: 25,
+                      height: 25,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={24}
+                      size={18}
                       color={colors.white}
                     />
                   </View>
@@ -154,14 +153,14 @@ const DeliveryPreferance = ({navigation}) => {
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
+                      width: 25,
+                      height: 25,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={24}
+                      size={18}
                       color={colors.white}
                     />
                   </View>
@@ -189,7 +188,7 @@ const DeliveryPreferance = ({navigation}) => {
           }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 14,
               color: colors.text,
               fontFamily: 'Montserrat-Medium',
             }}>
@@ -240,6 +239,7 @@ const styles = StyleSheet.create({
   roleText: {
     fontSize: 14,
     fontFamily: 'Montserrat-Medium',
+    color: colors.text,
   },
   roleTypeText: {
     fontSize: 20,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: 40,
+    marginTop: '40%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     width: '100%',
-    marginTop: 40,
+    marginTop: '40%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',

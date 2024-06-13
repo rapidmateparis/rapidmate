@@ -8,12 +8,12 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 
 const DeliveryboyMainDeliveryDetails = ({navigation}) => {
-
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -83,11 +83,41 @@ const DeliveryboyMainDeliveryDetails = ({navigation}) => {
         </View>
 
         <View style={styles.packageInformationCard}>
-             <Text style={styles.packageTitle}>Package information</Text>
-             <Text style={styles.orderdetails}>Order ID: <Text style={styles.detailsId}>20394</Text></Text>
-             <Text style={styles.orderdetails}>Comments: <Text style={styles.detailsId}>Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea sed.</Text></Text>
-             <Text style={styles.orderdetails}>Vehicle: <Text style={styles.detailsId}>Pickup truck</Text></Text>
+          <Text style={styles.packageTitle}>Package information</Text>
+          <Text style={styles.orderdetails}>
+            Order ID: <Text style={styles.detailsId}>20394</Text>
+          </Text>
+          <Text style={styles.orderdetails}>
+            Comments:{' '}
+            <Text style={styles.detailsId}>
+              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
+              sed.
+            </Text>
+          </Text>
+          <Text style={styles.orderdetails}>
+            Vehicle: <Text style={styles.detailsId}>Pickup truck</Text>
+          </Text>
         </View>
+
+        <TouchableOpacity style={styles.packageInvoiceCard}>
+          <View style={styles.invoiceCardBtn}>
+            <FontAwesome5
+              name="file-invoice"
+              size={20}
+              color="#FF0058"
+            />
+
+            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+          </View>
+          <View>
+          <Feather
+              style={{marginTop: 5}}
+              name="download"
+              size={20}
+              color="#FF0058"
+            />
+          </View>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -136,21 +166,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
   },
-  invoiceCard: {
+  invoiceCardBtn: {
     flexDirection: 'row',
-    backgroundColor: colors.white,
-    padding: 10,
-    borderRadius: 5,
-    shadowColor: 'rgba(0, 0, 0, 0.16)',
-    shadowOffset: {
-      width: 0,
-      height: 0.0625,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    elevation: 0.5, // for Android
-    marginBottom: 7,
-    marginTop: 7,
+    alignItems: 'center',
   },
   travel: {
     fontSize: 12,
@@ -207,13 +225,53 @@ const styles = StyleSheet.create({
   },
   orderdetails: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
     color: colors.subText,
     marginVertical: 3,
   },
   detailsId: {
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+  },
+  invoiceCard: {
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    padding: 10,
+    borderRadius: 5,
+    shadowColor: 'rgba(0, 0, 0, 0.16)',
+    shadowOffset: {
+      width: 0,
+      height: 0.0625,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 0.5, // for Android
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  downloadInvoiceText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+    marginLeft: 15,
+  },
+  packageInvoiceCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.white,
+    padding: 10,
+    borderRadius: 5,
+    shadowColor: 'rgba(0, 0, 0, 0.16)',
+    shadowOffset: {
+      width: 0,
+      height: 0.0625,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 0.5, // for Android
+    marginBottom: 20,
+    marginTop: 0,
   },
 });
 

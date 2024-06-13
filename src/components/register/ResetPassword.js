@@ -32,9 +32,9 @@ const ResetPassword = ({ navigation }) => {
         </Text>
         <View style={styles.inputCardContainer}>
           <View style={styles.inputContainer}>
-            <AntDesign name="lock" size={22} color="#131314" />
+            <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
-              style={[styles.input, {fontFamily: 'Montserrat-Regular',}]}
+              style={styles.input}
               placeholder="New Password"
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
@@ -44,15 +44,15 @@ const ResetPassword = ({ navigation }) => {
             <TouchableOpacity onPress={() => togglePasswordVisibility('password')}>
               <Feather
                 name={passwordVisible ? 'eye' : 'eye-off'}
-                size={20}
+                size={15}
                 color="#131314"
               />
             </TouchableOpacity>
           </View>
           <View style={styles.inputContainer}>
-            <AntDesign name="lock" size={22} color="#131314" />
+            <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
-              style={[styles.input, {fontFamily: 'Montserrat-Regular',}]}
+              style={styles.input}
               placeholder="Confirm New Password"
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
@@ -62,7 +62,7 @@ const ResetPassword = ({ navigation }) => {
             <TouchableOpacity onPress={() => togglePasswordVisibility('confirmPassword')}>
               <Feather
                 name={confirmPasswordVisible ? 'eye' : 'eye-off'}
-                size={20}
+                size={15}
                 color="#131314"
               />
             </TouchableOpacity>
@@ -80,30 +80,32 @@ const ResetPassword = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Montserrat-SemiBold', 
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     color: '#000',
+    width: '80%',
     marginBottom: 20,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     marginBottom: 30,
     borderWidth: 1,
     borderColor: '#2C303336',
   },
   input: {
     flex: 1,
-    fontSize: 17,
+    fontSize: 12,
     paddingHorizontal: 10,
     color: '#000',
+    fontFamily: 'Montserrat-Regular',
   },
   button: {
     width: '100%',
@@ -114,7 +116,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   buttonText: {
-    fontSize: 17,
+    fontSize: 14,
     fontFamily: 'Montserrat-Medium', 
     color: colors.text,
   },

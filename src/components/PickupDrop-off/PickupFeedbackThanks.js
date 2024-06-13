@@ -40,14 +40,14 @@ const PickupFeedbackThanks = ({navigation}) => {
           </View>
 
           <View style={styles.mainBtnCard}>
-            <TouchableOpacity style={styles.remindlaterBtn}>
-              <Text style={styles.trackText}>Remind later</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('PickupBottomNav')} style={styles.remindlaterBtn}>
+              <Text style={styles.trackText}>Go home</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => navigation.navigate('PickupFeedbackThanks')}
+              onPress={() => navigation.navigate('')}
               style={styles.trackOrderBtn}>
-              <Text style={styles.trackText}>Submit</Text>
+              <Text style={styles.trackText}>Order again</Text>
             </TouchableOpacity>
           </View>
         </View>

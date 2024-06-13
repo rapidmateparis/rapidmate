@@ -69,7 +69,6 @@ const AddPickupdetails = ({navigation}) => {
     }
   };
 
-
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -161,35 +160,14 @@ const AddPickupdetails = ({navigation}) => {
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
-                size={22}
+                size={18}
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text
-                style={{color: '#999', marginLeft: 5, paddingTop: 10, flex: 1}}>
-                Package photo
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: '#FFC72B26',
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  marginTop: 8,
-                }}>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontFamily: 'Montserrat-Regular',
-                    borderRightWidth: 1,
-                    paddingRight: 5,
-                    borderColor: '#2C30331A',
-                  }}>
-                  image.jpeg
-                </Text>
-                <MaterialCommunityIcons name="close" color="#000" size={20} />
+              <Text style={styles.packagePhoto}>Package photo</Text>
+              <View style={styles.packagePhotoPath}>
+                <Text style={styles.packagePhotoText}>image.jpeg</Text>
+                <MaterialCommunityIcons name="close" color="#000" size={18} />
               </View>
             </View>
           </TouchableOpacity>
@@ -217,7 +195,7 @@ const AddPickupdetails = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('PickupOrderPreview')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Continue</Text>
+            <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -279,7 +257,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },
@@ -356,10 +334,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   textlable: {
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat-Medium',
     marginBottom: 7,
     marginTop: 15,
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
   },
   inputTextStyle: {
@@ -367,6 +345,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
   },
   dottedLine: {
@@ -379,6 +358,31 @@ const styles = StyleSheet.create({
     borderColor: '#ccc', // Color of the dots
     borderStyle: 'dashed',
     width: '100%', // Full width of the border
+  },
+  packagePhoto: {
+    color: '#999',
+    marginLeft: 5,
+    paddingTop: 10,
+    flex: 1,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+  },
+  packagePhotoPath: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFC72B26',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginTop: 8,
+  },
+  packagePhotoText: {
+    color: colors.text,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    borderRightWidth: 1,
+    paddingRight: 5,
+    borderColor: '#2C30331A',
   },
 });
 

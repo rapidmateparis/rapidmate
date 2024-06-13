@@ -39,7 +39,7 @@ const DeliveryboyThanksPage = ({navigation}) => {
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('')}
+        onPress={() => navigation.navigate('DeliveryboyBottomNav')}
         style={[styles.logbutton, {backgroundColor: colors.primary}]}>
         <Text style={styles.buttonText}>Ok</Text>
       </TouchableOpacity>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },

@@ -116,14 +116,15 @@ const ForgotPassword = ({navigation}) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Montserrat-SemiBold',
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular', 
     color: colors.text,
+    width: '80%',
     marginBottom: 20,
   },
   button: {
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   buttonText: {
-    fontSize: 17,
+    fontSize: 14,
     fontFamily: 'Montserrat-Medium', 
     color: colors.text,
   },
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     color: colors.primary,
     textAlign: 'center',
-    fontSize: 17,
+    fontSize: 12,
   },
   viewOtpEnter: {
     // flex: 0.6,

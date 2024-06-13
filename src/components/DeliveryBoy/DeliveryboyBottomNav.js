@@ -14,15 +14,16 @@ import DeliveryPackageRequest from './DeliveryPackageRequest';
 import DeliveryPackageScheduleRequest from './DeliveryPackageScheduleRequest';
 import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
 import LoaderForDriver from '../PickupDrop-off/LoaderForDriver';
+import NewDeliveryPackageRequest from './NewDeliveryPackageRequest';
 
 const Bottom = createBottomTabNavigator();
 const DeliveryboyBottomNav = ({navigation}) => {
   return (
     <Bottom.Navigator>
       <Bottom.Screen
-        key="LoaderForDriver"
+        key="DeliveryboyHome"
         name="Home"
-        component={LoaderForDriver}
+        component={DeliveryboyHome}
         options={{
           headerShown: false,
           tabBarIcon: tabInfo => {
