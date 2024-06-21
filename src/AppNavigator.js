@@ -72,6 +72,22 @@ import EnterpiseScheduleNewDetailsFill from './components/Enterprise/EnterpiseSc
 import OrderPickup from './components/PickupDrop-off/OrderPickup';
 import DeliveryPackageRequest from './components/DeliveryBoy/DeliveryPackageRequest';
 import DeliveryPackageScheduleRequest from './components/DeliveryBoy/DeliveryPackageScheduleRequest';
+import EnterpriseScheduleApproved from './components/Enterprise/EnterpriseScheduleApproved';
+import EnterprisesMultiScheduleDetails from './components/Enterprise/EnterprisesMultiScheduleDetails';
+import EnterpiseSelectShiftDelivery from './components/Enterprise/EnterpiseSelectShiftDelivery';
+import EnterpriseShiftDeliverySchedule from './components/Enterprise/EnterpriseShiftDeliverySchedule';
+import EnterpriseSchedulePreview from './components/Enterprise/EnterpriseSchedulePreview';
+import EnterpriseScheduleRequestSubmitted from './components/Enterprise/EnterpriseScheduleRequestSubmitted';
+import EnterpriseDeliveryboyAssigned from './components/Enterprise/EnterpriseDeliveryboyAssigned';
+import EnterpriseDeliveryboyReady from './components/Enterprise/EnterpriseDeliveryboyReady';
+import EnterprisesActiveDeliveries from './components/Enterprise/EnterprisesActiveDeliveries';
+import EnterprisesSettins from './components/Enterprise/EnterpriseSettings/EnterprisesSettins';
+import EnterpriseLocation from './components/Enterprise/EnterpriseSettings/EnterpriseLocation';
+import EnterpriseAddNewLocation from './components/Enterprise/EnterpriseSettings/EnterpriseAddNewLocation';
+import EnterpriseSetLocationAddressMap from './components/commonComponent/EnterpriseSetLocationAddressMap';
+import EnterpriseManageAds from './components/Enterprise/EnterpriseManageAds';
+import EnterpriseListNewAd from './components/Enterprise/EnterpriseListNewAd';
+import EnterpriseShiftDetails from './components/Enterprise/EnterpriseShiftDetails';
 
 const Stack = createStackNavigator();
 
@@ -1249,14 +1265,151 @@ const AppNavigator = () => {
           />
 
           <Stack.Screen
+            name="EnterprisesActiveDeliveries"
+            component={EnterprisesActiveDeliveries}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Active deliveries',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterpriseAddNewLocation"
+            component={EnterpriseAddNewLocation}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Add new locations',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterpriseLocation"
+            component={EnterpriseLocation}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Locations',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+              headerRight: () => (
+                <View style={{flexDirection: 'row'}}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('EnterpriseAddNewLocation')
+                    }
+                    style={{paddingRight: 10}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontFamily: 'Montserrat-SemiBold',
+                          color: colors.secondary,
+                          marginRight: 5,
+                        }}>
+                        Add
+                      </Text>
+                      <AntDesign
+                        name="plussquare"
+                        size={25}
+                        color={colors.secondary}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ),
+            })}
+          />
+
+          <Stack.Screen
             name="EnterpriseThanksPage"
             component={EnterpriseThanksPage}
             options={{headerShown: false}}
           />
 
           <Stack.Screen
+            name="EnterpriseSetLocationAddressMap"
+            component={EnterpriseSetLocationAddressMap}
+            options={{headerShown: false}}
+          />
+
+          <Stack.Screen
             name="EnterpriseHome"
             component={EnterpriseHome}
+            options={{headerShown: false}}
+          />
+
+          <Stack.Screen
+            name="EnterpriseScheduleApproved"
+            component={EnterpriseScheduleApproved}
+            options={{headerShown: false}}
+          />
+
+          <Stack.Screen
+            name="EnterpriseScheduleRequestSubmitted"
+            component={EnterpriseScheduleRequestSubmitted}
+            options={{headerShown: false}}
+          />
+
+          <Stack.Screen
+            name="EnterpriseDeliveryboyAssigned"
+            component={EnterpriseDeliveryboyAssigned}
             options={{headerShown: false}}
           />
 
@@ -1290,6 +1443,143 @@ const AppNavigator = () => {
           />
 
           <Stack.Screen
+            name="EnterpriseManageAds"
+            component={EnterpriseManageAds}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Manage Ads',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+              headerRight: () => (
+                <View style={{flexDirection: 'row'}}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('EnterpriseListNewAd')
+                    }
+                    style={{paddingRight: 10}}>
+                    <AntDesign name="plus" size={25} color={colors.text} />
+                  </TouchableOpacity>
+                </View>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="EnterpriseShiftDetails"
+            component={EnterpriseShiftDetails}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Shift Details',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+              headerRight: () => (
+                <View style={{flexDirection: 'row'}}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('EnterpriseListNewAd')
+                    }
+                    style={{paddingRight: 10}}>
+                    <Ionicons name="settings-outline" size={25} color={colors.text} />
+                  </TouchableOpacity>
+                </View>
+              ),
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterpriseDeliveryboyReady"
+            component={EnterpriseDeliveryboyReady}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'John Doe’s shift',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterpriseListNewAd"
+            component={EnterpriseListNewAd}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'List New Ad',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
             name="EnterpriseScheduleNewDelivery"
             component={EnterpriseScheduleNewDelivery}
             options={({navigation}) => ({
@@ -1305,6 +1595,35 @@ const AppNavigator = () => {
                 </TouchableOpacity>
               ),
               headerTitle: '',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterprisesMultiScheduleDetails"
+            component={EnterprisesMultiScheduleDetails}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={30}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Schedule New Delivery',
               headerTitleStyle: {
                 fontFamily: 'Montserrat-SemiBold',
                 fontSize: 16,
@@ -1392,6 +1711,93 @@ const AppNavigator = () => {
                 </TouchableOpacity>
               ),
               headerTitle: 'Schedule New Delivery',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterpiseSelectShiftDelivery"
+            component={EnterpiseSelectShiftDelivery}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Schedule New Delivery',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterpriseShiftDeliverySchedule"
+            component={EnterpriseShiftDeliverySchedule}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Create New Schedule',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+
+          <Stack.Screen
+            name="EnterpriseSchedulePreview"
+            component={EnterpriseSchedulePreview}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Preview',
               headerTitleStyle: {
                 fontFamily: 'Montserrat-SemiBold',
                 fontSize: 16,

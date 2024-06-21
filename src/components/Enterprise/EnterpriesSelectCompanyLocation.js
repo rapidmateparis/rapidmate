@@ -64,7 +64,7 @@ const EnterpriesSelectCompanyLocation = ({navigation}) => {
           </View>
         </View>
 
-        <View>
+        <TouchableOpacity onPress={() => navigation.navigate('EnterpriseShiftDeliverySchedule')}>
           <View style={styles.franchiseCard}>
             <Image
               style={{width: 30, height: 30}}
@@ -78,7 +78,7 @@ const EnterpriesSelectCompanyLocation = ({navigation}) => {
               </View>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('EnterpiseSelectDeliveryTypes')}>
           <View style={styles.franchiseCard}>

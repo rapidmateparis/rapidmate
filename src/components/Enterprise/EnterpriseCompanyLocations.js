@@ -145,8 +145,8 @@ const EnterpriseCompanyLocations = ({navigation}) => {
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('EnterprisePlanning')} style={styles.nextBt}>
-            <Text style={styles.btnText}>Next</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('EnterpriseBottomNav')} style={styles.nextBt}>
+            <Text style={styles.btnText}>Go to Home</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

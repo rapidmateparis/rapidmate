@@ -30,6 +30,7 @@ const AddPickupdetails = ({navigation}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [photoFileName, setPhotoFileName] = useState(''); // State for filename
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -43,13 +44,12 @@ const AddPickupdetails = ({navigation}) => {
     {label: '+33', value: '+33'},
   ];
 
-  const handleCameraLaunch = async item => {
+  const handleCameraLaunch = async () => {
     setModalVisibleCamera(!isModalVisibleCamera);
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
-        // console.log("dataImage++++",imageData.data)
-        console.log('dataImage++++', imageData.fileName);
+        setPhotoFileName(getFileName(cameraData.data.uri));
       }
     } catch (error) {
       // Handle errors here
@@ -61,12 +61,20 @@ const AddPickupdetails = ({navigation}) => {
     try {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
-        // console.log("dataImage++++",imageData.data)
-        console.log('dataImage++++', imageData.fileName);
+        setPhotoFileName(getFileName(imageData.data.uri));
       }
     } catch (error) {
       // Handle errors here
     }
+  };
+
+  const getFileName = uri => {
+    if (!uri) return '';
+    const startIndex = uri.lastIndexOf('/') + 1;
+    let fileName = uri.substr(startIndex);
+    // Get last 20 characters or the whole string if shorter
+    fileName = fileName.substr(-35);
+    return fileName.length > 35 ? '...' + fileName : fileName;
   };
 
   return (
@@ -160,14 +168,14 @@ const AddPickupdetails = ({navigation}) => {
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
-                size={18}
+                size={13}
                 color="#131314"
                 style={{marginTop: 13}}
               />
               <Text style={styles.packagePhoto}>Package photo</Text>
               <View style={styles.packagePhotoPath}>
-                <Text style={styles.packagePhotoText}>image.jpeg</Text>
-                <MaterialCommunityIcons name="close" color="#000" size={18} />
+                <Text style={styles.packagePhotoText}>{photoFileName}</Text>
+                <MaterialCommunityIcons name="close" color="#000" size={13} />
               </View>
             </View>
           </TouchableOpacity>
@@ -364,7 +372,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     paddingTop: 10,
     flex: 1,
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Montserrat-Regular',
   },
   packagePhotoPath: {
@@ -378,7 +386,7 @@ const styles = StyleSheet.create({
   },
   packagePhotoText: {
     color: colors.text,
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Montserrat-Regular',
     borderRightWidth: 1,
     paddingRight: 5,

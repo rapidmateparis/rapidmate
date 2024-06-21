@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,7 @@ const DeliveryboyShiftStaredRequest = ({navigation}) => {
   }, [defaultStatusMessage]);
 
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
+  const [startTimerChange, setStartTimerChange] = useState(true);
   const [timer, setTimer] = useState({
     hours: 0,
     minutes: 0,
@@ -40,39 +41,56 @@ const DeliveryboyShiftStaredRequest = ({navigation}) => {
     centiseconds: 0,
   });
 
-  useEffect(() => {
+  const runTimer = useCallback(() => {
     const interval = setInterval(() => {
-      const newCentiseconds = timer.centiseconds + 1;
-      if (newCentiseconds === 100) {
-        const newSeconds = timer.seconds + 1;
-        if (newSeconds === 60) {
-          const newMinutes = timer.minutes + 1;
-          if (newMinutes === 60) {
-            const newHours = timer.hours + 1;
-            setTimer({
-              ...timer,
-              hours: newHours,
-              minutes: 0,
-              seconds: 0,
-              centiseconds: 0,
-            });
+      setTimer(prevTimer => {
+        const newCentiseconds = prevTimer.centiseconds + 1;
+        if (newCentiseconds === 100) {
+          const newSeconds = prevTimer.seconds + 1;
+          if (newSeconds === 60) {
+            const newMinutes = prevTimer.minutes + 1;
+            if (newMinutes === 60) {
+              const newHours = prevTimer.hours + 1;
+              return {
+                ...prevTimer,
+                hours: newHours,
+                minutes: 0,
+                seconds: 0,
+                centiseconds: 0,
+              };
+            } else {
+              return {
+                ...prevTimer,
+                minutes: newMinutes,
+                seconds: 0,
+                centiseconds: 0,
+              };
+            }
           } else {
-            setTimer({
-              ...timer,
-              minutes: newMinutes,
-              seconds: 0,
+            return {
+              ...prevTimer,
+              seconds: newSeconds,
               centiseconds: 0,
-            });
+            };
           }
         } else {
-          setTimer({...timer, seconds: newSeconds, centiseconds: 0});
+          return {
+            ...prevTimer,
+            centiseconds: newCentiseconds,
+          };
         }
-      } else {
-        setTimer({...timer, centiseconds: newCentiseconds});
-      }
+      });
     }, 10);
+
     return () => clearInterval(interval);
-  }, [timer]);
+  }, []);
+
+  useEffect(() => {
+    if (startTimerChange) {
+      const cleanup = runTimer();
+      return cleanup;
+    }
+  }, [startTimerChange]);
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -149,42 +167,51 @@ const DeliveryboyShiftStaredRequest = ({navigation}) => {
               please swipe below!
             </Text>
             <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
-            <SwipeButton
-              onSwipeFail={() => updateSwipeStatusMessage('Incomplete swipe!')}
-              onSwipeStart={() => updateSwipeStatusMessage('Swipe started!')}
-              onSwipeSuccess={() =>
-                updateSwipeStatusMessage('Request rejected')
-              }
-              thumbIconImageSource={StopShift}
-              railBackgroundColor="#BA1A1A0A"
-              railStyles={{
-                backgroundColor: '#BA1A1A0A',
-                borderColor: '#BA1A1A',
-              }}
-              thumbIconBackgroundColor="#E21B1B"
-              thumbIconStyles={{padding: 0, width: 0, borderWidth: 0}}
-              thumbIconWidth={50}
-              title={
-                <View style={styles.swipeTitleComp}>
-                  <Text>Swipe to end shift</Text>
-                  <AntDesign
-                    name="doubleright"
-                    size={18}
-                    color="#000"
-                    style={styles.copyIcon}
-                  />
-                </View>
-              }
-              enable
-              titleStyles={{
-                color: '#19151C',
-                fontSize: 14,
-                fontFamily: 'Montserrat-Regular',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            />
+            <TouchableOpacity onPress={() => setStartTimerChange(false)}>
+              <SwipeButton
+                onSwipeFail={() => {
+                  updateSwipeStatusMessage('Incomplete swipe!');
+                  setStartTimerChange(true);
+                }}
+                onSwipeStart={() => {
+                  updateSwipeStatusMessage('Swipe started!');
+                  setStartTimerChange(false);
+                }}
+                onSwipeSuccess={() => {
+                  updateSwipeStatusMessage('Request rejected');
+                  navigation.navigate('DeliveryboyShiftStaredRequest');
+                }}
+                thumbIconImageSource={StopShift}
+                railBackgroundColor="#BA1A1A0A"
+                railStyles={{
+                  backgroundColor: '#BA1A1A0A',
+                  borderColor: '#BA1A1A',
+                }}
+                thumbIconBackgroundColor="#E21B1B"
+                thumbIconStyles={{padding: 0, width: 0, borderWidth: 0}}
+                thumbIconWidth={50}
+                title={
+                  <View style={styles.swipeTitleComp}>
+                    <Text>Swipe to end shift</Text>
+                    <AntDesign
+                      name="doubleright"
+                      size={18}
+                      color="#000"
+                      style={styles.copyIcon}
+                    />
+                  </View>
+                }
+                enable
+                titleStyles={{
+                  color: '#19151C',
+                  fontSize: 14,
+                  fontFamily: 'Montserrat-Regular',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              />
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </View>

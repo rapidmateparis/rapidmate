@@ -9,37 +9,51 @@ import {colors} from '../../colors';
 import DeliveryboyHome from './DeliveryboyHome';
 import Planning from './Planning';
 import DeliveryboyHistory from './DeliverboyHistory';
-import DeliveryBoySignup from './DeliveryBoySignup';
 import DeliveryPackageRequest from './DeliveryPackageRequest';
-import DeliveryPackageScheduleRequest from './DeliveryPackageScheduleRequest';
 import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
-import LoaderForDriver from '../PickupDrop-off/LoaderForDriver';
-import NewDeliveryPackageRequest from './NewDeliveryPackageRequest';
+import Notifications from '../PickupDrop-off/Settings/Notifications';
 
 const Bottom = createBottomTabNavigator();
+
 const DeliveryboyBottomNav = ({navigation}) => {
   return (
-    <Bottom.Navigator>
+    <Bottom.Navigator
+      tabBarOptions={{
+        activeTintColor: '#FF0058',
+        inactiveTintColor: '#A1A1A1',
+        labelStyle: {
+          fontSize: 12,
+          fontFamily: 'Montserrat-Regular',
+        },
+      }}>
       <Bottom.Screen
         key="DeliveryboyHome"
         name="Home"
         component={DeliveryboyHome}
         options={{
           headerShown: false,
-          tabBarIcon: tabInfo => {
-            return (
-              <AntDesign
-                name="home"
-                size={22}
-                color="#B5B3B2"
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <AntDesign
+              name="home"
+              size={22}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
+        }}
+      />
+      <Bottom.Screen
+        key="Notifications"
+        name="Chat"
+        component={Notifications}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({focused}) => (
+            <Ionicons
+              name="chatbox-ellipses-outline"
+              size={25}
+              color={focused ? '#FF0058' : '#B5B3B2'} 
+            />
+          ),
         }}
       />
       <Bottom.Screen
@@ -48,42 +62,13 @@ const DeliveryboyBottomNav = ({navigation}) => {
         component={Planning}
         options={{
           headerShown: false,
-          tabBarIcon: tabInfo => {
-            return (
-              <Ionicons
-                name="calendar-outline"
-                size={25}
-                color="#B5B3B2"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
-        }}
-      />
-      <Bottom.Screen
-        key="DeliveryPackageRequest"
-        name="Requst"
-        component={DeliveryPackageRequest}
-        options={{
-          headerShown: false,
-          tabBarIcon: tabInfo => {
-            return (
-              <Feather
-                name="package"
-                size={25}
-                color="#B5B3B2"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <Ionicons
+              name="calendar-outline"
+              size={22}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
       <Bottom.Screen
@@ -92,20 +77,13 @@ const DeliveryboyBottomNav = ({navigation}) => {
         component={DeliveryboyHistory}
         options={{
           headerShown: false,
-          tabBarIcon: tabInfo => {
-            return (
-              <Ionicons
-                name="timer-outline"
-                size={25}
-                color="#B5B3B2"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <Ionicons
+              name="timer-outline"
+              size={25}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
       <Bottom.Screen
@@ -119,7 +97,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               style={{paddingLeft: 10}}>
               <MaterialIcons
                 name="keyboard-backspace"
-                size={30}
+                size={25}
                 color={colors.text}
               />
             </TouchableOpacity>
@@ -136,20 +114,13 @@ const DeliveryboyBottomNav = ({navigation}) => {
             borderBottomWidth: 0,
             elevation: 0,
           },
-          tabBarIcon: tabInfo => {
-            return (
-              <AntDesign
-                name="user"
-                size={25}
-                color="#B5B3B2"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <AntDesign
+              name="user"
+              size={25}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
     </Bottom.Navigator>

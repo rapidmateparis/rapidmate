@@ -25,8 +25,15 @@ const AddPickupVehicle = ({navigation}) => {
   const [vehicleVariant, setVehicleVariant] = useState('');
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const toggleModal = () => {
+  const [imageFileVehicleReg, setImageFileNameVehicleReg] = useState([]);
+  const [imageFileDrivingLicense, setImageFileDrivingLicense] = useState([]);
+  const [imageFileVehicleInsurance, setImageFileVehicleInsurance] = useState(
+    [],
+  );
+  const [imageFilePassport, setImageFilePassport] = useState([]);
+  const [imageFileUrl, setImageFileUrl] = useState();
+  const toggleModal = item => {
+    setImageFileUrl(item);
     setModalVisibleCamera(!isModalVisibleCamera);
   };
   const handlePhotoOpenClose = visible => {
@@ -38,8 +45,15 @@ const AddPickupVehicle = ({navigation}) => {
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
-        // console.log("dataImage++++",imageData.data)
-        console.log('dataImage++++', imageData.fileName);
+        if (imageFileUrl === 'VehicleRegistration') {
+          setImageFileNameVehicleReg(cameraData.data);
+        } else if (imageFileUrl === 'DrivingLicense') {
+          setImageFileDrivingLicense(cameraData.data);
+        } else if (imageFileUrl === 'VehicleInsurance') {
+          setImageFileVehicleInsurance(cameraData.data);
+        } else if (imageFileUrl === 'Passport') {
+          setImageFilePassport(cameraData.data);
+        }
       }
     } catch (error) {
       // Handle errors here
@@ -51,12 +65,28 @@ const AddPickupVehicle = ({navigation}) => {
     try {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
-        // console.log("dataImage++++",imageData.data)
-        console.log('dataImage++++', imageData.fileName);
+        if (imageFileUrl === 'VehicleRegistration') {
+          setImageFileNameVehicleReg(imageData.data);
+        } else if (imageFileUrl === 'DrivingLicense') {
+          setImageFileDrivingLicense(imageData.data);
+        } else if (imageFileUrl === 'VehicleInsurance') {
+          setImageFileVehicleInsurance(imageData.data);
+        } else if (imageFileUrl === 'Passport') {
+          setImageFilePassport(imageData.data);
+        }
       }
     } catch (error) {
       // Handle errors here
     }
+  };
+
+  const getFileName = uri => {
+    if (!uri) return '';
+    const startIndex = uri.lastIndexOf('/') + 1;
+    let fileName = uri.substr(startIndex);
+    // Get last 20 characters or the whole string if shorter
+    fileName = fileName.substr(-30);
+    return fileName.length > 30 ? '...' + fileName : fileName;
   };
 
   return (
@@ -110,7 +140,9 @@ const AddPickupVehicle = ({navigation}) => {
           <View>
             <Text style={styles.uploadDoc}>Upload documents</Text>
           </View>
-          <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
+          <TouchableOpacity
+            onPress={() => toggleModal('VehicleRegistration')}
+            style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle registration document</Text>
             <View style={styles.dottedLine}>
               <Entypo
@@ -120,13 +152,19 @@ const AddPickupVehicle = ({navigation}) => {
                 style={{marginTop: 13}}
               />
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
-               <View style={styles.docPathCard}>
-                <Text style={styles.docPath}>image.jpeg</Text>
+              <View style={styles.docPathCard}>
+                <Text style={styles.docPath}>
+                  {imageFileVehicleReg && imageFileUrl === 'VehicleRegistration'
+                    ? getFileName(imageFileVehicleReg.uri)
+                    : `image.jpeg`}
+                </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
+          <TouchableOpacity
+            onPress={() => toggleModal('DrivingLicense')}
+            style={{flex: 1}}>
             <Text style={styles.textlable}>Driving license</Text>
             <View style={styles.dottedLine}>
               <Entypo
@@ -136,13 +174,19 @@ const AddPickupVehicle = ({navigation}) => {
                 style={{marginTop: 13}}
               />
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
-               <View style={styles.docPathCard}>
-                <Text style={styles.docPath}>image.jpeg</Text>
+              <View style={styles.docPathCard}>
+                <Text style={styles.docPath}>
+                  {imageFileDrivingLicense && imageFileUrl === 'DrivingLicense'
+                    ? getFileName(imageFileDrivingLicense.uri)
+                    : `image.jpeg`}
+                </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
+          <TouchableOpacity
+            onPress={() => toggleModal('VehicleInsurance')}
+            style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle insurance</Text>
             <View style={styles.dottedLine}>
               <Entypo
@@ -153,13 +197,20 @@ const AddPickupVehicle = ({navigation}) => {
               />
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
-                <Text style={styles.docPath}>image.jpeg</Text>
+                <Text style={styles.docPath}>
+                  {imageFileVehicleInsurance &&
+                  imageFileUrl === 'VehicleInsurance'
+                    ? getFileName(imageFileVehicleInsurance.uri)
+                    : `image.jpeg`}
+                </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
+          <TouchableOpacity
+            onPress={() => toggleModal('Passport')}
+            style={{flex: 1}}>
             <Text style={styles.textlable}>Passport</Text>
             <View style={styles.dottedLine}>
               <Entypo
@@ -170,7 +221,11 @@ const AddPickupVehicle = ({navigation}) => {
               />
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
-                <Text style={styles.docPath}>image.jpeg</Text>
+                <Text style={styles.docPath}>
+                  {imageFilePassport && imageFileUrl === 'Passport'
+                    ? getFileName(imageFilePassport.uri)
+                    : `image.jpeg`}
+                </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
             </View>

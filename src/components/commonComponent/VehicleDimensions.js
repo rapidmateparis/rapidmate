@@ -1,12 +1,5 @@
 import React, {useState} from 'react';
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
@@ -16,94 +9,103 @@ import MotorbikeImage from '../../image/VehicleModal2.png';
 import MiniVanImage from '../../image/VehicleModal4.png';
 import SemiTruckImage from '../../image/VehicleModal5.png';
 
-function VehicleDimensionsModal({
+const VehicleDimensionsModal = ({
   setModalVisible,
   isModalVisible,
   vehicleDetails,
-}) {
+}) => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
+  // Determine which image and corresponding style to use based on vehicleDetails.name
+  let vehicleImageSource;
+  let vehicleImageStyle;
+
+  switch (vehicleDetails?.name) {
+    case 'Mini Truck':
+      vehicleImageSource = MiniTruckImage;
+      vehicleImageStyle = styles.miniTruckImage;
+      break;
+    case 'Bicycle':
+      vehicleImageSource = BicycleImage;
+      vehicleImageStyle = styles.bicycleImage;
+      break;
+    case 'Motorbike':
+      vehicleImageSource = MotorbikeImage;
+      vehicleImageStyle = styles.motorbikeImage;
+      break;
+    case 'Mini Van':
+      vehicleImageSource = MiniVanImage;
+      vehicleImageStyle = styles.miniVanImage;
+      break;
+    case 'Semi Truck':
+      vehicleImageSource = SemiTruckImage;
+      vehicleImageStyle = styles.semiTruckImage;
+      break;
+    default: // Handle the case where vehicleDetails.name is not matched
+      vehicleImageSource = null;
+      vehicleImageStyle = null;
+      break;
+  }
+
   return (
-    <View style={{flex: 1}}>
-      <Modal isVisible={isModalVisible}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Vehicle Dimensions</Text>
-            <TouchableOpacity onPress={toggleModal}>
-              <AntDesign name="close" size={20} color="#000000" />
-            </TouchableOpacity>
-          </View>
-          <View style={{paddingHorizontal: 20,}}>
-            <View style={styles.ImageCard}>
-              <Image
-                source={
-                  vehicleDetails && vehicleDetails.name == 'Mini Truck'
-                    ? MiniTruckImage
-                    :vehicleDetails && vehicleDetails.name == 'Bicycle'
-                    ? BicycleImage
-                    :vehicleDetails && vehicleDetails.name == 'Motorbike'
-                    ? MotorbikeImage
-                    :vehicleDetails && vehicleDetails.name == 'Mini Van'
-                    ? MiniVanImage
-                    :vehicleDetails && vehicleDetails.name == 'Semi Truck'
-                    ? SemiTruckImage
-                    : ''
-                }
-              />
-              {/* <Image
-                style={styles.countIcon1}
-                source={require('../../image/1-icon.png')}
-              />
-              <Image
-                style={styles.countIcon2}
-                source={require('../../image/2-icon.png')}
-              />
-              <Image
-                style={styles.countIcon3}
-                source={require('../../image/3-icon.png')}
-              /> */}
-            </View>
-            <View style={styles.infoVehicle}>
-              <Text style={styles.count}>1</Text>
-              <Text style={styles.infoText}>
-                Length{' '}
-                <Text style={styles.boldText}>
-                  {vehicleDetails && vehicleDetails.length}
-                </Text>
-              </Text>
-            </View>
-
-            <View style={styles.infoVehicle}>
-              <Text style={styles.count}>2</Text>
-              <Text style={styles.infoText}>
-                Height{' '}
-                <Text style={styles.boldText}>
-                  {vehicleDetails && vehicleDetails.height}
-                </Text>
-              </Text>
-            </View>
-
-            <View style={styles.infoVehicle}>
-              <Text style={styles.count}>3</Text>
-              <Text style={styles.infoText}>
-                Width{' '}
-                <Text style={styles.boldText}>
-                  {vehicleDetails && vehicleDetails.width}
-                </Text>
-              </Text>
-            </View>
-          </View>
-
-          <TouchableOpacity style={styles.buttonCard}>
-            <Text style={styles.okButton}>Ok</Text>
+    <Modal isVisible={isModalVisible}>
+      <View style={styles.modalContent}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.headerTitle}>Vehicle Dimensions</Text>
+          <TouchableOpacity onPress={toggleModal}>
+            <AntDesign name="close" size={20} color="#000000" />
           </TouchableOpacity>
         </View>
-      </Modal>
-    </View>
+
+        <View style={styles.imageContainer}>
+          {vehicleImageSource && (
+            <Image
+              source={vehicleImageSource}
+              style={[styles.vehicleImage, vehicleImageStyle]}
+            />
+          )}
+        </View>
+
+        <View style={styles.infoContainer}>
+          <View style={styles.infoVehicle}>
+            <View style={styles.count}>
+              <Text style={styles.countText}>1</Text>
+            </View>
+            <Text style={styles.infoText}>
+              Length{' '}
+              <Text style={styles.boldText}>{vehicleDetails?.length}</Text>
+            </Text>
+          </View>
+
+          <View style={styles.infoVehicle}>
+            <View style={styles.count}>
+              <Text style={styles.countText}>2</Text>
+            </View>
+            <Text style={styles.infoText}>
+              Height{' '}
+              <Text style={styles.boldText}>{vehicleDetails?.height}</Text>
+            </Text>
+          </View>
+
+          <View style={styles.infoVehicle}>
+            <View style={styles.count}>
+              <Text style={styles.countText}>3</Text>
+            </View>
+            <Text style={styles.infoText}>
+              Width <Text style={styles.boldText}>{vehicleDetails?.width}</Text>
+            </Text>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.okButton} onPress={toggleModal}>
+          <Text style={styles.okButtonText}>Ok</Text>
+        </TouchableOpacity>
+      </View>
+    </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   modalContent: {
@@ -128,60 +130,73 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
   },
-  ImageCard: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 30,
-    position: 'relative',
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  infoContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 15,
   },
   infoVehicle: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   count: {
     width: 20,
     height: 20,
+    backgroundColor: '#D3D4D4',
     borderRadius: 30,
-    paddingHorizontal: 6,
-    backgroundColor: '#ccc',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 10,
   },
-  infoText: {
-    fontSize: 14,
+  countText: {
     fontFamily: 'Montserrat-Regular',
+    fontSize: 12,
+  },
+  infoText: {
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 14,
     color: colors.text,
   },
   boldText: {
     fontFamily: 'Montserrat-SemiBold',
   },
   okButton: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-Medium',
-    width: 180,
-    borderRadius: 8,
-    backgroundColor: colors.primary,
-    paddingVertical: 12,
-    textAlign: 'center',
-  },
-  buttonCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
   },
-  countIcon1: {
-    position: 'absolute',
-    top: '-25%',
-    left: '20%',
+  okButtonText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.white,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    width: 200,
+    textAlign: 'center',
   },
-  countIcon2: {
-    position: 'absolute',
-    left: '8%',
+  miniTruckImage: {
+    width: 250,
+    height: 250,
   },
-  countIcon3: {
-    position: 'absolute',
-    bottom: '-15%',
-    left: '13%',
+  bicycleImage: {
+    width: 250,
+    height: 250,
+  },
+  motorbikeImage: {
+    width: 250,
+    height: 250,
+  },
+  miniVanImage: {
+    width: 250,
+    height: 250,
+  },
+  semiTruckImage: {
+    width: 250,
+    height: 250,
   },
 });
 

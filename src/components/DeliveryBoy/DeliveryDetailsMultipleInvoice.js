@@ -14,6 +14,12 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 
 const DeliveryDetailsMultipleInvoice = ({navigation}) => {
+  const [showDetails, setShowDetails] = useState(false);
+
+  const toggleDetails = () => {
+    setShowDetails(!showDetails);
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -71,7 +77,7 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare</Text>
+              <Text style={styles.orderFare}>Order fare 1</Text>
               <Text style={styles.totalmoney}>€34.00</Text>
             </View>
 
@@ -104,6 +110,53 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
           </View>
         </View>
 
+        <TouchableOpacity onPress={toggleDetails} activeOpacity={0.8}>
+          <View style={styles.invoiceMainCard}>
+            <View>
+              <Image source={require('../../image/order-fare.png')} />
+            </View>
+            <View style={{marginLeft: 10}}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.orderFare}>Order fare 2</Text>
+                <Text style={styles.totalmoney}>€34.00</Text>
+              </View>
+
+              {showDetails && (
+                <>
+                  <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
+
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.orderFareValue}>Order fare</Text>
+                    <Text style={styles.value}>€30.00</Text>
+                  </View>
+
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.orderFareValue}>Waiting</Text>
+                    <Text style={styles.value}>€03.00</Text>
+                  </View>
+
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.orderFareValue}>Platform fee</Text>
+                    <Text style={styles.value}>€01.00</Text>
+                  </View>
+
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.orderFareValue}>Amount charged</Text>
+                    <Text style={styles.value}>€34.00</Text>
+                  </View>
+
+                  <View style={styles.masterCard}>
+                    <Image
+                      source={require('../../image/logos_mastercard.png')}
+                    />
+                    <Text style={styles.paidWith}>Paid with mastercard</Text>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+
         <View style={styles.packageInformationCard}>
           <Text style={styles.packageTitle}>Package information</Text>
           <Text style={styles.orderdetails}>
@@ -123,16 +176,28 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
 
         <TouchableOpacity style={styles.packageInvoiceCard}>
           <View style={styles.invoiceCard}>
-            <FontAwesome5
-              name="file-invoice"
+            <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
+
+            <Text style={styles.downloadInvoiceText}>Download invoice 1</Text>
+          </View>
+          <View>
+            <Feather
+              style={{marginTop: 5}}
+              name="download"
               size={20}
               color="#FF0058"
             />
+          </View>
+        </TouchableOpacity>
 
-            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+        <TouchableOpacity style={styles.packageInvoiceCard}>
+          <View style={styles.invoiceCard}>
+            <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
+
+            <Text style={styles.downloadInvoiceText}>Download invoice 2</Text>
           </View>
           <View>
-          <Feather
+            <Feather
               style={{marginTop: 5}}
               name="download"
               size={20}

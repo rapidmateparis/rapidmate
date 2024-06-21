@@ -7,4 +7,6 @@ export const colors = {
     MountainMeadow: '#1ABC9C',
     CuriousBlue: '#3498DB',
     Wisteria: '#9B59B6',
+    Pending: '#F39C12',
+    Completed: '#27AE60',
   };

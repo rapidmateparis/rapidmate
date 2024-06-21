@@ -26,7 +26,7 @@ const Settings = ({navigation}) => {
           </View>
           <View style={{marginLeft: 15}}>
             <Text style={styles.username}>John Doe</Text>
-            <TouchableOpacity style={styles.goprofile}>
+            <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.goprofile}> 
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
             </TouchableOpacity>
@@ -50,6 +50,13 @@ const Settings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity onPress={() => navigation.navigate('Wallet')} style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Wallet</Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Billing details</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

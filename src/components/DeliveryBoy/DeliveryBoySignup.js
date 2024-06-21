@@ -66,7 +66,9 @@ const DeliveryBoySignup = ({navigation}) => {
               the app.
             </Text>
           </View>
-          <Image source={require('../../image/DeliveryBoy-Icon.png')} />
+          <View style={styles.profilePhotoCard}>
+            <Image source={require('../../image/DeliveryBoy-Icon.png')} />
+          </View>
         </View>
         <View style={styles.logFormView}>
           <View
@@ -315,8 +317,8 @@ const DeliveryBoySignup = ({navigation}) => {
               </TouchableOpacity>
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('AddVehicle')}
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('DeliveryboyTakeSelfie')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>

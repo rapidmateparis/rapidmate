@@ -8,12 +8,27 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart,
+} from 'react-native-chart-kit';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import {Dropdown} from 'react-native-element-dropdown';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {Dimensions} from 'react-native';
+const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+  const [dropdownStreet, setDropdownStreet] = useState(null);
+  const [dropdownWeek, setDropdownWeek] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -21,6 +36,41 @@ const EnterpriseHome = ({navigation}) => {
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
+  };
+
+  const dropdownData1 = [
+    {label: 'North Street Franchise', value: 'North Street Franchise'},
+    {label: 'South Street Franchise', value: 'South Street Franchise'},
+  ];
+
+  const dropdownData2 = [
+    {label: 'This week', value: 'This week'},
+    {label: 'This Month', value: 'This Month'},
+  ];
+
+  const data = {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [
+      {
+        data: [0, 2, 4, 6, 8, 10, 12],
+      },
+    ],
+  };
+
+  const chartConfig = {
+    backgroundGradientFrom: '#1E2923',
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: '#fff',
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(255, 0, 88, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false, // optional
+  };
+
+  const graphStyle = {
+    marginVertical: 8,
+    borderRadius: 16,
   };
 
   return (
@@ -74,10 +124,68 @@ const EnterpriseHome = ({navigation}) => {
             <Text style={styles.bookingsInfo}>362</Text>
           </View>
         </View>
+      </View>
+      <View style={styles.barChartCard}>
+        <View style={styles.hoursInfoCard}>
+          <Text style={styles.hoursBooked}>Hours booked</Text>
+          <Text style={styles.hoursNumberCount}>32</Text>
+        </View>
+        <View style={styles.dropdownCard}>
+          <View style={styles.containerCountryFirst}>
+            <Dropdown
+              data={dropdownData1}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'North Street Franchise' : '...'}
+              searchPlaceholder="Search.."
+              value={dropdownStreet}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setDropdownStreet(item.value);
+                setIsFocus(false);
+              }}
+            />
+          </View>
 
+          <View style={styles.containerCountrySecond}>
+            <Dropdown
+              data={dropdownData2}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'This Week' : '...'}
+              searchPlaceholder="Search.."
+              value={dropdownWeek}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setDropdownWeek(item.value);
+                setIsFocus(false);
+              }}
+            />
+          </View>
+        </View>
+        <View>
+          <BarChart
+            style={graphStyle}
+            data={data}
+            width={screenWidth}
+            height={220}
+            yAxisLabel=""
+            chartConfig={chartConfig}
+            verticalLabelRotation={0}
+          />
+        </View>
+      </View>
+      <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Company locations</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('EnterpriseCompanyLocations')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('EnterpriseCompanyLocations')}>
             <Text style={styles.seAllText}>See All</Text>
           </TouchableOpacity>
         </View>
@@ -442,6 +550,53 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
+  },
+  barChartCard: {
+    backgroundColor: colors.white,
+    borderRadius: 5,
+    shadowColor: 'rgba(0, 0, 0, 0.16)',
+    shadowOffset: {
+      width: 0,
+      height: 0.0625,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 0.5, // for Android
+    marginBottom: 7,
+    marginTop: 7,
+  },
+  hoursBooked: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  hoursInfoCard: {
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  hoursNumberCount: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.secondary,
+  },
+  containerCountryFirst: {
+    borderRadius: 5,
+    marginBottom: 20,
+    width: '48%',
+  },
+  containerCountrySecond: {
+    borderRadius: 5,
+    marginBottom: 20,
+    width: '30%',
+  },
+  dropdownCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
   },
 });
 

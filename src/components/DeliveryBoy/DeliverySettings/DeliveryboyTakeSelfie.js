@@ -1,44 +1,111 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
-  ImageBackground,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../../../colors';
+import { colors } from '../../../colors';
+import ChoosePhotoByCameraGallaryModal from '../../commonComponent/ChoosePhotoByCameraGallaryModal';
+import { handleCameraLaunchFunction, handleImageLibraryLaunchFunction } from '../../../utils/common';
 
-const DeliveryboyTakeSelfie = ({navigation}) => {
+const DeliveryboyTakeSelfie = ({ navigation }) => {
+  const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
+  const [photoFileName, setPhotoFileName] = useState(''); // State for filename
+  const [photoUri, setPhotoUri] = useState(null); // State for photo URI
+
+  const toggleModal = () => {
+    setModalVisibleCamera(!isModalVisibleCamera);
+  };
+
+  const handlePhotoOpenClose = (visible) => {
+    setModalVisibleCamera(!visible);
+  };
+
+  const handleCameraLaunch = async () => {
+    setModalVisibleCamera(!isModalVisibleCamera);
+    try {
+      let cameraData = await handleCameraLaunchFunction();
+      if (cameraData.status == 'success') {
+        setPhotoFileName(getFileName(cameraData.data.uri));
+        setPhotoUri(cameraData.data.uri);
+      }
+    } catch (error) {
+      // Handle errors here
+    }
+  };
+
+  const handleImageLibraryLaunch = async () => {
+    setModalVisibleCamera(!isModalVisibleCamera);
+    try {
+      let imageData = await handleImageLibraryLaunchFunction();
+      if (imageData.status == 'success') {
+        setPhotoFileName(getFileName(imageData.data.uri));
+        setPhotoUri(imageData.data.uri);
+      }
+    } catch (error) {
+      // Handle errors here
+    }
+  };
+
+  const getFileName = (uri) => {
+    // Function to extract file name from URI
+    if (uri) {
+      const path = uri.split('/');
+      return path[path.length - 1];
+    }
+    return '';
+  };
+
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
+    <ScrollView style={{ width: '100%', backgroundColor: '#FFF' }}>
       <View>
-        <View style={styles.profilePicCard}>
+        <TouchableOpacity onPress={toggleModal} style={styles.profilePicCard}>
           <Image
             style={styles.profilePic}
-            source={require('../../../image/Selfie.png')}
+            source={
+              photoUri
+                ? { uri: `file://${photoUri}` }
+                : require('../../../image/dummy-Selfie.jpg')
+            }
           />
-        </View>
+          <AntDesign
+            style={styles.cameraIcon}
+            name="camerao"
+            size={30}
+            color="#fff"
+          />
+        </TouchableOpacity>
 
         <View style={styles.titlesCard}>
-          <Text style={styles.statusTitle}>Good job!</Text>
+          <Text style={styles.statusTitle}>Please upload a Profile Picture</Text>
           <Text style={styles.statusSubtitle}>
             Please see if this looks good, you can try once more if you want to.
           </Text>
         </View>
 
         <View style={styles.buttonCard}>
-          <TouchableOpacity style={styles.logbutton}>
+          <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
             <Text style={styles.buttonText}>Try again</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.saveBTn}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AddVehicle')}
+            style={styles.saveBTn}>
             <Text style={styles.okButton}>Use this</Text>
           </TouchableOpacity>
         </View>
       </View>
+      {/* -------------- Modal --------------------- */}
+      <ChoosePhotoByCameraGallaryModal
+        visible={isModalVisibleCamera}
+        handlePhotoOpenClose={handlePhotoOpenClose}
+        handleCameraLaunch={handleCameraLaunch}
+        handleImageLibraryLaunch={handleImageLibraryLaunch}
+      />
+      {/* -------------- Modal --------------------- */}
     </ScrollView>
   );
 };
@@ -50,6 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 200,
   },
   profilePicCard: {
+    position: 'relative',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -69,12 +137,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   titlesCard: {
-    paddingHorizontal: '15%',
-  },
-  actionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
+    paddingHorizontal: '10%',
   },
   buttonCard: {
     flexDirection: 'row',
@@ -107,6 +170,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 15,
     backgroundColor: colors.primary,
+  },
+  cameraIcon: {
+    position: 'absolute',
+    top: '88%',
+    left: '60%',
+    width: 45,
+    height: 45,
+    borderRadius: 30,
+    backgroundColor: colors.primary,
+    paddingTop: 6,
+    paddingLeft: 8,
   },
 });
 

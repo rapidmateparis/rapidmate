@@ -9,6 +9,8 @@ import {colors} from '../../colors';
 import EnterpriseSignup from './EnterpriseSignup';
 import EnterprisePlanning from './EnterprisePlaning';
 import EnterpriseHome from './EnterpriseHome';
+import EnterprisesSettins from './EnterpriseSettings/EnterprisesSettins';
+import EnterpriseHistory from './EnterpriseHistory';
 
 const Bottom = createBottomTabNavigator();
 const EnterpriseBottomNav = ({navigation}) => {
@@ -80,10 +82,10 @@ const EnterpriseBottomNav = ({navigation}) => {
           },
         }}
       /> */}
-      {/* <Bottom.Screen
-        key=""
-        name=""
-        component={''}
+      <Bottom.Screen
+        key="EnterpriseHistory"
+        name="Orders"
+        component={EnterpriseHistory}
         options={{
           headerShown: false,
           tabBarIcon: tabInfo => {
@@ -101,11 +103,11 @@ const EnterpriseBottomNav = ({navigation}) => {
             );
           },
         }}
-      /> */}
-      {/* <Bottom.Screen
-        key=""
-        name=""
-        component={''}
+      />
+      <Bottom.Screen
+        key="EnterprisesSettins"
+        name="Account"
+        component={EnterprisesSettins}
         options={{
           headerLeft: () => (
             <TouchableOpacity
@@ -118,7 +120,7 @@ const EnterpriseBottomNav = ({navigation}) => {
               />
             </TouchableOpacity>
           ),
-          headerTitle: 'Account',
+          headerTitle: 'Settings',
           headerTitleStyle: {
             fontFamily: 'Montserrat-SemiBold',
             fontSize: 16,
@@ -145,7 +147,7 @@ const EnterpriseBottomNav = ({navigation}) => {
             );
           },
         }}
-      /> */}
+      />
     </Bottom.Navigator>
   );
 };

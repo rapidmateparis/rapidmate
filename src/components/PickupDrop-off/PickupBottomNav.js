@@ -12,31 +12,31 @@ import Notifications from './Settings/Notifications';
 import PickupHome from './PickupHome';
 import History from './History';
 
-
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
   return (
-    <Bottom.Navigator>
+    <Bottom.Navigator
+      tabBarOptions={{
+        activeTintColor: '#FF0058',
+        inactiveTintColor: '#A1A1A1',
+        labelStyle: {
+          fontSize: 12,
+          fontFamily: 'Montserrat-Regular',
+        },
+      }}>
       <Bottom.Screen
         key="PickupHome"
         name="Home"
         component={PickupHome}
         options={{
           headerShown: false,
-          tabBarIcon: tabInfo => {
-            return (
-              <AntDesign
-                name="home"
-                size={22}
-                color="#B5B3B2"
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <AntDesign
+              name="home"
+              size={22}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
       <Bottom.Screen
@@ -67,20 +67,13 @@ const PickupBottomNav = ({navigation}) => {
             borderBottomWidth: 0,
             elevation: 0,
           },
-          tabBarIcon: tabInfo => {
-            return (
-              <Ionicons
-                name="chatbox-ellipses-outline"
-                size={22}
-                color="#B5B3B2"
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <Ionicons
+              name="chatbox-ellipses-outline"
+              size={25}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
       <Bottom.Screen
@@ -89,20 +82,13 @@ const PickupBottomNav = ({navigation}) => {
         component={PickupAddress}
         options={{
           headerShown: false,
-          tabBarIcon: tabInfo => {
-            return (
-              <Feather
-                name="package"
-                size={25}
-                color="#B5B3B2"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <Feather
+              name="package"
+              size={25}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
       <Bottom.Screen
@@ -111,20 +97,13 @@ const PickupBottomNav = ({navigation}) => {
         component={History}
         options={{
           headerShown: false,
-          tabBarIcon: tabInfo => {
-            return (
-              <Ionicons
-                name="timer-outline"
-                size={25}
-                color="#B5B3B2"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <Ionicons
+              name="timer-outline"
+              size={25}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
       <Bottom.Screen
@@ -155,20 +134,13 @@ const PickupBottomNav = ({navigation}) => {
             borderBottomWidth: 0,
             elevation: 0,
           },
-          tabBarIcon: tabInfo => {
-            return (
-              <AntDesign
-                name="user"
-                size={25}
-                color="#B5B3B2"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: tabInfo.focused ? 'purple' : 'black',
-                }}
-              />
-            );
-          },
+          tabBarIcon: ({focused}) => (
+            <AntDesign
+              name="user"
+              size={25}
+              color={focused ? '#FF0058' : '#B5B3B2'}
+            />
+          ),
         }}
       />
     </Bottom.Navigator>

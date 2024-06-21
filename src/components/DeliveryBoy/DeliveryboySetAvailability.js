@@ -28,6 +28,8 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setPushNotifications(!pushNotifications);
   };
 
+  console.log("fromtime-----+++",fromtime, totime)
+
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
   };

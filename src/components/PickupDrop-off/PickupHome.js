@@ -54,13 +54,13 @@ const PickupHome = ({navigation}) => {
             </Text>
           </View>
           <View>
-            <Image source={require('../../image/package-girl.png')} />
+            <Image style={{width: 70, height: 140,}} source={require('../../image/package-girl.png')} />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.requestPickup}>
           <View>
-            <Image source={require('../../image/package-boy.png')} />
+            <Image style={{width: 78, height: 146,}} source={require('../../image/package-boy.png')} />
           </View>
           <View style={styles.pickcard}>
             <Text style={styles.packageRequst}>Request a Drop off</Text>
@@ -86,7 +86,7 @@ const PickupHome = ({navigation}) => {
             </View>
           </View>
           <View style={styles.packingCardImgas}>
-            <Image source={require('../../image/package-packing.png')} />
+            <Image style={{width: 146, height: 112,}} source={require('../../image/package-packing.png')} />
             <Image
               style={styles.timingIcon}
               source={require('../../image/timing-icon.png')}
@@ -96,7 +96,7 @@ const PickupHome = ({navigation}) => {
 
         <TouchableOpacity style={styles.requestPickup}>
           <View>
-            <Image source={require('../../image/PackageMove-img.png')} />
+            <Image style={{width: 163, height: 132,}} source={require('../../image/PackageMove-img.png')} />
           </View>
           <View style={styles.pickcard}>
             <Text style={styles.packageRequst}>Request a Mover</Text>
@@ -364,6 +364,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '-10%',
     left: '30%',
+    width: 35,
+    height: 35,
   },
 });
 
