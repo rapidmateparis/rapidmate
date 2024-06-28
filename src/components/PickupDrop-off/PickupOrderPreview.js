@@ -46,7 +46,7 @@ const PickupOrderPreview = ({navigation}) => {
               </Text>
             </View>
             <View>
-              <Image source={require('../../image/Semi-Truck.png')} />
+              <Image style={{width: 130, height: 75,}} source={require('../../image/Semi-Truck.png')} />
             </View>
           </View>
         </View>

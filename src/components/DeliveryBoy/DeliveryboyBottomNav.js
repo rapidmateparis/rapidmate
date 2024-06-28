@@ -93,7 +93,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
         options={{
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => navigation.navigate('Settings')}
+            onPress={() => navigation.goBack()}
               style={{paddingLeft: 10}}>
               <MaterialIcons
                 name="keyboard-backspace"

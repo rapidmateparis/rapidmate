@@ -26,7 +26,7 @@ const EnterprisesSettins = ({navigation}) => {
           </View>
           <View style={{marginLeft: 15}}>
             <Text style={styles.username}>Company Name</Text>
-            <TouchableOpacity style={styles.goprofile}>
+            <TouchableOpacity onPress={() => navigation.navigate('EnterprisesTakeSelfie')} style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
             </TouchableOpacity>
@@ -54,7 +54,7 @@ const EnterprisesSettins = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Wallet')}
+            onPress={() => navigation.navigate('AddPaymentMethod')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Payment methods</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -72,7 +72,7 @@ const EnterprisesSettins = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('History')}
+            onPress={() => navigation.navigate('PickupChangePassword')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Change password</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -97,7 +97,7 @@ const EnterprisesSettins = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Help</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -105,7 +105,7 @@ const EnterprisesSettins = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddPickupdetails')}
+            onPress={() => navigation.navigate('AboutUs')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>About us</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -113,7 +113,7 @@ const EnterprisesSettins = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('DeliveryBoySignup')} style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

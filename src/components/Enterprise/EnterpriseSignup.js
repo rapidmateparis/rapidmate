@@ -398,8 +398,8 @@ const EnterpriseSignup = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseThanksPage')}
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('EnterprisesTakeSelfie')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>

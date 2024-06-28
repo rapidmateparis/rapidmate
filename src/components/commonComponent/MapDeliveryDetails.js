@@ -89,7 +89,7 @@ const MyCustomCalloutView = () => (
         fontFamily: 'Montserrat-SemiBold',
         fontSize: 16,
       }}>
-      Hello
+     Your Location
     </Text>
   </View>
 );

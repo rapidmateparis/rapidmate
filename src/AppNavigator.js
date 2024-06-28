@@ -88,6 +88,11 @@ import EnterpriseSetLocationAddressMap from './components/commonComponent/Enterp
 import EnterpriseManageAds from './components/Enterprise/EnterpriseManageAds';
 import EnterpriseListNewAd from './components/Enterprise/EnterpriseListNewAd';
 import EnterpriseShiftDetails from './components/Enterprise/EnterpriseShiftDetails';
+import EnterprisesTakeSelfie from './components/Enterprise/EnterprisesTakeSelfie';
+import PickupTakeSelfie from './components/PickupDrop-off/PickupTakeSelfie';
+import AddPaymentMethod from './components/CommonSettings/AddPaymentMethod';
+import TrackDelivery from './components/DeliveryBoy/TrackDelivery';
+import TrackDeiver from './components/PickupDrop-off/TrackDeiver';
 
 const Stack = createStackNavigator();
 
@@ -122,6 +127,62 @@ const AppNavigator = () => {
             name="DeliveryboyBottomNav"
             component={DeliveryboyBottomNav}
             options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PickupTakeSelfie"
+            component={PickupTakeSelfie}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Take a selfie',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
+            name="AddPaymentMethod"
+            component={AddPaymentMethod}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Add Payment Method',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
           />
           <Stack.Screen
             name="LogInScreen"
@@ -682,6 +743,12 @@ const AppNavigator = () => {
             options={{headerShown: false}}
           />
 
+          <Stack.Screen
+            name="TrackDeiver"
+            component={TrackDeiver}
+            options={{headerShown: false}}
+          />
+
           {/* DeliveryBoy Start here  */}
 
           <Stack.Screen
@@ -1038,6 +1105,34 @@ const AppNavigator = () => {
             })}
           />
           <Stack.Screen
+            name="TrackDelivery"
+            component={TrackDelivery}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: '',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
             name="DeliveryboyTakeSelfie"
             component={DeliveryboyTakeSelfie}
             options={({navigation}) => ({
@@ -1234,6 +1329,35 @@ const AppNavigator = () => {
           />
 
           {/* Enterprises Start Here  */}
+
+          <Stack.Screen
+            name="EnterprisesTakeSelfie"
+            component={EnterprisesTakeSelfie}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Take a selfie',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
 
           <Stack.Screen
             name="EnterpriseSignup"
@@ -1471,9 +1595,7 @@ const AppNavigator = () => {
               headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('EnterpriseListNewAd')
-                    }
+                    onPress={() => navigation.navigate('EnterpriseListNewAd')}
                     style={{paddingRight: 10}}>
                     <AntDesign name="plus" size={25} color={colors.text} />
                   </TouchableOpacity>
@@ -1510,11 +1632,13 @@ const AppNavigator = () => {
               headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('EnterpriseListNewAd')
-                    }
+                    onPress={() => navigation.navigate('EnterpriseListNewAd')}
                     style={{paddingRight: 10}}>
-                    <Ionicons name="settings-outline" size={25} color={colors.text} />
+                    <Ionicons
+                      name="settings-outline"
+                      size={25}
+                      color={colors.text}
+                    />
                   </TouchableOpacity>
                 </View>
               ),

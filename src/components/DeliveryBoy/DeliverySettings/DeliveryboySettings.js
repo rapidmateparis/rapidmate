@@ -72,7 +72,7 @@ const DeliveryboySettings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('History')}
+            onPress={() => navigation.navigate('PickupChangePassword')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Change password</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -97,7 +97,7 @@ const DeliveryboySettings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Help</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -105,7 +105,7 @@ const DeliveryboySettings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddPickupdetails')}
+            onPress={() => navigation.navigate('AboutUs')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>About us</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -122,7 +122,7 @@ const DeliveryboySettings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('DeliveryBoySignup')} style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

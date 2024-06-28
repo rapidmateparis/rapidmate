@@ -15,7 +15,6 @@ import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
-
 // Constants
 const LATITUDE_DELTA = 0.0922; // Adjusted for more zoom
 const ASPECT_RATIO = 0.752;
@@ -35,7 +34,7 @@ const MyCustomFlagMarker = () => (
   />
 );
 
-const MapAddress = () => {
+const TrackLiveLocation = () => {
   const mapViewRef = useRef(null);
   const navigation = useNavigation();
   const {setPickupAddress} = usePickupAddress();
@@ -93,60 +92,6 @@ const MapAddress = () => {
   return (
     <View style={styles.container}>
       {/* GooglePlacesAutocomplete */}
-      <View style={{zIndex: 1, paddingTop: 10}}>
-        <View style={styles.locationCard}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MapPickupAddress')}>
-            <View style={styles.locationAddress}>
-              <Ionicons name="location-outline" size={18} color="#000000" />
-              <GooglePlacesAutocomplete
-                fetchDetails
-                placeholder="Enter pickup address"
-                onPress={(data, details = null) => {
-                  const originCoordinates = {
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                  };
-                  setOrigin(originCoordinates);
-                  moveToLocation(originCoordinates);
-                }}
-                query={{
-                  key: MAPS_API_KEY,
-                  language: 'en',
-                }}
-                onFail={() => console.error('Error')}
-              />
-              <AntDesign name="arrowright" size={18} color="#000000" />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.borderDummy}></View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MapDropAddress')}>
-            <View style={styles.locationAddress}>
-              <MaterialIcons name="my-location" size={18} color="#000000" />
-              <GooglePlacesAutocomplete
-                fetchDetails
-                placeholder="Enter drop address"
-                onPress={(data, details = null) => {
-                  const destinationCoordinates = {
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                  };
-                  setDestination(destinationCoordinates);
-                  moveToLocation(destinationCoordinates);
-                }}
-                query={{
-                  key: MAPS_API_KEY,
-                  language: 'en',
-                }}
-                onFail={() => console.error('Error')}
-              />
-              <AntDesign name="arrowright" size={18} color="#000000" />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.borderShowOff}></View>
-        </View>
-      </View>
 
       {/* Time And Distance  */}
       {distance !== 0 && time !== 0 && (
@@ -264,4 +209,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapAddress;
+export default TrackLiveLocation;

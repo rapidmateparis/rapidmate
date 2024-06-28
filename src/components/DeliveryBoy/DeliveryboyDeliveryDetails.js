@@ -45,7 +45,7 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
               <Text style={styles.dropInfo}>Pickup information</Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('DeliveryboyMainDeliveryDetails')
+                  navigation.navigate('TrackDelivery')
                 }>
                 <Image source={require('../../image/Track-Icon.png')} />
               </TouchableOpacity>
@@ -114,7 +114,7 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
               <Text style={styles.dropInfo}>Drop off information</Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('DeliveryboyMainDeliveryDetails')
+                  navigation.navigate('TrackDelivery')
                 }>
                 <Image source={require('../../image/Track-Icon.png')} />
               </TouchableOpacity>

@@ -44,17 +44,6 @@ const PickupBottomNav = ({navigation}) => {
         name="Chat"
         component={Notifications}
         options={{
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('AddPickupdetails')}
-              style={{paddingLeft: 10}}>
-              <MaterialIcons
-                name="keyboard-backspace"
-                size={30}
-                color={colors.text}
-              />
-            </TouchableOpacity>
-          ),
           headerTitle: 'Notifications',
           headerTitleStyle: {
             fontFamily: 'Montserrat-SemiBold',
@@ -70,7 +59,7 @@ const PickupBottomNav = ({navigation}) => {
           tabBarIcon: ({focused}) => (
             <Ionicons
               name="chatbox-ellipses-outline"
-              size={25}
+              size={22}
               color={focused ? '#FF0058' : '#B5B3B2'}
             />
           ),
@@ -85,7 +74,7 @@ const PickupBottomNav = ({navigation}) => {
           tabBarIcon: ({focused}) => (
             <Feather
               name="package"
-              size={25}
+              size={22}
               color={focused ? '#FF0058' : '#B5B3B2'}
             />
           ),
@@ -100,7 +89,7 @@ const PickupBottomNav = ({navigation}) => {
           tabBarIcon: ({focused}) => (
             <Ionicons
               name="timer-outline"
-              size={25}
+              size={22}
               color={focused ? '#FF0058' : '#B5B3B2'}
             />
           ),
@@ -113,7 +102,7 @@ const PickupBottomNav = ({navigation}) => {
         options={{
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => navigation.navigate('Settings')}
+            onPress={() => navigation.goBack()}
               style={{paddingLeft: 10}}>
               <MaterialIcons
                 name="keyboard-backspace"
@@ -137,7 +126,7 @@ const PickupBottomNav = ({navigation}) => {
           tabBarIcon: ({focused}) => (
             <AntDesign
               name="user"
-              size={25}
+              size={20}
               color={focused ? '#FF0058' : '#B5B3B2'}
             />
           ),

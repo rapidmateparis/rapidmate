@@ -216,8 +216,8 @@ const PickupSignup = ({navigation}) => {
               )}
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('PickupBottomNav')}
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('PickupTakeSelfie')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
