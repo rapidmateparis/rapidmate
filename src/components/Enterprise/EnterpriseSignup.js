@@ -71,7 +71,7 @@ const EnterpriseSignup = ({navigation}) => {
               deliveries
             </Text>
           </View>
-          <Image source={require('../../image/home.png')} />
+          <Image style={{width: 45, height: 45,}} source={require('../../image/home.png')} />
         </View>
         <View style={styles.logFormView}>
           <View

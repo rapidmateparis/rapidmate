@@ -114,7 +114,7 @@ const EnterpriseDeliveryboyReady = ({navigation}) => {
 
         <TouchableOpacity onPress={() => navigation.navigate('EnterprisesActiveDeliveries')} style={styles.activeDeliveries}>
           <View style={styles.activeCount}>
-            <Image source={require('../../image/ExpressPackage.png')} />
+            <Image style={{width: 50, height: 30,}} source={require('../../image/ExpressPackage.png')} />
             <Text style={styles.textActiveDeliveries}>
               Active deliveries <Text>(02)</Text>
             </Text>
@@ -126,7 +126,7 @@ const EnterpriseDeliveryboyReady = ({navigation}) => {
         onPress={() => navigation.navigate('')}
           style={styles.requstDeliveryBtn}>
           <View style={styles.activeCount}>
-            <Image source={require('../../image/ExpressPackage.png')} />
+            <Image style={{width: 50, height: 30,}} source={require('../../image/ExpressPackage.png')} />
             <Text style={styles.textActiveDeliveries}>
               Request new delivery
             </Text>

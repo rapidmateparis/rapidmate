@@ -28,7 +28,7 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
         </View>
 
         <View style={styles.packageCard}>
-          <Image source={require('../../image/Pickup-Package-Icon.png')} />
+          <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Pickup 1 information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
@@ -39,7 +39,7 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
         </View>
 
         <View style={styles.packageCard}>
-          <Image source={require('../../image/package-img.png')} />
+          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off 1 information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
@@ -50,7 +50,7 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
         </View>
 
         <View style={styles.packageCard}>
-          <Image source={require('../../image/Pickup-Package-Icon.png')} />
+          <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Pickup 2 information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
@@ -61,7 +61,7 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
         </View>
 
         <View style={styles.packageCard}>
-          <Image source={require('../../image/package-img.png')} />
+          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off 2 information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
@@ -359,6 +359,10 @@ const styles = StyleSheet.create({
     elevation: 0.5, // for Android
     marginBottom: 20,
     marginTop: 0,
+  },
+  packageManager: {
+    width: 30,
+    height: 30,
   },
 });
 

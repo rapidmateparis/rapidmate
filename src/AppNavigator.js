@@ -100,7 +100,6 @@ const AppNavigator = () => {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
-    console.log('demosdfh___');
     setModalVisible(!isModalVisible);
   };
 
@@ -194,7 +193,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -216,7 +215,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -238,7 +237,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -260,7 +259,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -282,7 +281,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -313,7 +312,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -342,7 +341,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -371,7 +370,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -400,7 +399,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -429,7 +428,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -467,7 +466,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -505,7 +504,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -533,7 +532,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -561,7 +560,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -589,7 +588,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -637,7 +636,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -761,7 +760,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -817,7 +816,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -854,7 +853,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -891,7 +890,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -933,7 +932,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -975,7 +974,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1012,7 +1011,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1049,7 +1048,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1369,7 +1368,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1398,7 +1397,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1427,7 +1426,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1456,7 +1455,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1547,7 +1546,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1576,7 +1575,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1613,7 +1612,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1655,7 +1654,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1684,7 +1683,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1713,7 +1712,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1742,7 +1741,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>
@@ -1771,7 +1770,7 @@ const AppNavigator = () => {
                   style={{paddingLeft: 10}}>
                   <MaterialIcons
                     name="keyboard-backspace"
-                    size={30}
+                    size={25}
                     color={colors.text}
                   />
                 </TouchableOpacity>

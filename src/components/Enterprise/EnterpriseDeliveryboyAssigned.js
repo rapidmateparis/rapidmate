@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 100,
   },
   buttonText: {
     fontSize: 14,

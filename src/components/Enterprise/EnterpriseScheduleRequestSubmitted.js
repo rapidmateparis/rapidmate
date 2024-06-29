@@ -106,6 +106,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
   },
+  loaderMap: {
+    width: 100,
+    height: 180,
+  },
 });
 
 export default EnterpriseScheduleRequestSubmitted;

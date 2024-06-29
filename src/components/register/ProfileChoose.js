@@ -39,7 +39,7 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image source={require('../../image/home.png')} />
+                <Image style={{width: 40, height: 40,}} source={require('../../image/home.png')} />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={[styles.roleTypeText, {color: colors.text}]}>
@@ -85,7 +85,7 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image source={require('../../image/MapWithLocation.png')} />
+                <Image style={{width: 40, height: 45,}} source={require('../../image/location-map.png')} />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={[styles.roleTypeText, {color: colors.text}]}>
@@ -128,7 +128,7 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image source={require('../../image/Deliveryboy1x.png')} />
+                <Image style={{width: 30, height: 45,}} source={require('../../image/DeliveryBoy-Icon.png')} />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={styles.roleTypeText}>Delivery boy</Text>
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '40%',
+    marginTop: '45%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     width: '100%',
-    marginTop: '40%',
+    marginTop: '45%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',

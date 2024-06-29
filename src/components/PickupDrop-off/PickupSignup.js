@@ -61,7 +61,7 @@ const PickupSignup = ({navigation}) => {
               the app.
             </Text>
           </View>
-          <Image source={require('../../image/location-map.png')} />
+          <Image style={{width: 40, height: 40,}} source={require('../../image/location-map.png')} />
         </View>
         <View style={styles.logFormView}>
           <View style={styles.textInputDiv}>

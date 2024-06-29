@@ -92,7 +92,9 @@ const DeliveryPackageRequest = ({navigation}) => {
               </View>
             </View>
           </View>
-          <SwipeButtonComponent />
+          <View style={{marginBottom: 40,}}>
+            <SwipeButtonComponent />
+          </View>
         </ImageBackground>
       </View>
     </ScrollView>

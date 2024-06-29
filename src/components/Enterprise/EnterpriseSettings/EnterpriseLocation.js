@@ -25,7 +25,7 @@ const EnterpriseLocation = ({navigation}) => {
           </View>
 
           <View style={styles.addressCard}>
-            <Image source={require('../../../image/home.png')} />
+            <Image style={styles.companyImga} source={require('../../../image/home.png')} />
 
             <View style={{flex: 1, marginLeft: 8}}>
               <Text style={styles.franchiseLocations}>
@@ -48,7 +48,7 @@ const EnterpriseLocation = ({navigation}) => {
           </View>
 
           <View style={styles.addressCard}>
-            <Image source={require('../../../image/home.png')} />
+            <Image style={styles.companyImga} source={require('../../../image/home.png')} />
 
             <View style={{flex: 1, marginLeft: 8}}>
               <Text style={styles.franchiseLocations}>
@@ -139,6 +139,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
+  },
+  companyImga: {
+    width: 30,
+    height: 30,
   },
 });
 

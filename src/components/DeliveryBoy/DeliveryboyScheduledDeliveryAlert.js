@@ -78,7 +78,9 @@ const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
               </View>
             </View>
           </View>
-          <ScheduledDeliverySwipe />
+          <View style={{marginBottom: 40,}}>
+            <ScheduledDeliverySwipe />
+          </View>
         </ImageBackground>
       </View>
     </ScrollView>

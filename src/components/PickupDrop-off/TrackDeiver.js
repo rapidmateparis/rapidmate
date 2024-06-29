@@ -187,8 +187,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5,
-    marginBottom: 5,
-    marginTop: 5,
+    marginBottom: 15,
+    marginTop: 15,
   },
   driverName: {
     fontSize: 14,

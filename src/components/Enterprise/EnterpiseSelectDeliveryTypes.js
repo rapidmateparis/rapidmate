@@ -152,13 +152,19 @@ const EnterpiseSelectDeliveryTypes = ({navigation}) => {
             />
             <Text style={styles.paymentPlateform}>Cycle</Text>
           </View>
-          <Image source={require('../../image/Cycle-Right1x.png')} />
+          <Image
+            style={styles.cycle}
+            source={require('../../image/Cycle-Right1x.png')}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[
             styles.addressCard,
-            selectedVehicle === 'Scooter' && {borderColor: colors.secondary, opacity: 1,},
+            selectedVehicle === 'Scooter' && {
+              borderColor: colors.secondary,
+              opacity: 1,
+            },
           ]}>
           <View style={styles.vihicleCards}>
             <FontAwesome
@@ -172,7 +178,7 @@ const EnterpiseSelectDeliveryTypes = ({navigation}) => {
             />
             <Text style={styles.paymentPlateform}>Scooter</Text>
           </View>
-          <Image source={require('../../image/Scooter-Right1x.png')} />
+          <Image style={styles.scooter} source={require('../../image/Scooter-Right1x.png')} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.addressCard}>
@@ -184,7 +190,7 @@ const EnterpiseSelectDeliveryTypes = ({navigation}) => {
             />
             <Text style={styles.paymentPlateform}>Car</Text>
           </View>
-          <Image source={require('../../image/Car-Right1x.png')} />
+          <Image style={styles.car} source={require('../../image/Car-Right1x.png')} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.addressCard}>
@@ -196,7 +202,7 @@ const EnterpiseSelectDeliveryTypes = ({navigation}) => {
             />
             <Text style={styles.paymentPlateform}>Van</Text>
           </View>
-          <Image source={require('../../image/Van-Right1x.png')} />
+          <Image style={styles.van} source={require('../../image/Van-Right1x.png')} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.addressCard}>
@@ -210,7 +216,7 @@ const EnterpiseSelectDeliveryTypes = ({navigation}) => {
             />
             <Text style={styles.paymentPlateform}>Pickup</Text>
           </View>
-          <Image source={require('../../image/Pickup-Right1x.png')} />
+          <Image style={styles.pickup} source={require('../../image/Pickup-Right1x.png')} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.addressCard}>
@@ -224,7 +230,7 @@ const EnterpiseSelectDeliveryTypes = ({navigation}) => {
             />
             <Text style={styles.paymentPlateform}>Truck</Text>
           </View>
-          <Image source={require('../../image/Truck-Right1x.png')} />
+          <Image style={styles.truck} source={require('../../image/Truck-Right1x.png')} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.addressCard}>
@@ -238,7 +244,7 @@ const EnterpiseSelectDeliveryTypes = ({navigation}) => {
             />
             <Text style={styles.paymentPlateform}>Other</Text>
           </View>
-          <Image source={require('../../image/Package-Right1x.png')} />
+          <Image style={styles.package} source={require('../../image/Package-Right1x.png')} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -326,7 +332,35 @@ const styles = StyleSheet.create({
   },
   disabledCard: {
     opacity: 1,
-  }
+  },
+  cycle: {
+    width: 32,
+    height: 34,
+  },
+  scooter: {
+    width: 32,
+    height: 34,
+  },
+  car: {
+    width: 41,
+    height: 17,
+  },
+  van: {
+    width: 48,
+    height: 22,
+  },
+  pickup: {
+    width: 42,
+    height: 27,
+  },
+  truck: {
+    width: 56,
+    height: 26,
+  },
+  package: {
+    width: 32,
+    height: 32,
+  },
 });
 
 export default EnterpiseSelectDeliveryTypes;

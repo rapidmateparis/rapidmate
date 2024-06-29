@@ -203,8 +203,8 @@ const styles = StyleSheet.create({
   mainBtnCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-   marginTop: '45%',
-   marginBottom: 45,
+   marginTop: '50%',
+   marginBottom: 80,
   },
   invoiceDownload: {
     flexDirection: 'row',

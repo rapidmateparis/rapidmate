@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 80,
     paddingVertical: 12,
     borderRadius: 5,
-    marginVertical: 30,
+    marginVertical: 60,
   },
   trackText: {
     color: colors.text,

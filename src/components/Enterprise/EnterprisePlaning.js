@@ -101,7 +101,7 @@ const EnterprisePlanning = ({navigation}) => {
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
           <View style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image style={styles.manageImages} source={require('../../image/Big-Package.png')} />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>

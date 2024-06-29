@@ -23,7 +23,7 @@ const EnterpriseAddNewLocation = ({navigation}) => {
         <View style={{paddingHorizontal: 15}}>
           <View style={styles.mainCardAddress}>
             <View style={styles.homeIconCard}>
-              <Image source={require('../../../image/Home2x.png')} />
+              <Image source={require('../../../image/home.png')} />
               <Image
                 style={styles.addAddress}
                 source={require('../../../image/plus-vector.png')}
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   addAddress: {
     position: 'absolute',
     bottom: -10,
-    left: 80,
+    left: 125,
   },
   homeIconCard: {
     position: 'relative',

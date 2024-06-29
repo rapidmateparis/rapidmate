@@ -10,39 +10,141 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../colors';
+import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
+import {
+  handleCameraLaunchFunction,
+  handleImageLibraryLaunchFunction,
+} from '../../utils/common';
 
 const EnterpriseListNewAd = ({navigation}) => {
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
+  const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
+  const [photoFileName, setPhotoFileName] = useState('');
+  const [photoUri, setPhotoUri] = useState(null);
+  const [largePhotoUri, setLargePhotoUri] = useState(null);
+  const [isModalVisibleLargePhoto, setModalVisibleLargePhoto] = useState(false);
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
   };
 
-  return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15}}>
-        <View>
-          <TouchableOpacity style={styles.uploadIconCard}>
-            <Image source={require('../../image/upload-image-icon.png')} />
-            <Text style={styles.uploadTextUpper}>Upload icon</Text>
-          </TouchableOpacity>
-        </View>
+  const toggleModal = (type) => {
+    if (type === 'camera') {
+      setModalVisibleCamera(!isModalVisibleCamera);
+    } else if (type === 'largePhoto') {
+      setModalVisibleLargePhoto(!isModalVisibleLargePhoto);
+    }
+  };
 
-        <View>
-          <TouchableOpacity style={styles.uploadLargePhoto}>
-            <Image source={require('../../image/upload-image-icon.png')} />
-            <View>
-              <Text style={styles.largePhotoText}>Upload large photo</Text>
-              <Text style={styles.uploadSubtitle}>
-                Upload a photo which will be shown when user clicks your ads
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+  const handlePhotoOpenClose = (visible, type) => {
+    if (type === 'camera') {
+      setModalVisibleCamera(!visible);
+    } else if (type === 'largePhoto') {
+      setModalVisibleLargePhoto(!visible);
+    }
+  };
+
+  const handleCameraLaunch = async () => {
+    toggleModal('camera'); // Close camera modal
+    try {
+      let cameraData = await handleCameraLaunchFunction();
+      if (cameraData.status === 'success') {
+        setPhotoFileName(getFileName(cameraData.data.uri));
+        setPhotoUri(cameraData.data.uri);
+      }
+    } catch (error) {
+      console.error('Error while launching camera:', error);
+      // Handle error
+    }
+  };
+
+  const handleImageLibraryLaunch = async () => {
+    toggleModal('camera'); // Close camera modal
+    try {
+      let imageData = await handleImageLibraryLaunchFunction();
+      if (imageData.status === 'success') {
+        setPhotoFileName(getFileName(imageData.data.uri));
+        setPhotoUri(imageData.data.uri);
+      }
+    } catch (error) {
+      console.error('Error while selecting image from library:', error);
+      // Handle error
+    }
+  };
+
+  const handleLargePhotoCameraLaunch = async () => {
+    toggleModal('largePhoto'); // Close large photo modal
+    try {
+      let cameraData = await handleCameraLaunchFunction();
+      if (cameraData.status === 'success') {
+        setLargePhotoUri(cameraData.data.uri);
+      }
+    } catch (error) {
+      console.error('Error while launching camera for large photo:', error);
+      // Handle error
+    }
+  };
+
+  const handleLargePhotoImageLibraryLaunch = async () => {
+    toggleModal('largePhoto'); // Close large photo modal
+    try {
+      let imageData = await handleImageLibraryLaunchFunction();
+      if (imageData.status === 'success') {
+        setLargePhotoUri(imageData.data.uri);
+      }
+    } catch (error) {
+      console.error('Error while selecting image from library for large photo:', error);
+      // Handle error
+    }
+  };
+
+  const getFileName = (uri) => {
+    if (uri) {
+      const path = uri.split('/');
+      return path[path.length - 1];
+    }
+    return '';
+  };
+
+  return (
+    <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
+      <View style={{paddingHorizontal: 15}}>
+        <TouchableOpacity
+          onPress={() => toggleModal('camera')}
+          style={[
+            styles.uploadIconCard,
+            photoUri && styles.uploadIconCardClicked,
+          ]}>
+          <Image
+            source={
+              photoUri
+                ? {uri: photoUri}
+                : require('../../image/upload-image-icon.png')
+            }
+            style={[styles.uploadIcon, photoUri && styles.uploadsmallIconClicked]}
+          />
+          {!photoUri && <Text style={styles.uploadTextUpper}>Upload icon</Text>}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => toggleModal('largePhoto')}
+          style={[
+            styles.uploadLargePhoto,
+            largePhotoUri && styles.uploadIconCardClicked,
+          ]}>
+          <Image
+            source={
+              largePhotoUri
+                ? {uri: largePhotoUri}
+                : require('../../image/upload-image-icon.png')
+            }
+            style={[styles.uploadIcon, largePhotoUri && styles.uploadIconClicked]}
+          />
+          {!largePhotoUri && <Text style={styles.uploadTextUpper}>Upload large photo</Text>}
+        </TouchableOpacity>
 
         <View style={styles.textInputDiv}>
           <Text style={styles.formTitle}>Title</Text>
@@ -60,7 +162,7 @@ const EnterpriseListNewAd = ({navigation}) => {
           <TextInput
             style={styles.inputTextStyle}
             multiline={true}
-            numberOfLines={4} // Set the number of lines you want to display initially
+            numberOfLines={4}
             placeholder="Type here.."
             placeholderTextColor="#999"
             textAlignVertical="top"
@@ -93,21 +195,34 @@ const EnterpriseListNewAd = ({navigation}) => {
           </View>
         </View>
       </View>
+
       <View style={styles.buttonCard}>
         <TouchableOpacity style={styles.logbutton}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('DeliveryboyScheduledDeliveryAlert')
-          }
           style={styles.saveBTn}>
           <Text style={styles.okButton}>Submit</Text>
         </TouchableOpacity>
       </View>
+
+      <ChoosePhotoByCameraGallaryModal
+        visible={isModalVisibleCamera}
+        handlePhotoOpenClose={handlePhotoOpenClose}
+        handleCameraLaunch={handleCameraLaunch}
+        handleImageLibraryLaunch={handleImageLibraryLaunch}
+      />
+
+      <ChoosePhotoByCameraGallaryModal
+        visible={isModalVisibleLargePhoto}
+        handlePhotoOpenClose={handlePhotoOpenClose}
+        handleCameraLaunch={handleLargePhotoCameraLaunch}
+        handleImageLibraryLaunch={handleLargePhotoImageLibraryLaunch}
+      />
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   profileCard: {
@@ -277,6 +392,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 15,
     backgroundColor: colors.primary,
+  },
+  uploadIcon: {},
+  uploadIconClicked: {
+    width: 300,
+    height: 300,
+  },
+  uploadIconCardClicked: {
+    borderWidth: 0,
+    marginVertical: 20,
+  },
+  uploadsmallIconClicked: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 });
 

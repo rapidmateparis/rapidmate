@@ -14,10 +14,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
 import SwipeButtonComponent from '../commonComponent/SwipeButton';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const NewDeliveryPackageRequest = ({navigation}) => {
-
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View>
@@ -68,7 +67,9 @@ const NewDeliveryPackageRequest = ({navigation}) => {
               </View>
             </View>
           </View>
-          <SwipeButtonComponent />
+          <View style={{marginBottom: 40,}}>
+            <SwipeButtonComponent />
+          </View>
         </ImageBackground>
       </View>
     </ScrollView>

@@ -18,7 +18,7 @@ const AddVehicle = ({ navigation }) => {
     setSelectedOption(option);
   };
 
-  const renderCard = (option, iconSource, title) => {
+  const renderCard = (option, iconSource, title, imageStyle) => {
     const isSelected = selectedOption === option;
 
     return (
@@ -32,7 +32,7 @@ const AddVehicle = ({ navigation }) => {
           onPress={() => handleOptionSelect(option)}
           style={[styles.addressCard, isSelected && styles.selectedCard]}
         >
-          <Image source={iconSource} />
+          <Image source={iconSource} style={[styles.cardImage, imageStyle]} />
           <View style={{ marginLeft: 10, flex: 1 }}>
             <Text style={styles.paymentPlateform}>{title}</Text>
           </View>
@@ -49,13 +49,14 @@ const AddVehicle = ({ navigation }) => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
       <View style={{ paddingHorizontal: 15 }}>
-        {renderCard('Cycle', require('../../image/Cycle-Icon.png'), 'Cycle')}
-        {renderCard('Scooter', require('../../image/Scooter-Icon.png'), 'Scooter')}
-        {renderCard('Car', require('../../image/Car-Icon.png'), 'Car')}
-        {renderCard('Van', require('../../image/Van-Icon.png'), 'Van')}
-        {renderCard('Pickup', require('../../image/Pickup-Icon.png'), 'Pickup')}
-        {renderCard('Truck', require('../../image/Truck-Icon.png'), 'Truck')}
-        {renderCard('Other', require('../../image/Package-Icon.png'), 'Other')}
+        {renderCard('Cycle', require('../../image/Cycle-Icon.png'), 'Cycle', styles.cycleImage)}
+        {renderCard('Scooter', require('../../image/Scooter-Icon.png'), 'Scooter', styles.scooterImage)}
+        {renderCard('Car', require('../../image/Car-Icon.png'), 'Car', styles.carImage)}
+        {renderCard('Partner', require('../../image/Partner-icon.png'), 'Partner', styles.partnerImage)}
+        {renderCard('Van', require('../../image/Van-Icon.png'), 'Van', styles.vanImage)}
+        {renderCard('Pickup', require('../../image/Pickup-Icon.png'), 'Pickup', styles.pickupImage)}
+        {renderCard('Truck', require('../../image/Truck-Icon.png'), 'Truck', styles.truckImage)}
+        {renderCard('Other', require('../../image/Big-Package.png'), 'Other', styles.otherImage)}
 
         <TouchableOpacity
           onPress={() => navigation.navigate('AddPickupVehicle')}
@@ -113,6 +114,42 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+  },
+  cardImage: {
+    width: 40,
+    height: 40,
+  },
+  cycleImage: {
+    width: 40,
+    height: 43,
+  },
+  scooterImage: {
+    width: 40,
+    height: 40,
+  },
+  carImage: {
+    width: 52,
+    height: 22,
+  },
+  partnerImage: {
+    width: 52,
+    height: 22,
+  },
+  vanImage: {
+    width: 60,
+    height: 28,
+  },
+  pickupImage: {
+    width: 52,
+    height: 34,
+  },
+  truckImage: {
+    width: 70,
+    height: 32,
+  },
+  otherImage: {
+    width: 38,
+    height: 38,
   },
 });
 

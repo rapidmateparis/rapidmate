@@ -172,7 +172,10 @@ const PastList = ({navigation}) => {
             onPress={() => navigation.navigate('DeliveryDetails')}
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -202,7 +205,10 @@ const PastList = ({navigation}) => {
 
           <View style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -232,7 +238,10 @@ const PastList = ({navigation}) => {
 
           <View style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -467,6 +476,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  packageManage: {
+    width: 25,
+    height: 25,
   },
 });
 

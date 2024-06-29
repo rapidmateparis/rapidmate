@@ -145,6 +145,7 @@ const DeliveryboyShiftDetails = ({navigation}) => {
             </View>
             <View>
               <Image
+              style={{width: 45, height: 30,}}
                 source={require('../../image/Delivery-PickupTruck-Icon.png')}
               />
             </View>

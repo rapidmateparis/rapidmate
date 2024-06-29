@@ -35,9 +35,9 @@ const AddressBook = ({navigation}) => {
           </View>
           <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
-              style={{marginTop: 15}}
+              style={{marginTop: 5}}
               name="edit-2"
-              size={20}
+              size={15}
               color="#000"
             />
           </TouchableOpacity>
@@ -53,9 +53,9 @@ const AddressBook = ({navigation}) => {
           </View>
           <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
-              style={{marginTop: 15}}
+              style={{marginTop: 5}}
               name="edit-2"
-              size={20}
+              size={15}
               color="#000"
             />
           </TouchableOpacity>
@@ -71,9 +71,9 @@ const AddressBook = ({navigation}) => {
           </View>
           <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
-              style={{marginTop: 15}}
+              style={{marginTop: 5}}
               name="edit-2"
-              size={20}
+              size={15}
               color="#000"
             />
           </TouchableOpacity>
@@ -89,9 +89,9 @@ const AddressBook = ({navigation}) => {
           </View>
           <TouchableOpacity onPress={() => toggleModal()}>
             <Feather
-              style={{marginTop: 15}}
+              style={{marginTop: 5}}
               name="edit-2"
-              size={20}
+              size={15}
               color="#000"
             />
           </TouchableOpacity>

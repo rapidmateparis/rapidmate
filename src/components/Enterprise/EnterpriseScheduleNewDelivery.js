@@ -18,7 +18,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         <View>
           <View style={styles.scheduleboard}>
-            <Image source={require('../../image/ScheduleNewDelivery.png')} />
+            <Image style={{width: 212, height: 140,}} source={require('../../image/ScheduleNewDelivery.png')} />
           </View>
           <View style={styles.schedulecard}>
             <Text style={styles.scheduleTitle}>Schedule New Delivery</Text>
@@ -30,7 +30,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
 
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation')} style={styles.franchiseCard}>
-            <Image source={require('../../image/ExpressPackage.png')} />
+            <Image style={{width: 50, height: 30,}} source={require('../../image/ExpressPackage.png')} />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>One time delivery</Text>
               <Text style={styles.franchiseSubTitle}>Avail any service for fixed time and location</Text>
@@ -43,7 +43,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
 
         <View>
           <TouchableOpacity onPress={() => navigation.navigate('EnterpiseSelectDeliveryTypes')} style={styles.franchiseCard}>
-            <Image style={{width: 30, height: 30,marginLeft: 20,}} source={require('../../image/Big-Calender.png')} />
+            <Image style={{width: 30, height: 30, marginLeft: 20,}} source={require('../../image/Big-Calender.png')} />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>Multiple deliveries</Text>
               <Text style={styles.franchiseSubTitle}>Repeat single delivery for multiple days</Text>

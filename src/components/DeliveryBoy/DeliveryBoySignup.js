@@ -67,7 +67,7 @@ const DeliveryBoySignup = ({navigation}) => {
             </Text>
           </View>
           <View style={styles.profilePhotoCard}>
-            <Image source={require('../../image/DeliveryBoy-Icon.png')} />
+            <Image style={{width: 40, height: 60,}} source={require('../../image/DeliveryBoy-Icon.png')} />
           </View>
         </View>
         <View style={styles.logFormView}>

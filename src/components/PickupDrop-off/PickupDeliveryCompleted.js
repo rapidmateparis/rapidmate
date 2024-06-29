@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   mainBtnCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 20,
+    marginVertical: 40,
   },
   invoiceDownload: {
     flexDirection: 'row',
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     borderColor: colors.text,
     paddingVertical: 12,
     borderRadius: 10,
-    marginBottom: 25,
+    marginBottom: 35,
   },
 });
 

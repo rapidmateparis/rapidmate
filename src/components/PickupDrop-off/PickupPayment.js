@@ -19,7 +19,7 @@ const PickupPayment = ({navigation}) => {
         <View style={styles.pickupCard}>
           <View style={styles.semiTruckDetails}>
             <View style={{marginRight: 15}}>
-              <Image source={require('../../image/semi-truck-small.png')} />
+              <Image style={{width: 90, height: 70,}} source={require('../../image/semi-truck-small.png')} />
             </View>
             <View>
               <Text style={styles.vehicleName}>Order Summary</Text>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 50,
+    paddingBottom: 80,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

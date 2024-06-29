@@ -453,7 +453,7 @@ const EnterpriseShiftDeliverySchedule = ({navigation}) => {
         <TouchableOpacity
           onPress={() => navigation.navigate('EnterpriseSchedulePreview')}
           style={styles.saveBTn}>
-          <Text style={styles.okButton}>Save</Text>
+          <Text style={styles.okButton}>Preview</Text>
         </TouchableOpacity>
       </View>
     </>

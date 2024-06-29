@@ -52,7 +52,10 @@ const TodayList = ({navigation}) => {
             onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Scheduled on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -83,7 +86,6 @@ const TodayList = ({navigation}) => {
               <Text style={styles.valueMoney}>€34.00</Text>
             </View>
           </TouchableOpacity>
-          
         </View>
       </View>
     </ScrollView>
@@ -118,13 +120,18 @@ const PastList = ({navigation}) => {
           style={{
             paddingHorizontal: 15,
             paddingTop: 5,
-            backgroundColor: '#FBFAF5', 
+            backgroundColor: '#FBFAF5',
           }}>
-          <TouchableOpacity 
-            onPress={() => navigation.navigate('DeliveryboyMainDeliveryDetails')}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('DeliveryboyMainDeliveryDetails')
+            }
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Scheduled on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -208,7 +215,10 @@ const PastList = ({navigation}) => {
             onPress={() => navigation.navigate('NewDeliveryPackageRequest')}
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -244,7 +254,10 @@ const PastList = ({navigation}) => {
             onPress={() => navigation.navigate('DeliveryDetailsMultipleOrder')}
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -280,7 +293,10 @@ const PastList = ({navigation}) => {
             onPress={() => navigation.navigate('DeliveryboyShiftDetails')}
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -316,7 +332,10 @@ const PastList = ({navigation}) => {
             onPress={() => navigation.navigate('DeliveryboyShiftStaredRequest')}
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -352,7 +371,10 @@ const PastList = ({navigation}) => {
             onPress={() => navigation.navigate('DeliveryPackageRequest')}
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -390,7 +412,11 @@ const PastList = ({navigation}) => {
             }
             style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
+              
               <Text style={styles.deliveryTime}>
                 Delivered on Apr 19, 2024 at 11:30 AM
               </Text>
@@ -455,7 +481,7 @@ const DeliveryboyHistory = ({navigation}) => {
           <Text style={styles.headerText}>History</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}>
-            <AntDesign name="filter" size={30} color={colors.secondary} />
+            <AntDesign name="filter" size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
@@ -665,6 +691,10 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     width: 20,
     marginHorizontal: 5,
+  },
+  packageManage: {
+    width: 25,
+    height: 25,
   },
 });
 

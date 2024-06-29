@@ -36,7 +36,7 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.packageCard}>
           <View style={{width: '10%'}}>
-            <Image source={require('../../image/Pickup-Package-Icon.png')} />
+            <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
@@ -105,7 +105,7 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
 
         <View style={styles.packageCard}>
           <View style={{width: '10%'}}>
-            <Image source={require('../../image/Pickup-Package-Icon.png')} />
+            <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
@@ -174,7 +174,7 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
 
         <View style={styles.packageCard}>
           <View style={{width: '10%'}}>
-            <Image source={require('../../image/package-img.png')} />
+            <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
@@ -207,7 +207,7 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
 
         <View style={styles.packageCard}>
           <View style={{width: '10%'}}>
-            <Image source={require('../../image/package-img.png')} />
+            <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
@@ -262,6 +262,7 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
           </View>
           <View>
             <Image
+            style={{width: 55, height: 35,}}
               source={require('../../image/Delivery-PickupTruck-Icon.png')}
             />
           </View>
@@ -529,6 +530,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginVertical: 10,
+  },
+  packageManager: {
+    width: 30,
+    height: 30,
   },
 });
 
