@@ -13,7 +13,7 @@ import {colors} from '../../colors';
 
 const PickupFeedbackThanks = ({navigation}) => {
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
+    <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <ImageBackground
         style={{width: '100%', marginTop: '30%', paddingTop: '20%',}}
         source={require('../../image/DeliveryRequest-bg.png')}>
@@ -203,8 +203,8 @@ const styles = StyleSheet.create({
   mainBtnCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-   marginTop: '50%',
-   marginBottom: 80,
+   marginTop: '30%',
+   marginBottom: 150,
   },
   invoiceDownload: {
     flexDirection: 'row',

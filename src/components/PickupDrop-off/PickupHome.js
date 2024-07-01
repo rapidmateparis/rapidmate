@@ -54,13 +54,19 @@ const PickupHome = ({navigation}) => {
             </Text>
           </View>
           <View>
-            <Image style={{width: 70, height: 140,}} source={require('../../image/package-girl.png')} />
+            <Image
+              style={{width: 70, height: 140}}
+              source={require('../../image/package-girl.png')}
+            />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.requestPickup}>
           <View>
-            <Image style={{width: 78, height: 146,}} source={require('../../image/package-boy.png')} />
+            <Image
+              style={{width: 78, height: 146}}
+              source={require('../../image/package-boy.png')}
+            />
           </View>
           <View style={styles.pickcard}>
             <Text style={styles.packageRequst}>Request a Drop off</Text>
@@ -86,7 +92,10 @@ const PickupHome = ({navigation}) => {
             </View>
           </View>
           <View style={styles.packingCardImgas}>
-            <Image style={{width: 146, height: 112,}} source={require('../../image/package-packing.png')} />
+            <Image
+              style={{width: 146, height: 112}}
+              source={require('../../image/package-packing.png')}
+            />
             <Image
               style={styles.timingIcon}
               source={require('../../image/timing-icon.png')}
@@ -96,81 +105,20 @@ const PickupHome = ({navigation}) => {
 
         <TouchableOpacity style={styles.requestPickup}>
           <View>
-            <Image style={{width: 163, height: 132,}} source={require('../../image/PackageMove-img.png')} />
-          </View>
-          <View style={styles.pickcard}>
-            <Text style={styles.packageRequst}>Request a Mover</Text>
-            <Text style={styles.packageDiscription}>
-              Avail service of our professional packer & movers
-            </Text>
+            <View>
+              <Image
+                style={{width: 163, height: 132}}
+                source={require('../../image/PackageMove-img.png')}
+              />
+            </View>
+            <View style={{marginTop: 10,}}>
+              <Text style={styles.packageRequst}>Request a Mover</Text>
+              <Text style={styles.packageDiscription}>
+                Avail service of our professional packer & movers
+              </Text>
+            </View>
           </View>
         </TouchableOpacity>
-
-        {/* <View style={styles.recentlyInfo}>
-          <Text style={styles.deliveryRecently}>Recently delivered</Text>
-          <View style={styles.allinfoSee}>
-            <Text style={styles.seAllText}>See All</Text>
-            <AntDesign name="right" size={15} color="#000" />
-          </View>
-        </View> */}
-
-        {/* <ScrollView horizontal={true}>
-          <View style={styles.allDeleveryCard}>
-            <View style={styles.packageDetailCard}>
-              <View style={styles.packageHeader}>
-                <Image
-                  source={require('../../image/package-medium-icon.png')}
-                />
-                <Text style={styles.deliveryTime}>Delivered 2hrs ago</Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  From <Text style={styles.Location}>North Street, ABC</Text>
-                </Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-                </Text>
-              </View>
-
-              <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Order ID: 98237469</Text>
-              </View>
-            </View>
-
-            <View style={styles.packageDetailCard}>
-              <View style={styles.packageHeader}>
-                <Image
-                  source={require('../../image/package-medium-icon.png')}
-                />
-                <Text style={styles.deliveryTime}>Delivered 2hrs ago</Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  From <Text style={styles.Location}>North Street, ABC</Text>
-                </Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-                </Text>
-              </View>
-
-              <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Order ID: 98237469</Text>
-              </View>
-            </View>
-          </View>
-        </ScrollView> */}
       </View>
     </ScrollView>
   );

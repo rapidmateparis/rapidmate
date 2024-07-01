@@ -24,7 +24,9 @@ const DeliveryPreferance = ({navigation}) => {
         <View style={{marginTop: 35}}>
           <TouchableOpacity
             style={styles.profileCard}
-            onPress={() => handleOptionSelect('ShiftWise')}>
+            onPress={() => {
+              handleOptionSelect('ShiftWise');
+            }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
               start={{x: 1, y: 0}}
@@ -43,26 +45,27 @@ const DeliveryPreferance = ({navigation}) => {
                   source={require('../../../image/Calender-icon2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Shift wise
-                  </Text>
+                  <Text style={styles.roleTypeText}>Shift wise</Text>
                   <Text style={styles.roleText}>
                     You will set your availability for a time period on select
                     days
                   </Text>
                 </View>
+                {selectedOption !== 'ShiftWise' && (
+                  <View style={styles.cricleRound} />
+                )}
                 {selectedOption === 'ShiftWise' && (
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 25,
-                      height: 25,
+                      width: 30,
+                      height: 30,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={18}
+                      size={24}
                       color={colors.white}
                     />
                   </View>
@@ -94,25 +97,26 @@ const DeliveryPreferance = ({navigation}) => {
                   source={require('../../../image/Location-Icon2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Pickup & Drop-off
-                  </Text>
+                  <Text style={styles.roleTypeText}>Pickup & Drop-off</Text>
                   <Text style={styles.roleText}>
                     Accept deliveries any time of the day
                   </Text>
                 </View>
+                {selectedOption !== 'PickupDrop' && (
+                  <View style={styles.cricleRound} />
+                )}
                 {selectedOption === 'PickupDrop' && (
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 25,
-                      height: 25,
+                      width: 30,
+                      height: 30,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={18}
+                      size={24}
                       color={colors.white}
                     />
                   </View>
@@ -123,7 +127,9 @@ const DeliveryPreferance = ({navigation}) => {
 
           <TouchableOpacity
             style={styles.profileCard}
-            onPress={() => handleOptionSelect('Both')}>
+            onPress={() => {
+              handleOptionSelect('Both');
+            }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
               start={{x: 1, y: 0}}
@@ -142,25 +148,26 @@ const DeliveryPreferance = ({navigation}) => {
                   source={require('../../../image/Calender-Both2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Both
-                  </Text>
+                  <Text style={styles.roleTypeText}>Both</Text>
                   <Text style={styles.roleText}>
                     Work as shift wise and pickup/dropoff both
                   </Text>
                 </View>
+                {selectedOption !== 'Both' && (
+                  <View style={styles.cricleRound} />
+                )}
                 {selectedOption === 'Both' && (
                   <View
                     style={{
                       backgroundColor: colors.primary,
-                      width: 25,
-                      height: 25,
+                      width: 30,
+                      height: 30,
                       padding: 3,
                       borderRadius: 15,
                     }}>
                     <MaterialIcons
                       name="check"
-                      size={18}
+                      size={24}
                       color={colors.white}
                     />
                   </View>
@@ -192,7 +199,7 @@ const DeliveryPreferance = ({navigation}) => {
               color: colors.text,
               fontFamily: 'Montserrat-Medium',
             }}>
-            Continue
+            Save
           </Text>
         </TouchableOpacity>
       </View>
@@ -247,23 +254,38 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '40%',
+    marginTop: '20%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 150,
   },
   profileCard: {
     marginBottom: 10,
   },
   disabledButton: {
     width: '100%',
-    marginTop: '40%',
+    marginTop: '20%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FCF9EA',
+    marginBottom: 150,
+  },
+  roleTypeText: {
+    fontSize: 18,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  cricleRound: {
+    width: 30,
+    height: 30,
+    padding: 3,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.subText,
   },
 });
 

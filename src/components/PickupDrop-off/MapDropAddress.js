@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 5,
     position: 'absolute',
-    bottom: 20,
+    bottom: 30,
     left: '18%',
     transform: [{translateX: -50}],
   },

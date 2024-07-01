@@ -19,7 +19,10 @@ const PickupPayment = ({navigation}) => {
         <View style={styles.pickupCard}>
           <View style={styles.semiTruckDetails}>
             <View style={{marginRight: 15}}>
-              <Image style={{width: 90, height: 70,}} source={require('../../image/semi-truck-small.png')} />
+              <Image
+                style={{width: 90, height: 70}}
+                source={require('../../image/semi-truck-small.png')}
+              />
             </View>
             <View>
               <Text style={styles.vehicleName}>Order Summary</Text>
@@ -79,14 +82,15 @@ const PickupPayment = ({navigation}) => {
             20% off on city bank credit card!
           </Text>
         </View>
-      </View>
-      <View style={styles.ProceedCard}>
-        <Text style={styles.proceedPayment}>
-          <Text>€</Text>34.00
-        </Text>
-        <TouchableOpacity  onPress={() => navigation.navigate('LoaderForDriver')}>
-          <Text style={styles.PayText}>Proceed to pay</Text>
-        </TouchableOpacity>
+        <View style={styles.ProceedCard}>
+          <Text style={styles.proceedPayment}>
+            <Text>€</Text>34.00
+          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('LoaderForDriver')}>
+            <Text style={styles.PayText}>Proceed to pay</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -250,11 +254,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 80,
+    paddingBottom: 20,
+    borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '70%',
+    marginTop: '50%',
   },
   PayText: {
     backgroundColor: '#FFFFFF',

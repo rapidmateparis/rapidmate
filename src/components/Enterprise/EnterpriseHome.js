@@ -147,6 +147,7 @@ const EnterpriseHome = ({navigation}) => {
                 setDropdownStreet(item.value);
                 setIsFocus(false);
               }}
+              placeholderStyle={styles.placeholderStyle}
             />
           </View>
 
@@ -166,6 +167,7 @@ const EnterpriseHome = ({navigation}) => {
                 setDropdownWeek(item.value);
                 setIsFocus(false);
               }}
+              placeholderStyle={styles.placeholderStyle}
             />
           </View>
         </View>
@@ -597,6 +599,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
+  },
+  placeholderStyle: {
+    fontSize: 12,
+    color: colors.text,
+    fontFamily: 'Montserrat-Regular', 
   },
 });
 

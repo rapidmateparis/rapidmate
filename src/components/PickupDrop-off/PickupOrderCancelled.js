@@ -14,14 +14,14 @@ import {colors} from '../../colors';
 const PickupOrderCancelled = ({navigation}) => {
   return (
     <ScrollView
-      style={{width: '100%', backgroundColor: '#FBFAF5'}}
+      style={{width: '100%', height: '100%', backgroundColor: '#FBFAF5'}}
       contentContainerStyle={styles.scrollViewContainer}>
       <View
         style={{
           width: 350,
           height: 500,
           position: 'relative',
-          marginVertical: 40,
+          marginVertical: 30,
         }}>
         <View style={styles.container}>
           <Image
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '40%',
-    marginTop: '15%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -119,7 +118,6 @@ const styles = StyleSheet.create({
   },
   goHomeBtn: {
     width: '40%',
-    marginTop: '15%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',

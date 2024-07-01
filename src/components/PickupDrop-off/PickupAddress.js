@@ -125,11 +125,11 @@ const PickupAddress = ({ navigation }) => {
             </ScrollView>
           </View>
         </View>
-      </ScrollView>
-      <TouchableOpacity onPress={() => navigation.navigate('AddPickupdetails')} style={styles.continueBtn}>
+        <TouchableOpacity onPress={() => navigation.navigate('AddPickupdetails')} style={styles.continueBtn}>
         <Text style={styles.continueText}>Continue to order details</Text>
         <AntDesign name="arrowright" size={20} color="#000000" />
       </TouchableOpacity>
+      </ScrollView>
       <VehicleDimensionsModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} vehicleDetails={vehicleDetails} />
     </View>
   );
@@ -211,8 +211,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.primary,
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 40,
+    paddingTop: 15,
+    paddingBottom: 15,
+    borderRadius: 10,
+    marginBottom: 10,
   },
   continueText: {
     flex: 1,

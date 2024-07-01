@@ -22,7 +22,7 @@ const DeliveryboyThanksPage = ({navigation}) => {
       <View
         style={{
           width: 350,
-          height: 500,
+          height: 450,
           position: 'relative',
           marginVertical: 40,
         }}>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '90%',
-    marginTop: '15%',
+    marginTop: '10%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',

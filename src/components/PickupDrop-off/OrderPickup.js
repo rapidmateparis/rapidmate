@@ -63,7 +63,7 @@ const OrderPickup = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
+    <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <View>
         <View>
           <Text style={styles.mainTitle}>
@@ -119,7 +119,7 @@ const OrderPickup = ({navigation}) => {
                 <Image style={styles.cloud1} source={require('../../image/Cloud-Graphic.png')}/>
                 <Image style={styles.cloud2} source={require('../../image/Cloud-Graphic.png')}/>
             </View>
-          <View style={{paddingTop: '20%', paddingHorizontal: 20}}>
+          <View style={{paddingTop: '15%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Pickup from</Text>
@@ -273,7 +273,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 80,
     paddingVertical: 12,
     borderRadius: 5,
-    marginVertical: 50,
+    marginTop: 20,
+    marginBottom: 80,
   },
   trackText: {
     color: colors.text,

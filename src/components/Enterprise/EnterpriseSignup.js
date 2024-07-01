@@ -71,7 +71,10 @@ const EnterpriseSignup = ({navigation}) => {
               deliveries
             </Text>
           </View>
-          <Image style={{width: 45, height: 45,}} source={require('../../image/home.png')} />
+          <Image
+            style={{width: 45, height: 45}}
+            source={require('../../image/home.png')}
+          />
         </View>
         <View style={styles.logFormView}>
           <View
@@ -81,11 +84,7 @@ const EnterpriseSignup = ({navigation}) => {
               justifyContent: 'space-between',
             }}>
             <View style={styles.nameInputDiv}>
-              <AntDesign
-                name="user"
-                size={18}
-                color="#131314"
-              />
+              <AntDesign name="user" size={18} color="#131314" />
               <TextInput
                 style={styles.loginput}
                 placeholder="First Name"
@@ -96,11 +95,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
 
             <View style={styles.nameInputDiv}>
-              <AntDesign
-                name="user"
-                size={18}
-                color="#131314"
-              />
+              <AntDesign name="user" size={18} color="#131314" />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                 placeholder="Last Name"
@@ -111,11 +106,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
           </View>
           <View style={styles.textInputDiv}>
-            <AntDesign
-              name="mail"
-              size={18}
-              color="#131314"
-            />
+            <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Email"
@@ -200,11 +191,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           <View style={styles.textInputDiv}>
-            <FontAwesome6
-              name="warehouse"
-              size={15}
-              color="#131314"
-            />
+            <FontAwesome6 name="warehouse" size={15} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Company name"
@@ -240,11 +227,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           <View style={styles.textInputDiv}>
-            <MaterialCommunityIcons
-              name="package"
-              size={18}
-              color="#131314"
-            />
+            <MaterialCommunityIcons name="package" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Deliveries per month / Hours per month"
@@ -340,11 +323,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
           </View>
           <View style={styles.textInputDiv}>
-            <Ionicons
-              name="location-outline"
-              size={18}
-              color="#131314"
-            />
+            <Ionicons name="location-outline" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Siret"
@@ -388,17 +367,17 @@ const EnterpriseSignup = ({navigation}) => {
               style={{alignSelf: 'flex-start'}}
               tintColors={{true: '#FFC72B', false: '#000000'}}
             />
-            <View style={{position: 'relative'}}>
-              <Text style={styles.checkboxText}>
-                By clicking on this box, you acknowledge that you have read and
-                understood the
-              </Text>
+            <View>
               <TouchableOpacity>
-                <Text style={styles.pirvacyTextBold}> Privacy Policy</Text>
+                <Text style={styles.checkboxText}>
+                  By clicking on this box, you acknowledge that you have read
+                  and understood the
+                  <Text style={styles.pirvacyTextBold}> Privacy Policy</Text>
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => navigation.navigate('EnterprisesTakeSelfie')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
@@ -446,7 +425,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 10,
     width: '90%',
-    fontFamily: 'Montserrat-Regular'
+    fontFamily: 'Montserrat-Regular',
   },
   mobileNumberInput: {
     flexDirection: 'row',
@@ -570,9 +549,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
     fontSize: 12,
-    position: 'absolute',
-    right: '28%',
-    bottom: '21%',
+    textDecorationLine: 'underline',
   },
   checkboxContainer: {
     flexDirection: 'row',

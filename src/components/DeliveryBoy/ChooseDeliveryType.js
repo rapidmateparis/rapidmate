@@ -54,6 +54,9 @@ const ChooseDeliveryType = ({navigation}) => {
                     days
                   </Text>
                 </View>
+                {selectedOption !== 'ShiftWise' && (
+                  <View style={styles.cricleRound} />
+                )}
                 {selectedOption === 'ShiftWise' && (
                   <View
                     style={{
@@ -102,6 +105,9 @@ const ChooseDeliveryType = ({navigation}) => {
                     Accept deliveries any time of the day
                   </Text>
                 </View>
+                {selectedOption !== 'PickupDrop' && (
+                  <View style={styles.cricleRound} />
+                )}
                 {selectedOption === 'PickupDrop' && (
                   <View
                     style={{
@@ -150,6 +156,9 @@ const ChooseDeliveryType = ({navigation}) => {
                     Work as shift wise and pickup/dropoff both
                   </Text>
                 </View>
+                {selectedOption !== 'Both' && (
+                  <View style={styles.cricleRound} />
+                )}
                 {selectedOption === 'Both' && (
                   <View
                     style={{
@@ -170,7 +179,8 @@ const ChooseDeliveryType = ({navigation}) => {
             </LinearGradient>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyThanksPage')}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('DeliveryboyThanksPage')}
           style={[
             styles.logbutton,
             {
@@ -234,28 +244,38 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '40%',
+    marginTop: '25%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 140
   },
   profileCard: {
     marginBottom: 10,
   },
   disabledButton: {
     width: '100%',
-    marginTop: '40%',
+    marginTop: '25%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FCF9EA',
+    marginBottom: 140,
   },
   continueBt: {
     fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+  },
+  cricleRound: {
+    width: 30,
+    height: 30,
+    padding: 3,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.subText,
   },
 });
 

@@ -27,7 +27,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
+    <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <View>
         <View>
           <Text style={styles.mainTitle}>Delivery complete!</Text>
@@ -51,7 +51,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
               source={require('../../image/Cloud-Graphic.png')}
             />
           </View>
-          <View style={{paddingTop: '20%', paddingHorizontal: 20}}>
+          <View style={{paddingTop: '10%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <Text style={styles.deliveryboyRate}>
                 How would you rate the delivery boy?
@@ -286,8 +286,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5, // for Android
-    marginBottom: 10,
-    marginTop: 10,
+    marginBottom: 5,
+    marginTop: 5,
     padding: 15,
   },
   Delivering: {
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   mainBtnCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 40,
+    marginVertical: 20,
   },
   invoiceDownload: {
     flexDirection: 'row',
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     borderColor: colors.text,
     paddingVertical: 12,
     borderRadius: 10,
-    marginBottom: 35,
+    marginBottom: 140,
   },
 });
 

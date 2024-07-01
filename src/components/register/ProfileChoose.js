@@ -4,6 +4,7 @@ import {colors} from '../../colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProfileChoose = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -16,7 +17,8 @@ const ProfileChoose = ({navigation}) => {
   const isOptionSelected = selectedOption !== null;
 
   return (
-    <ScrollView style={{backgroundColor: '#fff',}}>
+    <SafeAreaView style={{height: '100%',}}>
+    <ScrollView style={{height: '100%',backgroundColor: '#fff'}}>
       <View style={styles.contentContainer}>
         <Text style={styles.logInText}>Choose profile</Text>
         <Text style={styles.loginAccessText}>
@@ -39,14 +41,17 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image style={{width: 40, height: 40,}} source={require('../../image/home.png')} />
+                <Image
+                  style={{width: 40, height: 40}}
+                  source={require('../../image/home.png')}
+                />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={[styles.roleTypeText, {color: colors.text}]}>
                     Enterprise
                   </Text>
                 </View>
-                {selectedOption === 'Enterprise' && (
+                {selectedOption === 'Enterprise' ? (
                   <View
                     style={{
                       backgroundColor: colors.primary,
@@ -61,6 +66,8 @@ const ProfileChoose = ({navigation}) => {
                       color={colors.white}
                     />
                   </View>
+                ) : (
+                  <View style={styles.cricleRound} />
                 )}
               </View>
             </LinearGradient>
@@ -70,7 +77,6 @@ const ProfileChoose = ({navigation}) => {
             style={styles.profileCard}
             onPress={() => {
               handleOptionSelect('PickupDrop');
-              // navigation.navigate('PickupSignup');
             }}>
             <LinearGradient
               colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
@@ -85,14 +91,17 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image style={{width: 40, height: 45,}} source={require('../../image/location-map.png')} />
+                <Image
+                  style={{width: 40, height: 45}}
+                  source={require('../../image/location-map.png')}
+                />
                 <View style={styles.profileText}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={[styles.roleTypeText, {color: colors.text}]}>
                     Pickup & Drop-off
                   </Text>
                 </View>
-                {selectedOption === 'PickupDrop' && (
+                {selectedOption === 'PickupDrop' ? (
                   <View
                     style={{
                       backgroundColor: colors.primary,
@@ -107,6 +116,8 @@ const ProfileChoose = ({navigation}) => {
                       color={colors.white}
                     />
                   </View>
+                ) : (
+                  <View style={styles.cricleRound} /> 
                 )}
               </View>
             </LinearGradient>
@@ -128,12 +139,15 @@ const ProfileChoose = ({navigation}) => {
                 },
               ]}>
               <View style={styles.content}>
-                <Image style={{width: 30, height: 45,}} source={require('../../image/DeliveryBoy-Icon.png')} />
-                <View style={styles.profileText}>
+                <Image
+                  style={{width: 30, height: 45}}
+                  source={require('../../image/DeliveryBoy-Icon.png')}
+                />
+                <View style={[styles.profileText, {marginLeft: 30,}]}>
                   <Text style={styles.roleText}>I am here as</Text>
                   <Text style={styles.roleTypeText}>Delivery boy</Text>
                 </View>
-                {selectedOption === 'DeliveryBoy' && (
+                {selectedOption === 'DeliveryBoy' ? (
                   <View
                     style={{
                       backgroundColor: colors.primary,
@@ -148,6 +162,8 @@ const ProfileChoose = ({navigation}) => {
                       color={colors.white}
                     />
                   </View>
+                ) : (
+                  <View style={styles.cricleRound} /> 
                 )}
               </View>
             </LinearGradient>
@@ -186,6 +202,7 @@ const ProfileChoose = ({navigation}) => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -236,7 +253,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '45%',
+    marginTop: '30%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -247,12 +264,20 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     width: '100%',
-    marginTop: '45%',
+    marginTop: '30%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FCF9EA',
+  },
+  cricleRound: {
+    width: 25,
+    height: 25,
+    padding: 3,
+    borderRadius: 15,
+    borderBlockColor: colors.text,
+    borderWidth: 1,
   },
 });
 

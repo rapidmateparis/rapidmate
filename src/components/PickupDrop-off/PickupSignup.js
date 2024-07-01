@@ -61,7 +61,10 @@ const PickupSignup = ({navigation}) => {
               the app.
             </Text>
           </View>
-          <Image style={{width: 40, height: 40,}} source={require('../../image/location-map.png')} />
+          <Image
+            style={{width: 40, height: 40}}
+            source={require('../../image/location-map.png')}
+          />
         </View>
         <View style={styles.logFormView}>
           <View style={styles.textInputDiv}>
@@ -187,9 +190,12 @@ const PickupSignup = ({navigation}) => {
           </View>
           <View>
             <Text style={styles.accountType}>Create account as:</Text>
+
+            {/* Individual Account Type */}
             <TouchableOpacity
               style={[
                 styles.accountCard,
+                selectedAccountType !== 'individual' && styles.notSelectedCard,
                 selectedAccountType === 'individual' && styles.selectedCard,
               ]}
               onPress={() => handleAccountTypeSelection('individual')}>
@@ -200,10 +206,16 @@ const PickupSignup = ({navigation}) => {
                   <MaterialIcons name="check" size={15} color={colors.white} />
                 </View>
               )}
+              {selectedAccountType !== 'individual' && (
+                <View style={styles.cricleRound} />
+              )}
             </TouchableOpacity>
+
+            {/* Company Account Type */}
             <TouchableOpacity
               style={[
                 styles.accountCard,
+                selectedAccountType !== 'company' && styles.notSelectedCard,
                 selectedAccountType === 'company' && styles.selectedCard,
               ]}
               onPress={() => handleAccountTypeSelection('company')}>
@@ -214,9 +226,13 @@ const PickupSignup = ({navigation}) => {
                   <MaterialIcons name="check" size={15} color={colors.white} />
                 </View>
               )}
+              {selectedAccountType !== 'company' && (
+                <View style={styles.cricleRound} />
+              )}
             </TouchableOpacity>
           </View>
-          <TouchableOpacity 
+
+          <TouchableOpacity
             onPress={() => navigation.navigate('PickupTakeSelfie')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
@@ -230,7 +246,11 @@ const PickupSignup = ({navigation}) => {
             </Text>
 
             <View>
-               <Text style={styles.termOfRapidmate}>By signing up you agree to <Text style={{color: colors.primary}}>Privacy policy</Text> & <Text style={{color: colors.primary}}>Terms</Text> of RapidMate</Text>
+              <Text style={styles.termOfRapidmate}>
+                By signing up you agree to{' '}
+                <Text style={{color: colors.primary}}>Privacy policy</Text> &{' '}
+                <Text style={{color: colors.primary}}>Terms</Text> of RapidMate
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -373,6 +393,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 50,
     lineHeight: 20,
+  },
+  cricleRound: {
+    width: 20,
+    height: 20,
+    padding: 3,
+    borderRadius: 15,
+    borderBlockColor: colors.text,
+    borderWidth: 1,
   },
 });
 

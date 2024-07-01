@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '90%',
-    marginTop: '15%',
+    marginTop: '5%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',

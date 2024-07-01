@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { colors } from '../../colors';
+import {colors} from '../../colors';
 
-const AddVehicle = ({ navigation }) => {
+const AddVehicle = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = option => {
     setSelectedOption(option);
   };
 
@@ -25,17 +25,21 @@ const AddVehicle = ({ navigation }) => {
       <LinearGradient
         colors={['rgba(255, 0, 88, 0.07)', 'rgba(153, 0, 53, 0)']}
         style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      >
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}>
         <TouchableOpacity
           onPress={() => handleOptionSelect(option)}
-          style={[styles.addressCard, isSelected && styles.selectedCard]}
-        >
+          style={[
+            styles.addressCard,
+            isSelected ? styles.selectedCard : null, // Apply selected card style conditionally
+          ]}>
           <Image source={iconSource} style={[styles.cardImage, imageStyle]} />
-          <View style={{ marginLeft: 10, flex: 1 }}>
+          <View style={{marginLeft: 10, flex: 1}}>
             <Text style={styles.paymentPlateform}>{title}</Text>
           </View>
+
+          {!isSelected && <View style={styles.cricleRound} />}
+
           {isSelected && (
             <View style={styles.checkmark}>
               <AntDesign name="check" size={18} color={colors.white} />
@@ -47,21 +51,60 @@ const AddVehicle = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
-      <View style={{ paddingHorizontal: 15 }}>
-        {renderCard('Cycle', require('../../image/Cycle-Icon.png'), 'Cycle', styles.cycleImage)}
-        {renderCard('Scooter', require('../../image/Scooter-Icon.png'), 'Scooter', styles.scooterImage)}
-        {renderCard('Car', require('../../image/Car-Icon.png'), 'Car', styles.carImage)}
-        {renderCard('Partner', require('../../image/Partner-icon.png'), 'Partner', styles.partnerImage)}
-        {renderCard('Van', require('../../image/Van-Icon.png'), 'Van', styles.vanImage)}
-        {renderCard('Pickup', require('../../image/Pickup-Icon.png'), 'Pickup', styles.pickupImage)}
-        {renderCard('Truck', require('../../image/Truck-Icon.png'), 'Truck', styles.truckImage)}
-        {renderCard('Other', require('../../image/Big-Package.png'), 'Other', styles.otherImage)}
+    <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
+      <View style={{paddingHorizontal: 15}}>
+        {renderCard(
+          'Cycle',
+          require('../../image/Cycle-Icon.png'),
+          'Cycle',
+          styles.cycleImage,
+        )}
+        {renderCard(
+          'Scooter',
+          require('../../image/Scooter-Icon.png'),
+          'Scooter',
+          styles.scooterImage,
+        )}
+        {renderCard(
+          'Car',
+          require('../../image/Car-Icon.png'),
+          'Car',
+          styles.carImage,
+        )}
+        {renderCard(
+          'Partner',
+          require('../../image/Partner-icon.png'),
+          'Partner',
+          styles.partnerImage,
+        )}
+        {renderCard(
+          'Van',
+          require('../../image/Van-Icon.png'),
+          'Van',
+          styles.vanImage,
+        )}
+        {renderCard(
+          'Pickup',
+          require('../../image/Pickup-Icon.png'),
+          'Pickup',
+          styles.pickupImage,
+        )}
+        {renderCard(
+          'Truck',
+          require('../../image/Truck-Icon.png'),
+          'Truck',
+          styles.truckImage,
+        )}
+        {renderCard(
+          'Other',
+          require('../../image/Big-Package.png'),
+          'Other',
+          styles.otherImage,
+        )}
 
         <TouchableOpacity
           onPress={() => navigation.navigate('AddPickupVehicle')}
-          style={[styles.logbutton, { backgroundColor: colors.primary }]}
-        >
+          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </View>
@@ -72,7 +115,7 @@ const AddVehicle = ({ navigation }) => {
 const styles = StyleSheet.create({
   gradient: {
     borderRadius: 10,
-    marginVertical: 10,
+    marginVertical: 5,
   },
   addressCard: {
     flexDirection: 'row',
@@ -103,7 +146,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: 50,
+    marginTop: 20,
     marginBottom: 20,
     borderRadius: 5,
     padding: 13,
@@ -150,6 +193,13 @@ const styles = StyleSheet.create({
   otherImage: {
     width: 38,
     height: 38,
+  },
+  cricleRound: {
+    width: 25,
+    height: 25,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.subText,
   },
 });
 
