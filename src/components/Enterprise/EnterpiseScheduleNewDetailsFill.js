@@ -14,12 +14,23 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import {Dropdown} from 'react-native-element-dropdown';
 import {colors} from '../../colors';
+import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
+import {
+  handleCameraLaunchFunction,
+  handleImageLibraryLaunchFunction,
+} from '../../utils/common';
 
 const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
   const [pickupAddress, setPickupAddress] = useState('');
   const [dropAddress, setDropAddress] = useState('');
+  const [company, setCompany] = useState('');
+  const [dropdownValue, setDropdownValue] = useState('+33');
+  const [pickupNotes, setPickupNotes] = useState('');
+  const [orderid, setOrderid] = useState('');
+  const [number, setNumber] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
@@ -28,6 +39,9 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [repeatOrder, setRepeatOrder] = useState('Daily');
+  const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [photoFileName, setPhotoFileName] = useState(''); // State for filename
 
   const handleDayPress = day => {
     let updatedSelectedDays;
@@ -54,9 +68,55 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
     {label: '2', value: '2'},
   ];
 
+  const toggleModal = () => {
+    setModalVisibleCamera(!isModalVisibleCamera);
+  };
+  const handlePhotoOpenClose = visible => {
+    setModalVisibleCamera(!visible);
+  };
+
+  const numberData = [
+    {label: '+91', value: '+91'},
+    {label: '+33', value: '+33'},
+  ];
+
+  const handleCameraLaunch = async () => {
+    setModalVisibleCamera(!isModalVisibleCamera);
+    try {
+      let cameraData = await handleCameraLaunchFunction();
+      if (cameraData.status == 'success') {
+        setPhotoFileName(getFileName(cameraData.data.uri));
+      }
+    } catch (error) {
+      // Handle errors here
+    }
+  };
+
+  const handleImageLibraryLaunch = async () => {
+    setModalVisibleCamera(!isModalVisibleCamera);
+    try {
+      let imageData = await handleImageLibraryLaunchFunction();
+      if (imageData.status == 'success') {
+        setPhotoFileName(getFileName(imageData.data.uri));
+      }
+    } catch (error) {
+      // Handle errors here
+    }
+  };
+
+  const getFileName = uri => {
+    if (!uri) return '';
+    const startIndex = uri.lastIndexOf('/') + 1;
+    let fileName = uri.substr(startIndex);
+    // Get last 20 characters or the whole string if shorter
+    fileName = fileName.substr(-35);
+    return fileName.length > 35 ? '...' + fileName : fileName;
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
+        
         <View>
           <View style={styles.locationAddress}>
             <View style={styles.locationCompanyCard}>
@@ -68,7 +128,9 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
                 value={pickupAddress}
                 onChangeText={text => setPickupAddress(text)}
               />
-              <AntDesign name="arrowright" size={18} color="#000000" />
+              <TouchableOpacity  onPress={() => navigation.navigate('EnterpriseMapPickupAddress')}>
+                <AntDesign name="arrowright" size={18} color="#000000" />
+              </TouchableOpacity>
             </View>
 
             <View style={styles.borderDummy} />
@@ -77,13 +139,113 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
               <MaterialIcons name="my-location" size={18} color="#000000" />
               <TextInput
                 style={styles.loginput}
-                placeholder="Enter pickup address"
+                placeholder="Enter drop-off address"
                 placeholderTextColor="#999"
                 value={dropAddress}
                 onChangeText={text => setDropAddress(text)}
               />
-              <AntDesign name="arrowright" size={18} color="#000000" />
+              <TouchableOpacity  onPress={() => navigation.navigate('EnterpriseMapDropAddress')}>
+                <AntDesign name="arrowright" size={18} color="#000000" />
+              </TouchableOpacity>
             </View>
+          </View>
+
+          <View style={{flex: 1}}>
+            <Text style={styles.textlable}>Company</Text>
+            <TextInput
+              style={styles.inputTextStyle}
+              placeholder="Type here"
+              value={company}
+              onChangeText={text => setCompany(text)}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.textlable}>Phone number</Text>
+            <View style={styles.mobileNumberInput}>
+              <View style={{width: 95}}>
+                <View style={styles.containerDropdown}>
+                  <Dropdown
+                    data={numberData}
+                    search
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={!isFocus ? '+33' : '...'}
+                    searchPlaceholder="+.."
+                    value={dropdownValue}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                      setDropdownValue(item.value);
+                      setIsFocus(false);
+                    }}
+                    renderLeftIcon={() => (
+                      <Image
+                        style={{marginRight: 10}}
+                        source={require('../../image/flagIcon.png')}
+                      />
+                    )}
+                  />
+                </View>
+              </View>
+              <TextInput
+                style={[
+                  styles.input,
+                  {fontFamily: 'Montserrat-Regular', fontSize: 16},
+                ]}
+                placeholder="00 00 00 00 00"
+                placeholderTextColor="#999"
+                keyboardType="numeric"
+                maxLength={11}
+                value={number}
+                onChangeText={text => setNumber(text)}
+              />
+            </View>
+          </View>
+
+          <TouchableOpacity
+            onPress={toggleModal}
+            style={{flex: 1, backgroundColor: '#fff'}}>
+            <Text style={styles.textlable}>Package photo</Text>
+            <View style={styles.dottedLine}>
+              <Entypo
+                name="attachment"
+                size={13}
+                color="#131314"
+                style={{marginTop: 13}}
+              />
+              <Text style={styles.packagePhoto}>Package photo</Text>
+              <View style={styles.packagePhotoPath}>
+                <Text style={styles.packagePhotoText}>{photoFileName}</Text>
+                <MaterialCommunityIcons name="close" color="#000" size={13} />
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          <View style={{flex: 1}}>
+            <Text style={styles.textlable}>Order ID</Text>
+            <TextInput
+              style={styles.inputTextStyle}
+              placeholder="Type here"
+              value={orderid}
+              onChangeText={text => setOrderid(text)}
+            />
+          </View>
+          <View style={{flex: 1}}>
+            <Text style={styles.textlable}>Pickup notes</Text>
+            <TextInput
+              style={styles.inputTextStyle}
+              multiline={true}
+              numberOfLines={4} // Set the number of lines you want to display initially
+              placeholder="Type here"
+              textAlignVertical="top"
+              value={pickupNotes}
+              onChangeText={text => setPickupNotes(text)}
+            />
           </View>
 
           <View style={styles.datetimeCard}>
@@ -536,13 +698,21 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
         )}
 
         <View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseScheduleApproved')}
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('EnterprisePickupOrderPriview')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         </View>
       </View>
+      {/* -------------- Modal --------------------- */}
+      <ChoosePhotoByCameraGallaryModal
+        visible={isModalVisibleCamera}
+        handlePhotoOpenClose={handlePhotoOpenClose}
+        handleCameraLaunch={handleCameraLaunch}
+        handleImageLibraryLaunch={handleImageLibraryLaunch}
+      />
+      {/* -------------- Modal --------------------- */}
     </ScrollView>
   );
 };
@@ -1085,6 +1255,93 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+  },
+  textlable: {
+    fontFamily: 'Montserrat-Medium',
+    marginBottom: 7,
+    marginTop: 15,
+    fontSize: 12,
+    color: colors.text,
+  },
+  mobileNumberInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 8,
+    backgroundColor: colors.white,
+  },
+  inputTextStyle: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    backgroundColor: colors.white,
+  },
+  containerDropdown: {
+    borderRightWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 2,
+  },
+  placeholderStyle: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+  },
+  selectedTextStyle: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+  },
+  inputSearchStyle: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    paddingHorizontal: 10,
+    color: colors.text,
+  },
+  dottedLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingBottom: 8,
+    borderWidth: 1,
+    borderRadius: 5, // Controls dot size
+    borderColor: '#ccc', // Color of the dots
+    borderStyle: 'dashed',
+    width: '100%', // Full width of the border
+  },
+  packagePhoto: {
+    color: '#999',
+    marginLeft: 5,
+    paddingTop: 10,
+    flex: 1,
+    fontSize: 10,
+    fontFamily: 'Montserrat-Regular',
+  },
+  packagePhotoPath: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFC72B26',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginTop: 8,
+  },
+  packagePhotoText: {
+    color: colors.text,
+    fontSize: 10,
+    fontFamily: 'Montserrat-Regular',
+    borderRightWidth: 1,
+    paddingRight: 5,
+    borderColor: '#2C30331A',
   },
 });
 

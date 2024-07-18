@@ -93,6 +93,17 @@ import PickupTakeSelfie from './components/PickupDrop-off/PickupTakeSelfie';
 import AddPaymentMethod from './components/CommonSettings/AddPaymentMethod';
 import TrackDelivery from './components/DeliveryBoy/TrackDelivery';
 import TrackDeiver from './components/PickupDrop-off/TrackDeiver';
+import EnterpriseMapPickupAddress from './components/Enterprise/EnterpriseMapPickupAddress';
+import EnterpriseMapDropAddress from './components/Enterprise/EnterpriseMapDropAddress';
+import EnterprisePickupOrderPriview from './components/Enterprise/EnterprisePickupOrderPriview';
+import EnterpriseOrderPayment from './components/Enterprise/EnterpriseOrderPayment';
+import EnterpriseLookingForDriver from './components/Enterprise/EnterpriseLookingForDriver';
+import EnterpriseOrderCancelled from './components/Enterprise/EnterpriseOrderCancelled';
+import EnterpriseOrderPickup from './components/Enterprise/EnterpriseOrderPickup';
+import EnterpriseOrderDelivering from './components/Enterprise/EnterpriseOrderDelivering';
+import EnterpriseTrackDeiver from './components/Enterprise/EnterpriseTrackDeiver';
+import EnterpriseDeliveryCompleted from './components/Enterprise/EnterpriseDeliveryCompleted';
+import EnterpriseFeedbackThanksPage from './components/Enterprise/EnterpriseFeedbackThanksPage';
 
 const Stack = createStackNavigator();
 
@@ -293,15 +304,12 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="MainScreen"
             component={DrawerNavigator}
             options={{headerShown: false}}
           />
-
           {/* Pickup & drop off  */}
-
           <Stack.Screen
             name="PickupSignup"
             component={PickupSignup}
@@ -330,7 +338,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="AddPickupdetails"
             component={AddPickupdetails}
@@ -359,7 +366,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="PickupOrderPreview"
             component={PickupOrderPreview}
@@ -388,7 +394,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="OrderPickup"
             component={OrderPickup}
@@ -417,7 +422,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="PickupPayment"
             component={PickupPayment}
@@ -625,7 +629,6 @@ const AppNavigator = () => {
             component={PickupHome}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="AddressBook"
             component={AddressBook}
@@ -667,7 +670,6 @@ const AppNavigator = () => {
               ),
             })}
           />
-
           <Stack.Screen
             name="PickupChangePassword"
             component={PickupChangePassword}
@@ -696,7 +698,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="AddPickupVehicle"
             component={AddPickupVehicle}
@@ -730,7 +731,6 @@ const AppNavigator = () => {
             component={PickupOrderCancelled}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="PickupDeliveryCompleted"
             component={PickupDeliveryCompleted}
@@ -741,15 +741,12 @@ const AppNavigator = () => {
             component={PickupFeedbackThanks}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="TrackDeiver"
             component={TrackDeiver}
             options={{headerShown: false}}
           />
-
           {/* DeliveryBoy Start here  */}
-
           <Stack.Screen
             name="DeliveryBoySignup"
             component={DeliveryBoySignup}
@@ -1314,21 +1311,17 @@ const AppNavigator = () => {
             component={NewDeliveryPackageRequest}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="DeliveryPackageRequest"
             component={DeliveryPackageRequest}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="DeliveryPackageScheduleRequest"
             component={DeliveryPackageScheduleRequest}
             options={{headerShown: false}}
           />
-
           {/* Enterprises Start Here  */}
-
           <Stack.Screen
             name="EnterprisesTakeSelfie"
             component={EnterprisesTakeSelfie}
@@ -1357,7 +1350,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseSignup"
             component={EnterpriseSignup}
@@ -1386,7 +1378,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterprisesActiveDeliveries"
             component={EnterprisesActiveDeliveries}
@@ -1415,7 +1406,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseAddNewLocation"
             component={EnterpriseAddNewLocation}
@@ -1444,7 +1434,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseLocation"
             component={EnterpriseLocation}
@@ -1499,43 +1488,36 @@ const AppNavigator = () => {
               ),
             })}
           />
-
           <Stack.Screen
             name="EnterpriseThanksPage"
             component={EnterpriseThanksPage}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="EnterpriseSetLocationAddressMap"
             component={EnterpriseSetLocationAddressMap}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="EnterpriseHome"
             component={EnterpriseHome}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="EnterpriseScheduleApproved"
             component={EnterpriseScheduleApproved}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="EnterpriseScheduleRequestSubmitted"
             component={EnterpriseScheduleRequestSubmitted}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="EnterpriseDeliveryboyAssigned"
             component={EnterpriseDeliveryboyAssigned}
             options={{headerShown: false}}
           />
-
           <Stack.Screen
             name="EnterpriseCompanyLocations"
             component={EnterpriseCompanyLocations}
@@ -1564,7 +1546,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseManageAds"
             component={EnterpriseManageAds}
@@ -1643,7 +1624,6 @@ const AppNavigator = () => {
               ),
             })}
           />
-
           <Stack.Screen
             name="EnterpriseDeliveryboyReady"
             component={EnterpriseDeliveryboyReady}
@@ -1672,7 +1652,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseListNewAd"
             component={EnterpriseListNewAd}
@@ -1701,7 +1680,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseScheduleNewDelivery"
             component={EnterpriseScheduleNewDelivery}
@@ -1730,7 +1708,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterprisesMultiScheduleDetails"
             component={EnterprisesMultiScheduleDetails}
@@ -1759,7 +1736,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriesSelectCompanyLocation"
             component={EnterpriesSelectCompanyLocation}
@@ -1788,7 +1764,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpiseSelectDeliveryTypes"
             component={EnterpiseSelectDeliveryTypes}
@@ -1817,7 +1792,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpiseScheduleNewDetailsFill"
             component={EnterpiseScheduleNewDetailsFill}
@@ -1846,7 +1820,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpiseSelectShiftDelivery"
             component={EnterpiseSelectShiftDelivery}
@@ -1875,7 +1848,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseShiftDeliverySchedule"
             component={EnterpriseShiftDeliverySchedule}
@@ -1904,7 +1876,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="EnterpriseSchedulePreview"
             component={EnterpriseSchedulePreview}
@@ -1933,9 +1904,155 @@ const AppNavigator = () => {
               },
             })}
           />
+          <Stack.Screen
+            name="EnterpriseMapPickupAddress"
+            component={EnterpriseMapPickupAddress}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EnterpriseMapDropAddress"
+            component={EnterpriseMapDropAddress}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EnterpriseLookingForDriver"
+            component={EnterpriseLookingForDriver}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EnterpriseOrderCancelled"
+            component={EnterpriseOrderCancelled}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EnterpriseTrackDeiver"
+            component={EnterpriseTrackDeiver}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EnterpriseDeliveryCompleted"
+            component={EnterpriseDeliveryCompleted}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EnterpriseFeedbackThanksPage"
+            component={EnterpriseFeedbackThanksPage}
+            options={{headerShown: false}}
+          />
 
+          <Stack.Screen   
+            name="EnterpriseOrderPickup"
+            component={EnterpriseOrderPickup}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Order Confirmed',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen 
+            name="EnterpriseOrderDelivering"
+            component={EnterpriseOrderDelivering}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Order Confirmed',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
+            name="EnterprisePickupOrderPriview"
+            component={EnterprisePickupOrderPriview}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Preview',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
+            name="EnterpriseOrderPayment"
+            component={EnterpriseOrderPayment}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Payment',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
           {/* Common Pages  */}
-
           <Stack.Screen
             name="AboutUs"
             component={AboutUs}
@@ -1964,7 +2081,6 @@ const AppNavigator = () => {
               },
             })}
           />
-
           <Stack.Screen
             name="FAQs"
             component={FAQs}

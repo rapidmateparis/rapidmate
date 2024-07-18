@@ -3,13 +3,11 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import DeliveryboyHome from './DeliveryboyHome';
 import Planning from './Planning';
 import DeliveryboyHistory from './DeliverboyHistory';
-import DeliveryPackageRequest from './DeliveryPackageRequest';
 import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
 import Notifications from '../PickupDrop-off/Settings/Notifications';
 
