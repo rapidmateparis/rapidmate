@@ -10,6 +10,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import { authenticateUser } from '../../data_manager';
 
 const LogInScreen = ({navigation}) => {
   const [emailPhone, setEmailPhone] = useState('');
@@ -29,7 +30,15 @@ const LogInScreen = ({navigation}) => {
 
     if ((isEmail || isPhone) && password) {
       // Perform login action here based on email or phone number
-      navigation.navigate('PickupBottomNav');
+      let params = {
+        userName: emailPhone,
+        password: password,
+      };
+      authenticateUser(params, (successResponse) => {
+        console.log(successResponse)
+      }, (errorResponse)=> {
+        console.log(errorResponse)
+      })
     } else {
       // Show error message for invalid email or phone number
       console.log('Invalid email or phone number');

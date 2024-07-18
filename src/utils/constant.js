@@ -37,3 +37,7 @@ export const apiHost = {
   baseURL: 'https://betaapi.astafa.in/api/',
   apiKey: '',
 };
+
+export const API = {
+  loginAuthenticateUrl: BASE_URL + ""
+}
