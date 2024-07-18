@@ -37,7 +37,6 @@ local.properties
 node_modules/
 npm-debug.log
 yarn-error.log
-yarn.lock
 
 # BUCK
 buck-out/
@@ -63,3 +62,6 @@ buck-out/
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
+
+# Ignore Files
+yarn.lock
