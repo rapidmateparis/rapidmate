@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-clipboard/clipboard": "^1.14.1",
     "@react-native-community/checkbox": "^0.5.17",
     "@react-navigation/bottom-tabs": "^6.5.1",
@@ -25,6 +25,7 @@
     "react-native-calendars": "^1.1305.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-check-box": "^2.1.7",
+    "react-native-config": "^1.5.2",
     "react-native-confirmation-code-field": "^7.4.0",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-element-dropdown": "^2.10.4",

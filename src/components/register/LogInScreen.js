@@ -27,24 +27,9 @@ const LogInScreen = ({navigation}) => {
     // Check if the input is a valid phone number
     const isPhone = /^\d{10}$/.test(emailPhone);
 
-    if (isEmail || isPhone) {
+    if ((isEmail || isPhone) && password) {
       // Perform login action here based on email or phone number
-      navigation.navigate('MainScreen');
-      // Loader(true);
-      // let tempData = {
-      //   emailPhone: emailPhone,
-      //   password: password,
-      // };
-      // try {
-      //   let res = await postData('sendOtp', tempData);
-      //   if (res.statusCode === 200) {
-      //     console.log('success-------------');
-      //   }
-      // } catch (error) {
-      //   console.error('Error:', error);
-      // } finally {
-      //   Loader(false);
-      // }
+      navigation.navigate('PickupBottomNav');
     } else {
       // Show error message for invalid email or phone number
       console.log('Invalid email or phone number');
@@ -67,6 +52,9 @@ const LogInScreen = ({navigation}) => {
                 placeholder="Email/Phone"
                 placeholderTextColor="#999"
                 value={emailPhone}
+                maxLength={10}
+                inputMode='numeric'
+                keyboardType={'number-pad'}
                 onChangeText={text => setEmailPhone(text)}
               />
             </View>
@@ -76,6 +64,7 @@ const LogInScreen = ({navigation}) => {
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                 placeholder="Password"
                 placeholderTextColor="#999"
+                maxLength={10}
                 secureTextEntry={!passwordVisible} // Use the secureTextEntry prop based on passwordVisible state
                 value={password}
                 onChangeText={text => setPassword(text)}
@@ -103,7 +92,7 @@ const LogInScreen = ({navigation}) => {
               onPress={() => navigation.navigate('ProfileChoose')}
               style={styles.signUpContainer}>
               <Text style={styles.signUpText}>
-                Don’t have an account yet?{' '}
+                Don't have an account yet?{' '}
                 <Text style={{color: colors.primary}}>Register</Text>
               </Text>
             </TouchableOpacity>
