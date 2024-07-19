@@ -1,5 +1,5 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {View, Text, Image, TouchableOpacity, Alert, BackHandler} from 'react-native';
+import React, { useEffect } from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,9 +11,40 @@ import Settings from './Settings/Settings';
 import Notifications from './Settings/Notifications';
 import PickupHome from './PickupHome';
 import History from './History';
+import RNExitApp from 'react-native-exit-app';
 
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
+
+
+  useEffect(() => {
+    const onBackPress = () => {
+      Alert.alert(
+        'Exit App',
+        'Do you want to exit?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => {
+              // Do nothing
+            },
+            style: 'cancel',
+          },
+          { text: 'YES', onPress: () => RNExitApp.exitApp() },
+        ],
+        { cancelable: false }
+      );
+  
+      return true;
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress
+    );
+  
+    return () => backHandler.remove();
+  }, []);
   
   return (
     <Bottom.Navigator

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -40,15 +41,21 @@ const LogInScreen = ({navigation}) => {
       };
       authenticateUser(params, (successResponse) => {
         if(successResponse[0]._success){
-          if(successResponse[0]._response.idToken.payload) {
-            saveUserDetails(successResponse[0]._response.idToken.payload);
-            navigation.navigate('PickupBottomNav')
-          } else {
-            alert("errorResponse")
+          if(successResponse[0]._response) {
+            if(successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              saveUserDetails(successResponse[0]._response.idToken.payload);
+              navigation.navigate('PickupBottomNav');
+            }
           }
         }
       }, (errorResponse)=> {
-        alert(errorResponse)
+        Alert.alert('Error Alert', errorResponse, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       })
     } else {
       // Show error message for invalid email or phone number
