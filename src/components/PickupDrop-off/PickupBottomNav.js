@@ -14,6 +14,7 @@ import History from './History';
 
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
+  
   return (
     <Bottom.Navigator
       tabBarOptions={{
