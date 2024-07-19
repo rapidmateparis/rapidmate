@@ -20,7 +20,6 @@ import { useUserDetails } from '../commonComponent/StoreContext';
 const PickupHome = ({navigation}) => {
   const { userDetails } = useUserDetails();
 
-  console.log("print_data==>userDetails", userDetails)
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
 
