@@ -104,6 +104,7 @@ import EnterpriseOrderDelivering from './components/Enterprise/EnterpriseOrderDe
 import EnterpriseTrackDeiver from './components/Enterprise/EnterpriseTrackDeiver';
 import EnterpriseDeliveryCompleted from './components/Enterprise/EnterpriseDeliveryCompleted';
 import EnterpriseFeedbackThanksPage from './components/Enterprise/EnterpriseFeedbackThanksPage';
+import Splash from './Splash';
 
 const Stack = createStackNavigator();
 
@@ -118,6 +119,11 @@ const AppNavigator = () => {
     <>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen
+            name="Splash"
+            component={Splash}
+            options={{headerShown: false}}
+          />
           <Stack.Screen
             name="LoginSignup"
             component={LoginSignup}
@@ -1940,7 +1946,7 @@ const AppNavigator = () => {
             options={{headerShown: false}}
           />
 
-          <Stack.Screen   
+          <Stack.Screen
             name="EnterpriseOrderPickup"
             component={EnterpriseOrderPickup}
             options={({navigation}) => ({
@@ -1968,7 +1974,7 @@ const AppNavigator = () => {
               },
             })}
           />
-          <Stack.Screen 
+          <Stack.Screen
             name="EnterpriseOrderDelivering"
             component={EnterpriseOrderDelivering}
             options={({navigation}) => ({
