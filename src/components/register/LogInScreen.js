@@ -6,13 +6,16 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import { authenticateUser } from '../../data_manager';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
 const LogInScreen = ({navigation}) => {
+  const { saveUserDetails } = useUserDetails();
   const [emailPhone, setEmailPhone] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false); // State to track password visibility
@@ -31,13 +34,28 @@ const LogInScreen = ({navigation}) => {
     if ((isEmail || isPhone) && password) {
       // Perform login action here based on email or phone number
       let params = {
-        userName: emailPhone,
-        password: password,
+        info: {
+          userName: emailPhone,// "syszoomail@gmail.com"
+          password: password, //"Syszoo12!"
+        }
       };
       authenticateUser(params, (successResponse) => {
-        console.log(successResponse)
+        if(successResponse[0]._success){
+          if(successResponse[0]._response) {
+            if(successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              saveUserDetails(successResponse[0]._response.idToken.payload);
+              navigation.navigate('PickupBottomNav');
+            }
+          }
+        }
       }, (errorResponse)=> {
-        console.log(errorResponse)
+        Alert.alert('Error Alert', errorResponse, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       })
     } else {
       // Show error message for invalid email or phone number
@@ -61,9 +79,6 @@ const LogInScreen = ({navigation}) => {
                 placeholder="Email/Phone"
                 placeholderTextColor="#999"
                 value={emailPhone}
-                maxLength={10}
-                inputMode='numeric'
-                keyboardType={'number-pad'}
                 onChangeText={text => setEmailPhone(text)}
               />
             </View>

@@ -15,8 +15,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MapLiveTracking from '../commonComponent/MapLiveTracking';
 import {colors} from '../../colors';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
 const PickupHome = ({navigation}) => {
+  const { userDetails } = useUserDetails();
+
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
 
@@ -34,7 +37,7 @@ const PickupHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome <Text style={styles.userName}>John!</Text>
+              Welcome <Text style={styles.userName}>{userDetails.name}</Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate dashboard!

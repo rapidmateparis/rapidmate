@@ -15,22 +15,21 @@ export async function axiosCall(
   const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 20000,
-    headers: {'Content-Type': 'application/json'},
-  });
+    headers: {"Content-Type": "application/json", "Cache-Control": "no-cache", "Content-Type": "application/x-www-form-urlencoded", "Access-Control-Allow-Origin": "*"}});
 
-  axiosInstance.interceptors.request.use(
-    function (config) {
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    function (error) {
-      let parseError = JSON.stringify(error);
-      let errorResponse = JSON.parse(parseError);
-      return callbackErrorResponse(axiosError(errorResponse.code));
-    },
-  );
+  // axiosInstance.interceptors.request.use(
+  //   function (config) {
+  //     if (token) {
+  //       config.headers.Authorization = `Bearer ${token}`;
+  //     }
+  //     return config;
+  //   },
+  //   function (error) {
+  //     let parseError = JSON.stringify(error);
+  //     let errorResponse = JSON.parse(parseError);
+  //     return callbackErrorResponse(axiosError(errorResponse.code));
+  //   },
+  // );
 
   axiosInstance.interceptors.response.use(
     function (response) {
@@ -46,7 +45,7 @@ export async function axiosCall(
     function (error) {
       let parseError = JSON.stringify(error);
       let errorResponse = JSON.parse(parseError);
-      return callbackErrorResponse(axiosError(errorResponse.code));
+      return callbackErrorResponse(errorResponse.code);
     },
   );
   switch (method) {
