@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,25 +13,53 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import { authenticateUser } from '../../data_manager';
 import { useUserDetails } from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
 
 const LogInScreen = ({navigation}) => {
   const { saveUserDetails } = useUserDetails();
   const [emailPhone, setEmailPhone] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false); // State to track password visibility
+  const [errors, setErrors] = useState({});
+  const [errorResponse, setErrorResponse] = useState("");
+  const [successResponse, setSuccessResponse] = useState("");
+  const { setLoading } = useLoader();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  useEffect(() => {
+    setLoading(false)
+  },[])
+
+  const validateForm = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\+?\d{10,15}$/;
+   
+    let errors = {};
+    if (!emailPhone.trim()) {
+      errors.emailPhone = 'Email is required';
+    } else if (!emailPattern.test(emailPhone) && !phonePattern.test(emailPhone)) {
+      errors.emailPhone = 'Enter a valid email';
+    }
+
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters long';
+    }
+
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleLogin = async () => {
-    // Check if the input is a valid email
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailPhone);
 
-    // Check if the input is a valid phone number
-    const isPhone = /^\d{10}$/.test(emailPhone);
+    const isValid = validateForm();
 
-    if ((isEmail || isPhone) && password) {
+    if (isValid) {
       // Perform login action here based on email or phone number
       let params = {
         info: {
@@ -72,6 +100,7 @@ const LogInScreen = ({navigation}) => {
         </Text>
         <View>
           <View style={styles.logFormView}>
+          {errors.emailPhone ? <Text style={[{color:"red"}]}>{errors.emailPhone}</Text> : null}
             <View style={styles.textInputDiv}>
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
@@ -82,6 +111,7 @@ const LogInScreen = ({navigation}) => {
                 onChangeText={text => setEmailPhone(text)}
               />
             </View>
+            {errors.password ? <Text style={[{color:"red"}]}>{errors.password}</Text> : null}
             <View style={styles.textInputDiv}>
               <AntDesign name="lock" size={18} color="#131314" />
               <TextInput
