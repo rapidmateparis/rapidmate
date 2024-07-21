@@ -5,12 +5,15 @@ import LinearGradient from 'react-native-linear-gradient';
 import {ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSignUpDetails } from '../commonComponent/StoreContext';
 
 const ProfileChoose = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
+  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
 
   const handleOptionSelect = option => {
     setSelectedOption(option);
+    saveSignUpDetails({...signUpDetails, profile:option})
   };
 
   // Define a variable to check if any option is selected
