@@ -29,9 +29,6 @@ const LogInScreen = ({navigation}) => {
     setPasswordVisible(!passwordVisible);
   };
 
-  useEffect(() => {
-    setLoading(false)
-  },[])
 
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,6 +58,7 @@ const LogInScreen = ({navigation}) => {
 
     if (isValid) {
       // Perform login action here based on email or phone number
+      setLoading(true);
       let params = {
         info: {
           userName: emailPhone,// "syszoomail@gmail.com"
@@ -69,6 +67,7 @@ const LogInScreen = ({navigation}) => {
       };
       authenticateUser(params, (successResponse) => {
         if(successResponse[0]._success){
+          setLoading(false);
           if(successResponse[0]._response) {
             if(successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
