@@ -7,13 +7,17 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Dropdown } from 'react-native-element-dropdown';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import { colors } from '../../colors';
+import {colors} from '../../colors';
+import {useSignUpDetails} from '../commonComponent/StoreContext';
+import { signUpUser } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 // import DropDownDropdown from '../common component/dropdown';
 
 const PickupSignup = ({ navigation }) => {
@@ -29,7 +33,9 @@ const PickupSignup = ({ navigation }) => {
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
   const [errors, setErrors] = useState({});
+  const { setLoading } = useLoader();
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -81,21 +87,54 @@ const PickupSignup = ({ navigation }) => {
     return Object.keys(errors).length === 0; // Return true if no errors
   };
 
-  const handleSubmit = async () => {
-
-    const isValid = validateForm();
-    // console.log("Name: " + name);
-    if (isValid) {
-      console.log("print_data===>valid")
-    } else {
-      console.log("print_data===>Invalid")
-    }
-  }
-
   const data = [
     { label: '+91', value: '+91' },
     { label: '+33', value: '+33' },
   ];
+
+  const handleSignUp = async () => {
+    const isValid = validateForm();
+
+    if (isValid) {
+      let params = {
+        info: {
+          userName:email,
+          email:email,
+          phoneNumber:'+33'+ number,
+          password:password,
+          userrole:signUpDetails.profile
+        }
+      };
+      setLoading(true)
+      signUpUser(params, (successResponse) => {
+        setLoading(false)
+        if(successResponse[0]._success){
+          if(successResponse[0]._response) {
+            if(successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              saveSignUpDetails({...signUpDetails, userName:email, password:password})
+              navigation.navigate('SignUpVerify')
+            }
+          }
+        }
+      }, (errorResponse)=> {
+        setLoading(false)
+        Alert.alert('Error Alert', errorResponse, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      })
+    } 
+    // else {
+    //   // Show error message for invalid email or phone number
+    //   console.log('Invalid email or phone number');
+    //   Alert.alert('Error Alert', 'Invalid email or phone number', [
+    //     {text: 'OK', onPress: () => {}},
+    //   ]);
+    // }
+  };
 
   return (
     <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
@@ -189,6 +228,8 @@ const PickupSignup = ({ navigation }) => {
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
+                  itemTextStyle={{color:colors.text}}
+                  selectedTextStyle = {{color:colors.text}}
                   placeholder={!isFocus ? '+33' : '...'}
                   searchPlaceholder="+.."
                   value={dropdownValue}
@@ -225,6 +266,8 @@ const PickupSignup = ({ navigation }) => {
               maxHeight={300}
               labelField="label"
               valueField="value"
+              itemTextStyle={{color:colors.text}}
+              selectedTextStyle = {{color:colors.text}}
               placeholder={!isFocus ? 'Country' : '...'}
               searchPlaceholder="Search.."
               value={dropdownCountryValue}
@@ -290,9 +333,11 @@ const PickupSignup = ({ navigation }) => {
           </View>
 
           <TouchableOpacity
-            // onPress={() => navigation.navigate('PickupTakeSelfie')}
-            onPress={() => handleSubmit()}
-            style={[styles.logbutton, { backgroundColor: colors.primary }]}>
+            onPress={() => {
+              handleSignUp()
+              // navigation.navigate('SignUpVerify');
+            }}
+            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -426,6 +471,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     fontSize: 14,
     marginLeft: 5,
+    color:colors.text
   },
   checkIcon: {
     backgroundColor: colors.primary,

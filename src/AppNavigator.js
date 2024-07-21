@@ -104,6 +104,7 @@ import EnterpriseOrderDelivering from './components/Enterprise/EnterpriseOrderDe
 import EnterpriseTrackDeiver from './components/Enterprise/EnterpriseTrackDeiver';
 import EnterpriseDeliveryCompleted from './components/Enterprise/EnterpriseDeliveryCompleted';
 import EnterpriseFeedbackThanksPage from './components/Enterprise/EnterpriseFeedbackThanksPage';
+import SignUpVerify from './components/register/SignUpVerify';
 import { LoaderProvider } from './utils/loaderContext';
 import Loader from './common/Loader';
 
@@ -124,6 +125,11 @@ const AppNavigator = () => {
             <Stack.Screen
               name="LoginSignup"
               component={LoginSignup}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="SignUpVerify"
+              component={SignUpVerify}
               options={{ headerShown: false }}
             />
             <Stack.Screen
