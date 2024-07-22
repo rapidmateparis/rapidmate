@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import {
   CodeField,
@@ -17,6 +18,9 @@ import {Dimensions} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import { useForgotPasswordDetails } from '../commonComponent/StoreContext';
+import { resetPasswordApi } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const ForgotPassword = ({navigation}) => {
@@ -30,6 +34,14 @@ const ForgotPassword = ({navigation}) => {
     value,
     setValue,
   });
+  const { forgotPasswordDetails, saveForgotPasswordDetails } = useForgotPasswordDetails();
+  const { setLoading } = useLoader();
+
+  const handleVerifyCode = async() => {
+    saveForgotPasswordDetails({...forgotPasswordDetails, code:value})
+    navigation.navigate('ResetPassword')
+  }
+  
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -38,7 +50,7 @@ const ForgotPassword = ({navigation}) => {
         </Text>
         <Text style={styles.subtitle}>
           We have sent a 6 digit code to your email address{' '}
-          <Text style={{fontWeight: 'bold'}}>joh***********@gmail.com</Text>,
+          <Text style={{fontWeight: 'bold'}}>{forgotPasswordDetails.userName.replace(/(\w{3})[\w.-]+@([\w.]+\w)/, "$1***@$2")}</Text>,
           please confirm the code below
         </Text>
 
@@ -100,7 +112,7 @@ const ForgotPassword = ({navigation}) => {
 
         <View style={styles.inputCardContainer}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ResetPassword')}
+            onPress={handleVerifyCode}
             style={[styles.button, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>

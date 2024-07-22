@@ -4,12 +4,14 @@ const PickupAddressContext = createContext();
 const DropAddressContext = createContext();
 const UserDetailsContext = createContext();
 const UserSignUpContext = createContext();
+const ForgotPasswordContext = createContext();
 
 export const StoreContext = ({children}) => {
   const [pickupAddress, setPickupAddress] = useState(null);
   const [dropAddress, setDropAddress] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [signUpDetails, setSignUpDetails] = useState(null);
+  const [forgotPasswordDetails, setForgotPasswordDetails] = useState(null);
 
   const savePickupAddress = address => {
     setPickupAddress(address);
@@ -27,12 +29,18 @@ export const StoreContext = ({children}) => {
     setSignUpDetails(signUpDetails);
   };
 
+  const saveForgotPasswordDetails = forgotPasswordDetails => {
+    setForgotPasswordDetails(forgotPasswordDetails);
+  };
+
   return (
     <UserDetailsContext.Provider value={{userDetails, saveUserDetails}}>
       <PickupAddressContext.Provider value={{pickupAddress, savePickupAddress}}>
         <DropAddressContext.Provider value={{dropAddress, saveDropAddress}}>
           <UserSignUpContext.Provider value={{signUpDetails, saveSignUpDetails}}>
-            {children}
+            <ForgotPasswordContext.Provider value={{forgotPasswordDetails, saveForgotPasswordDetails}}>
+              {children}
+            </ForgotPasswordContext.Provider>
           </UserSignUpContext.Provider>
         </DropAddressContext.Provider>
       </PickupAddressContext.Provider>
@@ -44,3 +52,4 @@ export const useUserDetails = () => useContext(UserDetailsContext);
 export const usePickupAddress = () => useContext(PickupAddressContext);
 export const useDropAddress = () => useContext(DropAddressContext);
 export const useSignUpDetails = () => useContext(UserSignUpContext);
+export const useForgotPasswordDetails = () => useContext(ForgotPasswordContext);
