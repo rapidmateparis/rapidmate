@@ -35,5 +35,7 @@ export const apiHost = {
 export const API = {
   loginAuthenticateUrl: BASE_URL + "authuser/login",
   signUpUrl: BASE_URL + "authuser/signup",
-  signupVerifyUrl: BASE_URL + "authuser/signupverify"
+  signupVerifyUrl: BASE_URL + "authuser/signupverify",
+  forgotPasswordUrl: BASE_URL + "authuser/forgotpassword",
+  resetPasswordUrl: BASE_URL + "authuser/resetpassword"
 }

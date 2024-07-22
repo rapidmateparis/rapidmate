@@ -42,3 +42,31 @@ export const signUpVerifyApi = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const forgotPasswordApi = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.forgotPasswordUrl,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const resetPasswordApi = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.resetPasswordUrl,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
