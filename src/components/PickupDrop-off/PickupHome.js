@@ -37,7 +37,7 @@ const PickupHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome <Text style={styles.userName}>{userDetails.name}</Text>
+              Welcome <Text style={styles.userName}>{userDetails.name ? userDetails.name : "Jhon"}</Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate dashboard!

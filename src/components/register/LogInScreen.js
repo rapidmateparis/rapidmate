@@ -74,7 +74,7 @@ const LogInScreen = ({navigation}) => {
                 {text: 'OK', onPress: () => {}},
               ]);
             } else {
-              saveUserDetails(successResponse[0]._response.idToken.payload);
+              saveUserDetails(successResponse[0]._response.user.idToken.payload);
               navigation.navigate('PickupBottomNav');
             }
           }
