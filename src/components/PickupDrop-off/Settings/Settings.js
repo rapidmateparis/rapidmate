@@ -27,7 +27,7 @@ const Settings = ({navigation}) => {
             />
           </View>
           <View style={{marginLeft: 15}}>
-            <Text style={styles.username}>{userDetails.name}</Text>
+            <Text style={styles.username}>{userDetails.name ? userDetails.name : "Jhon"}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.goprofile}> 
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
