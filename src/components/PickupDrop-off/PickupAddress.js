@@ -18,11 +18,16 @@ import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
 
-const PickupAddress = ({navigation}) => {
+const PickupAddress = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedVehiclePrice, setSelectedVehiclePrice] = useState(null);
   const [vehicleDetails, setVehicleDetails] = useState();
+  const [sourceLocation, setSourceLocation] = useState();
+  const [destinationLocation, setDestinationLocation] = useState();
+
+
+  console.log("print_data===>pickupService", route.params.pickupService.id)
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
@@ -82,10 +87,18 @@ const PickupAddress = ({navigation}) => {
     },
   ];
 
+  const onSourceLocation = (location) => {
+    setSourceLocation(location)
+  }
+
+  const onDestinationLocation = (location) => {
+    setDestinationLocation(location)
+  }
+
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
       <View style={{height: 500, position: 'relative'}}>
-        <MapAddress />
+        <MapAddress onSourceLocation={onSourceLocation} onDestinationLocation={onDestinationLocation}/>
         <View style={styles.dateCard}>
           <EvilIcons name="calendar" size={25} color="#000" />
           <Text style={styles.dateCardText}>When do you need it?</Text>
@@ -153,7 +166,7 @@ const PickupAddress = ({navigation}) => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate('AddPickupdetails')}
+          onPress={() => navigation.push('AddPickupdetails', {selectedVehicle: selectedVehicle, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation})}
           style={styles.continueBtn}>
           <Text style={styles.continueText}>Continue to order details</Text>
           <AntDesign name="arrowright" size={20} color="#000000" />

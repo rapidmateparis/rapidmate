@@ -35,7 +35,7 @@ const MyCustomFlagMarker = () => (
   />
 );
 
-const MapAddress = () => {
+const MapAddress = (props) => {
   const mapViewRef = useRef(null);
   const navigation = useNavigation();
   const {setPickupAddress} = usePickupAddress();
@@ -55,6 +55,7 @@ const MapAddress = () => {
   //   }, 6000);
   //   return () => clearInterval(interval);
   // }, []);
+
 
   const getLiveLocation = async () => {
     try {
@@ -109,6 +110,7 @@ const MapAddress = () => {
                   };
                   setOrigin(originCoordinates);
                   moveToLocation(originCoordinates);
+                  props.onSourceLocation({originCoordinates : originCoordinates});
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -134,6 +136,7 @@ const MapAddress = () => {
                   };
                   setDestination(destinationCoordinates);
                   moveToLocation(destinationCoordinates);
+                  props.onDestinationLocation({destinationCoordinates : destinationCoordinates});
                 }}
                 query={{
                   key: MAPS_API_KEY,

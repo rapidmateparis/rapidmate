@@ -70,3 +70,18 @@ export const resetPasswordApi = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getServiceTypeApi = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.serviceTypeUrl,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+

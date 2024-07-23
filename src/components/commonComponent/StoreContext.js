@@ -1,17 +1,19 @@
-import React, {createContext, useState, useContext} from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
 const PickupAddressContext = createContext();
 const DropAddressContext = createContext();
 const UserDetailsContext = createContext();
 const UserSignUpContext = createContext();
 const ForgotPasswordContext = createContext();
+const ServiceTypeContext = createContext();
 
-export const StoreContext = ({children}) => {
+export const StoreContext = ({ children }) => {
   const [pickupAddress, setPickupAddress] = useState(null);
   const [dropAddress, setDropAddress] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [signUpDetails, setSignUpDetails] = useState(null);
   const [forgotPasswordDetails, setForgotPasswordDetails] = useState(null);
+  const [serviceTypeDetails, setServiceTypeDetails] = useState(null);
 
   const savePickupAddress = address => {
     setPickupAddress(address);
@@ -33,13 +35,19 @@ export const StoreContext = ({children}) => {
     setForgotPasswordDetails(forgotPasswordDetails);
   };
 
+  const saveServiceTypeDetails = serviceTypeDetails => {
+    setServiceTypeDetails(serviceTypeDetails)
+  }
+
   return (
-    <UserDetailsContext.Provider value={{userDetails, saveUserDetails}}>
-      <PickupAddressContext.Provider value={{pickupAddress, savePickupAddress}}>
-        <DropAddressContext.Provider value={{dropAddress, saveDropAddress}}>
-          <UserSignUpContext.Provider value={{signUpDetails, saveSignUpDetails}}>
-            <ForgotPasswordContext.Provider value={{forgotPasswordDetails, saveForgotPasswordDetails}}>
-              {children}
+    <UserDetailsContext.Provider value={{ userDetails, saveUserDetails }}>
+      <PickupAddressContext.Provider value={{ pickupAddress, savePickupAddress }}>
+        <DropAddressContext.Provider value={{ dropAddress, saveDropAddress }}>
+          <UserSignUpContext.Provider value={{ signUpDetails, saveSignUpDetails }}>
+            <ForgotPasswordContext.Provider value={{ forgotPasswordDetails, saveForgotPasswordDetails }}>
+              <ServiceTypeContext.Provider value={{ serviceTypeDetails, saveServiceTypeDetails }}>
+                {children}
+              </ServiceTypeContext.Provider>
             </ForgotPasswordContext.Provider>
           </UserSignUpContext.Provider>
         </DropAddressContext.Provider>
@@ -53,3 +61,4 @@ export const usePickupAddress = () => useContext(PickupAddressContext);
 export const useDropAddress = () => useContext(DropAddressContext);
 export const useSignUpDetails = () => useContext(UserSignUpContext);
 export const useForgotPasswordDetails = () => useContext(ForgotPasswordContext);
+export const useServiceTypeDetails = () => useContext(ServiceTypeContext);
