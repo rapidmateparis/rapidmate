@@ -38,5 +38,8 @@ export const API = {
   signupVerifyUrl: BASE_URL + "authuser/signupverify",
   forgotPasswordUrl: BASE_URL + "authuser/forgotpassword",
   resetPasswordUrl: BASE_URL + "authuser/resetpassword",
-  serviceTypeUrl: BASE_URL + "servicetypes"
+  serviceTypeUrl: BASE_URL + "servicetypes",
+  locationIdUrl: BASE_URL + "locations",
+  orderPickupUrl: BASE_URL +"order"
+  
 }

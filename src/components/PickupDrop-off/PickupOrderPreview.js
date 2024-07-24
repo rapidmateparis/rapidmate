@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -12,19 +12,46 @@ import CheckBox from '@react-native-community/checkbox';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
+import { createPickupOrder } from '../../data_manager';
 
-const PickupOrderPreview = ({route, navigation }) => {
+const PickupOrderPreview = ({ route, navigation }) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const params = route.params.props
+  const { setLoading } = useLoader();
+
+  const pickupOrderRequest = () => {
+    let requestParams = {
+      consumer_ext_id: "C1721584247181",
+      service_type_id: params.serviceTypeId,
+      vehicle_type_id: params.selectedVehicleDetails.id,
+      pickup_location_id: params.sourceLocationId ? params.sourceLocationId : 1,
+      dropoff_location_id: params.destinationLocationId ? params.destinationLocationId : 2
+    }
+    setLoading(true);
+    createPickupOrder(requestParams, (successResponse) => {
+      if (successResponse[0]._success) {
+        setLoading(false);
+        if (successResponse[0]._response) {
+          navigation.navigate('OrderConfirm')
+        }
+      }
+    }, (errorResponse) => {
+      setLoading(false);
+      Alert.alert('Error Alert', errorResponse, [
+        { text: 'OK', onPress: () => { } },
+      ]);
+    })
+  }
+
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15}}>
+    <ScrollView style={{ width: '100%', backgroundColor: '#FBFAF5' }}>
+      <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.locationCard}>
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
@@ -36,7 +63,7 @@ const PickupOrderPreview = ({route, navigation }) => {
           <View style={styles.locationAddress}>
             <MaterialIcons name="my-location" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-            {params.sourceLocationDescription.description ? params.sourceLocationDescription.description : null}
+              {params.sourceLocationDescription.description ? params.sourceLocationDescription.description : null}
             </Text>
           </View>
           <View style={styles.borderShowOff}></View>
@@ -47,16 +74,16 @@ const PickupOrderPreview = ({route, navigation }) => {
             <View>
               <Text style={styles.vehicleName}>{params.selectedVehicle}</Text>
               <Text style={styles.vehicleCapacity}>
-                {params.selectedVehicleDetails.capacity} max capacity
+                {params.selectedVehicleDetails.capacity ? params.selectedVehicleDetails.capacity : null} max capacity
               </Text>
             </View>
             <View>
-              <Image style={{width: 130, height: 75,}}  source={
+              <Image style={{ width: 130, height: 75, }} source={
                 params.selectedVehicle == 'Bicycle' ? BicycleImage :
-                params.selectedVehicle == 'Motorbike' ? MotorbikeImage :
-                params.selectedVehicle == 'Mini Truck' ? MiniTruckImage :
-                params.selectedVehicle == 'Mini Van' ? MiniTruckImage :
-                params.selectedVehicle == 'Semi Truck' ? SemiTruckImage: SemiTruckImage} />
+                  params.selectedVehicle == 'Motorbike' ? MotorbikeImage :
+                    params.selectedVehicle == 'Mini Truck' ? MiniTruckImage :
+                      params.selectedVehicle == 'Mini Van' ? MiniTruckImage :
+                        params.selectedVehicle == 'Semi Truck' ? SemiTruckImage : SemiTruckImage} />
             </View>
           </View>
         </View>
@@ -68,9 +95,9 @@ const PickupOrderPreview = ({route, navigation }) => {
             <Text style={styles.vehicleCapacity}></Text>
           </View>
           <View style={styles.pickupinfoCard}>
-            <View style={[styles.pickupManDetails, {width: '60%'}]}>
+            <View style={[styles.pickupManDetails, { width: '60%' }]}>
               <SimpleLineIcons
-                style={{marginTop: 3}}
+                style={{ marginTop: 3 }}
                 name="globe"
                 size={12}
                 color="#000000"
@@ -80,7 +107,7 @@ const PickupOrderPreview = ({route, navigation }) => {
 
             <View style={styles.pickupManDetails}>
               <MaterialIcons
-                style={{marginTop: 1}}
+                style={{ marginTop: 1 }}
                 name="call"
                 size={15}
                 color="#000000"
@@ -98,24 +125,24 @@ const PickupOrderPreview = ({route, navigation }) => {
         <View style={styles.pickupCard}>
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
           <View style={styles.semiTruckDetails}>
-            <View style={{marginTop: 10}}>
+            <View style={{ marginTop: 10 }}>
               <Text style={styles.vehicleName}>€{params.selectedVehicleDetails.pricePerKm * params.distanceTime.distance}</Text>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <Text
                   style={[
                     styles.bookininfo,
-                    {borderRightWidth: 1, paddingRight: 5},
+                    { borderRightWidth: 1, paddingRight: 5 },
                   ]}>
                   {params.distanceTime.distance.toFixed(1)} km
                 </Text>
                 <Text
                   style={[
                     styles.bookininfo,
-                    {borderRightWidth: 1, paddingHorizontal: 5},
+                    { borderRightWidth: 1, paddingHorizontal: 5 },
                   ]}>
                   {params.selectedVehicle}
                 </Text>
-                <Text style={[styles.bookininfo, {paddingLeft: 5}]}>
+                <Text style={[styles.bookininfo, { paddingLeft: 5 }]}>
                   {params.distanceTime.time.toFixed(0)} minutes
                 </Text>
               </View>
@@ -131,7 +158,7 @@ const PickupOrderPreview = ({route, navigation }) => {
             disabled={false}
             value={toggleCheckBox}
             onValueChange={newValue => setToggleCheckBox(newValue)}
-            style={{alignSelf: 'center'}}
+            style={{ alignSelf: 'center' }}
           />
           <Text style={styles.checkboxText}>
             Save these addresses for later
@@ -139,8 +166,8 @@ const PickupOrderPreview = ({route, navigation }) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('PickupPayment')}
-          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+          onPress={pickupOrderRequest}
+          style={[styles.logbutton, { backgroundColor: colors.primary }]}>
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
       </View>

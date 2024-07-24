@@ -80,6 +80,7 @@ const LogInScreen = ({navigation}) => {
           }
         }
       }, (errorResponse)=> {
+        setLoading(false);
         Alert.alert('Error Alert', errorResponse, [
           {text: 'OK', onPress: () => {}},
         ]);
