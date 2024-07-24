@@ -21,6 +21,14 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
+import Restaurant from '../../image/Restaurant-Icon.png';
+import Grocery from '../../image/Grocery-Icon.png';
+import Gift from '../../image/Gift-Icon.png';
+import Health from '../../image/Health-Icon.png';
+import Tech from '../../image/Tech-Icon.png';
+import Shopping from '../../image/Shopping-Icon.png';
+import Professional from '../../image/Professional-Icon.png';
+import Other from '../../image/Other-Icon.png';
 // import DropDownDropdown from '../common component/dropdown';
 
 const EnterpriseSignup = ({navigation}) => {
@@ -43,6 +51,8 @@ const EnterpriseSignup = ({navigation}) => {
   const [dropdownIndustryValue, setDropdownIndustryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const [showIndustryOptions, setShowIndustryOptions] = useState(false);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -52,10 +62,65 @@ const EnterpriseSignup = ({navigation}) => {
     }
   };
 
+  const toggleIndustrySelection = index => {
+    if (selectedIndustry === index) {
+      setSelectedIndustry(null); // Deselect if already selected
+    } else {
+      setSelectedIndustry(index); // Select the industry
+    }
+  };
+
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+
+  const industryData = [
+    {
+      name: 'Restaurant and takeaway',
+      image: Restaurant,
+      style: styles.restaurantImage,
+    },
+    {
+      name: 'Grocery and speciality',
+      image: Grocery,
+      style: styles.GroceryImage,
+    },
+    {
+      name: 'Gift delivery',
+      image: Gift,
+      style: styles.GiftImage,
+    },
+    {
+      name: 'Health and beauty',
+      image: Health,
+      style: styles.HealthImage,
+    },
+    {
+      name: 'Tech and electronics',
+      image: Tech,
+      style: styles.TechImage,
+    },
+    {
+      name: 'Retail and shopping',
+      image: Shopping,
+      style: styles.ShoppingImage,
+    },
+    {
+      name: 'Professional services',
+      image: Professional,
+      style: styles.ProfessionalImage,
+    },
+    {
+      name: 'Other',
+      image: Other,
+      style: styles.OtherImage,
+    },
+  ];
+
+  const toggleIndustryOptions = () => {
+    setShowIndustryOptions(!showIndustryOptions);
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
@@ -200,31 +265,44 @@ const EnterpriseSignup = ({navigation}) => {
               onChangeText={text => setCompanyName(text)}
             />
           </View>
-          <View style={styles.containerCountry}>
-            <Dropdown
-              data={data}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Industry' : '...'}
-              searchPlaceholder="Search.."
-              value={dropdownIndustryValue}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setDropdownIndustryValue(item.value);
-                setIsFocus(false);
-              }}
-              renderLeftIcon={() => (
-                <AntDesign
-                  style={{marginRight: 10}}
-                  name="API"
-                  size={18}
-                  color={colors.text}
-                />
-              )}
-            />
+          <View style={styles.industryMainCard}>
+            <TouchableOpacity
+              style={styles.selectIndustryCard}
+              onPress={toggleIndustryOptions}>
+              <Image
+                style={styles.industryLeftIcons}
+                source={require('../../image/bulding.png')}
+              />
+              <Text style={styles.industryText}>Select industry</Text>
+              <AntDesign
+                name={showIndustryOptions ? 'up' : 'down'}
+                size={12}
+                color={colors.text}
+              />
+            </TouchableOpacity>
+
+            {showIndustryOptions && (
+              <View>
+                {industryData.map((industry, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.typesIndustryCard}
+                    onPress={() => toggleIndustrySelection(index)}>
+                    <Image
+                      style={[styles.industryLeftIcons, industry.style]}
+                      source={industry.image}
+                    />
+                    <Text style={styles.industryText}>{industry.name}</Text>
+
+                    <View style={styles.industrySelectCircle}>
+                      {selectedIndustry === index && (
+                        <Entypo name="check" size={17} color={colors.primary} />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </View>
           <View style={styles.textInputDiv}>
             <MaterialCommunityIcons name="package" size={18} color="#131314" />
@@ -474,9 +552,10 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12,
     paddingHorizontal: 10,
     color: colors.text,
+    fontFamily: 'Montserrat-Regular', 
   },
   accountType: {
     fontFamily: 'Montserrat-Regular',
@@ -563,6 +642,73 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontFamily: 'Montserrat-Regular',
+  },
+  industryMainCard: {
+    borderWidth: 1,
+    borderColor: '#2C303336',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingTop: 15,
+    paddingBottom: 8,
+    marginBottom: 20,
+  },
+  selectIndustryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  industryLeftIcons: {
+    marginRight: 10,
+  },
+  industryText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+    flex: 1,
+  },
+  typesIndustryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+  industrySelectCircle: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: '#dbdbdb',
+    borderRadius: 50,
+  },
+  restaurantImage: {
+    width: 14,
+    height: 16,
+  },
+  GroceryImage: {
+    width: 13.5,
+    height: 15,
+  },
+  GiftImage: {
+    width: 14,
+    height: 16,
+  },
+  HealthImage: {
+    width: 14,
+    height: 14,
+  },
+  TechImage: {
+    width: 13,
+    height: 18,
+  },
+  ShoppingImage: {
+    width: 15,
+    height: 15,
+  },
+  ProfessionalImage: {
+    width: 14.8,
+    height: 14.8,
+  },
+  OtherImage: {
+    width: 14.8,
+    height: 14.8,
   },
 });
 

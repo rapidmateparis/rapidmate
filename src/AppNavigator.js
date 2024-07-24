@@ -105,14 +105,24 @@ import EnterpriseTrackDeiver from './components/Enterprise/EnterpriseTrackDeiver
 import EnterpriseDeliveryCompleted from './components/Enterprise/EnterpriseDeliveryCompleted';
 import EnterpriseFeedbackThanksPage from './components/Enterprise/EnterpriseFeedbackThanksPage';
 import Splash from './Splash';
+import PickupCompanySignup from './components/PickupDrop-off/PickupCompanySignup';
+import PickupSuccessfulPayment from './components/PickupDrop-off/PickupSuccessfulPayment';
+import PickupUnsuccessfulPayment from './components/PickupDrop-off/PickupUnsuccessfulPayment';
+import AddCustomVehicle from './components/DeliveryBoy/AddCustomVehicle';
+import DeliveryboyOtherOptions from './components/DeliveryBoy/DeliveryboyOtherOptions';
+import EnterpriseShiftFillter from './components/Enterprise/EnterpriseShiftFillter';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const [isShiftModalVisible, setShiftModalVisible] = useState(false);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const toggleShiftModal = () => {
+    setShiftModalVisible(!isShiftModalVisible);
   };
 
   return (
@@ -319,6 +329,34 @@ const AppNavigator = () => {
           <Stack.Screen
             name="PickupSignup"
             component={PickupSignup}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: '',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
+            name="PickupCompanySignup"
+            component={PickupCompanySignup}
             options={({navigation}) => ({
               headerLeft: () => (
                 <TouchableOpacity
@@ -733,8 +771,74 @@ const AppNavigator = () => {
             })}
           />
           <Stack.Screen
+            name="AddCustomVehicle"
+            component={AddCustomVehicle}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Add custom vehicle',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
+            name="DeliveryboyOtherOptions"
+            component={DeliveryboyOtherOptions}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Other',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
             name="PickupOrderCancelled"
             component={PickupOrderCancelled}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PickupSuccessfulPayment"
+            component={PickupSuccessfulPayment}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PickupUnsuccessfulPayment"
+            component={PickupUnsuccessfulPayment}
             options={{headerShown: false}}
           />
           <Stack.Screen
@@ -1616,16 +1720,22 @@ const AppNavigator = () => {
                 elevation: 0,
               },
               headerRight: () => (
-                <View style={{flexDirection: 'row'}}>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('EnterpriseListNewAd')}
-                    style={{paddingRight: 10}}>
-                    <Ionicons
-                      name="settings-outline"
-                      size={25}
-                      color={colors.text}
-                    />
-                  </TouchableOpacity>
+                <View>
+                  <View style={{flexDirection: 'row'}}>
+                    <TouchableOpacity
+                      onPress={toggleShiftModal}
+                      style={{paddingRight: 10, paddingTop: 10,}}>
+                      <Ionicons
+                        name="settings-outline"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <EnterpriseShiftFillter
+                    isShiftModalVisible={isShiftModalVisible}
+                    setShiftModalVisible={setShiftModalVisible}
+                  />
                 </View>
               ),
             })}

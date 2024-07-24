@@ -28,7 +28,7 @@ const TodayList = () => {
             paddingTop: 5,
             backgroundColor: '#FBFAF5',
           }}>
-          <View style={styles.packageDetailCard}>
+          <TouchableOpacity style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
               <Image source={require('../../image/package-medium-icon.png')} />
               <Text style={styles.deliveryTime}>
@@ -66,7 +66,7 @@ const TodayList = () => {
               <Text style={styles.orderId}>Pickup Truck</Text>
               <Text style={styles.valueMoney}>€34.00</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

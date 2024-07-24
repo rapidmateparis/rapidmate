@@ -87,7 +87,7 @@ const PickupPayment = ({navigation}) => {
             <Text>€</Text>34.00
           </Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('LoaderForDriver')}>
+            onPress={() => navigation.navigate('PickupSuccessfulPayment')}>
             <Text style={styles.PayText}>Proceed to pay</Text>
           </TouchableOpacity>
         </View>

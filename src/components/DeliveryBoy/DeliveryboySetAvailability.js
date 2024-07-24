@@ -16,7 +16,7 @@ import CheckBox from '@react-native-community/checkbox';
 const DeliveryboySetAvailability = ({navigation}) => {
   const [fromtime, setFromtime] = useState('');
   const [totime, setTotime] = useState('');
-  const [pushNotifications, setPushNotifications] = useState(true);
+  const [pushNotifications, setPushNotifications] = useState(false);
   const [promoEmails, setPromoEmails] = useState(false);
   const [toggleCheckBox20, setToggleCheckBox20] = useState(false);
   const [toggleCheckBox21, setToggleCheckBox21] = useState(false);
@@ -76,12 +76,25 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
           <View style={styles.applySlotCard}>
             <Text style={styles.applySlotText}>
+            I am available 24/7
+            </Text>
+            <TouchableOpacity onPress={togglePushNotifications}>
+              <MaterialCommunityIcons
+                name={pushNotifications ? 'toggle-switch' : 'toggle-switch-off'}
+                size={50}
+                color={pushNotifications ? '#FFC72B' : '#D3D3D3'}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.applySlotCard}>
+            <Text style={styles.applySlotText}>
               Apply same slots to all days
             </Text>
             <TouchableOpacity onPress={togglePromoEmails}>
               <MaterialCommunityIcons
                 name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
-                size={60}
+                size={50}
                 color={promoEmails ? '#FFC72B' : '#D3D3D3'}
               />
             </TouchableOpacity>
@@ -426,7 +439,11 @@ const DeliveryboySetAvailability = ({navigation}) => {
         <TouchableOpacity style={styles.logbutton}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyScheduledDeliveryAlert')} style={styles.saveBTn}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('DeliveryboyScheduledDeliveryAlert')
+          }
+          style={styles.saveBTn}>
           <Text style={styles.okButton}>Save</Text>
         </TouchableOpacity>
       </View>

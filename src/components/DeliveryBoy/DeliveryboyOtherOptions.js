@@ -1,36 +1,43 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Image,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native'; 
-import { colors } from '../../colors';
+import {useNavigation} from '@react-navigation/native';
+import {colors} from '../../colors';
 
-const AddVehicle = () => {
+const DeliveryboyOtherOptions = () => {
   const navigation = useNavigation();
 
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = option => {
     setSelectedOption(option);
   };
 
   const handleContinue = () => {
-    if (selectedOption === 'Other') {
-      navigation.navigate('DeliveryboyOtherOptions');
+    if (selectedOption === 'CustomVehicle') {
+      navigation.navigate('AddCustomVehicle');
     } else {
-      navigation.navigate('AddPickupVehicle');
+      navigation.navigate('ChooseDeliveryType');
     }
   };
 
-  const renderCard = (option, iconSource, title, imageStyle) => {
+  const renderCard = (option, iconSource, title, subtitle, imageStyle) => {
     const isSelected = selectedOption === option;
 
     return (
       <LinearGradient
         colors={['rgba(255, 0, 88, 0.07)', 'rgba(153, 0, 53, 0)']}
         style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}>
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}>
         <TouchableOpacity
           onPress={() => handleOptionSelect(option)}
           style={[
@@ -38,7 +45,8 @@ const AddVehicle = () => {
             isSelected ? styles.selectedCard : null, // Apply selected card style conditionally
           ]}>
           <Image source={iconSource} style={[styles.cardImage, imageStyle]} />
-          <View style={{ marginLeft: 10, flex: 1 }}>
+          <View style={{marginLeft: 10, flex: 1}}>
+            {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
             <Text style={styles.paymentPlateform}>{title}</Text>
           </View>
 
@@ -55,21 +63,34 @@ const AddVehicle = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
-      <View style={{ paddingHorizontal: 15 }}>
-        {renderCard('Cycle', require('../../image/Cycle-Icon.png'), 'Cycle', styles.cycleImage)}
-        {renderCard('Scooter', require('../../image/Scooter-Icon.png'), 'Scooter', styles.scooterImage)}
-        {renderCard('Car', require('../../image/Car-Icon.png'), 'Car', styles.carImage)}
-        {renderCard('Partner', require('../../image/Partner-icon.png'), 'Partner', styles.partnerImage)}
-        {renderCard('Van', require('../../image/Van-Icon.png'), 'Van', styles.vanImage)}
-        {renderCard('Pickup', require('../../image/Pickup-Icon.png'), 'Pickup', styles.pickupImage)}
-        {renderCard('Truck', require('../../image/Truck-Icon.png'), 'Truck', styles.truckImage)}
-        {renderCard('Other', require('../../image/Big-Package.png'), 'Other', styles.otherImage)}
+    <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
+      <View style={{paddingHorizontal: 15}}>
+        {renderCard(
+          'CustomVehicle',
+          require('../../image/Custom-Vehicle.png'),
+          'Add custom vehicle',
+          '',
+          styles.customVehicleImage,
+        )}
+        {renderCard(
+          'Multitask',
+          require('../../image/MultitaskCap.png'),
+          'Multitask employee',
+          'Register as',
+          styles.multitaskImage,
+        )}
+        {renderCard(
+          'CleaningStaff',
+          require('../../image/CleaningStaff.png'),
+          'Cleaning staff',
+          'Register as',
+          styles.cleaningImage,
+        )}
 
         {/* Continue Button */}
         <TouchableOpacity
           onPress={handleContinue}
-          style={[styles.logbutton, { backgroundColor: colors.primary }]}>
+          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
@@ -127,37 +148,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  cycleImage: {
-    width: 40,
-    height: 43,
+  customVehicleImage: {
+    width: 45,
+    height: 46,
   },
-  scooterImage: {
-    width: 40,
-    height: 40,
+  multitaskImage: {
+    width: 34,
+    height: 26,
   },
-  carImage: {
-    width: 52,
-    height: 22,
-  },
-  partnerImage: {
-    width: 52,
-    height: 22,
-  },
-  vanImage: {
-    width: 60,
-    height: 28,
-  },
-  pickupImage: {
-    width: 52,
-    height: 34,
-  },
-  truckImage: {
-    width: 70,
-    height: 32,
-  },
-  otherImage: {
-    width: 38,
-    height: 38,
+  cleaningImage: {
+    width: 30,
+    height: 37,
   },
   cricleRound: {
     width: 25,
@@ -166,6 +167,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.subText,
   },
+  subtitle: {
+    color: colors.subText,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+  },
 });
 
-export default AddVehicle;
+export default DeliveryboyOtherOptions;

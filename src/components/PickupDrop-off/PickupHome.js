@@ -55,7 +55,7 @@ const PickupHome = ({navigation}) => {
           </View>
           <View>
             <Image
-              style={{width: 70, height: 140}}
+              style={{width: 55, height: 112}}
               source={require('../../image/package-girl.png')}
             />
           </View>
@@ -64,7 +64,7 @@ const PickupHome = ({navigation}) => {
         <TouchableOpacity style={styles.requestPickup}>
           <View>
             <Image
-              style={{width: 78, height: 146}}
+              style={{width: 60, height: 112}}
               source={require('../../image/package-boy.png')}
             />
           </View>
@@ -76,7 +76,28 @@ const PickupHome = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.requestPickup}>
+          <View style={styles.pickcard}>
+            <Text style={styles.packageRequst}>Request a Mover</Text>
+            <Text style={styles.packageDiscription}>
+              Avail service of our professional packer & movers
+            </Text>
+          </View>
+          <View>
+            <Image
+              style={{width: 125, height: 106}}
+              source={require('../../image/PackageMove-img.png')}
+            />
+          </View>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.requestPickupPack}>
+          <View style={styles.packingCardImgas}>
+            <Image
+              style={{width: 125, height: 106}}
+              source={require('../../image/package-packing.png')}
+            />
+          </View>
           <View style={styles.packagePack}>
             <Text style={styles.packageRequst}>Schedule your delivery</Text>
             <Text style={styles.packageDiscription}>
@@ -89,33 +110,6 @@ const PickupHome = ({navigation}) => {
                 color="#FF0058"
               />
               <Text style={styles.discountPercentage}>15% OFF</Text>
-            </View>
-          </View>
-          <View style={styles.packingCardImgas}>
-            <Image
-              style={{width: 146, height: 112}}
-              source={require('../../image/package-packing.png')}
-            />
-            <Image
-              style={styles.timingIcon}
-              source={require('../../image/timing-icon.png')}
-            />
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.requestPickup}>
-          <View>
-            <View>
-              <Image
-                style={{width: 163, height: 132}}
-                source={require('../../image/PackageMove-img.png')}
-              />
-            </View>
-            <View style={{marginTop: 10,}}>
-              <Text style={styles.packageRequst}>Request a Mover</Text>
-              <Text style={styles.packageDiscription}>
-                Avail service of our professional packer & movers
-              </Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -263,8 +257,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor: colors.white,
     paddingHorizontal: 18,
-    paddingBottom: 20,
-    paddingTop: 45,
+    paddingTop: 20,
     borderRadius: 10,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
@@ -274,7 +267,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5, // for Android
-    marginBottom: 7,
+    marginBottom: 10,
     marginTop: 7,
     marginRight: 10,
   },
@@ -284,10 +277,10 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   packagePack: {
-    width: '67%',
+    width: '65%',
     paddingHorizontal: 10,
     paddingTop: 0,
-    paddingBottom: 50,
+    paddingBottom: 35,
   },
   specialDiscount: {
     flexDirection: 'row',
@@ -306,7 +299,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
   packingCardImgas: {
-    position: 'relative',
+    marginRight: 30,
   },
   timingIcon: {
     position: 'absolute',

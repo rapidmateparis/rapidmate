@@ -17,9 +17,6 @@ import StartShift from '../../image/play-32.png';
 import { useNavigation } from '@react-navigation/native';
 
 const DeliveryboyShiftDetails = ({navigation}) => {
-  const [isImageModalVisible, setImageModalVisible] = useState(false);
-  const [isOTPModalVisible, setOTPModalVisible] = useState(false);
-  const [disableCBButton, setDisableCBButton] = useState(false);
   const defaultStatusMessage = 'Swipe to accept the request';
   const [swipeStatusMessage, setSwipeStatusMessage] =
     useState(defaultStatusMessage);
@@ -28,16 +25,6 @@ const DeliveryboyShiftDetails = ({navigation}) => {
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
   const [delivered, setDelivered] = useState(false);
 
-  const handleMarkAsDelivered = () => {
-    setDelivered(true);
-  };
-
-  const toggleModal = () => {
-    setImageModalVisible(!isImageModalVisible);
-  };
-  const toggleModalOTP = () => {
-    setOTPModalVisible(!isOTPModalVisible);
-  };
   useEffect(() => {
     const interval = setInterval(
       () => setSwipeStatusMessage(defaultStatusMessage),
