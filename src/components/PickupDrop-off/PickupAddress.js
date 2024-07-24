@@ -21,10 +21,14 @@ import SemiTruckImage from '../../image/Semi-Truck.png';
 const PickupAddress = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [selectedVehicleDetails, setSelectedVehicleDetails] = useState(null);
   const [selectedVehiclePrice, setSelectedVehiclePrice] = useState(null);
   const [vehicleDetails, setVehicleDetails] = useState();
   const [sourceLocation, setSourceLocation] = useState();
+  const [sourceLocationDescription, setSourceLocationDescription] = useState();
   const [destinationLocation, setDestinationLocation] = useState();
+  const [destinationLocationDescription, setDestinationLocationDescription] = useState();
+  const [distanceTime, setDistanceTime] = useState();
 
 
   console.log("print_data===>pickupService", route.params.pickupService.id)
@@ -36,6 +40,7 @@ const PickupAddress = ({route, navigation}) => {
 
   const vehicleData = [
     {
+      id: 10, 
       name: 'Bicycle',
       capacity: '5 liters',
       price: '€5/km',
@@ -43,9 +48,11 @@ const PickupAddress = ({route, navigation}) => {
       length: '5 Feet',
       height: '4 Feet',
       width: '1 Feet',
+      pricePerKm:5,
       style: styles.bicycleImage,
     },
     {
+      id: 1, 
       name: 'Motorbike',
       capacity: '10 liters',
       price: '€10/km',
@@ -53,9 +60,11 @@ const PickupAddress = ({route, navigation}) => {
       length: '5 Feet',
       height: '4 Feet',
       width: '2 Feet',
+      pricePerKm:10,
       style: styles.motorbikeImage,
     },
     {
+      id: 4, 
       name: 'Mini Truck',
       capacity: '1000 liters',
       price: '€50/km',
@@ -63,9 +72,11 @@ const PickupAddress = ({route, navigation}) => {
       length: '24 Feet',
       height: '12 Feet',
       width: '8 Feet',
+      pricePerKm:50,
       style: styles.miniTruckImage,
     },
     {
+      id: 8, 
       name: 'Mini Van',
       capacity: '4000 liters',
       price: '€80/km',
@@ -73,9 +84,11 @@ const PickupAddress = ({route, navigation}) => {
       length: '24 Feet',
       height: '12 Feet',
       width: '8 Feet',
+      pricePerKm:80,
       style: styles.miniVanImage,
     },
     {
+      id: 9, 
       name: 'Semi Truck',
       capacity: '20000 liters',
       price: '€150/km',
@@ -83,6 +96,7 @@ const PickupAddress = ({route, navigation}) => {
       length: '30 Feet',
       height: '15 Feet',
       width: '10 Feet',
+      pricePerKm:150,
       style: styles.semiTruckImage,
     },
   ];
@@ -95,10 +109,22 @@ const PickupAddress = ({route, navigation}) => {
     setDestinationLocation(location)
   }
 
+  const onSourceLocationDescription = (description) => {
+    setSourceLocationDescription(description)
+  }
+
+  const onDestinationLocationDescription = (description) => {
+    setDestinationLocationDescription(description)
+  }
+
+  const onFetchDistanceAndTime = (value) => {
+    setDistanceTime(value)
+  }
+
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
       <View style={{height: 500, position: 'relative'}}>
-        <MapAddress onSourceLocation={onSourceLocation} onDestinationLocation={onDestinationLocation}/>
+        <MapAddress onFetchDistanceAndTime = {onFetchDistanceAndTime} onSourceLocation={onSourceLocation} onDestinationLocation={onDestinationLocation} onSourceLocationDescription = {onSourceLocationDescription} onDestinationLocationDescription={onDestinationLocationDescription} />
         <View style={styles.dateCard}>
           <EvilIcons name="calendar" size={25} color="#000" />
           <Text style={styles.dateCardText}>When do you need it?</Text>
@@ -137,6 +163,7 @@ const PickupAddress = ({route, navigation}) => {
                     key={index}
                     onPress={() => {
                       setSelectedVehicle(vehicle.name);
+                      setSelectedVehicleDetails(vehicle)
                       setSelectedVehiclePrice(vehicle.price);
                     }}
                     style={styles.cardVehicle}>
@@ -166,7 +193,7 @@ const PickupAddress = ({route, navigation}) => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.push('AddPickupdetails', {selectedVehicle: selectedVehicle, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation})}
+          onPress={() => navigation.push('AddPickupdetails', {selectedVehicle: selectedVehicle, selectedVehicleDetails: selectedVehicleDetails, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation, sourceLocationDescription:sourceLocationDescription, destinationLocationDescription:destinationLocationDescription, distanceTime:distanceTime})}
           style={styles.continueBtn}>
           <Text style={styles.continueText}>Continue to order details</Text>
           <AntDesign name="arrowright" size={20} color="#000000" />

@@ -89,6 +89,7 @@ const MapAddress = (props) => {
   const fetchTime = (d, t) => {
     setDistance(d);
     setTime(t);
+    props.onFetchDistanceAndTime({distance:d,time:t})
   };
 
   return (
@@ -103,6 +104,9 @@ const MapAddress = (props) => {
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter pickup address"
+                styles={{textInput: {
+                  color: colors.text,
+                }}}
                 onPress={(data, details = null) => {
                   const originCoordinates = {
                     latitude: details.geometry.location.lat,
@@ -111,6 +115,7 @@ const MapAddress = (props) => {
                   setOrigin(originCoordinates);
                   moveToLocation(originCoordinates);
                   props.onSourceLocation({originCoordinates : originCoordinates});
+                  props.onSourceLocationDescription({description : data.description});
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -134,10 +139,15 @@ const MapAddress = (props) => {
                     latitude: details.geometry.location.lat,
                     longitude: details.geometry.location.lng,
                   };
+                  console.log('data.description',details)
                   setDestination(destinationCoordinates);
                   moveToLocation(destinationCoordinates);
                   props.onDestinationLocation({destinationCoordinates : destinationCoordinates});
+                  props.onDestinationLocationDescription({description : data.description});
                 }}
+                styles={{textInput: {
+                  color: colors.text,
+                },}}
                 query={{
                   key: MAPS_API_KEY,
                   language: 'en',

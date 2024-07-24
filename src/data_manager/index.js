@@ -85,3 +85,17 @@ export const getServiceTypeApi = (params, successCallback, errorCallback) => {
   );
 };
 
+export const getLocationId = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.serviceTypeUrl,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+

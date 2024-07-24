@@ -122,6 +122,7 @@ const AddPickupdetails = ({route, navigation }) => {
               radioButtons={radioButtons}
               onPress={setSelectedId}
               selectedId={selectedId}
+              labelStyle={{color:colors.text}}
               containerStyle={{ flexDirection: 'row', justifyContent: 'space-between' }}
             />
           </View>
@@ -224,7 +225,7 @@ const AddPickupdetails = ({route, navigation }) => {
             </View>
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
-            <Text style={styles.textlable}>Order ID</Text>
+            <Text style={styles.textlable}>Package ID</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -245,7 +246,11 @@ const AddPickupdetails = ({route, navigation }) => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('PickupOrderPreview')}
+            onPress={() => {
+              let userDetails = {name:name, lastname:lastname,email:email, number:number}
+              route.params.userDetails = userDetails
+              navigation.navigate('PickupOrderPreview',{props:route.params})
+            }}
             style={[styles.logbutton, { backgroundColor: colors.primary }]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
@@ -398,6 +403,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 12,
+    color:colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   dottedLine: {
