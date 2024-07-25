@@ -31,16 +31,15 @@ const LogInScreen = ({navigation}) => {
 
 
   const validateForm = () => {
-    // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phonePattern = /^\+?\d{10,15}$/;
    
     let errors = {};
     if (!emailPhone.trim()) {
       errors.emailPhone = 'Email is required';
-    } 
-    // else if (!emailPattern.test(emailPhone) && !phonePattern.test(emailPhone)) {
-    //   errors.emailPhone = 'Enter a valid email';
-    // }
+    } else if (!emailPattern.test(emailPhone) && !phonePattern.test(emailPhone)) {
+      errors.emailPhone = 'Enter a valid email';
+    }
 
     if (!password.trim()) {
       errors.password = 'Password is required';
