@@ -114,3 +114,18 @@ export const createPickupOrder = (params, successCallback, errorCallback) => {
   );
 };
 
+
+
+export const getViewOrdersList = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.viewOrderListUrl,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
