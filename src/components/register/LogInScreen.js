@@ -74,12 +74,13 @@ const LogInScreen = ({navigation}) => {
                 {text: 'OK', onPress: () => {}},
               ]);
             } else {
-              saveUserDetails(successResponse[0]._response.user.idToken.payload);
+              saveUserDetails({userInfo : successResponse[0]._response.user.idToken.payload, userDetails: successResponse[0]._response.user_profile});
               navigation.navigate('PickupBottomNav');
             }
           }
         }
       }, (errorResponse)=> {
+        setLoading(false);
         Alert.alert('Error Alert', errorResponse, [
           {text: 'OK', onPress: () => {}},
         ]);

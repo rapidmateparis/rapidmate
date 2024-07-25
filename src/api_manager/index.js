@@ -33,7 +33,7 @@ export async function axiosCall(
 
   axiosInstance.interceptors.response.use(
     function (response) {
-      if (response.status == 200) {
+      if (response.status == 200 || response.status == 201) {
         return callbackResponse(response.data);
       } else if (response.status == 401) {
         onLogout();

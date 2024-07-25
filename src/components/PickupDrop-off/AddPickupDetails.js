@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -9,16 +9,19 @@ import {
   Image,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {Dropdown} from 'react-native-element-dropdown';
-import {colors} from '../../colors';
+import { Dropdown } from 'react-native-element-dropdown';
+import { colors } from '../../colors';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
+import { RadioButton, RadioGroup } from 'react-native-radio-buttons-group';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
-const AddPickupdetails = ({navigation}) => {
+const AddPickupdetails = ({route, navigation }) => {
+
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [company, setCompany] = useState('');
@@ -31,6 +34,23 @@ const AddPickupdetails = ({navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
+  const [selectedId, setSelectedId] = useState();
+  const { userDetails } = useUserDetails();
+
+  console.log("print_data===>AddPickupdetails", route.params)
+
+  const radioButtons = useMemo(() => ([
+    {
+      id: '1',
+      label: 'My Self',
+      value: 'self'
+    },
+    {
+      id: '2',
+      label: 'Others',
+      value: 'others'
+    }
+  ]), []);
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -40,8 +60,8 @@ const AddPickupdetails = ({navigation}) => {
   };
 
   const data = [
-    {label: '+91', value: '+91'},
-    {label: '+33', value: '+33'},
+    { label: '+91', value: '+91' },
+    { label: '+33', value: '+33' },
   ];
 
   const handleCameraLaunch = async () => {
@@ -77,12 +97,37 @@ const AddPickupdetails = ({navigation}) => {
     return fileName.length > 35 ? '...' + fileName : fileName;
   };
 
+
+  useEffect(() => {
+    if (selectedId == 1) {
+      const updatedNumber = userDetails.userInfo.phone_number ? userDetails.userInfo.phone_number.startsWith('+91') ? userDetails.userInfo.phone_number.slice(3) : userDetails.userInfo.phone_number : null;
+      setName(userDetails.userInfo.name ? userDetails.userInfo.name : null)
+      setLastname(userDetails.userInfo.name ? userDetails.userInfo.name : null)
+      setEmail(userDetails.userInfo.email ? userDetails.userInfo.email : null)
+      setNumber(updatedNumber)
+    } else {
+      setName(null)
+      setLastname(null)
+      setEmail(null)
+      setNumber(null)
+    }
+  }, [selectedId])
+
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
-      <View style={{paddingHorizontal: 15}}>
+    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
+      <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.logFormView}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1, marginRight: 10}}>
+          <View>
+            <RadioGroup
+              radioButtons={radioButtons}
+              onPress={setSelectedId}
+              selectedId={selectedId}
+              labelStyle={{color:colors.text}}
+              containerStyle={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            />
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flex: 1, marginRight: 10 }}>
               <Text style={styles.textlable}>First name*</Text>
               <TextInput
                 style={styles.inputTextStyle}
@@ -92,7 +137,7 @@ const AddPickupdetails = ({navigation}) => {
               />
             </View>
 
-            <View style={{flex: 1, marginLeft: 10}}>
+            <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={styles.textlable}>Last name</Text>
               <TextInput
                 style={styles.inputTextStyle}
@@ -102,7 +147,7 @@ const AddPickupdetails = ({navigation}) => {
               />
             </View>
           </View>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <Text style={styles.textlable}>Company</Text>
             <TextInput
               style={styles.inputTextStyle}
@@ -111,7 +156,7 @@ const AddPickupdetails = ({navigation}) => {
               onChangeText={text => setCompany(text)}
             />
           </View>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <Text style={styles.textlable}>Email</Text>
             <TextInput
               style={styles.inputTextStyle}
@@ -123,7 +168,7 @@ const AddPickupdetails = ({navigation}) => {
           <View>
             <Text style={styles.textlable}>Phone number</Text>
             <View style={styles.mobileNumberInput}>
-              <View style={{width: 95}}>
+              <View style={{ width: 95 }}>
                 <View style={styles.containerDropdown}>
                   <Dropdown
                     data={data}
@@ -142,7 +187,7 @@ const AddPickupdetails = ({navigation}) => {
                     }}
                     renderLeftIcon={() => (
                       <Image
-                        style={{marginRight: 10}}
+                        style={{ marginRight: 10 }}
                         source={require('../../image/flagIcon.png')}
                       />
                     )}
@@ -152,7 +197,7 @@ const AddPickupdetails = ({navigation}) => {
               <TextInput
                 style={[
                   styles.input,
-                  {fontFamily: 'Montserrat-Regular', fontSize: 16},
+                  { fontFamily: 'Montserrat-Regular', fontSize: 16 },
                 ]}
                 placeholder="00 00 00 00 00)"
                 placeholderTextColor="#999"
@@ -163,14 +208,14 @@ const AddPickupdetails = ({navigation}) => {
               />
             </View>
           </View>
-          <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
+          <TouchableOpacity onPress={toggleModal} style={{ flex: 1 }}>
             <Text style={styles.textlable}>Package photo</Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
                 size={13}
                 color="#131314"
-                style={{marginTop: 13}}
+                style={{ marginTop: 13 }}
               />
               <Text style={styles.packagePhoto}>Package photo</Text>
               <View style={styles.packagePhotoPath}>
@@ -179,8 +224,8 @@ const AddPickupdetails = ({navigation}) => {
               </View>
             </View>
           </TouchableOpacity>
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Order ID</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.textlable}>Package ID</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -188,7 +233,7 @@ const AddPickupdetails = ({navigation}) => {
               onChangeText={text => setOrderid(text)}
             />
           </View>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <Text style={styles.textlable}>Pickup notes</Text>
             <TextInput
               style={styles.inputTextStyle}
@@ -201,8 +246,12 @@ const AddPickupdetails = ({navigation}) => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('PickupOrderPreview')}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+            onPress={() => {
+              let userDetails = {name:name, lastname:lastname,email:email, number:number}
+              route.params.userDetails = userDetails
+              navigation.navigate('PickupOrderPreview',{props:route.params})
+            }}
+            style={[styles.logbutton, { backgroundColor: colors.primary }]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         </View>
@@ -354,6 +403,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 12,
+    color:colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   dottedLine: {
