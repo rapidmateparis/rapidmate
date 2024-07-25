@@ -40,6 +40,7 @@ export const API = {
   resetPasswordUrl: BASE_URL + "authuser/resetpassword",
   serviceTypeUrl: BASE_URL + "servicetypes",
   locationIdUrl: BASE_URL + "locations",
-  orderPickupUrl: BASE_URL +"order"
+  orderPickupUrl: BASE_URL +"order",
+  viewOrderListUrl: BASE_URL +"order"
   
 }

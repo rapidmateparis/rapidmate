@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,138 +7,102 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
+  FlatList
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../colors';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { colors } from '../../colors';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useLoader } from '../../utils/loaderContext';
+import { getViewOrdersList } from '../../data_manager';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const Tab = createMaterialTopTabNavigator();
 
 const TodayList = () => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const { setLoading } = useLoader();
+  const [orderList, setOrderList] = useState([]);
+
+  useEffect(() => {
+    getOrderList();
+  }, []);
+
+  const getOrderList = () => {
+    setLoading(true);
+    setOrderList([]);
+    getViewOrdersList(null, (successResponse) => {
+      if (successResponse[0]._success) {
+        let tempOrderList = successResponse[0]._response;
+        setOrderList(tempOrderList);
+      }
+      setLoading(false);
+    }, (errorResponse) => {
+      setLoading(false);
+      Alert.alert('Error Alert', errorResponse, [{ text: 'OK', onPress: () => { } }]);
+    });
+  };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.packageDetailCard}>
+      <View style={styles.packageHeader}>
+        <Image style={styles.packageManage} source={require('../../image/Big-Package.png')} />
+        <Text style={styles.deliveryTime}>Delivered on {item.delivery_date}</Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <Ionicons name="location-outline" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          From <Text style={styles.Location}>North Street, ABC</Text>
+        </Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <MaterialIcons name="my-location" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+        </Text>
+      </View>
+
+      <View style={styles.borderShow}></View>
+
+      <View style={styles.footerCard}>
+        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.valueMoney}>€34.00</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <ScrollView>
-      <View style={styles.scrollViewContainer}>
-        <View
-          style={{
-            width: 350,
-            height: 500,
-            position: 'relative',
-            marginVertical: 40,
-          }}>
-          <View style={styles.container}>
-            <Image
-              style={styles.loaderMap}
-              source={require('../../image/No-Data-Table.png')}
-            />
-            <Text style={styles.text}>No orders to show</Text>
-            <Text style={styles.subText}>
-              If there is any active order, it will be shown here..
-            </Text>
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5' }}>
+        {orderList.length === 0 ? (
+          <View style={styles.scrollViewContainer}>
+            <View style={{ width: 350, height: 500, position: 'relative', marginVertical: 40 }}>
+              <View style={styles.container}>
+                <Image style={styles.loaderMap} source={require('../../image/No-Data-Table.png')} />
+                <Text style={styles.text}>No orders to show</Text>
+                <Text style={styles.subText}>
+                  If there is any active order, it will be shown here.
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
+        ) : (
+          <FlatList
+            data={orderList}
+            renderItem={renderItem}
+          />
+        )}
       </View>
-      {/* <View style={{flex: 1}}>
-      <View style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5',}}>
-        <View style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image source={require('../../image/package-medium-icon.png')} />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </View>
-
-        <View style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image source={require('../../image/package-medium-icon.png')} />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </View>
-
-        <View style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image source={require('../../image/package-medium-icon.png')} />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </View>
-      </View>
-    </View> */}
-    </ScrollView>
+    </View>
   );
 };
 
-const PastList = ({navigation}) => {
+const PastList = ({ navigation }) => {
   return (
     <ScrollView>
       {/* <View style={styles.scrollViewContainer}>
@@ -161,7 +125,7 @@ const PastList = ({navigation}) => {
           </View>
         </View>
       </View> */}
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <View
           style={{
             paddingHorizontal: 15,
@@ -276,7 +240,7 @@ const PastList = ({navigation}) => {
 
 const Ongoing = () => {
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <TodayList />
     </View>
   );
@@ -284,18 +248,18 @@ const Ongoing = () => {
 
 const Past = () => {
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <PastList />
     </View>
   );
 };
 
-function History({navigation}) {
+function History({ navigation }) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           paddingHorizontal: 15,
@@ -332,9 +296,9 @@ function History({navigation}) {
         screenOptions={{
           tabBarActiveTintColor: colors.secondary,
           tabBarInactiveTintColor: colors.subText,
-          tabBarLabelStyle: {fontSize: 14},
-          tabBarIndicatorStyle: {backgroundColor: colors.secondary},
-          tabBarStyle: {backgroundColor: '#fff'},
+          tabBarLabelStyle: { fontSize: 14 },
+          tabBarIndicatorStyle: { backgroundColor: colors.secondary },
+          tabBarStyle: { backgroundColor: '#fff' },
         }}>
         <Tab.Screen name="Ongoing" component={Ongoing} />
         <Tab.Screen name="Past">
