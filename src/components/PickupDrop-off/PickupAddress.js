@@ -118,14 +118,14 @@ const PickupAddress = ({ route, navigation }) => {
     }
     setLoading(true);
     getLocationId(locationParams, (successResponse) => {
-      if(successResponse[0]._success){
+      if (successResponse[0]._success) {
         setLoading(false);
         setSourceLocationId(successResponse[0]._response.location_id)
       }
-    }, (errorResponse)=> {
+    }, (errorResponse) => {
       setLoading(false);
       Alert.alert('Error Alert', errorResponse, [
-        {text: 'OK', onPress: () => {}},
+        { text: 'OK', onPress: () => { } },
       ]);
     })
   }
@@ -146,20 +146,30 @@ const PickupAddress = ({ route, navigation }) => {
     }
     setLoading(true);
     getLocationId(locationParams, (successResponse) => {
-      if(successResponse[0]._success){
+      if (successResponse[0]._success) {
         setLoading(false);
         setDestinationLocationId(successResponse[0]._response.location_id)
       }
-    }, (errorResponse)=> {
+    }, (errorResponse) => {
       setLoading(false);
       Alert.alert('Error Alert', errorResponse, [
-        {text: 'OK', onPress: () => {}},
+        { text: 'OK', onPress: () => { } },
       ]);
     })
   }
 
   const onFetchDistanceAndTime = (value) => {
     setDistanceTime(value)
+  }
+
+  const navigateToAddPickupAddress = () => {
+    if (selectedVehicle && sourceLocation && destinationLocation) {
+      navigation.push('AddPickupdetails', { selectedVehicle: selectedVehicle, selectedVehicleDetails: selectedVehicleDetails, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation, distanceTime: distanceTime, sourceLocationId: sourceLocationId, destinationLocationId: destinationLocationId, serviceTypeId: route.params.pickupService.id })
+    } else {
+      Alert.alert('Alert', "Please choose location and vehicle", [
+        { text: 'OK', onPress: () => { } },
+      ]);
+    }
   }
 
   return (
@@ -234,7 +244,7 @@ const PickupAddress = ({ route, navigation }) => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.push('AddPickupdetails', { selectedVehicle: selectedVehicle, selectedVehicleDetails: selectedVehicleDetails, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation, distanceTime: distanceTime, sourceLocationId: sourceLocationId, destinationLocationId: destinationLocationId, serviceTypeId: route.params.pickupService.id })}
+          onPress={navigateToAddPickupAddress}
           style={styles.continueBtn}>
           <Text style={styles.continueText}>Continue to order details</Text>
           <AntDesign name="arrowright" size={20} color="#000000" />
