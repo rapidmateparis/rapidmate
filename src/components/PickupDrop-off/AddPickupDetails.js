@@ -100,10 +100,10 @@ const AddPickupdetails = ({route, navigation }) => {
 
   useEffect(() => {
     if (selectedId == 1) {
-      const updatedNumber = userDetails.phone_number ? userDetails.phone_number.startsWith('+91') ? userDetails.phone_number.slice(3) : userDetails.phone_number : null;
-      setName(userDetails.name ? userDetails.name : null)
-      setLastname(userDetails.name ? userDetails.name : null)
-      setEmail(userDetails.email ? userDetails.email : null)
+      const updatedNumber = userDetails.userInfo.phone_number ? userDetails.userInfo.phone_number.startsWith('+91') ? userDetails.userInfo.phone_number.slice(3) : userDetails.userInfo.phone_number : null;
+      setName(userDetails.userInfo.name ? userDetails.userInfo.name : null)
+      setLastname(userDetails.userInfo.name ? userDetails.userInfo.name : null)
+      setEmail(userDetails.userInfo.email ? userDetails.userInfo.email : null)
       setNumber(updatedNumber)
     } else {
       setName(null)

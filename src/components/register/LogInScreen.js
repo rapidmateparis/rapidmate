@@ -31,15 +31,16 @@ const LogInScreen = ({navigation}) => {
 
 
   const validateForm = () => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phonePattern = /^\+?\d{10,15}$/;
    
     let errors = {};
     if (!emailPhone.trim()) {
       errors.emailPhone = 'Email is required';
-    } else if (!emailPattern.test(emailPhone) && !phonePattern.test(emailPhone)) {
-      errors.emailPhone = 'Enter a valid email';
-    }
+    } 
+    // else if (!emailPattern.test(emailPhone) && !phonePattern.test(emailPhone)) {
+    //   errors.emailPhone = 'Enter a valid email';
+    // }
 
     if (!password.trim()) {
       errors.password = 'Password is required';
@@ -74,7 +75,7 @@ const LogInScreen = ({navigation}) => {
                 {text: 'OK', onPress: () => {}},
               ]);
             } else {
-              saveUserDetails(successResponse[0]._response.user.idToken.payload);
+              saveUserDetails({userInfo : successResponse[0]._response.user.idToken.payload, userDetails: successResponse[0]._response.user_profile});
               navigation.navigate('PickupBottomNav');
             }
           }

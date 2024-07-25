@@ -28,16 +28,11 @@ const PickupAddress = ({ route, navigation }) => {
   const [selectedVehiclePrice, setSelectedVehiclePrice] = useState(null);
   const [vehicleDetails, setVehicleDetails] = useState();
   const [sourceLocation, setSourceLocation] = useState();
-  const [sourceLocationDescription, setSourceLocationDescription] = useState();
   const [destinationLocation, setDestinationLocation] = useState();
-  const [destinationLocationDescription, setDestinationLocationDescription] = useState();
   const [distanceTime, setDistanceTime] = useState();
   const { setLoading } = useLoader();
   const [sourceLocationId, setSourceLocationId] = useState();
   const [destinationLocationId, setDestinationLocationId] = useState();
-
-
-  console.log("print_data===>pickupService", route.params.pickupService.id)
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
@@ -109,32 +104,23 @@ const PickupAddress = ({ route, navigation }) => {
 
   const onSourceLocation = (location) => {
     setSourceLocation(location)
-  }
 
-  const onDestinationLocation = (location) => {
-    setDestinationLocation(location)
-  }
-
-  const onSourceLocationDescription = (description) => {
-    setSourceLocationDescription(description)
-    let locationDetails = description.description.split(',')
+    let locationDetails = location.sourceDescription.split(',')
     let locationParams = {
-      location_name: "Others",
-      address: locationDetails[0],
-      city: locationDetails[1],
-      state: locationDetails[2],
-      country: locationDetails[3],
-      postal_code: "23423",
-      latitude: sourceLocation.originCoordinates.latitude,
-      longitude: sourceLocation.originCoordinates.longitude
+      location_name: locationDetails[0] ? locationDetails[0] : '',
+      address: locationDetails[0] ? locationDetails[0] : '',
+      city: locationDetails[1] ? locationDetails[1] : '',
+      state: locationDetails[2] ? locationDetails[2] : '',
+      country: locationDetails[3] ? locationDetails[3] : '',
+      postal_code: "23424",
+      latitude: location.originCoordinates.latitude,
+      longitude: location.originCoordinates.longitude
     }
     setLoading(true);
     getLocationId(locationParams, (successResponse) => {
       if(successResponse[0]._success){
         setLoading(false);
-        if(successResponse[0]._response) {
-          setSourceLocationId(successResponse[0]._response.location_id)
-        }
+        setSourceLocationId(successResponse[0]._response.location_id)
       }
     }, (errorResponse)=> {
       setLoading(false);
@@ -144,27 +130,25 @@ const PickupAddress = ({ route, navigation }) => {
     })
   }
 
-  const onDestinationLocationDescription = (description) => {
-    setDestinationLocationDescription(description)
+  const onDestinationLocation = (location) => {
+    setDestinationLocation(location)
 
-    let locationDetails = description.description.split(',')
+    let locationDetails = location.destinationDescription.split(',')
     let locationParams = {
-      location_name: "Others",
-      address: locationDetails[0],
-      city: locationDetails[1],
-      state: locationDetails[2],
-      country: locationDetails[3],
-      postal_code: "23423",
-      latitude: destinationLocation.originCoordinates.latitude,
-      longitude: destinationLocation.originCoordinates.longitude
+      location_name: locationDetails[0] ? locationDetails[0] : '',
+      address: locationDetails[0] ? locationDetails[0] : '',
+      city: locationDetails[1] ? locationDetails[1] : '',
+      state: locationDetails[2] ? locationDetails[2] : '',
+      country: locationDetails[3] ? locationDetails[3] : '',
+      postal_code: "23425",
+      latitude: location.destinationCoordinates.latitude,
+      longitude: location.destinationCoordinates.longitude
     }
     setLoading(true);
     getLocationId(locationParams, (successResponse) => {
       if(successResponse[0]._success){
         setLoading(false);
-        if(successResponse[0]._response) {
-          setDestinationLocationId(successResponse[0]._response.location_id)
-        }
+        setDestinationLocationId(successResponse[0]._response.location_id)
       }
     }, (errorResponse)=> {
       setLoading(false);
@@ -181,7 +165,7 @@ const PickupAddress = ({ route, navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
       <View style={{ height: 500, position: 'relative' }}>
-        <MapAddress onFetchDistanceAndTime={onFetchDistanceAndTime} onSourceLocation={onSourceLocation} onDestinationLocation={onDestinationLocation} onSourceLocationDescription={onSourceLocationDescription} onDestinationLocationDescription={onDestinationLocationDescription} />
+        <MapAddress onFetchDistanceAndTime={onFetchDistanceAndTime} onSourceLocation={onSourceLocation} onDestinationLocation={onDestinationLocation} />
         <View style={styles.dateCard}>
           <EvilIcons name="calendar" size={25} color="#000" />
           <Text style={styles.dateCardText}>When do you need it?</Text>
@@ -250,7 +234,7 @@ const PickupAddress = ({ route, navigation }) => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.push('AddPickupdetails', { selectedVehicle: selectedVehicle, selectedVehicleDetails: selectedVehicleDetails, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation, sourceLocationDescription: sourceLocationDescription, destinationLocationDescription: destinationLocationDescription, distanceTime: distanceTime, sourceLocationId: sourceLocationId, destinationLocationId: destinationLocationId, serviceTypeId: route.params.pickupService.id })}
+          onPress={() => navigation.push('AddPickupdetails', { selectedVehicle: selectedVehicle, selectedVehicleDetails: selectedVehicleDetails, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation, distanceTime: distanceTime, sourceLocationId: sourceLocationId, destinationLocationId: destinationLocationId, serviceTypeId: route.params.pickupService.id })}
           style={styles.continueBtn}>
           <Text style={styles.continueText}>Continue to order details</Text>
           <AntDesign name="arrowright" size={20} color="#000000" />

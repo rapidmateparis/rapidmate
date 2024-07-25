@@ -114,8 +114,7 @@ const MapAddress = (props) => {
                   };
                   setOrigin(originCoordinates);
                   moveToLocation(originCoordinates);
-                  props.onSourceLocation({originCoordinates : originCoordinates});
-                  props.onSourceLocationDescription({description : data.description});
+                  props.onSourceLocation({originCoordinates : originCoordinates, sourceDescription : data.description});
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -139,11 +138,9 @@ const MapAddress = (props) => {
                     latitude: details.geometry.location.lat,
                     longitude: details.geometry.location.lng,
                   };
-                  console.log('data.description',details)
                   setDestination(destinationCoordinates);
                   moveToLocation(destinationCoordinates);
-                  props.onDestinationLocation({destinationCoordinates : destinationCoordinates});
-                  props.onDestinationLocationDescription({description : data.description});
+                  props.onDestinationLocation({destinationCoordinates : destinationCoordinates, destinationDescription : data.description});
                 }}
                 styles={{textInput: {
                   color: colors.text,

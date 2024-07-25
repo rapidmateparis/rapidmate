@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -19,15 +20,18 @@ import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
 import { createPickupOrder } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
 const PickupOrderPreview = ({ route, navigation }) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const params = route.params.props
   const { setLoading } = useLoader();
+  const { userDetails } = useUserDetails();
 
   const pickupOrderRequest = () => {
     let requestParams = {
-      consumer_ext_id: "C1721584247181",
+      consumer_ext_id: userDetails.userDetails[0].ext_id,
       service_type_id: params.serviceTypeId,
       vehicle_type_id: params.selectedVehicleDetails.id,
       pickup_location_id: params.sourceLocationId ? params.sourceLocationId : 1,
@@ -56,14 +60,14 @@ const PickupOrderPreview = ({ route, navigation }) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.sourceLocationDescription.description ? params.sourceLocationDescription.description : null}
+              {params.destinationLocation.destinationDescription ? params.destinationLocation.destinationDescription : null}
             </Text>
           </View>
           <View style={styles.borderDummy}></View>
           <View style={styles.locationAddress}>
             <MaterialIcons name="my-location" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.sourceLocationDescription.description ? params.sourceLocationDescription.description : null}
+              {params.sourceLocation.sourceDescription ? params.sourceLocation.sourceDescription : null}
             </Text>
           </View>
           <View style={styles.borderShowOff}></View>
