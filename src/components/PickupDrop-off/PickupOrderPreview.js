@@ -39,15 +39,14 @@ const PickupOrderPreview = ({ route, navigation }) => {
     }
     setLoading(true);
     createPickupOrder(requestParams, (successResponse) => {
+      console.log("print_data==>successResponse", ""+successResponse)
       if (successResponse[0]._success) {
         setLoading(false);
-        if (successResponse[0]._response) {
-          navigation.navigate('OrderConfirm')
-        }
+        navigation.navigate('OrderConfirm')
       }
     }, (errorResponse) => {
       setLoading(false);
-      Alert.alert('Error Alert', errorResponse, [
+      Alert.alert('Error Alert', ""+JSON.stringify(errorResponse), [
         { text: 'OK', onPress: () => { } },
       ]);
     })

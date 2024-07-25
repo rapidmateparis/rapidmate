@@ -101,7 +101,6 @@ export const getLocationId = (params, successCallback, errorCallback) => {
 };
 
 export const createPickupOrder = (params, successCallback, errorCallback) => {
-  console.log('print_data==>',  API.orderPickupUrl, params)
   axiosCall(
     API.orderPickupUrl,
     HTTPMethod.POST,
