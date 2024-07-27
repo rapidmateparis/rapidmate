@@ -10,8 +10,10 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
+import { useUserDetails } from '../../commonComponent/StoreContext';
 
 const Settings = ({navigation}) => {
+  const { userDetails } = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
   return (
@@ -25,7 +27,7 @@ const Settings = ({navigation}) => {
             />
           </View>
           <View style={{marginLeft: 15}}>
-            <Text style={styles.username}>John Doe</Text>
+            <Text style={styles.username}>{userDetails.userInfo.name ? userDetails.userInfo.name : "Jhon"}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.goprofile}> 
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />

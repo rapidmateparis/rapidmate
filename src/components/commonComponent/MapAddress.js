@@ -35,7 +35,7 @@ const MyCustomFlagMarker = () => (
   />
 );
 
-const MapAddress = () => {
+const MapAddress = (props) => {
   const mapViewRef = useRef(null);
   const navigation = useNavigation();
   const {setPickupAddress} = usePickupAddress();
@@ -55,6 +55,7 @@ const MapAddress = () => {
   //   }, 6000);
   //   return () => clearInterval(interval);
   // }, []);
+
 
   const getLiveLocation = async () => {
     try {
@@ -88,6 +89,7 @@ const MapAddress = () => {
   const fetchTime = (d, t) => {
     setDistance(d);
     setTime(t);
+    props.onFetchDistanceAndTime({distance:d,time:t})
   };
 
   return (
@@ -102,6 +104,9 @@ const MapAddress = () => {
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter pickup address"
+                styles={{textInput: {
+                  color: colors.text,
+                }}}
                 onPress={(data, details = null) => {
                   const originCoordinates = {
                     latitude: details.geometry.location.lat,
@@ -109,6 +114,7 @@ const MapAddress = () => {
                   };
                   setOrigin(originCoordinates);
                   moveToLocation(originCoordinates);
+                  props.onSourceLocation({originCoordinates : originCoordinates, sourceDescription : data.description});
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -134,7 +140,11 @@ const MapAddress = () => {
                   };
                   setDestination(destinationCoordinates);
                   moveToLocation(destinationCoordinates);
+                  props.onDestinationLocation({destinationCoordinates : destinationCoordinates, destinationDescription : data.description});
                 }}
+                styles={{textInput: {
+                  color: colors.text,
+                },}}
                 query={{
                   key: MAPS_API_KEY,
                   language: 'en',

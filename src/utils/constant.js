@@ -1,5 +1,4 @@
 import {Dimensions} from 'react-native';
-import Config from 'react-native-config';
 
 export const COLORS = {
   primary: '#4da2ff',
@@ -23,21 +22,25 @@ export const HTTPMethod = {
   DELETE: 'delete',
 };
 
-export const BASE_URL = Config.BASE_URL;
-
-export const OPEN_AI = {
-  baseUrl: Config.AI_BASE_URL,
-  token: Config.AI_TOKEN,
-};
+export const BASE_URL = "http://16.171.224.246:3004/api/";
 
 export const apiHost = {
   // baseURL: 'http://10.0.2.2:3005/api/',
   // baseURL: "http://www.api.astafa.in/api/",
   // baseURL: "https://api.astafa.in/api/",
-  baseURL: 'https://betaapi.astafa.in/api/',
+  baseURL: 'http://16.171.224.246:3004/api/',
   apiKey: '',
 };
 
 export const API = {
-  loginAuthenticateUrl: BASE_URL + ""
+  loginAuthenticateUrl: BASE_URL + "authuser/login",
+  signUpUrl: BASE_URL + "authuser/signup",
+  signupVerifyUrl: BASE_URL + "authuser/signupverify",
+  forgotPasswordUrl: BASE_URL + "authuser/forgotpassword",
+  resetPasswordUrl: BASE_URL + "authuser/resetpassword",
+  serviceTypeUrl: BASE_URL + "servicetypes",
+  locationIdUrl: BASE_URL + "locations",
+  orderPickupUrl: BASE_URL +"order",
+  viewOrderListUrl: BASE_URL +"order"
+  
 }

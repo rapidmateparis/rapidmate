@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -15,10 +15,25 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MapLiveTracking from '../commonComponent/MapLiveTracking';
 import {colors} from '../../colors';
+import { useServiceTypeDetails, useUserDetails } from '../commonComponent/StoreContext';
+import { getServiceTypeApi } from '../../data_manager';
 
 const PickupHome = ({navigation}) => {
+  const { userDetails } = useUserDetails();
+  const {serviceTypeDetails, saveServiceTypeDetails } = useServiceTypeDetails();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+
+
+  useEffect(()=> {
+    getServiceTypeApi(null, (successResponse) => {
+      saveServiceTypeDetails(successResponse[0]._response);
+     }, (errorResponse) => { 
+      Alert.alert('Error Alert', errorResponse, [
+        {text: 'OK', onPress: () => {}},
+      ]);
+     });
+  }, [])
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -34,7 +49,7 @@ const PickupHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome <Text style={styles.userName}>John!</Text>
+              Welcome <Text style={styles.userName}>{userDetails.userInfo.name ? userDetails.userInfo.name : "Jhon"}</Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate dashboard!
@@ -46,7 +61,7 @@ const PickupHome = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.requestPickup}>
+        <TouchableOpacity style={styles.requestPickup} onPress={() => {navigation.push('PickupAddress', {pickupService: serviceTypeDetails[0]});}}>
           <View style={styles.pickcard}>
             <Text style={styles.packageRequst}>Request a Pick up</Text>
             <Text style={styles.packageDiscription}>
