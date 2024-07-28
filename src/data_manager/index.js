@@ -129,3 +129,59 @@ export const getViewOrdersList = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getCountryList = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.countryList,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getStateList = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.stateList,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getCityList = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.cityList,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const addVehicleApi = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.vehicles,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

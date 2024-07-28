@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -15,13 +16,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {colors} from '../../colors';
 import CheckBox from '@react-native-community/checkbox';
+import {useLoader} from '../../utils/loaderContext';
+import {
+  getCityList,
+  getCountryList,
+  getStateList,
+  signUpUser,
+} from '../../data_manager';
 // import DropDownDropdown from '../common component/dropdown';
 
 const DeliveryBoySignup = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  const [name, setName] = useState(false);
-  const [lastname, setLastname] = useState(false);
-  const [email, setEmail] = useState(false);
+  const [name, setName] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [password, setPassword] = useState('');
@@ -31,9 +39,18 @@ const DeliveryBoySignup = ({navigation}) => {
   const [openDropDown, setOpenDropDown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
+  const [dropdownStateValue, setDropdownStateValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const {setLoading} = useLoader();
+  const [masterCountryList, setMasterCountryList] = useState(null);
+  const [countryList, setCountryList] = useState([]);
+  const [masterStateList, setMasterStateList] = useState(null);
+  const [masterCityList, setMasterCityList] = useState(null);
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -47,10 +64,180 @@ const DeliveryBoySignup = ({navigation}) => {
     setSelectedAccountType(accountType);
   };
 
+  useEffect(() => {
+    getCountryList(
+      (param = {}),
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCountryList(successResponse[0]._response);
+              var formattedCountryList = [];
+              successResponse[0]._response.forEach(element => {
+                formattedCountryList.push({
+                  label: element.country_name,
+                  value: element.id,
+                });
+              });
+              setCountryList(formattedCountryList);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+
+    getStateList(
+      (param = {}),
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterStateList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+
+    // getCityList(param={}, (successResponse) => {
+    //   setLoading(false)
+    //   if(successResponse[0]._success){
+    //     if(successResponse[0]._response) {
+    //       if(successResponse[0]._response.name == 'NotAuthorizedException') {
+    //         Alert.alert('Error Alert', successResponse[0]._response.name, [
+    //           {text: 'OK', onPress: () => {}},
+    //         ]);
+    //       } else {
+    //         setMasterCityList(successResponse[0]._response)
+
+    //       }
+    //     }
+    //   }
+    // }, (errorResponse)=> {
+    //   console.log('errorResponse',errorResponse)
+    //   setLoading(false)
+    //   Alert.alert('Error Alert', errorResponse, [
+    //     {text: 'OK', onPress: () => {}},
+    //   ]);
+    // })
+  }, []);
+
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+
+  const validateForm = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\+?\d{10,15}$/;
+
+    let errors = {};
+    if (!name.trim()) {
+      errors.name = 'First name is required';
+    }
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters long';
+    }
+    if (password !== confirmPassword) {
+      errors.confirmPassword = 'Passwords does not match';
+    }
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    } else if (isNaN(number)) {
+      errors.number = 'Number should be numeric';
+    }
+    if (!dropdownCountryValue) {
+      errors.dropdownCountryValue = 'Please select a country';
+    }
+    if (!dropdownStateValue) {
+      errors.dropdownStateValue = 'Please select a state';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
+  };
+
+  const handleSignUp = async () => {
+    const isValid = validateForm()
+
+    if (isValid) {
+      let params = {
+        info: {
+          userName: email,
+          email: email,
+          phoneNumber: dropdownValue + number,
+          password: password,
+          userrole: 'DELIVERY_BOY',
+          firstName: name,
+          lastName: lastname,
+          city: '1',
+          state: dropdownStateValue.toString(),
+          country: dropdownCountryValue.toString(),
+          siretNo: '4352354',
+          termone: 1,
+        },
+      };
+      setLoading(true);
+      signUpUser(
+        params,
+        successResponse => {
+          console.log('successResponse', successResponse);
+          setLoading(false);
+          if (successResponse[0]._success) {
+            if (successResponse[0]._response) {
+              if (
+                successResponse[0]._response.name == 'NotAuthorizedException'
+              ) {
+                Alert.alert('Error Alert', successResponse[0]._response.name, [
+                  {text: 'OK', onPress: () => {}},
+                ]);
+              } else if(successResponse[0]._httpsStatusCode == 200) {
+                navigation.navigate('DeliveryboyTakeSelfie',{delivery_boy_details:successResponse[0]._response})
+              }
+            }
+          }
+        },
+        errorResponse => {
+          console.log('errorResponse', errorResponse);
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
@@ -67,10 +254,14 @@ const DeliveryBoySignup = ({navigation}) => {
             </Text>
           </View>
           <View style={styles.profilePhotoCard}>
-            <Image style={{width: 40, height: 60,}} source={require('../../image/DeliveryBoy-Icon.png')} />
+            <Image
+              style={{width: 40, height: 60}}
+              source={require('../../image/DeliveryBoy-Icon.png')}
+            />
           </View>
         </View>
         <View style={styles.logFormView}>
+        {errors.name ? <Text style={[{color:"red"}]}>{errors.name}</Text> : null}
           <View
             style={{
               flexDirection: 'row',
@@ -109,6 +300,7 @@ const DeliveryBoySignup = ({navigation}) => {
               />
             </View>
           </View>
+          {errors.email ? <Text style={[{color:"red"}]}>{errors.email}</Text> : null}
           <View style={styles.textInputDiv}>
             <AntDesign
               name="mail"
@@ -124,6 +316,7 @@ const DeliveryBoySignup = ({navigation}) => {
               onChangeText={text => setEmail(text)}
             />
           </View>
+          {errors.password ? <Text style={[{color:"red"}]}>{errors.password}</Text> : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -143,6 +336,7 @@ const DeliveryBoySignup = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
+          {errors.confirmPassword ? <Text style={[{color:"red"}]}>{errors.confirmPassword}</Text> : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -162,6 +356,7 @@ const DeliveryBoySignup = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
+          {errors.number ? <Text style={[{color:"red"}]}>{errors.number}</Text> : null}
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -169,6 +364,8 @@ const DeliveryBoySignup = ({navigation}) => {
                   data={data}
                   search
                   maxHeight={300}
+                  itemTextStyle={{color: colors.text}}
+                  selectedTextStyle={{color: colors.text}}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? '+33' : '...'}
@@ -199,11 +396,14 @@ const DeliveryBoySignup = ({navigation}) => {
               onChangeText={text => setNumber(text)}
             />
           </View>
+          {errors.dropdownCountryValue ? <Text style={[{color:"red", marginTop: 20, marginBottom:-20}]}>{errors.dropdownCountryValue}</Text> : null}
           <View style={styles.containerCountry}>
             <Dropdown
-              data={data}
+              data={countryList}
               search
               maxHeight={300}
+              itemTextStyle={{color: colors.text}}
+              selectedTextStyle={{color: colors.text}}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Country' : '...'}
@@ -214,6 +414,16 @@ const DeliveryBoySignup = ({navigation}) => {
               onChange={item => {
                 setDropdownCountryValue(item.value);
                 setIsFocus(false);
+                var formattedStateList = [];
+                masterStateList.forEach(element => {
+                  if (item.value == element.country_id) {
+                    formattedStateList.push({
+                      label: element.state_name,
+                      value: element.id,
+                    });
+                  }
+                });
+                setStateList(formattedStateList);
               }}
               renderLeftIcon={() => (
                 <FontAwesome6
@@ -225,6 +435,7 @@ const DeliveryBoySignup = ({navigation}) => {
               )}
             />
           </View>
+          {errors.dropdownStateValue ? <Text style={[{color:"red"}]}>{errors.dropdownStateValue}</Text> : null}
           <View
             style={{
               flexDirection: 'row',
@@ -233,18 +444,20 @@ const DeliveryBoySignup = ({navigation}) => {
             }}>
             <View style={styles.containerCity}>
               <Dropdown
-                data={data}
+                data={stateList}
                 search
                 maxHeight={300}
+                itemTextStyle={{color: colors.text}}
+                selectedTextStyle={{color: colors.text}}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Ain' : '...'}
                 searchPlaceholder="Search.."
-                value={dropdownCountryValue}
+                value={dropdownStateValue}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
-                  setDropdownCountryValue(item.value);
+                  setDropdownStateValue(item.value);
                   setIsFocus(false);
                 }}
                 renderLeftIcon={() => (
@@ -263,6 +476,8 @@ const DeliveryBoySignup = ({navigation}) => {
                 data={data}
                 search
                 maxHeight={300}
+                itemTextStyle={{color: colors.text}}
+                selectedTextStyle={{color: colors.text}}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'ambérieu-e...' : '...'}
@@ -317,8 +532,10 @@ const DeliveryBoySignup = ({navigation}) => {
               </TouchableOpacity>
             </Text>
           </View>
-          <TouchableOpacity 
-            onPress={() => navigation.navigate('DeliveryboyTakeSelfie')}
+          <TouchableOpacity
+            onPress={() => {
+              handleSignUp();
+            }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
@@ -364,6 +581,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 10,
     width: '90%',
+    color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   mobileNumberInput: {

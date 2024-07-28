@@ -12,11 +12,10 @@ import { colors } from '../../../colors';
 import ChoosePhotoByCameraGallaryModal from '../../commonComponent/ChoosePhotoByCameraGallaryModal';
 import { handleCameraLaunchFunction, handleImageLibraryLaunchFunction } from '../../../utils/common';
 
-const DeliveryboyTakeSelfie = ({ navigation }) => {
+const DeliveryboyTakeSelfie = ({ route, navigation }) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [photoUri, setPhotoUri] = useState(null); // State for photo URI
-
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
   };
@@ -92,7 +91,7 @@ const DeliveryboyTakeSelfie = ({ navigation }) => {
             <Text style={styles.buttonText}>Try again</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddVehicle')}
+            onPress={() => navigation.navigate('AddVehicle',{delivery_boy_details:route.params.delivery_boy_details})}
             style={styles.saveBTn}>
             <Text style={styles.okButton}>Use this</Text>
           </TouchableOpacity>
