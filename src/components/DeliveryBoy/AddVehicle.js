@@ -6,20 +6,21 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 
-const AddVehicle = ({navigation}) => {
-  const [selectedOption, setSelectedOption] = useState(null);
+const AddVehicle = ({route, navigation}) => {
+  const [selectedOption, setSelectedOption] = useState({});
 
   const handleOptionSelect = option => {
     setSelectedOption(option);
   };
 
-  const renderCard = (option, iconSource, title, imageStyle) => {
-    const isSelected = selectedOption === option;
+  const renderCard = (option, id, iconSource, title, imageStyle) => {
+    const isSelected = selectedOption.vehicle_name === option;
 
     return (
       <LinearGradient
@@ -28,7 +29,7 @@ const AddVehicle = ({navigation}) => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}>
         <TouchableOpacity
-          onPress={() => handleOptionSelect(option)}
+          onPress={() => handleOptionSelect({vehicle_name:option, vehicle_id:id})}
           style={[
             styles.addressCard,
             isSelected ? styles.selectedCard : null, // Apply selected card style conditionally
@@ -55,55 +56,72 @@ const AddVehicle = ({navigation}) => {
       <View style={{paddingHorizontal: 15}}>
         {renderCard(
           'Cycle',
+          1,
           require('../../image/Cycle-Icon.png'),
           'Cycle',
           styles.cycleImage,
         )}
         {renderCard(
           'Scooter',
+          2,
           require('../../image/Scooter-Icon.png'),
           'Scooter',
           styles.scooterImage,
         )}
         {renderCard(
           'Car',
+          3,
           require('../../image/Car-Icon.png'),
           'Car',
           styles.carImage,
         )}
         {renderCard(
           'Partner',
+          4,
           require('../../image/Partner-icon.png'),
           'Partner',
           styles.partnerImage,
         )}
         {renderCard(
           'Van',
+          5,
           require('../../image/Van-Icon.png'),
           'Van',
           styles.vanImage,
         )}
         {renderCard(
           'Pickup',
+          7,
           require('../../image/Pickup-Icon.png'),
           'Pickup',
           styles.pickupImage,
         )}
         {renderCard(
           'Truck',
+          8,
           require('../../image/Truck-Icon.png'),
           'Truck',
           styles.truckImage,
         )}
         {renderCard(
           'Other',
+          1,
           require('../../image/Big-Package.png'),
           'Other',
           styles.otherImage,
         )}
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('AddPickupVehicle')}
+          onPress={() =>  {
+            console.log('selectedOption.selectedVehicle',selectedOption)
+            if(!selectedOption.vehicle_id) {
+              Alert.alert('Error Alert', 'Please select a vehicle', [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              navigation.navigate('AddPickupVehicle',{delivery_boy_details:route.params.delivery_boy_details, selectedVehicle:selectedOption})
+            }
+          }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>

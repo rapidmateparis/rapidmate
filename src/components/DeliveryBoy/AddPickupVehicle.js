@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -17,8 +18,10 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
+import {useLoader} from '../../utils/loaderContext';
+import {addVehicleApi} from '../../data_manager';
 
-const AddPickupVehicle = ({navigation}) => {
+const AddPickupVehicle = ({route, navigation}) => {
   const [vehicleNo, setVehicleNo] = useState('');
   const [vehicleModel, setVehicleModel] = useState('');
   const [vehicleMake, setVehicleMake] = useState('');
@@ -32,6 +35,9 @@ const AddPickupVehicle = ({navigation}) => {
   );
   const [imageFilePassport, setImageFilePassport] = useState([]);
   const [imageFileUrl, setImageFileUrl] = useState();
+  const {setLoading} = useLoader();
+  const [errors, setErrors] = useState({});
+
   const toggleModal = item => {
     setImageFileUrl(item);
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -89,6 +95,74 @@ const AddPickupVehicle = ({navigation}) => {
     return fileName.length > 30 ? '...' + fileName : fileName;
   };
 
+  const validateForm = () => {
+
+    let errors = {};
+    if (!vehicleNo.trim()) {
+      errors.vehicleNo = 'Vehicle number is required';
+    }
+    if (!vehicleModel.trim()) {
+      errors.vehicleModel = 'Vehicle model is required';
+    }
+    if (!vehicleMake.trim()) {
+      errors.vehicleMake = 'Vehicle make is required';
+    } 
+    if (!vehicleVariant.trim()) {
+      errors.vehicleVariant = 'Vehicle Variant is required';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
+  };
+
+  const handleSubmit = () => {
+    const isValid = validateForm();
+
+    if (isValid) {
+      let params = {
+        info: {
+          delivery_boy_ext_id: route.params.delivery_boy_details.extId,
+          vehicle_type_id: route.params.selectedVehicle.vehicle_id,
+          plat_no: vehicleNo,
+          modal: vehicleModel,
+          rcv_no: '12242334987654',
+          vehicle_front_photo: '',
+          vehicle_back_photo: '',
+          rcv_photo: '',
+        },
+      };
+      setLoading(true);
+      addVehicleApi(
+        params,
+        successResponse => {
+          console.log('successResponse', successResponse);
+          setLoading(false);
+          if (successResponse[0]._success) {
+            if (successResponse[0]._response) {
+              if (
+                successResponse[0]._response.name == 'NotAuthorizedException'
+              ) {
+                Alert.alert('Error Alert', successResponse[0]._response.name, [
+                  {text: 'OK', onPress: () => {}},
+                ]);
+              } else if (successResponse[0]._httpsStatusCode == 200) {
+                navigation.navigate('DeliveryboyThanksPage');
+              }
+            }
+          }
+        },
+        errorResponse => {
+          console.log('errorResponse', errorResponse);
+          setLoading(false);
+          navigation.navigate('DeliveryboyThanksPage');
+          // Alert.alert('Error Alert', errorResponse, [
+          //   {text: 'OK', onPress: () => {}},
+          // ]);
+        },
+      );
+    }
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fbfaf5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -98,40 +172,45 @@ const AddPickupVehicle = ({navigation}) => {
         <View style={styles.logFormView}>
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle No.</Text>
+            {errors.vehicleNo ? <Text style={[{color:"red"}]}>{errors.vehicleNo}</Text> : null}
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
+              placeholderTextColor={'#999'}
               value={vehicleNo}
               onChangeText={text => setVehicleNo(text)}
             />
           </View>
-
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle Model</Text>
+            {errors.vehicleModel ? <Text style={[{color:"red"}]}>{errors.vehicleModel}</Text> : null}
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
+              placeholderTextColor={'#999'}
               value={vehicleModel}
               onChangeText={text => setVehicleModel(text)}
             />
           </View>
-
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
               <Text style={styles.textlable}>Vehicle make</Text>
+              {errors.vehicleMake ? <Text style={[{color:"red"}]}>{errors.vehicleMake}</Text> : null}
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
+                placeholderTextColor={'#999'}
                 value={vehicleMake}
                 onChangeText={text => setVehicleMake(text)}
               />
             </View>
-
             <View style={{flex: 1, marginLeft: 10}}>
               <Text style={styles.textlable}>Vehicle variant</Text>
+              {errors.vehicleVariant ? <Text style={[{color:"red"}]}>{errors.vehicleVariant}</Text> : null}
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
+                placeholderTextColor={'#999'}
                 value={vehicleVariant}
                 onChangeText={text => setVehicleVariant(text)}
               />
@@ -232,7 +311,9 @@ const AddPickupVehicle = ({navigation}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate('ChooseDeliveryType')}
+            onPress={() => {
+              handleSubmit();
+            }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
@@ -385,6 +466,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 12,
     padding: 10,
+    color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   dottedLine: {

@@ -22,13 +22,13 @@ export const HTTPMethod = {
   DELETE: 'delete',
 };
 
-export const BASE_URL = "http://16.171.224.246:3004/api/";
+export const BASE_URL = "http://16.171.224.246:3000/api/";
 
 export const apiHost = {
   // baseURL: 'http://10.0.2.2:3005/api/',
   // baseURL: "http://www.api.astafa.in/api/",
   // baseURL: "https://api.astafa.in/api/",
-  baseURL: 'http://16.171.224.246:3004/api/',
+  baseURL: 'http://16.171.224.246:3000/api/',
   apiKey: '',
 };
 
@@ -41,6 +41,9 @@ export const API = {
   serviceTypeUrl: BASE_URL + "servicetypes",
   locationIdUrl: BASE_URL + "locations",
   orderPickupUrl: BASE_URL +"order",
-  viewOrderListUrl: BASE_URL +"order"
-  
+  viewOrderListUrl: BASE_URL +"order",
+  countryList: BASE_URL +"country",
+  stateList: BASE_URL +"state",
+  cityList: BASE_URL +"city",
+  vehicles: BASE_URL +"vehicles"
 }
