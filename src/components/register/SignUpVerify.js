@@ -6,79 +6,90 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Alert
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import { authenticateUser, signUpVerifyApi } from '../../data_manager';
-import { useSignUpDetails, useUserDetails } from '../commonComponent/StoreContext';
-import { useLoader } from '../../utils/loaderContext';
+import {authenticateUser, signUpVerifyApi} from '../../data_manager';
+import {
+  useSignUpDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
 
 const SignUpVerify = ({navigation}) => {
-  const { saveUserDetails } = useUserDetails();
-  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
+  const {saveUserDetails} = useUserDetails();
+  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
   const [code, setCode] = useState('');
-  const { setLoading } = useLoader();
+  const {setLoading} = useLoader();
 
   const handleVerifyCode = async () => {
-    console.log('signUpDetails',signUpDetails)
+    console.log('signUpDetails', signUpDetails);
     if (code) {
       // Perform login action here based on email or phone number
       let params = {
         info: {
           userName: signUpDetails.userName,
-          code: code, 
-        }
+          code: code,
+          role: 'CONSUMER',
+        },
       };
-      setLoading(true)
-      signUpVerifyApi(params, (successResponse) => {
-        setLoading(false)
-        if(successResponse[0]._success){
-          if(successResponse[0]._response) {
-            if(successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else {
-              let loginParams = {
-                info: {
-                  userName: signUpDetails.userName,
-                  password: signUpDetails.password,
-                }
-              };
-              setLoading(true)
-              authenticateUser(loginParams, (successResponse) => {
-                setLoading(false)
-                if(successResponse[0]._success){
-                  if(successResponse[0]._response) {
-                    if(successResponse[0]._response.name == 'NotAuthorizedException') {
-                      Alert.alert('Error Alert', successResponse[0]._response.name, [
-                        {text: 'OK', onPress: () => {}},
-                      ]);
+      setLoading(true);
+      signUpVerifyApi(
+        params,
+        successResponse => {
+          setLoading(false);
+          if (successResponse[0]._success) {
+            let loginParams = {
+              info: {
+                userName: signUpDetails.userName,
+                password: signUpDetails.password,
+              },
+            };
+            setLoading(true);
+            authenticateUser(
+              loginParams,
+              successResponse => {
+                setLoading(false);
+                if (successResponse[0]._success) {
+                  if (successResponse[0]._response) {
+                    if (
+                      successResponse[0]._response.name ==
+                      'NotAuthorizedException'
+                    ) {
+                      Alert.alert(
+                        'Error Alert',
+                        successResponse[0]._response.name,
+                        [{text: 'OK', onPress: () => {}}],
+                      );
                     } else {
-                      saveUserDetails(successResponse[0]._response.idToken.payload);
+                      saveUserDetails({
+                        userInfo:
+                          successResponse[0]._response.user.idToken.payload,
+                        userDetails: successResponse[0]._response.user_profile,
+                      });
                       navigation.navigate('PickupBottomNav');
                     }
                   }
                 }
-              }, (errorResponse)=> {
-                setLoading(false)
+              },
+              errorResponse => {
+                setLoading(false);
                 Alert.alert('Error Alert', errorResponse, [
                   {text: 'OK', onPress: () => {}},
                 ]);
-              })
-              // saveUserDetails(successResponse[0]._response.idToken.payload);
-              // navigation.navigate('PickupBottomNav');
-            }
+              },
+            );
           }
-        }
-      }, (errorResponse)=> {
-        setLoading(false)
-        Alert.alert('Error Alert', errorResponse, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      })
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
     } else {
       // Show error message for invalid email or phone number
       console.log('Invalid email or phone number');
@@ -123,7 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
-    marginTop:20
+    marginTop: 20,
   },
   loginAccessText: {
     fontSize: 12,
