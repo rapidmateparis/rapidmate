@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {colors} from '../../colors';
 import {useSignUpDetails} from '../commonComponent/StoreContext';
-import { signUpUser } from '../../data_manager';
+import { getCountryList, signUpUser } from '../../data_manager';
 import { useLoader } from '../../utils/loaderContext';
 // import DropDownDropdown from '../common component/dropdown';
 
@@ -36,6 +36,8 @@ const PickupSignup = ({ navigation }) => {
   const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
   const [errors, setErrors] = useState({});
   const { setLoading } = useLoader();
+  const [masterCountryList, setMasterCountryList] = useState(null);
+  const [countryList, setCountryList] = useState([]);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -91,6 +93,41 @@ const PickupSignup = ({ navigation }) => {
     { label: '+91', value: '+91' },
     { label: '+33', value: '+33' },
   ];
+
+  useEffect(()=> {
+    getCountryList(
+      (param = {}),
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCountryList(successResponse[0]._response);
+              var formattedCountryList = [];
+              successResponse[0]._response.forEach(element => {
+                formattedCountryList.push({
+                  label: element.country_name,
+                  value: element.id,
+                });
+              });
+              setCountryList(formattedCountryList);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  },[])
 
   const handleSignUp = async () => {
     const isValid = validateForm();
@@ -261,7 +298,7 @@ const PickupSignup = ({ navigation }) => {
           {errors.dropdownCountryValue ? <Text style={[{color:"red", marginTop: 20}]}>{errors.dropdownCountryValue}</Text> : null}
           <View style={styles.containerCountry}>
             <Dropdown
-              data={data}
+              data={countryList}
               search
               maxHeight={300}
               labelField="label"

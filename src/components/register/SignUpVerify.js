@@ -29,6 +29,7 @@ const SignUpVerify = ({navigation}) => {
         info: {
           userName: signUpDetails.userName,
           code: code, 
+          role: "CONSUMER"
         }
       };
       setLoading(true)
@@ -41,37 +42,35 @@ const SignUpVerify = ({navigation}) => {
                 {text: 'OK', onPress: () => {}},
               ]);
             } else {
-              let loginParams = {
-                info: {
-                  userName: signUpDetails.userName,
-                  password: signUpDetails.password,
-                }
-              };
-              setLoading(true)
-              authenticateUser(loginParams, (successResponse) => {
-                setLoading(false)
-                if(successResponse[0]._success){
-                  if(successResponse[0]._response) {
-                    if(successResponse[0]._response.name == 'NotAuthorizedException') {
-                      Alert.alert('Error Alert', successResponse[0]._response.name, [
-                        {text: 'OK', onPress: () => {}},
-                      ]);
-                    } else {
-                      saveUserDetails(successResponse[0]._response.idToken.payload);
-                      navigation.navigate('PickupBottomNav');
-                    }
+            let loginParams = {
+              info: {
+                userName: signUpDetails.userName,
+                password: signUpDetails.password,
+              }
+            };
+            setLoading(true)
+            authenticateUser(loginParams, (successResponse) => {
+              setLoading(false)
+              if(successResponse[0]._success){
+                if(successResponse[0]._response) {
+                  if(successResponse[0]._response.name == 'NotAuthorizedException') {
+                    Alert.alert('Error Alert', successResponse[0]._response.name, [
+                      {text: 'OK', onPress: () => {}},
+                    ]);
+                  } else {
+                    saveUserDetails(successResponse[0]._response.idToken.payload);
+                    navigation.navigate('PickupBottomNav');
                   }
                 }
-              }, (errorResponse)=> {
-                setLoading(false)
-                Alert.alert('Error Alert', errorResponse, [
-                  {text: 'OK', onPress: () => {}},
-                ]);
-              })
-              // saveUserDetails(successResponse[0]._response.idToken.payload);
-              // navigation.navigate('PickupBottomNav');
-            }
+              }
+            }, (errorResponse)=> {
+              setLoading(false)
+              Alert.alert('Error Alert', errorResponse, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            })
           }
+        }
         }
       }, (errorResponse)=> {
         setLoading(false)
