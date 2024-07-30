@@ -30,6 +30,7 @@ const PickupOrderPreview = ({ route, navigation }) => {
   const { userDetails } = useUserDetails();
 
   const pickupOrderRequest = () => {
+    if(userDetails.userDetails[0]) {
     let requestParams = {
       consumer_ext_id: userDetails.userDetails[0].ext_id,
       service_type_id: params.serviceTypeId,
@@ -50,6 +51,11 @@ const PickupOrderPreview = ({ route, navigation }) => {
         { text: 'OK', onPress: () => { } },
       ]);
     })
+  } else {
+    Alert.alert('Error Alert', "Consumer extended ID missing", [
+      { text: 'OK', onPress: () => { } },
+    ]);
+  }
   }
 
   return (
