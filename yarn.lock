@@ -1391,6 +1391,11 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@stripe/stripe-react-native@^0.38.3":
+  version "0.38.3"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.38.3.tgz#c6a89177d517cb91fb7d6174f19684354e3c7e42"
+  integrity sha512-WQyElSLiOJ+dQbdNCcxsGT2Mk1XISG4Lh2r3GCVqqTARe37Wm9ZIfmUISX7MSd+tPLkNi3Spc4z33+WkVGihTw==
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.npmjs.org/@tootallnate/once/-/once-1.1.2.tgz"
@@ -5929,10 +5934,10 @@ react-native-safe-area-context@^4.4.1:
   resolved "https://registry.npmjs.org/react-native-safe-area-context/-/react-native-safe-area-context-4.4.1.tgz"
   integrity sha512-N9XTjiuD73ZpVlejHrUWIFZc+6Z14co1K/p1IFMkImU7+avD69F3y+lhkqA2hN/+vljdZrBSiOwXPkuo43nFQA==
 
-react-native-screens@^3.18.2:
-  version "3.18.2"
-  resolved "https://registry.npmjs.org/react-native-screens/-/react-native-screens-3.18.2.tgz"
-  integrity sha512-ANUEuvMUlsYJ1QKukEhzhfrvOUO9BVH9Nzg+6eWxpn3cfD/O83yPBOF8Mx6x5H/2+sMy+VS5x/chWOOo/U7QJw==
+react-native-screens@^3.22.0:
+  version "3.33.0"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.33.0.tgz#706caf1a5f985160c944ed0d02e576c6c77408eb"
+  integrity sha512-3bKeT/kS1g/6XqraBqjDtyyci35LDeDIHMoko74o+Z5p1oLEi697GWFVwsG272FF0iuOullUbuRNzCcEfRBASQ==
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
