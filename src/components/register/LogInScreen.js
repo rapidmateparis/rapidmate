@@ -70,11 +70,10 @@ const LogInScreen = ({navigation}) => {
           setLoading(false);
           if(successResponse[0]._response) {
             if(successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
+              Alert.alert('Error Alert', "Username or password is incorrect", [
                 {text: 'OK', onPress: () => {}},
               ]);
             } else {
-              console.log("print_login===>", successResponse[0])
               saveUserDetails({userInfo : successResponse[0]._response.user.idToken.payload, userDetails: successResponse[0]._response.user_profile});
               if(successResponse[0]._response.user_profile[0].role == "CONSUMER") {
                 navigation.navigate('PickupBottomNav');
@@ -88,7 +87,7 @@ const LogInScreen = ({navigation}) => {
         }
       }, (errorResponse)=> {
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse, [
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       })

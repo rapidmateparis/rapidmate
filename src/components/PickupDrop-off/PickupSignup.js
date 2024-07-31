@@ -147,7 +147,6 @@ const PickupSignup = ({ navigation }) => {
       signUpUser(params, (successResponse) => {
         setLoading(false)
         if(successResponse[0]._success){
-          console.log("print_data==>", successResponse[0])
           if(successResponse[0]._response) {
             if(successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
@@ -160,9 +159,8 @@ const PickupSignup = ({ navigation }) => {
           }
         }
       }, (errorResponse)=> {
-        console.log("print_data==>", errorResponse)
         setLoading(false)
-        Alert.alert('Error Alert', errorResponse, [
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       })
