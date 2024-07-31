@@ -30,40 +30,7 @@ const PickupOrderPreview = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
 
   const pickupOrderRequest = () => {
-    if (userDetails.userDetails[0]) {
-      let requestParams = {
-        consumer_ext_id: userDetails.userDetails[0].ext_id,
-        service_type_id: params.serviceTypeId,
-        vehicle_type_id: params.selectedVehicleDetails.id,
-        pickup_location_id: params.sourceLocationId
-          ? params.sourceLocationId
-          : 1,
-        dropoff_location_id: params.destinationLocationId
-          ? params.destinationLocationId
-          : 2,
-      };
-      setLoading(true);
-      createPickupOrder(
-        requestParams,
-        successResponse => {
-          console.log('print_data==>successResponse', '' + successResponse);
-          if (successResponse[0]._success) {
-            setLoading(false);
-            navigation.navigate('OrderConfirm');
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
-    } else {
-      Alert.alert('Error Alert', 'Consumer extended ID missing', [
-        {text: 'OK', onPress: () => {}},
-      ]);
-    }
+    navigation.navigate('PickupPayment',{props:params})
   };
 
   return (
@@ -163,8 +130,8 @@ const PickupOrderPreview = ({route, navigation}) => {
             <View style={{marginTop: 10}}>
               <Text style={styles.vehicleName}>
                 €
-                {params.selectedVehicleDetails.pricePerKm *
-                  params.distanceTime.distance}
+                {(params.selectedVehicleDetails.pricePerKm * 
+                params.distanceTime.distance).toFixed(0)}
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text
