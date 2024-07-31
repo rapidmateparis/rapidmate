@@ -86,7 +86,6 @@ export const getServiceTypeApi = (params, successCallback, errorCallback) => {
 };
 
 export const getLocationId = (params, successCallback, errorCallback) => {
-  console.log("print_data==>", API.locationIdUrl, params)
   axiosCall(
     API.locationIdUrl,
     HTTPMethod.POST,
