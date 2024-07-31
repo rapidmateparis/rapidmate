@@ -53,6 +53,7 @@ const SignUpVerify = ({navigation}) => {
               successResponse => {
                 setLoading(false);
                 if (successResponse[0]._success) {
+                  console.log("print_data===>signUpVerifyApi_login", successResponse[0]._response)
                   if (successResponse[0]._response) {
                     if (
                       successResponse[0]._response.name ==
@@ -69,7 +70,13 @@ const SignUpVerify = ({navigation}) => {
                           successResponse[0]._response.user.idToken.payload,
                         userDetails: successResponse[0]._response.user_profile,
                       });
-                      navigation.navigate('PickupBottomNav');
+                      if(successResponse[0]._response.user_profile[0].role == "CONSUMER") {
+                        navigation.navigate('PickupBottomNav');
+                      } else if (successResponse[0]._response.user_profile[0].role == "DELIVERY_BOY") {
+                        navigation.navigate('DeliveryboyBottomNav');
+                      } else {
+                        navigation.navigate('EnterpriseBottomNav');
+                      }
                     }
                   }
                 }
