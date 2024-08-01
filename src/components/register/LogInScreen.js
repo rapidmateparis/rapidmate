@@ -6,38 +6,41 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Alert
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import { authenticateUser } from '../../data_manager';
-import { useUserDetails } from '../commonComponent/StoreContext';
-import { useLoader } from '../../utils/loaderContext';
+import {authenticateUser} from '../../data_manager';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LogInScreen = ({navigation}) => {
-  const { saveUserDetails } = useUserDetails();
-  const [emailPhone, setEmailPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const {saveUserDetails} = useUserDetails();
+  const [emailPhone, setEmailPhone] = useState('yopoli9042@maxturns.com');
+  const [password, setPassword] = useState('Syszoo12!');
   const [passwordVisible, setPasswordVisible] = useState(false); // State to track password visibility
   const [errors, setErrors] = useState({});
-  const [errorResponse, setErrorResponse] = useState("");
-  const [successResponse, setSuccessResponse] = useState("");
-  const { setLoading } = useLoader();
+  const [errorResponse, setErrorResponse] = useState('');
+  const [successResponse, setSuccessResponse] = useState('');
+  const {setLoading} = useLoader();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phonePattern = /^\+?\d{10,15}$/;
-   
+
     let errors = {};
     if (!emailPhone.trim()) {
       errors.emailPhone = 'Email is required';
-    } else if (!emailPattern.test(emailPhone) && !phonePattern.test(emailPhone)) {
+    } else if (
+      !emailPattern.test(emailPhone) &&
+      !phonePattern.test(emailPhone)
+    ) {
       errors.emailPhone = 'Enter a valid email';
     }
 
@@ -52,8 +55,11 @@ const LogInScreen = ({navigation}) => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleLogin = async () => {
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
 
+  const handleLogin = async () => {
     const isValid = validateForm();
 
     if (isValid) {
@@ -61,40 +67,63 @@ const LogInScreen = ({navigation}) => {
       setLoading(true);
       let params = {
         info: {
-          userName: emailPhone,// "syszoomail@gmail.com"
+          userName: emailPhone, // "syszoomail@gmail.com"
           password: password, //"Syszoo12!"
-        }
+        },
       };
-      authenticateUser(params, (successResponse) => {
-        if(successResponse[0]._success){
-          setLoading(false);
-          if(successResponse[0]._response) {
-            if(successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', "Username or password is incorrect", [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else if (successResponse[0]._response.name == 'UserNotConfirmedException') {
-              Alert.alert('Error Alert', "Delivery Boy Verfication Pending", [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else {
-              saveUserDetails({userInfo : successResponse[0]._response.user.idToken.payload, userDetails: successResponse[0]._response.user_profile});
-              if(successResponse[0]._response.user_profile[0].role == "CONSUMER") {
-                navigation.navigate('PickupBottomNav');
-              } else if (successResponse[0]._response.user_profile[0].role == "DELIVERY_BOY") {
-                navigation.navigate('DeliveryboyBottomNav');
+      authenticateUser(
+        params,
+        successResponse => {
+          if (successResponse[0]._success) {
+            setLoading(false);
+            if (successResponse[0]._response) {
+              if (
+                successResponse[0]._response.name == 'NotAuthorizedException'
+              ) {
+                Alert.alert(
+                  'Error Alert',
+                  'Username or password is incorrect',
+                  [{text: 'OK', onPress: () => {}}],
+                );
+              } else if (
+                successResponse[0]._response.name == 'UserNotConfirmedException'
+              ) {
+                Alert.alert('Error Alert', 'Delivery Boy Verfication Pending', [
+                  {text: 'OK', onPress: () => {}},
+                ]);
               } else {
-                navigation.navigate('EnterpriseBottomNav');
+                saveUserDetails({
+                  userInfo: successResponse[0]._response.user.idToken.payload,
+                  userDetails: successResponse[0]._response.user_profile,
+                });
+                if (
+                  successResponse[0]._response.user_profile[0].role ==
+                  'CONSUMER'
+                ) {
+                  navigation.navigate('PickupBottomNav');
+                } else if (
+                  successResponse[0]._response.user_profile[0].role ==
+                  'DELIVERY_BOY'
+                ) {
+                  navigation.navigate('DeliveryboyBottomNav');
+                } else {
+                  navigation.navigate('EnterpriseBottomNav');
+                }
+                saveUserDetailsInAsync({
+                  userInfo: successResponse[0]._response.user.idToken.payload,
+                  userDetails: successResponse[0]._response.user_profile,
+                });
               }
             }
           }
-        }
-      }, (errorResponse)=> {
-        setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      })
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
     } else {
       // Show error message for invalid email or phone number
       console.log('Invalid email or phone number');
@@ -110,7 +139,9 @@ const LogInScreen = ({navigation}) => {
         </Text>
         <View>
           <View style={styles.logFormView}>
-          {errors.emailPhone ? <Text style={[{color:"red"}]}>{errors.emailPhone}</Text> : null}
+            {errors.emailPhone ? (
+              <Text style={[{color: 'red'}]}>{errors.emailPhone}</Text>
+            ) : null}
             <View style={styles.textInputDiv}>
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
@@ -121,7 +152,9 @@ const LogInScreen = ({navigation}) => {
                 onChangeText={text => setEmailPhone(text)}
               />
             </View>
-            {errors.password ? <Text style={[{color:"red"}]}>{errors.password}</Text> : null}
+            {errors.password ? (
+              <Text style={[{color: 'red'}]}>{errors.password}</Text>
+            ) : null}
             <View style={styles.textInputDiv}>
               <AntDesign name="lock" size={18} color="#131314" />
               <TextInput

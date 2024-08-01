@@ -212,3 +212,17 @@ export const getDeliveryBoyViewOrdersList = (extentedId, params, successCallback
     },
   );
 };
+
+export const getConsumerViewOrdersList = (extentedId, params, successCallback, errorCallback) => {
+  axiosCall(
+    API.viewConsumerOrderUrl+extentedId,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

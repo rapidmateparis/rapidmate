@@ -10,11 +10,16 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
-import { useUserDetails } from '../../commonComponent/StoreContext';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Settings = ({navigation}) => {
-  const { userDetails } = useUserDetails();
+  const {userDetails} = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
+  const clearAsyncStorage = async () => {
+    AsyncStorage.clear();
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -27,8 +32,12 @@ const Settings = ({navigation}) => {
             />
           </View>
           <View style={{marginLeft: 15}}>
-            <Text style={styles.username}>{userDetails.userInfo.name ? userDetails.userInfo.name : "Jhon"}</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.goprofile}> 
+            <Text style={styles.username}>
+              {userDetails.userInfo.name ? userDetails.userInfo.name : 'Jhon'}
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('DeliveryboyTakeSelfie')}
+              style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
             </TouchableOpacity>
@@ -36,7 +45,9 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('AddressBook')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AddressBook')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
             <Text style={styles.titleStatus}>3 addresses</Text>
             <AntDesign name="right" size={13} color="#909090" />
@@ -44,35 +55,45 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Payment methods</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('Wallet')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Wallet')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Wallet</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Billing details</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('PickupChangePassword')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('PickupChangePassword')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Change password</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('NotificationSetting')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('NotificationSetting')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Notifications</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -94,21 +115,30 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('AboutUs')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AboutUs')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>About us</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('FAQs')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('FAQs')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>FAQs</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => {
+              clearAsyncStorage();
+              navigation.popToTop();
+            }}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

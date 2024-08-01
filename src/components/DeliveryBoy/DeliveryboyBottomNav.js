@@ -1,5 +1,12 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  BackHandler,
+  Alert,
+} from 'react-native';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,10 +17,40 @@ import Planning from './Planning';
 import DeliveryboyHistory from './DeliverboyHistory';
 import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
 import Notifications from '../PickupDrop-off/Settings/Notifications';
+import RNExitApp from 'react-native-exit-app';
 
 const Bottom = createBottomTabNavigator();
 
 const DeliveryboyBottomNav = ({navigation}) => {
+  useEffect(() => {
+    const onBackPress = () => {
+      Alert.alert(
+        'Exit App',
+        'Do you want to exit?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => {
+              // Do nothing
+            },
+            style: 'cancel',
+          },
+          {text: 'YES', onPress: () => RNExitApp.exitApp()},
+        ],
+        {cancelable: false},
+      );
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <Bottom.Navigator
       tabBarOptions={{
@@ -49,7 +86,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
             <Ionicons
               name="chatbox-ellipses-outline"
               size={25}
-              color={focused ? '#FF0058' : '#B5B3B2'} 
+              color={focused ? '#FF0058' : '#B5B3B2'}
             />
           ),
         }}
@@ -91,7 +128,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
         options={{
           headerLeft: () => (
             <TouchableOpacity
-            onPress={() => navigation.goBack()}
+              onPress={() => navigation.goBack()}
               style={{paddingLeft: 10}}>
               <MaterialIcons
                 name="keyboard-backspace"
