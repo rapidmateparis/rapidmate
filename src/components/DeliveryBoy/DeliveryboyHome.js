@@ -1,24 +1,30 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
+  FlatList,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MapLiveTracking from '../commonComponent/MapLiveTracking';
 import {colors} from '../../colors';
+import {getViewOrdersList, getLocations} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import { useServiceTypeDetails, useUserDetails } from '../commonComponent/StoreContext';
 
 const DeliveryboyHome = ({navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+  const {setLoading} = useLoader();
+  const [orderList, setOrderList] = useState([]);
+  const [locationList, setLocationList] = useState([])
+  const { userDetails } = useUserDetails();
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -28,13 +34,94 @@ const DeliveryboyHome = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
+  
+  useEffect(() => {
+    getLocationsData();
+    getOrderList();
+
+  }, []);
+
+  const getLocationsData = () => {
+    setLoading(true);
+    setLocationList([])
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getLocationAddress = (locationId) => {
+    let result = locationList.filter(location => location.id == locationId)
+    return result[0].address;
+  }
+
+  const getOrderList = () => {
+    setLoading(true);
+    setOrderList([]);
+    getViewOrdersList(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const renderItem = ({item}) => (
+    <View style={styles.packageDetailCard}>
+      <View style={styles.packageHeader}>
+        <Image source={require('../../image/package-medium-icon.png')} />
+        <Text style={styles.deliveryTime}>Pickup in 00:23:19</Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <Ionicons name="location-outline" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          From <Text style={styles.Location}>{getLocationAddress(item.pickup_location_id)}</Text>
+        </Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <MaterialIcons name="my-location" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          To <Text style={styles.Location}>{getLocationAddress(item.dropoff_location_id)}</Text>
+        </Text>
+      </View>
+
+      <View style={styles.footerCard}>
+        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+      </View>
+    </View>
+  );
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome <Text style={styles.userName}>John!</Text>
+              Welcome <Text style={styles.userName}>{userDetails.userInfo.name}</Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate dashboard!
@@ -54,63 +141,14 @@ const DeliveryboyHome = ({navigation}) => {
           </View>
         </View>
 
-        <ScrollView horizontal={true}>
-          <View style={styles.allDeleveryCard}>
-            <View style={styles.packageDetailCard}>
-              <View style={styles.packageHeader}>
-                <Image
-                  source={require('../../image/package-medium-icon.png')}
-                />
-                <Text style={styles.deliveryTime}>Pickup in 00:23:19</Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  From <Text style={styles.Location}>North Street, ABC</Text>
-                </Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-                </Text>
-              </View>
-
-              <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Order ID: 98237469</Text>
-              </View>
-            </View>
-
-            <View style={styles.packageDetailCard}>
-              <View style={styles.packageHeader}>
-                <Image
-                  source={require('../../image/package-medium-icon.png')}
-                />
-                <Text style={styles.deliveryTime}>Pickup in 00:23:19</Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  From <Text style={styles.Location}>North Street, ABC</Text>
-                </Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-                </Text>
-              </View>
-
-              <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Order ID: 98237469</Text>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
+        <View style={styles.allDeleveryCard}>
+          <FlatList
+            horizontal
+            data={orderList}
+            renderItem={renderItem}
+            keyExtractor={item => item.id.toString()}
+          />
+        </View>
 
         <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Recently delivered</Text>
@@ -140,7 +178,7 @@ const DeliveryboyHome = ({navigation}) => {
               <View style={styles.packageMiddle}>
                 <MaterialIcons name="my-location" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+                  To <Text style={styles.Location}>5th Avenue, XYZ</Text>
                 </Text>
               </View>
 
@@ -167,7 +205,7 @@ const DeliveryboyHome = ({navigation}) => {
               <View style={styles.packageMiddle}>
                 <MaterialIcons name="my-location" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+                  To <Text style={styles.Location}>5th Avenue, XYZ</Text>
                 </Text>
               </View>
 
@@ -184,22 +222,34 @@ const DeliveryboyHome = ({navigation}) => {
 
         <View style={styles.companyLogoCard}>
           <View style={styles.companyInfo}>
-            <Image style={styles.companyLogosImage} source={require('../../image/Subway-logo.png')} />
+            <Image
+              style={styles.companyLogosImage}
+              source={require('../../image/Subway-logo.png')}
+            />
             <Text style={styles.companyNames}>Company Name</Text>
           </View>
 
           <View style={styles.companyInfo}>
-            <Image style={styles.companyLogosImage} source={require('../../image/Levis-logo.png')} />
+            <Image
+              style={styles.companyLogosImage}
+              source={require('../../image/Levis-logo.png')}
+            />
             <Text style={styles.companyNames}>Company Name</Text>
           </View>
 
           <View style={styles.companyInfo}>
-            <Image style={styles.companyLogosImage} source={require('../../image/Nike-logo.png')} />
+            <Image
+              style={styles.companyLogosImage}
+              source={require('../../image/Nike-logo.png')}
+            />
             <Text style={styles.companyNames}>Company Name</Text>
           </View>
 
           <View style={styles.companyInfo}>
-            <Image style={styles.companyLogosImage} source={require('../../image/Spark-logo.png')} />
+            <Image
+              style={styles.companyLogosImage}
+              source={require('../../image/Spark-logo.png')}
+            />
             <Text style={styles.companyNames}>Company Name</Text>
           </View>
         </View>
@@ -405,14 +455,14 @@ const styles = StyleSheet.create({
   companyInfo: {
     width: 80,
   },
-  companyLogosImage:{
+  companyLogosImage: {
     flexDirection: 'row',
     alignSelf: 'center',
   },
   companyNames: {
     fontSize: 12,
     textAlign: 'center',
-    fontFamily: 'Montserrat-Medium',  
+    fontFamily: 'Montserrat-Medium',
     color: colors.text,
     paddingVertical: 5,
   },

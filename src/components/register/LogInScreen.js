@@ -17,8 +17,8 @@ import { useLoader } from '../../utils/loaderContext';
 
 const LogInScreen = ({navigation}) => {
   const { saveUserDetails } = useUserDetails();
-  const [emailPhone, setEmailPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const [emailPhone, setEmailPhone] = useState('yopoli9042@maxturns.com');
+  const [password, setPassword] = useState('Syszoo12!');
   const [passwordVisible, setPasswordVisible] = useState(false); // State to track password visibility
   const [errors, setErrors] = useState({});
   const [errorResponse, setErrorResponse] = useState("");
@@ -71,6 +71,10 @@ const LogInScreen = ({navigation}) => {
           if(successResponse[0]._response) {
             if(successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', "Username or password is incorrect", [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else if (successResponse[0]._response.name == 'UserNotConfirmedException') {
+              Alert.alert('Error Alert', "Delivery Boy Verfication Pending", [
                 {text: 'OK', onPress: () => {}},
               ]);
             } else {

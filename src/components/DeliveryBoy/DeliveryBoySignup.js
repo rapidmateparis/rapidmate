@@ -90,9 +90,9 @@ const DeliveryBoySignup = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse);
+        console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse, [
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },
@@ -115,9 +115,9 @@ const DeliveryBoySignup = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse);
+        console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse, [
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },
@@ -229,7 +229,7 @@ const DeliveryBoySignup = ({navigation}) => {
           }
         },
         errorResponse => {
-          console.log('errorResponse', errorResponse[0]);
+          console.log('errorResponse', errorResponse[0]._errors.message[0]);
           setLoading(false);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},

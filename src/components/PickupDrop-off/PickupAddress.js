@@ -124,7 +124,7 @@ const PickupAddress = ({ route, navigation }) => {
       }
     }, (errorResponse) => {
       setLoading(false);
-      Alert.alert('Error Alert', errorResponse, [
+      Alert.alert('Error Alert', errorResponse[0]._errors.message, [
         { text: 'OK', onPress: () => { } },
       ]);
     })
@@ -152,7 +152,7 @@ const PickupAddress = ({ route, navigation }) => {
       }
     }, (errorResponse) => {
       setLoading(false);
-      Alert.alert('Error Alert', errorResponse, [
+      Alert.alert('Error Alert', errorResponse[0]._errors.message, [
         { text: 'OK', onPress: () => { } },
       ]);
     })
