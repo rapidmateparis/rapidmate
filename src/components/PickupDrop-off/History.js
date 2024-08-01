@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,24 +8,26 @@ import {
   StyleSheet,
   Image,
   Alert,
-  FlatList
+  FlatList,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../../colors';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useLoader } from '../../utils/loaderContext';
-import { getViewOrdersList } from '../../data_manager';
-import { RefreshControl } from 'react-native-gesture-handler';
+import {colors} from '../../colors';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {useLoader} from '../../utils/loaderContext';
+import {getConsumerViewOrdersList} from '../../data_manager';
+import {RefreshControl} from 'react-native-gesture-handler';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const Tab = createMaterialTopTabNavigator();
 
 const TodayList = () => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
-  const { setLoading } = useLoader();
+  const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
+  const {userDetails} = useUserDetails();
 
   useEffect(() => {
     getOrderList();
@@ -34,23 +36,35 @@ const TodayList = () => {
   const getOrderList = () => {
     setLoading(true);
     setOrderList([]);
-    getViewOrdersList(null, (successResponse) => {
-      if (successResponse[0]._success) {
-        let tempOrderList = successResponse[0]._response;
-        setOrderList(tempOrderList);
-      }
-      setLoading(false);
-    }, (errorResponse) => {
-      setLoading(false);
-      Alert.alert('Error Alert', errorResponse, [{ text: 'OK', onPress: () => { } }]);
-    });
+    getConsumerViewOrdersList(
+      userDetails.userDetails[0].ext_id,
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({item}) => (
     <TouchableOpacity style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
-        <Image style={styles.packageManage} source={require('../../image/Big-Package.png')} />
-        <Text style={styles.deliveryTime}>Delivered on {item.delivery_date}</Text>
+        <Image
+          style={styles.packageManage}
+          source={require('../../image/Big-Package.png')}
+        />
+        <Text style={styles.deliveryTime}>
+          Delivered on {item.delivery_date}
+        </Text>
       </View>
 
       <View style={styles.packageMiddle}>
@@ -77,13 +91,28 @@ const TodayList = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5' }}>
+    <View style={{flex: 1}}>
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: 15,
+          paddingTop: 5,
+          backgroundColor: '#FBFAF5',
+        }}>
         {orderList.length === 0 ? (
           <View style={styles.scrollViewContainer}>
-            <View style={{ width: 350, height: 500, position: 'relative', marginVertical: 40 }}>
+            <View
+              style={{
+                width: 350,
+                height: 500,
+                position: 'relative',
+                marginVertical: 40,
+              }}>
               <View style={styles.container}>
-                <Image style={styles.loaderMap} source={require('../../image/No-Data-Table.png')} />
+                <Image
+                  style={styles.loaderMap}
+                  source={require('../../image/No-Data-Table.png')}
+                />
                 <Text style={styles.text}>No orders to show</Text>
                 <Text style={styles.subText}>
                   If there is any active order, it will be shown here.
@@ -92,17 +121,14 @@ const TodayList = () => {
             </View>
           </View>
         ) : (
-          <FlatList
-            data={orderList}
-            renderItem={renderItem}
-          />
+          <FlatList data={orderList} renderItem={renderItem} />
         )}
       </View>
     </View>
   );
 };
 
-const PastList = ({ navigation }) => {
+const PastList = ({navigation}) => {
   return (
     <ScrollView>
       {/* <View style={styles.scrollViewContainer}>
@@ -125,7 +151,7 @@ const PastList = ({ navigation }) => {
           </View>
         </View>
       </View> */}
-      <View style={{ flex: 1 }}>
+      <View style={{flex: 1}}>
         <View
           style={{
             paddingHorizontal: 15,
@@ -240,7 +266,7 @@ const PastList = ({ navigation }) => {
 
 const Ongoing = () => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <TodayList />
     </View>
   );
@@ -248,18 +274,18 @@ const Ongoing = () => {
 
 const Past = () => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <PastList />
     </View>
   );
 };
 
-function History({ navigation }) {
+function History({navigation}) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <View
         style={{
           paddingHorizontal: 15,
@@ -296,9 +322,9 @@ function History({ navigation }) {
         screenOptions={{
           tabBarActiveTintColor: colors.secondary,
           tabBarInactiveTintColor: colors.subText,
-          tabBarLabelStyle: { fontSize: 14 },
-          tabBarIndicatorStyle: { backgroundColor: colors.secondary },
-          tabBarStyle: { backgroundColor: '#fff' },
+          tabBarLabelStyle: {fontSize: 14},
+          tabBarIndicatorStyle: {backgroundColor: colors.secondary},
+          tabBarStyle: {backgroundColor: '#fff'},
         }}>
         <Tab.Screen name="Ongoing" component={Ongoing} />
         <Tab.Screen name="Past">

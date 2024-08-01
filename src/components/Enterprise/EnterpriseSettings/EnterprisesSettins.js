@@ -10,9 +10,15 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EnterprisesSettins = ({navigation}) => {
+  const {userDetails} = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
+  const clearAsyncStorage = async () => {
+    AsyncStorage.clear();
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -26,7 +32,9 @@ const EnterprisesSettins = ({navigation}) => {
           </View>
           <View style={{marginLeft: 15}}>
             <Text style={styles.username}>Company Name</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('EnterprisesTakeSelfie')} style={styles.goprofile}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('EnterprisesTakeSelfie')}
+              style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
             </TouchableOpacity>
@@ -97,7 +105,9 @@ const EnterprisesSettins = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Help</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -113,7 +123,12 @@ const EnterprisesSettins = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => {
+              clearAsyncStorage();
+              navigation.popToTop();
+            }}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

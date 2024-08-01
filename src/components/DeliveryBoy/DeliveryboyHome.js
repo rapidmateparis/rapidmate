@@ -16,10 +16,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {getDeliveryBoyViewOrdersList, getLocations} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import {
-  useServiceTypeDetails,
-  useUserDetails,
-} from '../commonComponent/StoreContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const DeliveryboyHome = ({navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
@@ -124,6 +121,39 @@ const DeliveryboyHome = ({navigation}) => {
     </View>
   );
 
+  const renderDeliveryItem = ({item}) => {
+    <View style={styles.packageDetailCard}>
+      <View style={styles.packageHeader}>
+        <Image source={require('../../image/package-medium-icon.png')} />
+        <Text style={styles.deliveryTime}>Delivered 2hrs ago</Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <Ionicons name="location-outline" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          From{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.pickup_location_id)}
+          </Text>
+        </Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <MaterialIcons name="my-location" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          To{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.dropoff_location_id)}
+          </Text>
+        </Text>
+      </View>
+
+      <View style={styles.footerCard}>
+        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+      </View>
+    </View>;
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
@@ -181,62 +211,28 @@ const DeliveryboyHome = ({navigation}) => {
           </View>
         </View>
 
+        <View
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            paddingTop: 5,
+            backgroundColor: '#FBFAF5',
+          }}>
+          {orderList.length === 0 ? (
+            <Text style={styles.userName}>No orders to show</Text>
+          ) : (
+            <FlatList data={orderList} renderItem={renderItem} />
+          )}
+        </View>
+        <FlatList
+          horizontal
+          data={orderList}
+          renderItem={renderDeliveryItem}
+          keyExtractor={item => item.id.toString()}
+        />
+
         <ScrollView horizontal={true}>
-          <View style={styles.allDeleveryCard}>
-            <View style={styles.packageDetailCard}>
-              <View style={styles.packageHeader}>
-                <Image
-                  source={require('../../image/package-medium-icon.png')}
-                />
-                <Text style={styles.deliveryTime}>Delivered 2hrs ago</Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  From <Text style={styles.Location}>North Street, ABC</Text>
-                </Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>5th Avenue, XYZ</Text>
-                </Text>
-              </View>
-
-              <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Order ID: 98237469</Text>
-              </View>
-            </View>
-
-            <View style={styles.packageDetailCard}>
-              <View style={styles.packageHeader}>
-                <Image
-                  source={require('../../image/package-medium-icon.png')}
-                />
-                <Text style={styles.deliveryTime}>Delivered 2hrs ago</Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  From <Text style={styles.Location}>North Street, ABC</Text>
-                </Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>5th Avenue, XYZ</Text>
-                </Text>
-              </View>
-
-              <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Order ID: 98237469</Text>
-              </View>
-            </View>
-          </View>
+          <View style={styles.allDeleveryCard}></View>
         </ScrollView>
 
         <View style={styles.recentlyInfo}>

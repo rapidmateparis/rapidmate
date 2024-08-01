@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,33 @@ import {
 import ExStyles from '../../style';
 import {colors} from '../../colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginSignup = ({navigation}) => {
+  const {saveUserDetails} = useUserDetails();
+
+  useEffect(() => {
+    const getUserDetails = async () => {
+      try {
+        const userDetail = await AsyncStorage.getItem('userDetails');
+        if (userDetail !== null) {
+          saveUserDetails(JSON.parse(userDetail));
+          let userDetails = JSON.parse(userDetail);
+          if (userDetails.userDetails[0].role == 'CONSUMER') {
+            navigation.navigate('PickupBottomNav');
+          } else if (userDetails.userDetails[0].role == 'DELIVERY_BOY') {
+            navigation.navigate('DeliveryboyBottomNav');
+          } else {
+            navigation.navigate('EnterpriseBottomNav');
+          }
+        }
+      } catch (error) {}
+    };
+
+    getUserDetails();
+  }, []);
+
   return (
     <View style={{width: '100%', backgroundColor: colors.primary}}>
       <View>
@@ -22,7 +47,7 @@ const LoginSignup = ({navigation}) => {
             source={require('../../image/Logo.png')}
             style={styles.deliveryScootericon}
           />
-          <Text style={[styles.companyName, {color: colors.text,}]}>
+          <Text style={[styles.companyName, {color: colors.text}]}>
             Rapidmate
           </Text>
         </View>
@@ -36,7 +61,7 @@ const LoginSignup = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('ProfileChoose')}
             style={[styles.createAcBtn, {backgroundColor: colors.white}]}>
-            <Text style={[styles.pageDirections, {color: colors.text,}]}>
+            <Text style={[styles.pageDirections, {color: colors.text}]}>
               Create account
             </Text>
           </TouchableOpacity>
