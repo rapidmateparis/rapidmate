@@ -17,8 +17,8 @@ import { useLoader } from '../../utils/loaderContext';
 
 const LogInScreen = ({navigation}) => {
   const { saveUserDetails } = useUserDetails();
-  const [emailPhone, setEmailPhone] = useState('yopoli9042@maxturns.com');
-  const [password, setPassword] = useState('Syszoo12!');
+  const [emailPhone, setEmailPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false); // State to track password visibility
   const [errors, setErrors] = useState({});
   const [errorResponse, setErrorResponse] = useState("");

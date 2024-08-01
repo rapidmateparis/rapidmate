@@ -198,3 +198,17 @@ export const getLocations = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getDeliveryBoyViewOrdersList = (extentedId, params, successCallback, errorCallback) => {
+  axiosCall(
+    API.viewDeliveryBoyOrderUrl+extentedId,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

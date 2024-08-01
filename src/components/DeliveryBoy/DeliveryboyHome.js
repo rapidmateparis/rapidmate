@@ -14,17 +14,20 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
-import {getViewOrdersList, getLocations} from '../../data_manager';
+import {getDeliveryBoyViewOrdersList, getLocations} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import { useServiceTypeDetails, useUserDetails } from '../commonComponent/StoreContext';
+import {
+  useServiceTypeDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
 
 const DeliveryboyHome = ({navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
   const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
-  const [locationList, setLocationList] = useState([])
-  const { userDetails } = useUserDetails();
+  const [locationList, setLocationList] = useState([]);
+  const {userDetails} = useUserDetails();
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -34,16 +37,15 @@ const DeliveryboyHome = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  
   useEffect(() => {
     getLocationsData();
     getOrderList();
-
+    console.log('print_data===>', userDetails.userDetails[0].ext_id);
   }, []);
 
   const getLocationsData = () => {
     setLoading(true);
-    setLocationList([])
+    setLocationList([]);
     getLocations(
       null,
       successResponse => {
@@ -62,15 +64,16 @@ const DeliveryboyHome = ({navigation}) => {
     );
   };
 
-  const getLocationAddress = (locationId) => {
-    let result = locationList.filter(location => location.id == locationId)
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
     return result[0].address;
-  }
+  };
 
   const getOrderList = () => {
     setLoading(true);
     setOrderList([]);
-    getViewOrdersList(
+    getDeliveryBoyViewOrdersList(
+      userDetails.userDetails[0].ext_id,
       null,
       successResponse => {
         if (successResponse[0]._success) {
@@ -81,9 +84,9 @@ const DeliveryboyHome = ({navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        if (errorResponse[0].code) {
+          setOrderList([]);
+        }
       },
     );
   };
@@ -98,14 +101,20 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From <Text style={styles.Location}>{getLocationAddress(item.pickup_location_id)}</Text>
+          From{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.pickup_location_id)}
+          </Text>
         </Text>
       </View>
 
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To <Text style={styles.Location}>{getLocationAddress(item.dropoff_location_id)}</Text>
+          To{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.dropoff_location_id)}
+          </Text>
         </Text>
       </View>
 
@@ -121,7 +130,8 @@ const DeliveryboyHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome <Text style={styles.userName}>{userDetails.userInfo.name}</Text>
+              Welcome{' '}
+              <Text style={styles.userName}>{userDetails.userInfo.name}</Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate dashboard!
@@ -142,6 +152,19 @@ const DeliveryboyHome = ({navigation}) => {
         </View>
 
         <View style={styles.allDeleveryCard}>
+          <View
+            style={{
+              flex: 1,
+              paddingHorizontal: 15,
+              paddingTop: 5,
+              backgroundColor: '#FBFAF5',
+            }}>
+            {orderList.length === 0 ? (
+              <Text style={styles.userName}>No orders to show</Text>
+            ) : (
+              <FlatList data={orderList} renderItem={renderItem} />
+            )}
+          </View>
           <FlatList
             horizontal
             data={orderList}
