@@ -29,7 +29,7 @@ const PickupHome = ({navigation}) => {
     getServiceTypeApi(null, (successResponse) => {
       saveServiceTypeDetails(successResponse[0]._response);
      }, (errorResponse) => { 
-      Alert.alert('Error Alert', errorResponse, [
+      Alert.alert('Error Alert', errorResponse[0]._errors.message, [
         {text: 'OK', onPress: () => {}},
       ]);
      });

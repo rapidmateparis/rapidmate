@@ -121,9 +121,9 @@ const PickupSignup = ({ navigation }) => {
         }
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse);
+        console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse, [
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },

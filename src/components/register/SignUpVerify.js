@@ -83,7 +83,7 @@ const SignUpVerify = ({navigation}) => {
               },
               errorResponse => {
                 setLoading(false);
-                Alert.alert('Error Alert', errorResponse, [
+                Alert.alert('Error Alert', errorResponse[0]._errors.message, [
                   {text: 'OK', onPress: () => {}},
                 ]);
               },
@@ -92,7 +92,7 @@ const SignUpVerify = ({navigation}) => {
         },
         errorResponse => {
           setLoading(false);
-          Alert.alert('Error Alert', errorResponse, [
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
           ]);
         },

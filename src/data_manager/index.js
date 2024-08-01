@@ -184,3 +184,17 @@ export const addVehicleApi = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getLocations = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.locationIdUrl,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
