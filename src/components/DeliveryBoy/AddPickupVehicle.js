@@ -96,7 +96,6 @@ const AddPickupVehicle = ({route, navigation}) => {
   };
 
   const validateForm = () => {
-
     let errors = {};
     if (!vehicleNo.trim()) {
       errors.vehicleNo = 'Vehicle number is required';
@@ -106,7 +105,7 @@ const AddPickupVehicle = ({route, navigation}) => {
     }
     if (!vehicleMake.trim()) {
       errors.vehicleMake = 'Vehicle make is required';
-    } 
+    }
     if (!vehicleVariant.trim()) {
       errors.vehicleVariant = 'Vehicle Variant is required';
     }
@@ -120,16 +119,14 @@ const AddPickupVehicle = ({route, navigation}) => {
 
     if (isValid) {
       let params = {
-        info: {
-          delivery_boy_ext_id: route.params.delivery_boy_details.extId,
-          vehicle_type_id: route.params.selectedVehicle.vehicle_id,
-          plat_no: vehicleNo,
-          modal: vehicleModel,
-          rcv_no: '12242334987654',
-          vehicle_front_photo: '',
-          vehicle_back_photo: '',
-          rcv_photo: '',
-        },
+        delivery_boy_ext_id: route.params.delivery_boy_details.extId,
+        vehicle_type_id: route.params.selectedVehicle.vehicle_id,
+        plat_no: vehicleNo,
+        modal: vehicleModel,
+        rcv_no: '12242334987654',
+        vehicle_front_photo: '',
+        vehicle_back_photo: '',
+        rcv_photo: '',
       };
       setLoading(true);
       addVehicleApi(
@@ -152,12 +149,10 @@ const AddPickupVehicle = ({route, navigation}) => {
           }
         },
         errorResponse => {
-          console.log('errorResponse', errorResponse[0]._errors.message);
           setLoading(false);
-          navigation.navigate('DeliveryboyThanksPage');
-          // Alert.alert('Error Alert', errorResponse, [
-          //   {text: 'OK', onPress: () => {}},
-          // ]);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
         },
       );
     }
@@ -172,7 +167,9 @@ const AddPickupVehicle = ({route, navigation}) => {
         <View style={styles.logFormView}>
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle No.</Text>
-            {errors.vehicleNo ? <Text style={[{color:"red"}]}>{errors.vehicleNo}</Text> : null}
+            {errors.vehicleNo ? (
+              <Text style={[{color: 'red'}]}>{errors.vehicleNo}</Text>
+            ) : null}
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -183,7 +180,9 @@ const AddPickupVehicle = ({route, navigation}) => {
           </View>
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle Model</Text>
-            {errors.vehicleModel ? <Text style={[{color:"red"}]}>{errors.vehicleModel}</Text> : null}
+            {errors.vehicleModel ? (
+              <Text style={[{color: 'red'}]}>{errors.vehicleModel}</Text>
+            ) : null}
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -195,7 +194,9 @@ const AddPickupVehicle = ({route, navigation}) => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
               <Text style={styles.textlable}>Vehicle make</Text>
-              {errors.vehicleMake ? <Text style={[{color:"red"}]}>{errors.vehicleMake}</Text> : null}
+              {errors.vehicleMake ? (
+                <Text style={[{color: 'red'}]}>{errors.vehicleMake}</Text>
+              ) : null}
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
@@ -206,7 +207,9 @@ const AddPickupVehicle = ({route, navigation}) => {
             </View>
             <View style={{flex: 1, marginLeft: 10}}>
               <Text style={styles.textlable}>Vehicle variant</Text>
-              {errors.vehicleVariant ? <Text style={[{color:"red"}]}>{errors.vehicleVariant}</Text> : null}
+              {errors.vehicleVariant ? (
+                <Text style={[{color: 'red'}]}>{errors.vehicleVariant}</Text>
+              ) : null}
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
