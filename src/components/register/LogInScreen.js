@@ -18,8 +18,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LogInScreen = ({navigation}) => {
   const {saveUserDetails} = useUserDetails();
-  const [emailPhone, setEmailPhone] = useState('poson30700@eixdeal.com');
-  const [password, setPassword] = useState('Syszoo12!');
+  const [emailPhone, setEmailPhone] = useState(''); //poson30700@eixdeal.com
+  const [password, setPassword] = useState('');//Syszoo12!
   const [passwordVisible, setPasswordVisible] = useState(false); // State to track password visibility
   const [errors, setErrors] = useState({});
   const [errorResponse, setErrorResponse] = useState('');
