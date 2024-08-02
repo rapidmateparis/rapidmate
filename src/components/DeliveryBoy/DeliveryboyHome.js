@@ -37,7 +37,6 @@ const DeliveryboyHome = ({navigation}) => {
   useEffect(() => {
     getLocationsData();
     getOrderList();
-    console.log('print_data===>', userDetails.userDetails[0].ext_id);
   }, []);
 
   const getLocationsData = () => {
@@ -54,9 +53,9 @@ const DeliveryboyHome = ({navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        if (errorResponse[0].code) {
+          setLocationList([]);
+        }
       },
     );
   };
