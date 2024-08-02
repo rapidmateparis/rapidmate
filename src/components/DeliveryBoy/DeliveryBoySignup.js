@@ -40,6 +40,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [dropdownStateValue, setDropdownStateValue] = useState(null);
+  const [dropdownCityValue, setDropdownCityValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -49,7 +50,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [masterStateList, setMasterStateList] = useState(null);
   const [masterCityList, setMasterCityList] = useState(null);
   const [stateList, setStateList] = useState([]);
-  const [cityList, setCityList] = useState(null);
+  const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
 
   const togglePasswordVisibility = field => {
@@ -123,27 +124,30 @@ const DeliveryBoySignup = ({navigation}) => {
       },
     );
 
-    // getCityList(param={}, (successResponse) => {
-    //   setLoading(false)
-    //   if(successResponse[0]._success){
-    //     if(successResponse[0]._response) {
-    //       if(successResponse[0]._response.name == 'NotAuthorizedException') {
-    //         Alert.alert('Error Alert', successResponse[0]._response.name, [
-    //           {text: 'OK', onPress: () => {}},
-    //         ]);
-    //       } else {
-    //         setMasterCityList(successResponse[0]._response)
-
-    //       }
-    //     }
-    //   }
-    // }, (errorResponse)=> {
-    //   console.log('errorResponse',errorResponse)
-    //   setLoading(false)
-    //   Alert.alert('Error Alert', errorResponse, [
-    //     {text: 'OK', onPress: () => {}},
-    //   ]);
-    // })
+    getCityList(
+      null,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCityList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
   }, []);
 
   const data = [
@@ -183,13 +187,16 @@ const DeliveryBoySignup = ({navigation}) => {
     if (!dropdownStateValue) {
       errors.dropdownStateValue = 'Please select a state';
     }
+    if (!dropdownCityValue) {
+      errors.dropdownCityValue = 'Please select a city';
+    }
     console.log(errors);
     setErrors(errors);
     return Object.keys(errors).length === 0; // Return true if no errors
   };
 
   const handleSignUp = async () => {
-    const isValid = validateForm()
+    const isValid = validateForm();
 
     if (isValid) {
       let params = {
@@ -201,7 +208,7 @@ const DeliveryBoySignup = ({navigation}) => {
           userrole: 'DELIVERY_BOY',
           firstName: name,
           lastName: lastname,
-          city: '1',
+          city: dropdownCityValue.toString(),
           state: dropdownStateValue.toString(),
           country: dropdownCountryValue.toString(),
           siretNo: '4352354',
@@ -222,8 +229,10 @@ const DeliveryBoySignup = ({navigation}) => {
                 Alert.alert('Error Alert', successResponse[0]._response.name, [
                   {text: 'OK', onPress: () => {}},
                 ]);
-              } else if(successResponse[0]._httpsStatusCode == 200) {
-                navigation.navigate('DeliveryboyTakeSelfie',{delivery_boy_details:successResponse[0]._response})
+              } else if (successResponse[0]._httpsStatusCode == 200) {
+                navigation.navigate('DeliveryboyTakeSelfie', {
+                  delivery_boy_details: successResponse[0]._response,
+                });
               }
             }
           }
@@ -261,7 +270,9 @@ const DeliveryBoySignup = ({navigation}) => {
           </View>
         </View>
         <View style={styles.logFormView}>
-        {errors.name ? <Text style={[{color:"red"}]}>{errors.name}</Text> : null}
+          {errors.name ? (
+            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+          ) : null}
           <View
             style={{
               flexDirection: 'row',
@@ -300,7 +311,9 @@ const DeliveryBoySignup = ({navigation}) => {
               />
             </View>
           </View>
-          {errors.email ? <Text style={[{color:"red"}]}>{errors.email}</Text> : null}
+          {errors.email ? (
+            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign
               name="mail"
@@ -316,7 +329,9 @@ const DeliveryBoySignup = ({navigation}) => {
               onChangeText={text => setEmail(text)}
             />
           </View>
-          {errors.password ? <Text style={[{color:"red"}]}>{errors.password}</Text> : null}
+          {errors.password ? (
+            <Text style={[{color: 'red'}]}>{errors.password}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -336,7 +351,9 @@ const DeliveryBoySignup = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
-          {errors.confirmPassword ? <Text style={[{color:"red"}]}>{errors.confirmPassword}</Text> : null}
+          {errors.confirmPassword ? (
+            <Text style={[{color: 'red'}]}>{errors.confirmPassword}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -356,7 +373,9 @@ const DeliveryBoySignup = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
-          {errors.number ? <Text style={[{color:"red"}]}>{errors.number}</Text> : null}
+          {errors.number ? (
+            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+          ) : null}
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -396,7 +415,11 @@ const DeliveryBoySignup = ({navigation}) => {
               onChangeText={text => setNumber(text)}
             />
           </View>
-          {errors.dropdownCountryValue ? <Text style={[{color:"red", marginTop: 20, marginBottom:-20}]}>{errors.dropdownCountryValue}</Text> : null}
+          {errors.dropdownCountryValue ? (
+            <Text style={[{color: 'red', marginTop: 20, marginBottom: -20}]}>
+              {errors.dropdownCountryValue}
+            </Text>
+          ) : null}
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
@@ -435,7 +458,9 @@ const DeliveryBoySignup = ({navigation}) => {
               )}
             />
           </View>
-          {errors.dropdownStateValue ? <Text style={[{color:"red"}]}>{errors.dropdownStateValue}</Text> : null}
+          {errors.dropdownStateValue ? (
+            <Text style={[{color: 'red'}]}>{errors.dropdownStateValue}</Text>
+          ) : null}
           <View
             style={{
               flexDirection: 'row',
@@ -459,6 +484,16 @@ const DeliveryBoySignup = ({navigation}) => {
                 onChange={item => {
                   setDropdownStateValue(item.value);
                   setIsFocus(false);
+                  var formattedCityList = [];
+                  masterCityList.forEach(element => {
+                    if (item.value == element.state_id) {
+                      formattedCityList.push({
+                        label: element.city_name,
+                        value: element.id,
+                      });
+                    }
+                  });
+                  setCityList(formattedCityList);
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
@@ -473,7 +508,7 @@ const DeliveryBoySignup = ({navigation}) => {
 
             <View style={styles.containerCity}>
               <Dropdown
-                data={data}
+                data={cityList}
                 search
                 maxHeight={300}
                 itemTextStyle={{color: colors.text}}
@@ -486,7 +521,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
-                  setDropdownCountryValue(item.value);
+                  setDropdownCityValue(item.value);
                   setIsFocus(false);
                 }}
                 renderLeftIcon={() => (

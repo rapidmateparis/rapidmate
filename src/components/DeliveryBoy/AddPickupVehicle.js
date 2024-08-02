@@ -123,10 +123,12 @@ const AddPickupVehicle = ({route, navigation}) => {
         vehicle_type_id: route.params.selectedVehicle.vehicle_id,
         plat_no: vehicleNo,
         modal: vehicleModel,
-        rcv_no: '12242334987654',
-        vehicle_front_photo: '',
-        vehicle_back_photo: '',
-        rcv_photo: '',
+        make: vehicleMake,
+        variant: vehicleVariant,
+        reg_doc: '1',
+        driving_license: '1',
+        insurance: '1',
+        passport: '1',
       };
       setLoading(true);
       addVehicleApi(
