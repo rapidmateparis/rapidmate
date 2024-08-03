@@ -4,207 +4,215 @@ import {colors} from '../../colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSignUpDetails } from '../commonComponent/StoreContext';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSignUpDetails} from '../commonComponent/StoreContext';
 
 const ProfileChoose = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
-  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
+  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
 
   const handleOptionSelect = option => {
     setSelectedOption(option);
-    saveSignUpDetails({...signUpDetails, profile:option})
+    let profileOption;
+    if (option == 'Enterprise') {
+      profileOption = 'ENTERPRISE';
+    } else if (option == 'PickupDrop') {
+      profileOption = 'CONSUMER';
+    } else {
+      profileOption = 'DELIVERY_BOY';
+    }
+    saveSignUpDetails({...signUpDetails, profile: profileOption});
   };
 
   // Define a variable to check if any option is selected
   const isOptionSelected = selectedOption !== null;
 
   return (
-    <SafeAreaView style={{height: '100%',}}>
-    <ScrollView style={{height: '100%',backgroundColor: '#fff'}}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.logInText}>Choose profile</Text>
-        <Text style={styles.loginAccessText}>
-          Before creating your profile, please select your role on this app.
-        </Text>
-        <View style={{marginTop: 35}}>
-          <TouchableOpacity
-            style={styles.profileCard}
-            onPress={() => handleOptionSelect('Enterprise')}>
-            <LinearGradient
-              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={[
-                styles.container,
-                selectedOption === 'Enterprise' && {
-                  backgroundColor: '#FFF8C9',
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                },
-              ]}>
-              <View style={styles.content}>
-                <Image
-                  style={{width: 40, height: 40}}
-                  source={require('../../image/home.png')}
-                />
-                <View style={styles.profileText}>
-                  <Text style={styles.roleText}>I am here as</Text>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Enterprise
-                  </Text>
-                </View>
-                {selectedOption === 'Enterprise' ? (
-                  <View
-                    style={{
-                      backgroundColor: colors.primary,
-                      width: 25,
-                      height: 25,
-                      padding: 3,
-                      borderRadius: 15,
-                    }}>
-                    <MaterialIcons
-                      name="check"
-                      size={18}
-                      color={colors.white}
-                    />
+    <SafeAreaView style={{height: '100%'}}>
+      <ScrollView style={{height: '100%', backgroundColor: '#fff'}}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.logInText}>Choose profile</Text>
+          <Text style={styles.loginAccessText}>
+            Before creating your profile, please select your role on this app.
+          </Text>
+          <View style={{marginTop: 35}}>
+            <TouchableOpacity
+              style={styles.profileCard}
+              onPress={() => handleOptionSelect('Enterprise')}>
+              <LinearGradient
+                colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
+                start={{x: 1, y: 0}}
+                end={{x: 0, y: 0}}
+                style={[
+                  styles.container,
+                  selectedOption === 'Enterprise' && {
+                    backgroundColor: '#FFF8C9',
+                    borderWidth: 1,
+                    borderColor: colors.primary,
+                  },
+                ]}>
+                <View style={styles.content}>
+                  <Image
+                    style={{width: 40, height: 40}}
+                    source={require('../../image/home.png')}
+                  />
+                  <View style={styles.profileText}>
+                    <Text style={styles.roleText}>I am here as</Text>
+                    <Text style={[styles.roleTypeText, {color: colors.text}]}>
+                      Enterprise
+                    </Text>
                   </View>
-                ) : (
-                  <View style={styles.cricleRound} />
-                )}
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
+                  {selectedOption === 'Enterprise' ? (
+                    <View
+                      style={{
+                        backgroundColor: colors.primary,
+                        width: 25,
+                        height: 25,
+                        padding: 3,
+                        borderRadius: 15,
+                      }}>
+                      <MaterialIcons
+                        name="check"
+                        size={18}
+                        color={colors.white}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.cricleRound} />
+                  )}
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
 
+            <TouchableOpacity
+              style={styles.profileCard}
+              onPress={() => {
+                handleOptionSelect('PickupDrop');
+              }}>
+              <LinearGradient
+                colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
+                start={{x: 1, y: 0}}
+                end={{x: 0, y: 0}}
+                style={[
+                  styles.container,
+                  selectedOption === 'PickupDrop' && {
+                    backgroundColor: '#FFF8C9',
+                    borderWidth: 1,
+                    borderColor: colors.primary,
+                  },
+                ]}>
+                <View style={styles.content}>
+                  <Image
+                    style={{width: 40, height: 45}}
+                    source={require('../../image/location-map.png')}
+                  />
+                  <View style={styles.profileText}>
+                    <Text style={styles.roleText}>I am here as</Text>
+                    <Text style={[styles.roleTypeText, {color: colors.text}]}>
+                      Pickup & Drop-off
+                    </Text>
+                  </View>
+                  {selectedOption === 'PickupDrop' ? (
+                    <View
+                      style={{
+                        backgroundColor: colors.primary,
+                        width: 25,
+                        height: 25,
+                        padding: 3,
+                        borderRadius: 15,
+                      }}>
+                      <MaterialIcons
+                        name="check"
+                        size={18}
+                        color={colors.white}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.cricleRound} />
+                  )}
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.profileCard}
+              onPress={() => handleOptionSelect('DeliveryBoy')}>
+              <LinearGradient
+                colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
+                start={{x: 1, y: 0}}
+                end={{x: 0, y: 0}}
+                style={[
+                  styles.container,
+                  selectedOption === 'DeliveryBoy' && {
+                    backgroundColor: '#FFF8C9',
+                    borderWidth: 1,
+                    borderColor: colors.primary,
+                  },
+                ]}>
+                <View style={styles.content}>
+                  <Image
+                    style={{width: 30, height: 45}}
+                    source={require('../../image/DeliveryBoy-Icon.png')}
+                  />
+                  <View style={[styles.profileText, {marginLeft: 30}]}>
+                    <Text style={styles.roleText}>I am here as</Text>
+                    <Text style={styles.roleTypeText}>Delivery boy</Text>
+                  </View>
+                  {selectedOption === 'DeliveryBoy' ? (
+                    <View
+                      style={{
+                        backgroundColor: colors.primary,
+                        width: 25,
+                        height: 25,
+                        padding: 3,
+                        borderRadius: 15,
+                      }}>
+                      <MaterialIcons
+                        name="check"
+                        size={18}
+                        color={colors.white}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.cricleRound} />
+                  )}
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
-            style={styles.profileCard}
+            style={[
+              styles.logbutton,
+              {
+                backgroundColor: isOptionSelected
+                  ? colors.primary
+                  : colors.disabledButtonColor,
+              },
+              !isOptionSelected && styles.disabledButton, // Apply additional styles when option is not selected
+            ]}
+            disabled={!isOptionSelected}
             onPress={() => {
-              handleOptionSelect('PickupDrop');
+              if (isOptionSelected) {
+                if (selectedOption === 'PickupDrop') {
+                  navigation.navigate('PickupSignup');
+                } else if (selectedOption === 'Enterprise') {
+                  navigation.navigate('EnterpriseSignup');
+                } else if (selectedOption === 'DeliveryBoy') {
+                  navigation.navigate('DeliveryBoySignup');
+                }
+              }
             }}>
-            <LinearGradient
-              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={[
-                styles.container,
-                selectedOption === 'PickupDrop' && {
-                  backgroundColor: '#FFF8C9',
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                },
-              ]}>
-              <View style={styles.content}>
-                <Image
-                  style={{width: 40, height: 45}}
-                  source={require('../../image/location-map.png')}
-                />
-                <View style={styles.profileText}>
-                  <Text style={styles.roleText}>I am here as</Text>
-                  <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                    Pickup & Drop-off
-                  </Text>
-                </View>
-                {selectedOption === 'PickupDrop' ? (
-                  <View
-                    style={{
-                      backgroundColor: colors.primary,
-                      width: 25,
-                      height: 25,
-                      padding: 3,
-                      borderRadius: 15,
-                    }}>
-                    <MaterialIcons
-                      name="check"
-                      size={18}
-                      color={colors.white}
-                    />
-                  </View>
-                ) : (
-                  <View style={styles.cricleRound} /> 
-                )}
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.profileCard}
-            onPress={() => handleOptionSelect('DeliveryBoy')}>
-            <LinearGradient
-              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={[
-                styles.container,
-                selectedOption === 'DeliveryBoy' && {
-                  backgroundColor: '#FFF8C9',
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                },
-              ]}>
-              <View style={styles.content}>
-                <Image
-                  style={{width: 30, height: 45}}
-                  source={require('../../image/DeliveryBoy-Icon.png')}
-                />
-                <View style={[styles.profileText, {marginLeft: 30,}]}>
-                  <Text style={styles.roleText}>I am here as</Text>
-                  <Text style={styles.roleTypeText}>Delivery boy</Text>
-                </View>
-                {selectedOption === 'DeliveryBoy' ? (
-                  <View
-                    style={{
-                      backgroundColor: colors.primary,
-                      width: 25,
-                      height: 25,
-                      padding: 3,
-                      borderRadius: 15,
-                    }}>
-                    <MaterialIcons
-                      name="check"
-                      size={18}
-                      color={colors.white}
-                    />
-                  </View>
-                ) : (
-                  <View style={styles.cricleRound} /> 
-                )}
-              </View>
-            </LinearGradient>
+            <Text
+              style={{
+                fontSize: 14,
+                color: colors.text,
+                fontFamily: 'Montserrat-Medium',
+              }}>
+              Continue
+            </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={[
-            styles.logbutton,
-            {
-              backgroundColor: isOptionSelected
-                ? colors.primary
-                : colors.disabledButtonColor,
-            },
-            !isOptionSelected && styles.disabledButton, // Apply additional styles when option is not selected
-          ]}
-          disabled={!isOptionSelected}
-          onPress={() => {
-            if (isOptionSelected) {
-              if (selectedOption === 'PickupDrop') {
-                navigation.navigate('PickupSignup');
-              } else if (selectedOption === 'Enterprise') {
-                navigation.navigate('EnterpriseSignup');
-              } else if (selectedOption === 'DeliveryBoy') {
-                navigation.navigate('DeliveryBoySignup');
-              }
-            }
-          }}>
-          <Text
-            style={{
-              fontSize: 14,
-              color: colors.text,
-              fontFamily: 'Montserrat-Medium',
-            }}>
-            Continue
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 };
