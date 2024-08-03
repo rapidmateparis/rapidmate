@@ -23,7 +23,7 @@ import {
   getStateList,
   signUpUser,
 } from '../../data_manager';
-// import DropDownDropdown from '../common component/dropdown';
+import {useSignUpDetails} from '../commonComponent/StoreContext';
 
 const DeliveryBoySignup = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -52,6 +52,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
+  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -230,7 +231,8 @@ const DeliveryBoySignup = ({navigation}) => {
                   {text: 'OK', onPress: () => {}},
                 ]);
               } else if (successResponse[0]._httpsStatusCode == 200) {
-                navigation.navigate('DeliveryboyTakeSelfie', {
+                saveSignUpDetails({...signUpDetails, userName:email, password:password})
+                navigation.navigate('SignUpVerify', {
                   delivery_boy_details: successResponse[0]._response,
                 });
               }
