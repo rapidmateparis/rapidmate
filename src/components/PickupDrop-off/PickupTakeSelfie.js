@@ -62,6 +62,7 @@ const PickupTakeSelfie = ({navigation}) => {
       name: image.data.fileName,
   };
     const formdata = new FormData();
+    formdata.append("file", photo);
     setLoading(true);
     uploadDocumentsApi(
       formdata,
