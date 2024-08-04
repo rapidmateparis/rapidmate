@@ -138,6 +138,7 @@ const AddPickupVehicle = ({route, navigation}) => {
           setLoading(false);
           if (successResponse[0]._success) {
             if (successResponse[0]._response) {
+              console.log("print_data==>addVehicle", successResponse[0])
               if (
                 successResponse[0]._response.name == 'NotAuthorizedException'
               ) {

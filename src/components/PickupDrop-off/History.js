@@ -16,7 +16,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useLoader} from '../../utils/loaderContext';
-import {getConsumerViewOrdersList} from '../../data_manager';
+import {getConsumerViewOrdersList, getLocations} from '../../data_manager';
 import {RefreshControl} from 'react-native-gesture-handler';
 import {useUserDetails} from '../commonComponent/StoreContext';
 
@@ -28,10 +28,38 @@ const TodayList = () => {
   const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
   const {userDetails} = useUserDetails();
+  const [locationList, setLocationList] = useState([]);
 
   useEffect(() => {
+    getLocationsData();
     getOrderList();
   }, []);
+
+  const getLocationsData = () => {
+    setLoading(true);
+    setLocationList([]);
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setLocationList([]);
+        }
+      },
+    );
+  };
+
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0].address;
+  };
 
   const getOrderList = () => {
     setLoading(true);
@@ -48,9 +76,6 @@ const TodayList = () => {
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse, [
-          {text: 'OK', onPress: () => {}},
-        ]);
       },
     );
   };
@@ -70,14 +95,14 @@ const TodayList = () => {
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From <Text style={styles.Location}>North Street, ABC</Text>
+          From <Text style={styles.Location}>{getLocationAddress(item.pickup_location_id)}</Text>
         </Text>
       </View>
 
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+          To <Text style={styles.Location}>{getLocationAddress(item.dropoff_location_id)}</Text>
         </Text>
       </View>
 

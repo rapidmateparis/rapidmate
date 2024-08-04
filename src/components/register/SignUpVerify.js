@@ -18,7 +18,7 @@ import {
 } from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 
-const SignUpVerify = ({navigation}) => {
+const SignUpVerify = ({route, navigation}) => {
   const {saveUserDetails} = useUserDetails();
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
   const [code, setCode] = useState('');
@@ -32,7 +32,7 @@ const SignUpVerify = ({navigation}) => {
         info: {
           userName: signUpDetails.userName,
           code: code,
-          role: 'CONSUMER',
+          role: signUpDetails.profile,
         },
       };
       setLoading(true);
@@ -53,7 +53,9 @@ const SignUpVerify = ({navigation}) => {
               successResponse => {
                 setLoading(false);
                 if (successResponse[0]._success) {
-                  console.log("print_data===>signUpVerifyApi_login", successResponse[0]._response)
+                  console.log(
+                    successResponse[0]._response,
+                  );
                   if (successResponse[0]._response) {
                     if (
                       successResponse[0]._response.name ==
@@ -70,10 +72,19 @@ const SignUpVerify = ({navigation}) => {
                           successResponse[0]._response.user.idToken.payload,
                         userDetails: successResponse[0]._response.user_profile,
                       });
-                      if(successResponse[0]._response.user_profile[0].role == "CONSUMER") {
+                      if (
+                        successResponse[0]._response.user_profile[0].role ==
+                        'CONSUMER'
+                      ) {
                         navigation.navigate('PickupBottomNav');
-                      } else if (successResponse[0]._response.user_profile[0].role == "DELIVERY_BOY") {
-                        navigation.navigate('DeliveryboyBottomNav');
+                      } else if (
+                        successResponse[0]._response.user_profile[0].role ==
+                        'DELIVERY_BOY'
+                      ) {
+                        navigation.navigate('DeliveryboyTakeSelfie', {
+                          delivery_boy_details:
+                            route.params.delivery_boy_details,
+                        });
                       } else {
                         navigation.navigate('EnterpriseBottomNav');
                       }
@@ -83,7 +94,7 @@ const SignUpVerify = ({navigation}) => {
               },
               errorResponse => {
                 setLoading(false);
-                Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+                Alert.alert('Error Alert', ""+errorResponse[0]._errors.message, [
                   {text: 'OK', onPress: () => {}},
                 ]);
               },

@@ -53,7 +53,7 @@ const DeliveryboyHome = ({navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        if (errorResponse[0].code) {
+        if (errorResponse[0]._errors.message) {
           setLocationList([]);
         }
       },
@@ -80,7 +80,7 @@ const DeliveryboyHome = ({navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        if (errorResponse[0].code) {
+        if (errorResponse[0]._errors.message) {
           setOrderList([]);
         }
       },
