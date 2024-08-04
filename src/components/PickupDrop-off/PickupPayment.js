@@ -15,7 +15,7 @@ import {colors} from '../../colors';
 import {useStripe} from '@stripe/stripe-react-native';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
-import {createPickupOrder} from '../../data_manager';
+import {addPayment, createPickupOrder} from '../../data_manager';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
@@ -28,8 +28,15 @@ const PickupPayment = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
   const params = route.params.props;
+  const paymentAmount = 
+    params.selectedVehicleDetails.pricePerKm *
+    params.distanceTime.distance
 
-  console.log('params', params);
+  console.log('payemnt', paymentAmount)
+  
+  const onPayment = async () => {
+    placePickUpOrder();
+  };
 
   const createPaymentIntent = async () => {
     try {
@@ -43,8 +50,8 @@ const PickupPayment = ({route, navigation}) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            amount: '5000', // Amount in cents
-            currency: 'usd',
+            amount: (paymentAmount * 100), // Amount in cents
+            currency: 'EUR',
             //payment_method_types: ['card', 'google_pay']
           }).toString(),
         },
@@ -78,13 +85,13 @@ const PickupPayment = ({route, navigation}) => {
 
   const checkout = async () => {
     const {error} = await presentPaymentSheet();
-    placePickUpOrder();
+    createPayment();
   };
 
   const placePickUpOrder = async () => {
-    if (userDetails.userDetails[0]) {
+    // if (userDetails.userDetails[0]) {
       let requestParams = {
-        consumer_ext_id: userDetails.userDetails[0].ext_id,
+        consumer_ext_id: "C1721848968278",
         service_type_id: params.serviceTypeId,
         vehicle_type_id: params.selectedVehicleDetails.id,
         pickup_location_id: params.sourceLocationId
@@ -95,13 +102,14 @@ const PickupPayment = ({route, navigation}) => {
           : 2,
       };
       setLoading(true);
+      console.log('request', requestParams)
       createPickupOrder(
         requestParams,
         successResponse => {
           console.log('print_data==>successResponse', '' + successResponse);
           if (successResponse[0]._success) {
             setLoading(false);
-            navigation.navigate('OrderConfirm');
+            // createPaymentIntent();
           }
         },
         errorResponse => {
@@ -111,11 +119,36 @@ const PickupPayment = ({route, navigation}) => {
           ]);
         },
       );
-    } else {
-      Alert.alert('Error Alert', 'Consumer extended ID missing', [
-        {text: 'OK', onPress: () => {}},
-      ]);
-    }
+    // } else {
+    //   Alert.alert('Error Alert', 'Consumer extended ID missing', [
+    //     {text: 'OK', onPress: () => {}},
+    //   ]);
+    // }
+  };
+
+  const createPayment = async () => {
+    let requestParams = {
+      order_number: '20240802182633',
+      amount: '10.50',
+    };
+    setLoading(true);
+    addPayment(
+      requestParams,
+      successResponse => {
+        setLoading(false);
+        console.log('print_data==>successResponse1', '' + successResponse);
+        if (successResponse[0]._success) {
+          navigation.navigate('OrderConfirm');
+        }
+      },
+      errorResponse => {
+        console.log('print_data==>errorResponse1', '' + errorResponse);
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
   };
 
   return (
@@ -218,12 +251,9 @@ const PickupPayment = ({route, navigation}) => {
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
             €{' '}
-            {(
-              params.selectedVehicleDetails.pricePerKm *
-              params.distanceTime.distance
-            ).toFixed(0)}
+            {paymentAmount.toFixed(0)}
           </Text>
-          <TouchableOpacity onPress={createPaymentIntent}>
+          <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>
           </TouchableOpacity>
         </View>
