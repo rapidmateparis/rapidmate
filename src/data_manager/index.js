@@ -113,8 +113,6 @@ export const createPickupOrder = (params, successCallback, errorCallback) => {
   );
 };
 
-
-
 export const getViewOrdersList = (params, successCallback, errorCallback) => {
   axiosCall(
     API.viewOrderListUrl,
@@ -199,9 +197,14 @@ export const getLocations = (params, successCallback, errorCallback) => {
   );
 };
 
-export const getDeliveryBoyViewOrdersList = (extentedId, params, successCallback, errorCallback) => {
+export const getDeliveryBoyViewOrdersList = (
+  extentedId,
+  params,
+  successCallback,
+  errorCallback,
+) => {
   axiosCall(
-    API.viewDeliveryBoyOrderUrl+extentedId,
+    API.viewDeliveryBoyOrderUrl + extentedId,
     HTTPMethod.GET,
     params,
     response => {
@@ -213,9 +216,14 @@ export const getDeliveryBoyViewOrdersList = (extentedId, params, successCallback
   );
 };
 
-export const getConsumerViewOrdersList = (extentedId, params, successCallback, errorCallback) => {
+export const getConsumerViewOrdersList = (
+  extentedId,
+  params,
+  successCallback,
+  errorCallback,
+) => {
   axiosCall(
-    API.viewConsumerOrderUrl+extentedId,
+    API.viewConsumerOrderUrl + extentedId,
     HTTPMethod.GET,
     params,
     response => {
@@ -225,4 +233,35 @@ export const getConsumerViewOrdersList = (extentedId, params, successCallback, e
       errorCallback(errorResponse);
     },
   );
+};
+
+export const addPayment = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.payment,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const uploadDocumentsApi = (params, successCallback, errorCallback) => {
+  const myHeaders = new Headers();
+  myHeaders.append('upload_type', 'ORDER_DOC');
+
+  const requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: params,
+    redirect: 'follow',
+  };
+
+  fetch(API.documentsUpload, requestOptions)
+    .then(response => response.text())
+    .then(result => successCallback(result))
+    .catch(error => errorCallback(error));
 };
