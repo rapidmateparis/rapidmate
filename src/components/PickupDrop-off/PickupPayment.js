@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -27,16 +27,16 @@ const PickupPayment = ({route, navigation}) => {
   const [clientSecret, setClientSecret] = useState(null);
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  const [orderResponse, setOrderResponse] = useState();
   const params = route.params.props;
-  const paymentAmount = 
-    params.selectedVehicleDetails.pricePerKm *
-    params.distanceTime.distance
+  const paymentAmount =
+    params.selectedVehicleDetails.pricePerKm * params.distanceTime.distance;
 
-  console.log('payemnt', paymentAmount)
-  
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  useEffect(() => {}, [orderResponse]);
 
   const createPaymentIntent = async () => {
     try {
@@ -50,23 +50,20 @@ const PickupPayment = ({route, navigation}) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            amount: (paymentAmount * 100), // Amount in cents
+            amount: paymentAmount * 100, // Amount in cents
             currency: 'EUR',
             //payment_method_types: ['card', 'google_pay']
           }).toString(),
         },
       );
       const data = await response.json();
-      console.log(data);
       if (data.error) {
         throw new Error(data.error.message);
       }
       setClientSecret(data.client_secret);
-      console.log(data.client_secret);
       setup(data.client_secret);
     } catch (error) {
-      //Alert.alert('Error', error.message);
-      console.log(error.message);
+      Alert.alert('Error', error.message);
     }
   };
 
@@ -89,9 +86,9 @@ const PickupPayment = ({route, navigation}) => {
   };
 
   const placePickUpOrder = async () => {
-    // if (userDetails.userDetails[0]) {
+    if (userDetails.userDetails[0]) {
       let requestParams = {
-        consumer_ext_id: "C1721848968278",
+        consumer_ext_id: userDetails.userDetails[0].ext_id,
         service_type_id: params.serviceTypeId,
         vehicle_type_id: params.selectedVehicleDetails.id,
         pickup_location_id: params.sourceLocationId
@@ -102,14 +99,15 @@ const PickupPayment = ({route, navigation}) => {
           : 2,
       };
       setLoading(true);
-      console.log('request', requestParams)
+      console.log('request', requestParams);
       createPickupOrder(
         requestParams,
         successResponse => {
-          console.log('print_data==>successResponse', '' + successResponse);
           if (successResponse[0]._success) {
+            console.log('placePickUpOrder', successResponse[0]._response);
+            setOrderResponse(successResponse[0]._response);
             setLoading(false);
-            // createPaymentIntent();
+            createPaymentIntent();
           }
         },
         errorResponse => {
@@ -119,30 +117,29 @@ const PickupPayment = ({route, navigation}) => {
           ]);
         },
       );
-    // } else {
-    //   Alert.alert('Error Alert', 'Consumer extended ID missing', [
-    //     {text: 'OK', onPress: () => {}},
-    //   ]);
-    // }
+    } else {
+      Alert.alert('Error Alert', 'Consumer extended ID missing', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
   };
 
   const createPayment = async () => {
+    console.log('orderResponse', orderResponse);
     let requestParams = {
-      order_number: '20240802182633',
-      amount: '10.50',
+      order_number: orderResponse[0].order_number,
+      amount: paymentAmount.toFixed(0),
     };
     setLoading(true);
     addPayment(
       requestParams,
       successResponse => {
         setLoading(false);
-        console.log('print_data==>successResponse1', '' + successResponse);
         if (successResponse[0]._success) {
           navigation.navigate('OrderConfirm');
         }
       },
       errorResponse => {
-        console.log('print_data==>errorResponse1', '' + errorResponse);
         setLoading(false);
         Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
           {text: 'OK', onPress: () => {}},
@@ -250,8 +247,7 @@ const PickupPayment = ({route, navigation}) => {
         </View>
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
-            €{' '}
-            {paymentAmount.toFixed(0)}
+            € {paymentAmount.toFixed(0)}
           </Text>
           <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>
