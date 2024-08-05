@@ -107,6 +107,7 @@ import EnterpriseFeedbackThanksPage from './components/Enterprise/EnterpriseFeed
 import SignUpVerify from './components/register/SignUpVerify';
 import { LoaderProvider } from './utils/loaderContext';
 import Loader from './common/Loader';
+import PaymentSuccess from './components/PickupDrop-off/PaymentSuccess';
 
 const Stack = createStackNavigator();
 
@@ -447,6 +448,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: 'Payment',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="PaymentSuccess"
+                component={PaymentSuccess}
+                options={({ navigation }) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{ paddingLeft: 10 }}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Payment Success',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

@@ -29,10 +29,11 @@ const PickupPayment = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const params = route.params.props;
   const paymentAmount = 
-    params.selectedVehicleDetails.pricePerKm *
-    params.distanceTime.distance
+  (Math.round(params.selectedVehicleDetails.pricePerKm *
+    params.distanceTime.distance)).toFixed(2)
+  var orderNumber = ''
 
-  console.log('payemnt', paymentAmount)
+  console.log('paymentAmount',paymentAmount)
   
   const onPayment = async () => {
     placePickUpOrder();
@@ -85,13 +86,16 @@ const PickupPayment = ({route, navigation}) => {
 
   const checkout = async () => {
     const {error} = await presentPaymentSheet();
-    createPayment();
+    console.log('érror',error)
+    if(!error) {
+      createPayment();
+    }
   };
 
   const placePickUpOrder = async () => {
-    // if (userDetails.userDetails[0]) {
+    if (userDetails.userDetails[0]) {
       let requestParams = {
-        consumer_ext_id: "C1721848968278",
+        consumer_ext_id: userDetails.userDetails[0].ext_id,
         service_type_id: params.serviceTypeId,
         vehicle_type_id: params.selectedVehicleDetails.id,
         pickup_location_id: params.sourceLocationId
@@ -102,14 +106,13 @@ const PickupPayment = ({route, navigation}) => {
           : 2,
       };
       setLoading(true);
-      console.log('request', requestParams)
       createPickupOrder(
         requestParams,
         successResponse => {
-          console.log('print_data==>successResponse', '' + successResponse);
           if (successResponse[0]._success) {
             setLoading(false);
-            // createPaymentIntent();
+            orderNumber = successResponse[0]._response[0].order_number
+            createPaymentIntent();
           }
         },
         errorResponse => {
@@ -119,30 +122,28 @@ const PickupPayment = ({route, navigation}) => {
           ]);
         },
       );
-    // } else {
-    //   Alert.alert('Error Alert', 'Consumer extended ID missing', [
-    //     {text: 'OK', onPress: () => {}},
-    //   ]);
-    // }
+    } else {
+      Alert.alert('Error Alert', 'Consumer extended ID missing', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
   };
 
   const createPayment = async () => {
     let requestParams = {
-      order_number: '20240802182633',
-      amount: '10.50',
+      order_number: orderNumber,
+      amount: paymentAmount.toString(),
     };
     setLoading(true);
     addPayment(
       requestParams,
       successResponse => {
         setLoading(false);
-        console.log('print_data==>successResponse1', '' + successResponse);
         if (successResponse[0]._success) {
-          navigation.navigate('OrderConfirm');
+          navigation.navigate('PaymentSuccess');
         }
       },
       errorResponse => {
-        console.log('print_data==>errorResponse1', '' + errorResponse);
         setLoading(false);
         Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
           {text: 'OK', onPress: () => {}},
@@ -208,10 +209,7 @@ const PickupPayment = ({route, navigation}) => {
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
             <Text style={styles.totalAmount}>
               €{' '}
-              {(
-                params.selectedVehicleDetails.pricePerKm *
-                params.distanceTime.distance
-              ).toFixed(0)}
+              {paymentAmount}
             </Text>
           </View>
         </View>
@@ -251,7 +249,7 @@ const PickupPayment = ({route, navigation}) => {
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
             €{' '}
-            {paymentAmount.toFixed(0)}
+            {paymentAmount}
           </Text>
           <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>
