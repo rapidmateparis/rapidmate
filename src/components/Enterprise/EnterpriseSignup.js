@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -28,7 +29,7 @@ import {
   signUpUser,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import { useSignUpDetails } from '../commonComponent/StoreContext';
+import {useSignUpDetails} from '../commonComponent/StoreContext';
 // import DropDownDropdown from '../common component/dropdown';
 
 const EnterpriseSignup = ({navigation}) => {
@@ -62,7 +63,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
-  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
+  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -75,6 +76,12 @@ const EnterpriseSignup = ({navigation}) => {
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
+  ];
+
+  const industryList = [
+    {label: 'Restaurants', value: 1},
+    {label: 'Hospitals', value: 2},
+    {label: 'Logistics', value: 3},
   ];
 
   useEffect(() => {
@@ -225,13 +232,13 @@ const EnterpriseSignup = ({navigation}) => {
           email: email,
           phoneNumber: dropdownValue + number,
           password: password,
-          userrole: 'ENTERPRISE',
+          userrole: signUpDetails.profile,
           firstName: name,
           lastName: lastname,
           companyName: companyName,
           deliveryMonthHours: deliveries + 'hours',
           description: comments,
-          industryId: 1,
+          industryId: dropdownIndustryValue.toString(),
           city: dropdownCityValue.toString(),
           state: dropdownStateValue.toString(),
           country: dropdownCountryValue.toString(),
@@ -247,20 +254,12 @@ const EnterpriseSignup = ({navigation}) => {
           setLoading(false);
           if (successResponse[0]._success) {
             if (successResponse[0]._response) {
-              if (
-                successResponse[0]._response.name == 'NotAuthorizedException'
-              ) {
-                Alert.alert('Error Alert', successResponse[0]._response.name, [
-                  {text: 'OK', onPress: () => {}},
-                ]);
-              } else if (successResponse[0]._httpsStatusCode == 200) {
-                saveSignUpDetails({
-                  ...signUpDetails,
-                  userName: email,
-                  password: password,
-                });
-                navigation.navigate('EnterprisesTakeSelfie');
-              }
+              saveSignUpDetails({
+                ...signUpDetails,
+                userName: email,
+                password: password,
+              });
+              navigation.navigate('SignUpVerify');
             }
           }
         },
@@ -440,7 +439,7 @@ const EnterpriseSignup = ({navigation}) => {
           </View>
           <View style={styles.containerCountry}>
             <Dropdown
-              data={[]}
+              data={industryList}
               search
               maxHeight={300}
               itemTextStyle={{color: colors.text}}
