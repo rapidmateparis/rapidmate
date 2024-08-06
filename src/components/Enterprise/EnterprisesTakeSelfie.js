@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,22 +6,28 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { colors } from '../../colors';
+import {colors} from '../../colors';
 import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
-import { handleCameraLaunchFunction, handleImageLibraryLaunchFunction } from '../../utils/common';
+import {
+  handleCameraLaunchFunction,
+  handleImageLibraryLaunchFunction,
+} from '../../utils/common';
+import { uploadDocumentsApi } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 
-const EnterprisesTakeSelfie = ({ navigation }) => {
+const EnterprisesTakeSelfie = ({navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
-  const [photoFileName, setPhotoFileName] = useState(''); // State for filename
-  const [photoUri, setPhotoUri] = useState(null); // State for photo URI
+  const [image, setImage] = useState(null); // State for photo
+  const {setLoading} = useLoader();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
   };
 
-  const handlePhotoOpenClose = (visible) => {
+  const handlePhotoOpenClose = visible => {
     setModalVisibleCamera(!visible);
   };
 
@@ -30,8 +36,7 @@ const EnterprisesTakeSelfie = ({ navigation }) => {
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
-        setPhotoFileName(getFileName(cameraData.data.uri));
-        setPhotoUri(cameraData.data.uri);
+        setImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -43,32 +48,54 @@ const EnterprisesTakeSelfie = ({ navigation }) => {
     try {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
-        setPhotoFileName(getFileName(imageData.data.uri));
-        setPhotoUri(imageData.data.uri);
+        setImage(imageData);
       }
     } catch (error) {
       // Handle errors here
     }
   };
 
-  const getFileName = (uri) => {
-    // Function to extract file name from URI
-    if (uri) {
-      const path = uri.split('/');
-      return path[path.length - 1];
-    }
-    return '';
+  const uploadImage = async () => {
+    var photo = {
+      uri: image.data.uri,
+      type: image.data.type,
+      name: image.data.fileName,
+    };
+    const formdata = new FormData();
+    formdata.append('file', photo);
+    setLoading(true);
+    uploadDocumentsApi(
+      formdata,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'print_data==>successResponseuploadDocumentsApi',
+          '' + successResponse,
+        );
+        navigation.navigate('EnterpriseThanksPage')
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>errorResponseuploadDocumentsApi',
+          '' + errorResponse,
+        );
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
   };
 
   return (
-    <ScrollView style={{ width: '100%', backgroundColor: '#FFF' }}>
+    <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
       <View>
         <TouchableOpacity onPress={toggleModal} style={styles.profilePicCard}>
           <Image
             style={styles.profilePic}
             source={
-              photoUri
-                ? { uri: `file://${photoUri}` }
+              image
+                ? {uri: image.data.uri}
                 : require('../../image/dummy-Selfie.jpg')
             }
           />
@@ -81,7 +108,9 @@ const EnterprisesTakeSelfie = ({ navigation }) => {
         </TouchableOpacity>
 
         <View style={styles.titlesCard}>
-          <Text style={styles.statusTitle}>Please upload a Profile Picture</Text>
+          <Text style={styles.statusTitle}>
+            Please upload a Profile Picture
+          </Text>
           <Text style={styles.statusSubtitle}>
             Please see if this looks good, you can try once more if you want to.
           </Text>
@@ -92,7 +121,7 @@ const EnterprisesTakeSelfie = ({ navigation }) => {
             <Text style={styles.buttonText}>Try again</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseThanksPage')}
+            onPress={uploadImage}
             style={styles.saveBTn}>
             <Text style={styles.okButton}>Use this</Text>
           </TouchableOpacity>

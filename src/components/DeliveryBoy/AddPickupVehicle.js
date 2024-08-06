@@ -19,7 +19,7 @@ import {
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
 import {useLoader} from '../../utils/loaderContext';
-import {addVehicleApi} from '../../data_manager';
+import {addVehicleApi, uploadDocumentsApi} from '../../data_manager';
 
 const AddPickupVehicle = ({route, navigation}) => {
   const [vehicleNo, setVehicleNo] = useState('');
@@ -28,12 +28,10 @@ const AddPickupVehicle = ({route, navigation}) => {
   const [vehicleVariant, setVehicleVariant] = useState('');
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [imageFileVehicleReg, setImageFileNameVehicleReg] = useState([]);
-  const [imageFileDrivingLicense, setImageFileDrivingLicense] = useState([]);
-  const [imageFileVehicleInsurance, setImageFileVehicleInsurance] = useState(
-    [],
-  );
-  const [imageFilePassport, setImageFilePassport] = useState([]);
+  const [imageFileVehicleReg, setImageFileNameVehicleReg] = useState(null);
+  const [imageFileDrivingLicense, setImageFileDrivingLicense] = useState(null);
+  const [imageFileVehicleInsurance, setImageFileVehicleInsurance] = useState(null);
+  const [imageFilePassport, setImageFilePassport] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState();
   const {setLoading} = useLoader();
   const [errors, setErrors] = useState({});
@@ -161,6 +159,76 @@ const AddPickupVehicle = ({route, navigation}) => {
     }
   };
 
+  const uploadAllImages = async () => {
+    var photos = []
+    var photo = {};
+    if (imageFileVehicleReg) {
+      photo = {
+        uri: imageFileVehicleReg.uri,
+        type: imageFileVehicleReg.type,
+        name: imageFileVehicleReg.fileName,
+      };
+      photos.push(photo)
+    } 
+    if (imageFileDrivingLicense) {
+      photo = {
+        uri: imageFileDrivingLicense.uri,
+        type: imageFileDrivingLicense.type,
+        name: imageFileDrivingLicense.fileName,
+      };
+      photos.push(photo)
+    }
+    if (imageFileVehicleInsurance) {
+      photo = {
+        uri: imageFileVehicleInsurance.uri,
+        type: imageFileVehicleInsurance.type,
+        name: imageFileVehicleInsurance.fileName,
+      };
+      photos.push(photo)
+    }
+    if (imageFilePassport) {
+      photo = {
+        uri: imageFilePassport.uri,
+        type: imageFilePassport.type,
+        name: imageFilePassport.fileName,
+      };
+      photos.push(photo)
+    }
+    uploadImage(photos,0)
+  }
+
+  const uploadImage = async (photos, index) => {
+    if (photos.length == 0) {
+      return
+    }
+    const formdata = new FormData();
+    formdata.append('file', photos[index]);
+    setLoading(true);
+    uploadDocumentsApi(
+      formdata,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'print_data==>successResponseuploadDocumentsApi',
+          '' + successResponse,
+        );
+        if (photos.length > index + 1) {
+          uploadImage(photos, index + 1)
+        }
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>errorResponseuploadDocumentsApi',
+          '' + errorResponse,
+        );
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fbfaf5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -239,11 +307,13 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFileVehicleReg && imageFileUrl === 'VehicleRegistration'
+                  {imageFileVehicleReg
                     ? getFileName(imageFileVehicleReg.uri)
                     : `image.jpeg`}
                 </Text>
-                <MaterialCommunityIcons name="close" color="#000" size={20} />
+                <MaterialCommunityIcons onPress={()=>{
+                  setImageFileNameVehicleReg(null)
+                }} name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>
@@ -261,11 +331,13 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFileDrivingLicense && imageFileUrl === 'DrivingLicense'
+                  {imageFileDrivingLicense
                     ? getFileName(imageFileDrivingLicense.uri)
                     : `image.jpeg`}
                 </Text>
-                <MaterialCommunityIcons name="close" color="#000" size={20} />
+                <MaterialCommunityIcons onPress={()=>{
+                  setImageFileDrivingLicense(null)
+                }} name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>
@@ -283,12 +355,13 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFileVehicleInsurance &&
-                  imageFileUrl === 'VehicleInsurance'
+                  {imageFileVehicleInsurance
                     ? getFileName(imageFileVehicleInsurance.uri)
                     : `image.jpeg`}
                 </Text>
-                <MaterialCommunityIcons name="close" color="#000" size={20} />
+                <MaterialCommunityIcons onPress={()=>{
+                  setImageFileVehicleInsurance(null)
+                }} name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>
@@ -307,11 +380,13 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFilePassport && imageFileUrl === 'Passport'
+                  {imageFilePassport
                     ? getFileName(imageFilePassport.uri)
                     : `image.jpeg`}
                 </Text>
-                <MaterialCommunityIcons name="close" color="#000" size={20} />
+                <MaterialCommunityIcons onPress={()=>{
+                  setImageFilePassport(null)
+                }} name="close" color="#000" size={20} />
               </View>
             </View>
           </TouchableOpacity>

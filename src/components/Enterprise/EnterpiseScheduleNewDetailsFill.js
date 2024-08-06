@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -22,6 +23,8 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
+import { useLoader } from '../../utils/loaderContext';
+import { uploadDocumentsApi } from '../../data_manager';
 
 const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
   const [pickupAddress, setPickupAddress] = useState('');
@@ -42,6 +45,8 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
+  const [image, setImage] = useState(null); // State for photo
+  const {setLoading} = useLoader();
 
   const handleDayPress = day => {
     let updatedSelectedDays;
@@ -86,6 +91,7 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
         setPhotoFileName(getFileName(cameraData.data.uri));
+        setImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -98,6 +104,7 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
+        setImage(imageData);
       }
     } catch (error) {
       // Handle errors here
@@ -111,6 +118,38 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
     // Get last 20 characters or the whole string if shorter
     fileName = fileName.substr(-35);
     return fileName.length > 35 ? '...' + fileName : fileName;
+  };
+
+  const uploadImage = async () => {
+    var photo = {
+      uri: image.data.uri,
+      type: image.data.type,
+      name: image.data.fileName,
+    };
+    const formdata = new FormData();
+    formdata.append('file', photo);
+    setLoading(true);
+    uploadDocumentsApi(
+      formdata,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'print_data==>successResponseuploadDocumentsApi',
+          '' + successResponse,
+        );
+
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>errorResponseuploadDocumentsApi',
+          '' + errorResponse,
+        );
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
   };
 
   return (
@@ -221,7 +260,10 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
               <Text style={styles.packagePhoto}>Package photo</Text>
               <View style={styles.packagePhotoPath}>
                 <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                <MaterialCommunityIcons name="close" color="#000" size={13} />
+                <MaterialCommunityIcons onPress={()=> {
+                  setPhotoFileName('');
+                  setImage(null);
+                }} name="close" color="#000" size={13} />
               </View>
             </View>
           </TouchableOpacity>

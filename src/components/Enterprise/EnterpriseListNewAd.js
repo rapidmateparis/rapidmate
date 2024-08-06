@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../colors';
@@ -15,6 +16,8 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
+import { useLoader } from '../../utils/loaderContext';
+import { uploadDocumentsApi } from '../../data_manager';
 
 const EnterpriseListNewAd = ({navigation}) => {
   const [title, setTitle] = useState('');
@@ -26,6 +29,7 @@ const EnterpriseListNewAd = ({navigation}) => {
   const [photoUri, setPhotoUri] = useState(null);
   const [largePhotoUri, setLargePhotoUri] = useState(null);
   const [isModalVisibleLargePhoto, setModalVisibleLargePhoto] = useState(false);
+  const {setLoading} = useLoader();
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
@@ -53,7 +57,7 @@ const EnterpriseListNewAd = ({navigation}) => {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status === 'success') {
         setPhotoFileName(getFileName(cameraData.data.uri));
-        setPhotoUri(cameraData.data.uri);
+        setPhotoUri(cameraData.data);
       }
     } catch (error) {
       console.error('Error while launching camera:', error);
@@ -67,7 +71,7 @@ const EnterpriseListNewAd = ({navigation}) => {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status === 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
-        setPhotoUri(imageData.data.uri);
+        setPhotoUri(imageData.data);
       }
     } catch (error) {
       console.error('Error while selecting image from library:', error);
@@ -80,7 +84,7 @@ const EnterpriseListNewAd = ({navigation}) => {
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status === 'success') {
-        setLargePhotoUri(cameraData.data.uri);
+        setLargePhotoUri(cameraData.data);
       }
     } catch (error) {
       console.error('Error while launching camera for large photo:', error);
@@ -93,7 +97,7 @@ const EnterpriseListNewAd = ({navigation}) => {
     try {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status === 'success') {
-        setLargePhotoUri(imageData.data.uri);
+        setLargePhotoUri(imageData.data);
       }
     } catch (error) {
       console.error('Error while selecting image from library for large photo:', error);
@@ -109,6 +113,60 @@ const EnterpriseListNewAd = ({navigation}) => {
     return '';
   };
 
+  const uploadAllImages = async () => {
+    var photos = []
+    var photo = {};
+    if (photoUri) {
+      photo = {
+        uri: photoUri.uri,
+        type: photoUri.type,
+        name: photoUri.fileName,
+      };
+      photos.push(photo)
+    } 
+    if (largePhotoUri) {
+      photo = {
+        uri: largePhotoUri.uri,
+        type: largePhotoUri.type,
+        name: largePhotoUri.fileName,
+      };
+      photos.push(photo)
+    }
+    uploadImage(photos,0)
+  }
+
+  const uploadImage = async (photos, index) => {
+    if (photos.length == 0) {
+      return
+    }
+    const formdata = new FormData();
+    formdata.append('file', photos[index]);
+    setLoading(true);
+    uploadDocumentsApi(
+      formdata,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'print_data==>successResponseuploadDocumentsApi',
+          '' + successResponse,
+        );
+        if (photos.length > index + 1) {
+          uploadImage(photos, index + 1)
+        }
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>errorResponseuploadDocumentsApi',
+          '' + errorResponse,
+        );
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -121,7 +179,7 @@ const EnterpriseListNewAd = ({navigation}) => {
           <Image
             source={
               photoUri
-                ? {uri: photoUri}
+                ? {uri: photoUri.uri}
                 : require('../../image/upload-image-icon.png')
             }
             style={[styles.uploadIcon, photoUri && styles.uploadsmallIconClicked]}
@@ -138,7 +196,7 @@ const EnterpriseListNewAd = ({navigation}) => {
           <Image
             source={
               largePhotoUri
-                ? {uri: largePhotoUri}
+                ? {uri: largePhotoUri.uri}
                 : require('../../image/upload-image-icon.png')
             }
             style={[styles.uploadIcon, largePhotoUri && styles.uploadIconClicked]}

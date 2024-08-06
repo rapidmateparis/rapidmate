@@ -36,7 +36,7 @@ const PickupTakeSelfie = ({navigation}) => {
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
-        setImage(imageData);
+        setImage(cameraData);
       }
     } catch (error) {
       // Handle errors here

@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -19,6 +20,8 @@ import {
 } from '../../utils/common';
 import { RadioButton, RadioGroup } from 'react-native-radio-buttons-group';
 import { useUserDetails } from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
+import { uploadDocumentsApi } from '../../data_manager';
 
 const AddPickupdetails = ({route, navigation }) => {
 
@@ -36,6 +39,8 @@ const AddPickupdetails = ({route, navigation }) => {
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [selectedId, setSelectedId] = useState();
   const { userDetails } = useUserDetails();
+  const [image, setImage] = useState(null); // State for photo
+  const {setLoading} = useLoader();
 
   console.log("print_data===>AddPickupdetails", route.params)
 
@@ -70,6 +75,7 @@ const AddPickupdetails = ({route, navigation }) => {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
         setPhotoFileName(getFileName(cameraData.data.uri));
+        setImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -82,6 +88,7 @@ const AddPickupdetails = ({route, navigation }) => {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
+        setImage(imageData);
       }
     } catch (error) {
       // Handle errors here
@@ -112,6 +119,41 @@ const AddPickupdetails = ({route, navigation }) => {
       setNumber(null)
     }
   }, [selectedId])
+
+  const uploadImage = async () => {
+    if (!image) {
+      return
+    }
+    var photo = {
+      uri: image.data.uri,
+      type: image.data.type,
+      name: image.data.fileName,
+    };
+    const formdata = new FormData();
+    formdata.append('file', photo);
+    setLoading(true);
+    uploadDocumentsApi(
+      formdata,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'print_data==>successResponseuploadDocumentsApi',
+          '' + successResponse,
+        );
+        navigation.navigate('EnterpriseThanksPage')
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>errorResponseuploadDocumentsApi',
+          '' + errorResponse,
+        );
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   return (
     <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
@@ -220,7 +262,10 @@ const AddPickupdetails = ({route, navigation }) => {
               <Text style={styles.packagePhoto}>Package photo</Text>
               <View style={styles.packagePhotoPath}>
                 <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                <MaterialCommunityIcons name="close" color="#000" size={13} />
+                <MaterialCommunityIcons onPress={()=>{
+                  setPhotoFileName('')
+                  setImage(null)
+                }} name="close" color="#000" size={13} />
               </View>
             </View>
           </TouchableOpacity>
