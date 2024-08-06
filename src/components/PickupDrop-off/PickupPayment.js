@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -27,17 +27,18 @@ const PickupPayment = ({route, navigation}) => {
   const [clientSecret, setClientSecret] = useState(null);
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  const [orderResponse, setOrderResponse] = useState();
   const params = route.params.props;
   const paymentAmount = 
   (Math.round(params.selectedVehicleDetails.pricePerKm *
     params.distanceTime.distance)).toFixed(2)
   var orderNumber = ''
-
-  console.log('paymentAmount',paymentAmount)
   
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  useEffect(() => {}, [orderResponse]);
 
   const createPaymentIntent = async () => {
     try {
@@ -51,23 +52,20 @@ const PickupPayment = ({route, navigation}) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            amount: (paymentAmount * 100), // Amount in cents
+            amount: paymentAmount * 100, // Amount in cents
             currency: 'EUR',
             //payment_method_types: ['card', 'google_pay']
           }).toString(),
         },
       );
       const data = await response.json();
-      console.log(data);
       if (data.error) {
         throw new Error(data.error.message);
       }
       setClientSecret(data.client_secret);
-      console.log(data.client_secret);
       setup(data.client_secret);
     } catch (error) {
-      //Alert.alert('Error', error.message);
-      console.log(error.message);
+      Alert.alert('Error', error.message);
     }
   };
 
@@ -110,6 +108,8 @@ const PickupPayment = ({route, navigation}) => {
         requestParams,
         successResponse => {
           if (successResponse[0]._success) {
+            console.log('placePickUpOrder', successResponse[0]._response);
+            setOrderResponse(successResponse[0]._response);
             setLoading(false);
             orderNumber = successResponse[0]._response[0].order_number
             createPaymentIntent();
@@ -131,8 +131,8 @@ const PickupPayment = ({route, navigation}) => {
 
   const createPayment = async () => {
     let requestParams = {
-      order_number: orderNumber,
-      amount: paymentAmount.toString(),
+      order_number: orderResponse[0].order_number,
+      amount: paymentAmount,
     };
     setLoading(true);
     addPayment(

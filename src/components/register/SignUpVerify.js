@@ -53,50 +53,35 @@ const SignUpVerify = ({route, navigation}) => {
               successResponse => {
                 setLoading(false);
                 if (successResponse[0]._success) {
-                  console.log(
-                    successResponse[0]._response,
-                  );
-                  if (successResponse[0]._response) {
-                    if (
-                      successResponse[0]._response.name ==
-                      'NotAuthorizedException'
-                    ) {
-                      Alert.alert(
-                        'Error Alert',
-                        successResponse[0]._response.name,
-                        [{text: 'OK', onPress: () => {}}],
-                      );
-                    } else {
-                      saveUserDetails({
-                        userInfo:
-                          successResponse[0]._response.user.idToken.payload,
-                        userDetails: successResponse[0]._response.user_profile,
-                      });
-                      if (
-                        successResponse[0]._response.user_profile[0].role ==
-                        'CONSUMER'
-                      ) {
-                        navigation.navigate('PickupBottomNav');
-                      } else if (
-                        successResponse[0]._response.user_profile[0].role ==
-                        'DELIVERY_BOY'
-                      ) {
-                        navigation.navigate('DeliveryboyTakeSelfie', {
-                          delivery_boy_details:
-                            route.params.delivery_boy_details,
-                        });
-                      } else {
-                        navigation.navigate('EnterpriseBottomNav');
-                      }
-                    }
+                  console.log(successResponse[0]._response);
+                  saveUserDetails({
+                    userInfo: successResponse[0]._response.user.idToken.payload,
+                    userDetails: successResponse[0]._response.user_profile,
+                  });
+                  if (
+                    successResponse[0]._response.user_profile[0].role ==
+                    'CONSUMER'
+                  ) {
+                    navigation.navigate('PickupBottomNav');
+                  } else if (
+                    successResponse[0]._response.user_profile[0].role ==
+                    'DELIVERY_BOY'
+                  ) {
+                    navigation.navigate('DeliveryboyTakeSelfie', {
+                      delivery_boy_details: route.params.delivery_boy_details,
+                    });
+                  } else {
+                    navigation.navigate('EnterprisesTakeSelfie');
                   }
                 }
               },
               errorResponse => {
                 setLoading(false);
-                Alert.alert('Error Alert', ""+errorResponse[0]._errors.message, [
-                  {text: 'OK', onPress: () => {}},
-                ]);
+                Alert.alert(
+                  'Error Alert',
+                  '' + errorResponse[0]._errors.message,
+                  [{text: 'OK', onPress: () => {}}],
+                );
               },
             );
           }
