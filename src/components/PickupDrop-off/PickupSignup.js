@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,16 +11,16 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Dropdown } from 'react-native-element-dropdown';
+import {Dropdown} from 'react-native-element-dropdown';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {colors} from '../../colors';
 import {useSignUpDetails} from '../commonComponent/StoreContext';
-import { getCountryList, signUpUser } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
+import {getCountryList, signUpUser} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 // import DropDownDropdown from '../common component/dropdown';
 
-const PickupSignup = ({ navigation }) => {
+const PickupSignup = ({navigation}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -33,9 +33,9 @@ const PickupSignup = ({ navigation }) => {
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
+  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
   const [errors, setErrors] = useState({});
-  const { setLoading } = useLoader();
+  const {setLoading} = useLoader();
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
 
@@ -54,7 +54,6 @@ const PickupSignup = ({ navigation }) => {
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phonePattern = /^\+?\d{10,15}$/;
-
 
     let errors = {};
     if (!name.trim()) {
@@ -90,17 +89,16 @@ const PickupSignup = ({ navigation }) => {
   };
 
   const data = [
-    { label: '+91', value: '+91' },
-    { label: '+33', value: '+33' },
+    {label: '+91', value: '+91'},
+    {label: '+33', value: '+33'},
   ];
 
-  useEffect(()=> {
+  useEffect(() => {
     getCountryList(
       (param = {}),
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
@@ -128,7 +126,7 @@ const PickupSignup = ({ navigation }) => {
         ]);
       },
     );
-  },[])
+  }, []);
 
   const handleSignUp = async () => {
     const isValid = validateForm();
@@ -136,35 +134,48 @@ const PickupSignup = ({ navigation }) => {
     if (isValid) {
       let params = {
         info: {
-          userName:email,
-          email:email,
-          phoneNumber:'+33'+ number,
-          password:password,
-          userrole: "CONSUMER"
-        }
+          userName: email,
+          email: email,
+          phoneNumber: '+33' + number,
+          password: password,
+          userrole: 'CONSUMER',
+          firstName: name,
+          lastName: '',
+          country: dropdownCountryValue.toString(),
+        },
       };
-      setLoading(true)
-      signUpUser(params, (successResponse) => {
-        setLoading(false)
-        if(successResponse[0]._success){
-          if(successResponse[0]._response) {
-            if(successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else {
-              saveSignUpDetails({...signUpDetails, userName:email, password:password})
-              navigation.navigate('SignUpVerify')
+      setLoading(true);
+      signUpUser(
+        params,
+        successResponse => {
+          setLoading(false);
+          if (successResponse[0]._success) {
+            if (successResponse[0]._response) {
+              if (
+                successResponse[0]._response.name == 'NotAuthorizedException'
+              ) {
+                Alert.alert('Error Alert', successResponse[0]._response.name, [
+                  {text: 'OK', onPress: () => {}},
+                ]);
+              } else {
+                saveSignUpDetails({
+                  ...signUpDetails,
+                  userName: email,
+                  password: password,
+                });
+                navigation.navigate('SignUpVerify');
+              }
             }
           }
-        }
-      }, (errorResponse)=> {
-        setLoading(false)
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      })
-    } 
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }
     // else {
     //   // Show error message for invalid email or phone number
     //   console.log('Invalid email or phone number');
@@ -175,13 +186,13 @@ const PickupSignup = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
-      <View style={{ paddingHorizontal: 15 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ width: '85%' }}>
-            <Text style={[styles.logInText, { color: colors.text }]}>
+    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
+      <View style={{paddingHorizontal: 15}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{width: '85%'}}>
+            <Text style={[styles.logInText, {color: colors.text}]}>
               Pickup & Drop-off{' '}
-              <Text style={{ fontFamily: 'Montserrat-Medium' }}>signup</Text>
+              <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
             </Text>
             <Text style={styles.loginAccessText}>
               Let’s create your profile so you can have a complete experience of
@@ -189,23 +200,27 @@ const PickupSignup = ({ navigation }) => {
             </Text>
           </View>
           <Image
-            style={{ width: 40, height: 40 }}
+            style={{width: 40, height: 40}}
             source={require('../../image/location-map.png')}
           />
         </View>
         <View style={styles.logFormView}>
-        {errors.name ? <Text style={[{color:"red"}]}>{errors.name}</Text> : null}
+          {errors.name ? (
+            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign name="user" size={18} color="#131314" />
             <TextInput
-              style={[styles.loginput, { fontFamily: 'Montserrat-Regular' }]}
+              style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
               placeholder="Name"
               placeholderTextColor="#999"
               value={name}
               onChangeText={text => setName(text)}
             />
           </View>
-          {errors.email ? <Text style={[{color:"red"}]}>{errors.email}</Text> : null}
+          {errors.email ? (
+            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
@@ -216,11 +231,13 @@ const PickupSignup = ({ navigation }) => {
               onChangeText={text => setEmail(text)}
             />
           </View>
-          {errors.password ? <Text style={[{color:"red"}]}>{errors.password}</Text> : null}
+          {errors.password ? (
+            <Text style={[{color: 'red'}]}>{errors.password}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
-              style={[styles.input, { fontFamily: 'Montserrat-Regular' }]}
+              style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
               placeholder="New Password"
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
@@ -236,7 +253,9 @@ const PickupSignup = ({ navigation }) => {
               />
             </TouchableOpacity>
           </View>
-          {errors.confirmPassword ? <Text style={[{color:"red"}]}>{errors.confirmPassword}</Text> : null}
+          {errors.confirmPassword ? (
+            <Text style={[{color: 'red'}]}>{errors.confirmPassword}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -256,9 +275,11 @@ const PickupSignup = ({ navigation }) => {
               />
             </TouchableOpacity>
           </View>
-          {errors.number ? <Text style={[{color:"red"}]}>{errors.number}</Text> : null}
+          {errors.number ? (
+            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+          ) : null}
           <View style={styles.mobileNumberInput}>
-            <View style={{ width: 95 }}>
+            <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
                 <Dropdown
                   data={data}
@@ -266,8 +287,8 @@ const PickupSignup = ({ navigation }) => {
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
-                  itemTextStyle={{color:colors.text}}
-                  selectedTextStyle = {{color:colors.text}}
+                  itemTextStyle={{color: colors.text}}
+                  selectedTextStyle={{color: colors.text}}
                   placeholder={!isFocus ? '+33' : '...'}
                   searchPlaceholder="+.."
                   value={dropdownValue}
@@ -279,7 +300,7 @@ const PickupSignup = ({ navigation }) => {
                   }}
                   renderLeftIcon={() => (
                     <Image
-                      style={{ marginRight: 10 }}
+                      style={{marginRight: 10}}
                       source={require('../../image/flagIcon.png')}
                     />
                   )}
@@ -296,7 +317,11 @@ const PickupSignup = ({ navigation }) => {
               onChangeText={text => setNumber(text)}
             />
           </View>
-          {errors.dropdownCountryValue ? <Text style={[{color:"red", marginTop: 20}]}>{errors.dropdownCountryValue}</Text> : null}
+          {errors.dropdownCountryValue ? (
+            <Text style={[{color: 'red', marginTop: 20}]}>
+              {errors.dropdownCountryValue}
+            </Text>
+          ) : null}
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
@@ -304,8 +329,8 @@ const PickupSignup = ({ navigation }) => {
               maxHeight={300}
               labelField="label"
               valueField="value"
-              itemTextStyle={{color:colors.text}}
-              selectedTextStyle = {{color:colors.text}}
+              itemTextStyle={{color: colors.text}}
+              selectedTextStyle={{color: colors.text}}
               placeholder={!isFocus ? 'Country' : '...'}
               searchPlaceholder="Search.."
               value={dropdownCountryValue}
@@ -317,7 +342,7 @@ const PickupSignup = ({ navigation }) => {
               }}
               renderLeftIcon={() => (
                 <FontAwesome6
-                  style={{ marginRight: 10 }}
+                  style={{marginRight: 10}}
                   name="globe"
                   size={18}
                   color={colors.text}
@@ -325,7 +350,9 @@ const PickupSignup = ({ navigation }) => {
               )}
             />
           </View>
-          {errors.selectedAccountType ? <Text style={[{color:"red"}]}>{errors.selectedAccountType}</Text> : null}
+          {errors.selectedAccountType ? (
+            <Text style={[{color: 'red'}]}>{errors.selectedAccountType}</Text>
+          ) : null}
           <View>
             <Text style={styles.accountType}>Create account as:</Text>
 
@@ -372,7 +399,7 @@ const PickupSignup = ({ navigation }) => {
 
           <TouchableOpacity
             onPress={() => {
-              handleSignUp()
+              handleSignUp();
               // navigation.navigate('SignUpVerify');
             }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
@@ -383,14 +410,14 @@ const PickupSignup = ({ navigation }) => {
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
               Already have an account yet?{' '}
-              <Text style={{ color: colors.primary }}>Login</Text>
+              <Text style={{color: colors.primary}}>Login</Text>
             </Text>
 
             <View>
               <Text style={styles.termOfRapidmate}>
                 By signing up you agree to{' '}
-                <Text style={{ color: colors.primary }}>Privacy policy</Text> &{' '}
-                <Text style={{ color: colors.primary }}>Terms</Text> of RapidMate
+                <Text style={{color: colors.primary}}>Privacy policy</Text> &{' '}
+                <Text style={{color: colors.primary}}>Terms</Text> of RapidMate
               </Text>
             </View>
           </TouchableOpacity>
@@ -509,7 +536,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     fontSize: 14,
     marginLeft: 5,
-    color:colors.text
+    color: colors.text,
   },
   checkIcon: {
     backgroundColor: colors.primary,

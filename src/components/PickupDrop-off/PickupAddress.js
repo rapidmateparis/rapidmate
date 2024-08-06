@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,11 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  Alert
+  Alert,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { colors } from '../../colors';
+import {colors} from '../../colors';
 import VehicleDimensionsModal from '../commonComponent/VehicleDimensions';
 import MapAddress from '../commonComponent/MapAddress';
 import BicycleImage from '../../image/Bicycle.png';
@@ -18,10 +18,10 @@ import MotorbikeImage from '../../image/Motorbike.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
-import { getLocationId } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
+import {getLocationId, getAllVehicleTypes} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
-const PickupAddress = ({ route, navigation }) => {
+const PickupAddress = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedVehicleDetails, setSelectedVehicleDetails] = useState(null);
@@ -30,152 +30,148 @@ const PickupAddress = ({ route, navigation }) => {
   const [sourceLocation, setSourceLocation] = useState();
   const [destinationLocation, setDestinationLocation] = useState();
   const [distanceTime, setDistanceTime] = useState();
-  const { setLoading } = useLoader();
+  const {setLoading} = useLoader();
   const [sourceLocationId, setSourceLocationId] = useState();
   const [destinationLocationId, setDestinationLocationId] = useState();
+  const [vehicleTypeList, setVehicleTypeList] = useState([]);
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
   };
 
-  const vehicleData = [
-    {
-      id: 10,
-      name: 'Bicycle',
-      capacity: '5 liters',
-      price: '€5/km',
-      image: BicycleImage,
-      length: '5 Feet',
-      height: '4 Feet',
-      width: '1 Feet',
-      pricePerKm: 5,
-      style: styles.bicycleImage,
-    },
-    {
-      id: 1,
-      name: 'Motorbike',
-      capacity: '10 liters',
-      price: '€10/km',
-      image: MotorbikeImage,
-      length: '5 Feet',
-      height: '4 Feet',
-      width: '2 Feet',
-      pricePerKm: 10,
-      style: styles.motorbikeImage,
-    },
-    {
-      id: 4,
-      name: 'Mini Truck',
-      capacity: '1000 liters',
-      price: '€50/km',
-      image: MiniTruckImage,
-      length: '24 Feet',
-      height: '12 Feet',
-      width: '8 Feet',
-      pricePerKm: 50,
-      style: styles.miniTruckImage,
-    },
-    {
-      id: 8,
-      name: 'Mini Van',
-      capacity: '4000 liters',
-      price: '€80/km',
-      image: MiniVanImage,
-      length: '24 Feet',
-      height: '12 Feet',
-      width: '8 Feet',
-      pricePerKm: 80,
-      style: styles.miniVanImage,
-    },
-    {
-      id: 9,
-      name: 'Semi Truck',
-      capacity: '20000 liters',
-      price: '€150/km',
-      image: SemiTruckImage,
-      length: '30 Feet',
-      height: '15 Feet',
-      width: '10 Feet',
-      pricePerKm: 150,
-      style: styles.semiTruckImage,
-    },
-  ];
+  useEffect(() => {
+    setLoading(true);
+    getAllVehicleTypes(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setVehicleTypeList(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
 
-  const onSourceLocation = (location) => {
-    setSourceLocation(location)
+  const onSourceLocation = location => {
+    setSourceLocation(location);
 
-    let locationDetails = location.sourceDescription.split(',')
+    let locationDetails = location.sourceDescription.split(',');
     let locationParams = {
       location_name: locationDetails[0] ? locationDetails[0] : '',
       address: locationDetails[0] ? locationDetails[0] : '',
       city: locationDetails[1] ? locationDetails[1] : '',
       state: locationDetails[2] ? locationDetails[2] : '',
       country: locationDetails[3] ? locationDetails[3] : '',
-      postal_code: "23424",
+      postal_code: '23424',
       latitude: location.originCoordinates.latitude,
-      longitude: location.originCoordinates.longitude
-    }
+      longitude: location.originCoordinates.longitude,
+    };
     setLoading(true);
-    getLocationId(locationParams, (successResponse) => {
-      if (successResponse[0]._success) {
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setSourceLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
         setLoading(false);
-        setSourceLocationId(successResponse[0]._response.location_id)
-      }
-    }, (errorResponse) => {
-      setLoading(false);
-      Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-        { text: 'OK', onPress: () => { } },
-      ]);
-    })
-  }
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
-  const onDestinationLocation = (location) => {
-    setDestinationLocation(location)
+  const onDestinationLocation = location => {
+    setDestinationLocation(location);
 
-    let locationDetails = location.destinationDescription.split(',')
+    let locationDetails = location.destinationDescription.split(',');
     let locationParams = {
       location_name: locationDetails[0] ? locationDetails[0] : '',
       address: locationDetails[0] ? locationDetails[0] : '',
       city: locationDetails[1] ? locationDetails[1] : '',
       state: locationDetails[2] ? locationDetails[2] : '',
       country: locationDetails[3] ? locationDetails[3] : '',
-      postal_code: "23425",
+      postal_code: '23425',
       latitude: location.destinationCoordinates.latitude,
-      longitude: location.destinationCoordinates.longitude
-    }
+      longitude: location.destinationCoordinates.longitude,
+    };
     setLoading(true);
-    getLocationId(locationParams, (successResponse) => {
-      if (successResponse[0]._success) {
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setDestinationLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
         setLoading(false);
-        setDestinationLocationId(successResponse[0]._response.location_id)
-      }
-    }, (errorResponse) => {
-      setLoading(false);
-      Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-        { text: 'OK', onPress: () => { } },
-      ]);
-    })
-  }
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
-  const onFetchDistanceAndTime = (value) => {
-    setDistanceTime(value)
-  }
+  const onFetchDistanceAndTime = value => {
+    setDistanceTime(value);
+  };
 
   const navigateToAddPickupAddress = () => {
     if (selectedVehicle && sourceLocation && destinationLocation) {
-      navigation.push('AddPickupdetails', { selectedVehicle: selectedVehicle, selectedVehicleDetails: selectedVehicleDetails, selectedVehiclePrice: selectedVehiclePrice, sourceLocation: sourceLocation, destinationLocation: destinationLocation, distanceTime: distanceTime, sourceLocationId: sourceLocationId, destinationLocationId: destinationLocationId, serviceTypeId: route.params.pickupService.id })
+      navigation.push('AddPickupdetails', {
+        selectedVehicle: selectedVehicle,
+        selectedVehicleDetails: selectedVehicleDetails,
+        selectedVehiclePrice: selectedVehiclePrice,
+        sourceLocation: sourceLocation,
+        destinationLocation: destinationLocation,
+        distanceTime: distanceTime,
+        sourceLocationId: sourceLocationId,
+        destinationLocationId: destinationLocationId,
+        serviceTypeId: route.params.pickupService.id,
+      });
     } else {
-      Alert.alert('Alert', "Please choose location and vehicle", [
-        { text: 'OK', onPress: () => { } },
+      Alert.alert('Alert', 'Please choose location and vehicle', [
+        {text: 'OK', onPress: () => {}},
       ]);
     }
-  }
+  };
+
+  const getImage = vehicleData => {
+    switch (vehicleData.vehicle_type_id) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 6:
+        return MiniTruckImage;
+      case 7:
+        return SemiTruckImage;
+      case 5:
+        return MiniVanImage;
+      default:
+        return MiniVanImage;
+    }
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
-      <View style={{ height: 500, position: 'relative' }}>
-        <MapAddress onFetchDistanceAndTime={onFetchDistanceAndTime} onSourceLocation={onSourceLocation} onDestinationLocation={onDestinationLocation} />
+    <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
+      <View style={{height: 500, position: 'relative'}}>
+        <MapAddress
+          onFetchDistanceAndTime={onFetchDistanceAndTime}
+          onSourceLocation={onSourceLocation}
+          onDestinationLocation={onDestinationLocation}
+        />
         <View style={styles.dateCard}>
           <EvilIcons name="calendar" size={25} color="#000" />
           <Text style={styles.dateCardText}>When do you need it?</Text>
@@ -191,7 +187,7 @@ const PickupAddress = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+      <ScrollView contentContainerStyle={{paddingHorizontal: 15}}>
         <View>
           <View style={styles.chooseVehicleCard}>
             <View
@@ -203,25 +199,25 @@ const PickupAddress = ({ route, navigation }) => {
               <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
               {selectedVehiclePrice && (
                 <Text style={styles.selectedVehiclePrice}>
-                  {selectedVehiclePrice}
+                  €{selectedVehiclePrice}
                 </Text>
               )}
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={{ flexDirection: 'row' }}>
-                {vehicleData.map((vehicle, index) => (
+              <View style={{flexDirection: 'row'}}>
+                {vehicleTypeList.map((vehicle, index) => (
                   <TouchableOpacity
                     key={index}
                     onPress={() => {
-                      setSelectedVehicle(vehicle.name);
-                      setSelectedVehicleDetails(vehicle)
-                      setSelectedVehiclePrice(vehicle.price);
+                      setSelectedVehicle(vehicle.vehicle_type);
+                      setSelectedVehicleDetails(vehicle);
+                      setSelectedVehiclePrice(vehicle.base_price != 0 ? vehicle.base_price : 1.0);
                     }}
                     style={styles.cardVehicle}>
                     <View
                       style={[
                         styles.allVehicleCard,
-                        selectedVehicle === vehicle.name
+                        selectedVehicle === vehicle.vehicle_type
                           ? styles.selectedCard
                           : null,
                       ]}>
@@ -231,12 +227,16 @@ const PickupAddress = ({ route, navigation }) => {
                         <Image source={require('../../image/info.png')} />
                       </TouchableOpacity>
                       <Image
-                        style={[styles.vehicleImage, vehicle.style]}
-                        source={vehicle.image}
+                        style={[styles.vehicleImage, {width: 100, height: 100}]}
+                        source={getImage(vehicle)}
                       />
                     </View>
-                    <Text style={styles.vehicleTypeName}>{vehicle.name}</Text>
-                    <Text style={styles.vehicleCap}>{vehicle.capacity}</Text>
+                    <Text style={styles.vehicleTypeName}>
+                      {vehicle.vehicle_type}
+                    </Text>
+                    <Text style={styles.vehicleCap}>
+                      {vehicle.vehicle_type_desc}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     shadowColor: 'rgba(0, 0, 0, 0.16)',
-    shadowOffset: { width: 0, height: 0.0625 },
+    shadowOffset: {width: 0, height: 0.0625},
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5,

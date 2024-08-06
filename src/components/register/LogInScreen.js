@@ -109,6 +109,7 @@ const LogInScreen = ({navigation}) => {
                 } else {
                   navigation.navigate('EnterpriseBottomNav');
                 }
+                console.log("successResponse[0]._response.user_profile", successResponse[0]._response.user_profile)
                 saveUserDetailsInAsync({
                   userInfo: successResponse[0]._response.user.idToken.payload,
                   userDetails: successResponse[0]._response.user_profile,

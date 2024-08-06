@@ -102,6 +102,7 @@ export const getLocationId = (params, successCallback, errorCallback) => {
 };
 
 export const createPickupOrder = (params, successCallback, errorCallback) => {
+  console.log("createPickupOrder", params, API.orderPickupUrl)
   axiosCall(
     API.orderPickupUrl,
     HTTPMethod.POST,
@@ -266,4 +267,19 @@ export const uploadDocumentsApi = (params, successCallback, errorCallback) => {
     .then(response => response.text())
     .then(result => successCallback(result))
     .catch(error => errorCallback(error));
+};
+
+
+export const getAllVehicleTypes = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.vehicletypesUrl,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
 };
