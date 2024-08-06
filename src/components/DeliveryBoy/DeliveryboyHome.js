@@ -160,7 +160,11 @@ const DeliveryboyHome = ({navigation}) => {
           <View>
             <Text style={styles.userWelcome}>
               Welcome{' '}
-              <Text style={styles.userName}>{userDetails.userInfo.name}</Text>
+              <Text style={styles.userName}>
+                {userDetails.userDetails[0].first_name +
+                  ' ' +
+                  userDetails.userDetails[0].last_name}
+              </Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate dashboard!
