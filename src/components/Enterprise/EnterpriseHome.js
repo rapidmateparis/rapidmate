@@ -79,7 +79,12 @@ const EnterpriseHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome <Text style={styles.userName}>John!</Text>
+              Welcome{' '}
+              <Text style={styles.userName}>
+                {userDetails.userDetails[0].first_name +
+                  ' ' +
+                  userDetails.userDetails[0].last_name}
+              </Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate enterprise dashboard!
@@ -603,7 +608,7 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 12,
     color: colors.text,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
   },
 });
 

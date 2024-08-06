@@ -32,9 +32,9 @@ const DeliveryboySettings = ({navigation}) => {
           </View>
           <View style={{marginLeft: 15}}>
             <Text style={styles.username}>
-              {userDetails.userInfo.name
-                ? userDetails.userInfo.name
-                : 'Jhon Doe'}{' '}
+              {userDetails.userDetails[0].first_name +
+                ' ' +
+                userDetails.userDetails[0].last_name}
             </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('DeliveryboyTakeSelfie')}

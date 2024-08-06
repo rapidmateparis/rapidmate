@@ -16,12 +16,14 @@ export const authenticateUser = (params, successCallback, errorCallback) => {
 };
 
 export const signUpUser = (params, successCallback, errorCallback) => {
+  console.log("print_data===>signUpUser", params, API.signUpUrl)
   axiosCall(
     API.signUpUrl,
     HTTPMethod.POST,
     params,
     response => {
       successCallback(response);
+      console.log("print_data===>signUpUser", response)
     },
     errorResponse => {
       errorCallback(errorResponse);
