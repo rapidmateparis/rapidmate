@@ -69,18 +69,20 @@ const PickupOrderPreview = ({route, navigation}) => {
               </Text>
             </View>
             <View>
+            {console.log("params.selectedVehicle", params.selectedVehicle)}
               <Image
                 style={{width: 130, height: 75}}
+                
                 source={
-                  params.selectedVehicle == 'Bicycle'
+                  params.selectedVehicle == 'Cycle'
                     ? BicycleImage
-                    : params.selectedVehicle == 'Motorbike'
+                    : params.selectedVehicle == 'Scooter'
                     ? MotorbikeImage
-                    : params.selectedVehicle == 'Mini Truck'
+                    : params.selectedVehicle == 'Pickup'
                     ? MiniTruckImage
-                    : params.selectedVehicle == 'Mini Van'
+                    : params.selectedVehicle == 'Van'
                     ? MiniTruckImage
-                    : params.selectedVehicle == 'Semi Truck'
+                    : params.selectedVehicle == 'Car'
                     ? SemiTruckImage
                     : SemiTruckImage
                 }
@@ -130,7 +132,7 @@ const PickupOrderPreview = ({route, navigation}) => {
             <View style={{marginTop: 10}}>
               <Text style={styles.vehicleName}>
                 €
-                {(params.selectedVehicleDetails.pricePerKm * 
+                {(params.selectedVehicleDetails.km_price * 
                 params.distanceTime.distance).toFixed(0)}
               </Text>
               <View style={{flexDirection: 'row'}}>

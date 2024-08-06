@@ -30,7 +30,7 @@ const PickupPayment = ({route, navigation}) => {
   const [orderResponse, setOrderResponse] = useState();
   const params = route.params.props;
   const paymentAmount = 
-  (Math.round(params.selectedVehicleDetails.pricePerKm *
+  (Math.round(params.selectedVehicleDetails.km_price *
     params.distanceTime.distance)).toFixed(2)
   var orderNumber = ''
   
@@ -117,7 +117,8 @@ const PickupPayment = ({route, navigation}) => {
         },
         errorResponse => {
           setLoading(false);
-          Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          console.log("createPickupOrder==>errorResponse", errorResponse[0])
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
           ]);
         },

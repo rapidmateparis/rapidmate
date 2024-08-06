@@ -49,5 +49,6 @@ export const API = {
   viewDeliveryBoyOrderUrl: BASE_URL +"order/deliveryboy/",
   viewConsumerOrderUrl: BASE_URL +"order/",
   payment: BASE_URL +"payment",
-  documentsUpload: BASE_URL +"documents/upload"
+  documentsUpload: BASE_URL +"documents/upload",
+  vehicletypesUrl: BASE_URL +"vehicletypes"
 }
