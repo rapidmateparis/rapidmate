@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 
-const PickupOrderCancelled = ({navigation}) => {
+const PaymentSuccess = ({navigation}) => {
   return (
     <ScrollView
       style={{width: '100%', height: '100%', backgroundColor: '#FBFAF5'}}
@@ -25,26 +25,20 @@ const PickupOrderCancelled = ({navigation}) => {
         }}>
         <View style={styles.container}>
           <Image
-            style={styles.loaderMap}
-            source={require('../../image/NotHappy-Img.png')}
+            style={{width:100,height:100}}
+            source={require('../../image/payment_success.png')}
           />
-          <Text style={styles.text}>Your order is cancelled</Text>
+          <Text style={styles.text}>Payment Successful!</Text>
           <Text style={styles.subText}>
-            Sorry for the inconvenience, hope to see you soon!
+          Your payment was successful, let’s look for a delivery boy now...
           </Text>
         </View>
       </View>
       <View style={styles.actionBtnCard}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('PickupHome')}
+          onPress={() => navigation.navigate('LoaderForDriver')}
           style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Go home</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('PickupHome')}
-          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Order again</Text>
+          <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -117,7 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   goHomeBtn: {
-    width: '40%',
+    width: '60%',
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -127,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PickupOrderCancelled;
+export default PaymentSuccess;

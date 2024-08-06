@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -16,9 +16,17 @@ import {colors} from '../../colors';
 
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = (vehicleDetails) => {
+  const toggleModal = vehicleDetails => {
+    clearTimeout(timeOutId)
     setModalVisible(!isModalVisible);
   };
+var timeOutId = ''
+  useEffect(() => {
+    timeOutId = setTimeout(() => {
+      navigation.navigate('OrderConfirm')
+    }, 5000);
+    console.log('timeOutId',timeOutId)
+  }, []);
 
   return (
     <ScrollView
@@ -58,7 +66,9 @@ const LoaderForDriver = ({navigation}) => {
           source={require('../../image/Driver-Bg2.png')}
         />
       </View>
-      <TouchableOpacity onPress={()=>toggleModal()} style={styles.requestTouch}>
+      <TouchableOpacity
+        onPress={() => toggleModal()}
+        style={styles.requestTouch}>
         <Text style={styles.cancelRequest}>Cancel request</Text>
       </TouchableOpacity>
 

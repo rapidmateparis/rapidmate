@@ -29,9 +29,11 @@ const PickupPayment = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [orderResponse, setOrderResponse] = useState();
   const params = route.params.props;
-  const paymentAmount =
-    params.selectedVehicleDetails.pricePerKm * params.distanceTime.distance;
-
+  const paymentAmount = 
+  (Math.round(params.selectedVehicleDetails.pricePerKm *
+    params.distanceTime.distance)).toFixed(2)
+  var orderNumber = ''
+  
   const onPayment = async () => {
     placePickUpOrder();
   };
@@ -82,7 +84,10 @@ const PickupPayment = ({route, navigation}) => {
 
   const checkout = async () => {
     const {error} = await presentPaymentSheet();
-    createPayment();
+    console.log('érror',error)
+    if(!error) {
+      createPayment();
+    }
   };
 
   const placePickUpOrder = async () => {
@@ -99,7 +104,6 @@ const PickupPayment = ({route, navigation}) => {
           : 2,
       };
       setLoading(true);
-      console.log('request', requestParams);
       createPickupOrder(
         requestParams,
         successResponse => {
@@ -107,6 +111,7 @@ const PickupPayment = ({route, navigation}) => {
             console.log('placePickUpOrder', successResponse[0]._response);
             setOrderResponse(successResponse[0]._response);
             setLoading(false);
+            orderNumber = successResponse[0]._response[0].order_number
             createPaymentIntent();
           }
         },
@@ -125,10 +130,9 @@ const PickupPayment = ({route, navigation}) => {
   };
 
   const createPayment = async () => {
-    console.log('orderResponse', orderResponse);
     let requestParams = {
       order_number: orderResponse[0].order_number,
-      amount: paymentAmount.toFixed(0),
+      amount: paymentAmount,
     };
     setLoading(true);
     addPayment(
@@ -136,7 +140,7 @@ const PickupPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('OrderConfirm');
+          navigation.navigate('PaymentSuccess');
         }
       },
       errorResponse => {
@@ -205,10 +209,7 @@ const PickupPayment = ({route, navigation}) => {
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
             <Text style={styles.totalAmount}>
               €{' '}
-              {(
-                params.selectedVehicleDetails.pricePerKm *
-                params.distanceTime.distance
-              ).toFixed(0)}
+              {paymentAmount}
             </Text>
           </View>
         </View>
@@ -247,7 +248,8 @@ const PickupPayment = ({route, navigation}) => {
         </View>
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
-            € {paymentAmount.toFixed(0)}
+            €{' '}
+            {paymentAmount}
           </Text>
           <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>
