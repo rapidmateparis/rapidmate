@@ -20,6 +20,17 @@ import {
 } from '../../utils/common';
 import {useLoader} from '../../utils/loaderContext';
 import {addVehicleApi} from '../../data_manager';
+import BicycleImage from '../../image/Cycle-Icon.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Icon.png';
+import PartnerImage from '../../image/Partner-icon.png';
+import VanImage from '../../image/Van-Icon.png';
+import PickupImage from '../../image/Pickup-Icon.png';
+import TruckImage from '../../image/Truck-Icon.png';
+import MiniTruckImage from '../../image/Mini-Truck.png';
+import MiniVanImage from '../../image/Mini-Van.png';
+import SemiTruckImage from '../../image/Semi-Truck.png';
+import BigTruckImage from '../../image/Big-Package.png';
 
 const AddPickupVehicle = ({route, navigation}) => {
   const [vehicleNo, setVehicleNo] = useState('');
@@ -138,7 +149,7 @@ const AddPickupVehicle = ({route, navigation}) => {
           setLoading(false);
           if (successResponse[0]._success) {
             if (successResponse[0]._response) {
-              console.log("print_data==>addVehicle", successResponse[0])
+              console.log('print_data==>addVehicle', successResponse[0]);
               if (
                 successResponse[0]._response.name == 'NotAuthorizedException'
               ) {
@@ -161,11 +172,36 @@ const AddPickupVehicle = ({route, navigation}) => {
     }
   };
 
+  const getVechicleImage = vehicleTypeId => {
+    switch (vehicleTypeId) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return VanImage;
+      case 6:
+        return PickupImage;
+      case 7:
+        return TruckImage;
+      default:
+        return BigTruckImage;
+    }
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fbfaf5'}}>
+      {console.log(route.params.selectedVehicle.vehicle_id)}
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.headerMiniTruck}>
-          <Image source={require('../../image/Mini-Truck1x.png')} />
+          <Image
+            style={{height: 80, width: 80, resizeMode: 'contain'}}
+            source={getVechicleImage(route.params.selectedVehicle.vehicle_id)}
+          />
         </View>
         <View style={styles.logFormView}>
           <View style={{flex: 1}}>
