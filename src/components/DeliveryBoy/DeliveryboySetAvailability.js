@@ -24,6 +24,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const [maxWeekCount, setMaxWeekCount] = useState(0);
   const [totalMonthWeek, setTotalMonthWeek] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(0);
+  const [currentMonthWords, setCurrentMonthWords] = useState(0);
   const [currentYear, setCurrentYear] = useState(0);
   const [allWeeksSlots, setAllWeeksSlots] = useState([]);
 
@@ -31,7 +32,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
     let totalMonthWeek = getWeeksInMonth(currentYear, currentMonth);
+    const monthWords = new Date().toLocaleString('default', {month: 'short'});
     setCurrentMonth(currentMonth);
+    setCurrentMonthWords(monthWords.toLocaleUpperCase());
     setCurrentYear(currentYear);
     setTotalMonthWeek(totalMonthWeek);
     setMaxWeekCount(totalMonthWeek.length);
@@ -41,7 +44,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
   useEffect(() => {
     const defaultTimeSlots = {};
     currentWeek.forEach(day => {
-      defaultTimeSlots[day] = [{from: '', to: ''}];
+      defaultTimeSlots[day] = [{from_time: '', to_time: ''}];
     });
     setTimeSlots(defaultTimeSlots);
   }, [currentWeek]);
@@ -73,25 +76,26 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
   const handleNextWeek = () => {
     if (weekCount < maxWeekCount) {
-      var selectedTimeSlots = {};
-
+      var slots = [];
+      var slot = {};
       currentWeek.forEach(element => {
         if (
           toggleCheckBoxes.hasOwnProperty(element) &&
           timeSlots.hasOwnProperty(element) &&
           toggleCheckBoxes[element]
         ) {
-          selectedTimeSlots = {
-            ...selectedTimeSlots,
-            [element]: timeSlots[element],
+          slot = {
+            day: element,
+            times: timeSlots[element],
           };
+          slots = [...slots, slot];
         }
       });
 
-      if (Object.keys(selectedTimeSlots).length) {
+      if (Object.keys(slots).length) {
         setAllWeeksSlots(prev => [
           ...prev.filter(week => week.week !== weekCount),
-          {week: weekCount, selectedTimeSlots},
+          {year: currentYear, month: currentMonthWords, week: weekCount, slots:slots},
         ]);
       } else {
         setAllWeeksSlots(prev => [
@@ -107,25 +111,26 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
   const handlePreviousWeek = () => {
     if (weekCount > 1) {
-      var selectedTimeSlots = {};
-
+      var slots = [];
+      var slot = {};
       currentWeek.forEach(element => {
         if (
           toggleCheckBoxes.hasOwnProperty(element) &&
           timeSlots.hasOwnProperty(element) &&
           toggleCheckBoxes[element]
         ) {
-          selectedTimeSlots = {
-            ...selectedTimeSlots,
-            [element]: timeSlots[element],
+          slot = {
+            day: element,
+            times: timeSlots[element],
           };
+          slots = [...slots, slot];
         }
       });
 
-      if (Object.keys(selectedTimeSlots).length) {
+      if (Object.keys(slots).length) {
         setAllWeeksSlots(prev => [
           ...prev.filter(week => week.week !== weekCount),
-          {week: weekCount, selectedTimeSlots},
+          {year: currentYear, month: currentMonthWords, week: weekCount, slots:slots},
         ]);
       } else {
         setAllWeeksSlots(prev => [
@@ -150,7 +155,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const handleAddSlot = day => {
     setTimeSlots({
       ...timeSlots,
-      [day]: [...(timeSlots[day] || []), {from: '', to: ''}],
+      [day]: [...(timeSlots[day] || []), {from_time: '', to_time: ''}],
     });
   };
 
@@ -182,27 +187,33 @@ const DeliveryboySetAvailability = ({navigation}) => {
   };
 
   const handleSave = () => {
-    var selectedTimeSlots = {};
-
+    var slots = [];
+    var slot = {};
     currentWeek.forEach(element => {
       if (
         toggleCheckBoxes.hasOwnProperty(element) &&
         timeSlots.hasOwnProperty(element) &&
         toggleCheckBoxes[element]
       ) {
-        selectedTimeSlots = {
-          ...selectedTimeSlots,
-          [element]: timeSlots[element],
+        slot = {
+          day: element,
+          times: timeSlots[element],
         };
+        slots = [...slots, slot];
       }
     });
 
     var updatedWeeksSlots = [];
 
-    if (Object.keys(selectedTimeSlots).length) {
+    if (Object.keys(slots).length) {
       updatedWeeksSlots = [
         ...allWeeksSlots.filter(week => week.week !== weekCount),
-        {week: weekCount, selectedTimeSlots},
+        {
+          year: currentYear,
+          month: currentMonthWords,
+          week: weekCount,
+          slots: slots,
+        },
       ];
     } else {
       updatedWeeksSlots = [
@@ -322,7 +333,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
                                   idx === slotIndex
-                                    ? {...s, from: formatTime(text)}
+                                    ? {...s, from_time: formatTime(text)}
                                     : s,
                                 ),
                               })
@@ -349,7 +360,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
                                   idx === slotIndex
-                                    ? {...s, to: formatTime(text)}
+                                    ? {...s, to_time: formatTime(text)}
                                     : s,
                                 ),
                               })
