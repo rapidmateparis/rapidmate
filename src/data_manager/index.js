@@ -283,3 +283,17 @@ export const getAllVehicleTypes = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const planningSetupUpdate = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.planningSetupUrl,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
