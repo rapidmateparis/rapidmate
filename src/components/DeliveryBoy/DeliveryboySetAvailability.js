@@ -15,18 +15,17 @@ import CheckBox from '@react-native-community/checkbox';
 import moment from 'moment';
 
 const DeliveryboySetAvailability = ({navigation}) => {
-  const [fromtime, setFromtime] = useState('');
-  const [totime, setTotime] = useState('');
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
   const [toggleCheckBoxes, setToggleCheckBoxes] = useState({});
   const [timeSlots, setTimeSlots] = useState({});
   const [currentWeek, setCurrentWeek] = useState([]);
-  const [weekCount, setWeekCount] = useState(1); // Start from 1
+  const [weekCount, setWeekCount] = useState(1);
   const [maxWeekCount, setMaxWeekCount] = useState(0);
   const [totalMonthWeek, setTotalMonthWeek] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(0);
   const [currentYear, setCurrentYear] = useState(0);
+  const [allWeeksSlots, setAllWeeksSlots] = useState([]);
 
   useEffect(() => {
     let currentYear = new Date().getFullYear();
@@ -37,12 +36,15 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setTotalMonthWeek(totalMonthWeek);
     setMaxWeekCount(totalMonthWeek.length);
     setCurrentWeek(totalMonthWeek[0].dates);
-
   }, []);
 
-  function countWeeks(dateRanges) {
-    return dateRanges.length;
-  }
+  useEffect(() => {
+    const defaultTimeSlots = {};
+    currentWeek.forEach(day => {
+      defaultTimeSlots[day] = [{from: '', to: ''}];
+    });
+    setTimeSlots(defaultTimeSlots);
+  }, [currentWeek]);
 
   function getWeeksInMonth(year, month) {
     const weeks = [],
@@ -71,21 +73,46 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
   const handleNextWeek = () => {
     if (weekCount < maxWeekCount) {
+      // Save current week's slots to tempWeekSlot
+      const timeSlot = Object.keys(timeSlots).map(day => ({
+        day,
+        times: timeSlots[day].map(slot => ({
+          from_time: slot.from,
+          to_time: slot.to,
+        })),
+      }));
+  
+      setAllWeeksSlots(prev => [
+        ...prev.filter(week => week.week !== weekCount),
+        { week: weekCount, timeSlot },
+      ]);
+  
       const newWeekCount = weekCount + 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
     }
   };
-
+  
   const handlePreviousWeek = () => {
     if (weekCount > 1) {
+      const timeSlot = Object.keys(timeSlots).map(day => ({
+        day,
+        times: timeSlots[day].map(slot => ({
+          from_time: slot.from,
+          to_time: slot.to,
+        })),
+      }));
+  
+      setAllWeeksSlots(prev => [
+        ...prev.filter(week => week.week !== weekCount),
+        { week: weekCount, timeSlot },
+      ]);
+  
       const newWeekCount = weekCount - 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
     }
   };
-
-  console.log(currentWeek);
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -116,7 +143,37 @@ const DeliveryboySetAvailability = ({navigation}) => {
     });
   };
 
-  console.log("timeSlots",timeSlots)
+  const formatTime = text => {
+    // Remove non-numeric characters
+    const cleanedText = text.replace(/\D/g, '');
+    // Format as HH:MM
+    if (cleanedText.length <= 2) {
+      return cleanedText;
+    }
+    if (cleanedText.length <= 4) {
+      return `${cleanedText.slice(0, 2)}:${cleanedText.slice(2)}`;
+    }
+    return `${cleanedText.slice(0, 2)}:${cleanedText.slice(2, 4)}`;
+  };
+  
+  const handleSave = () => {
+    const timeSlot = Object.keys(timeSlots).map(day => ({
+      day,
+      times: timeSlots[day].map(slot => ({
+        from_time: slot.from,
+        to_time: slot.to,
+      })),
+    }));
+    setTempWeekSlot({ week: weekCount, timeSlot });
+  
+    const updatedWeeksSlots = [
+      ...allWeeksSlots.filter(week => week.week !== weekCount),
+      { week: weekCount, timeSlot },
+    ];
+    setAllWeeksSlots(updatedWeeksSlots);
+  
+    console.log('All Weeks Time Slots:', JSON.stringify(updatedWeeksSlots));
+  };
 
   return (
     <>
@@ -142,13 +199,24 @@ const DeliveryboySetAvailability = ({navigation}) => {
           </View>
 
           <View style={styles.applySlotCard}>
+            <Text style={styles.applySlotText}>I am available 24/7</Text>
+            <TouchableOpacity onPress={togglePushNotifications}>
+              <MaterialCommunityIcons
+                name={pushNotifications ? 'toggle-switch' : 'toggle-switch-off'}
+                size={50}
+                color={pushNotifications ? '#FFC72B' : '#D3D3D3'}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.applySlotCard}>
             <Text style={styles.applySlotText}>
               Apply same slots to all days
             </Text>
             <TouchableOpacity onPress={togglePromoEmails}>
               <MaterialCommunityIcons
                 name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
-                size={60}
+                size={50}
                 color={promoEmails ? '#FFC72B' : '#D3D3D3'}
               />
             </TouchableOpacity>
@@ -200,64 +268,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
                     )}
                   </View>
 
-                  <View style={styles.selectTimeCard}>
-                    <View style={styles.textInputDiv}>
-                      <TextInput
-                        style={styles.loginput}
-                        placeholder="From HH:MM"
-                        placeholderTextColor="#999"
-                        value={fromtime}
-                        onChangeText={text => setFromtime(text)}
-                        editable={toggleCheckBoxes[day]} 
-                      />
-                      <TouchableOpacity disabled={!toggleCheckBoxes[day]}>
-                        <MaterialCommunityIcons
-                          name="clock-time-four"
-                          size={20}
-                          color={toggleCheckBoxes[day] ? '#FF0058' : '#D4D4D4'} 
-                          style={{marginTop: 15}}
-                        />
-                      </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.textInputDiv}>
-                      <TextInput
-                        style={styles.loginput}
-                        placeholder="To HH:MM"
-                        placeholderTextColor="#999"
-                        value={totime}
-                        onChangeText={text => setTotime(text)}
-                        editable={toggleCheckBoxes[day]} 
-                      />
-                      <TouchableOpacity disabled={!toggleCheckBoxes[day]}>
-                        <MaterialCommunityIcons
-                          name="clock-time-four"
-                          size={20}
-                          color={toggleCheckBoxes[day] ? '#FF0058' : '#D4D4D4'} 
-                          style={{marginTop: 15}}
-                        />
-                      </TouchableOpacity>
-                    </View>
-
-                    <TouchableOpacity
-                      style={[
-                        styles.plusNewCardDisabled,
-                        toggleCheckBoxes[day]
-                          ? styles.plusNewCardEnabled
-                          : styles.plusNewCardDisabled,
-                      ]}
-                      onPress={
-                        toggleCheckBoxes[day] ? () => handleAddSlot(day) : null
-                      }>
-                      <AntDesign
-                        name="plus"
-                        size={20}
-                        color="#000"
-                        style={{marginTop: 15}}
-                      />
-                    </TouchableOpacity>
-                  </View>
-
                   {timeSlots[day] &&
                     timeSlots[day].map((slot, slotIndex) => (
                       <View key={slotIndex} style={styles.selectTimeCard}>
@@ -271,7 +281,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
                               setTimeSlots({
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
-                                  idx === slotIndex ? {...s, from: text} : s,
+                                  idx === slotIndex
+                                    ? {...s, from: formatTime(text)}
+                                    : s,
                                 ),
                               })
                             }
@@ -296,7 +308,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
                               setTimeSlots({
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
-                                  idx === slotIndex ? {...s, to: text} : s,
+                                  idx === slotIndex
+                                    ? {...s, to: formatTime(text)}
+                                    : s,
                                 ),
                               })
                             }
@@ -311,16 +325,40 @@ const DeliveryboySetAvailability = ({navigation}) => {
                           </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity
-                          onPress={() => handleDeleteSlot(day, slotIndex)}
-                          style={styles.deleteCard}>
-                          <AntDesign
-                            name="delete"
-                            size={20}
-                            color="#FF0000"
-                            style={{marginTop: 15}}
-                          />
-                        </TouchableOpacity>
+                        {slotIndex == 0 ? (
+                          <View style={styles.selectTimeCard}>
+                            <TouchableOpacity
+                              style={[
+                                styles.plusNewCardDisabled,
+                                toggleCheckBoxes[day]
+                                  ? styles.plusNewCardEnabled
+                                  : styles.plusNewCardDisabled,
+                              ]}
+                              onPress={
+                                toggleCheckBoxes[day]
+                                  ? () => handleAddSlot(day)
+                                  : null
+                              }>
+                              <AntDesign
+                                name="plus"
+                                size={20}
+                                color="#000"
+                                style={{marginTop: 15}}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          <TouchableOpacity
+                            onPress={() => handleDeleteSlot(day, slotIndex)}
+                            style={styles.deleteCard}>
+                            <AntDesign
+                              name="delete"
+                              size={20}
+                              color="#FF0000"
+                              style={{marginTop: 15}}
+                            />
+                          </TouchableOpacity>
+                        )}
                       </View>
                     ))}
                 </View>
@@ -335,9 +373,11 @@ const DeliveryboySetAvailability = ({navigation}) => {
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('DeliveryboyScheduledDeliveryAlert')
-          }
+          onPress={handleSave}
+          // onPress={() =>
+          //   handleSave
+          //   // navigation.navigate('DeliveryboyScheduledDeliveryAlert')
+          // }
           style={styles.saveBTn}>
           <Text style={styles.okButton}>Save</Text>
         </TouchableOpacity>
