@@ -7,16 +7,20 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../colors';
 import CheckBox from '@react-native-community/checkbox';
 import moment from 'moment';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {planningSetupUpdate} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
 const DeliveryboySetAvailability = ({navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
+  const [toggleAvailable24, setToggleAvailable24] = useState(false);
+  const [toggleApplySameForAll, setToggleApplySameForAll] = useState(false);
   const [toggleCheckBoxes, setToggleCheckBoxes] = useState({});
   const [timeSlots, setTimeSlots] = useState({});
   const [currentWeek, setCurrentWeek] = useState([]);
@@ -27,14 +31,15 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const [currentMonthWords, setCurrentMonthWords] = useState(0);
   const [currentYear, setCurrentYear] = useState(0);
   const [allWeeksSlots, setAllWeeksSlots] = useState([]);
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
 
   useEffect(() => {
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
     let totalMonthWeek = getWeeksInMonth(currentYear, currentMonth);
-    const monthWords = new Date().toLocaleString('default', {month: 'short'});
     setCurrentMonth(currentMonth);
-    setCurrentMonthWords(monthWords.toLocaleUpperCase());
+    setCurrentMonthWords(currentMonth + 1);
     setCurrentYear(currentYear);
     setTotalMonthWeek(totalMonthWeek);
     setMaxWeekCount(totalMonthWeek.length);
@@ -95,7 +100,12 @@ const DeliveryboySetAvailability = ({navigation}) => {
       if (Object.keys(slots).length) {
         setAllWeeksSlots(prev => [
           ...prev.filter(week => week.week !== weekCount),
-          {year: currentYear, month: currentMonthWords, week: weekCount, slots:slots},
+          {
+            year: currentYear,
+            month: currentMonthWords,
+            week: weekCount,
+            slots: slots,
+          },
         ]);
       } else {
         setAllWeeksSlots(prev => [
@@ -130,7 +140,12 @@ const DeliveryboySetAvailability = ({navigation}) => {
       if (Object.keys(slots).length) {
         setAllWeeksSlots(prev => [
           ...prev.filter(week => week.week !== weekCount),
-          {year: currentYear, month: currentMonthWords, week: weekCount, slots:slots},
+          {
+            year: currentYear,
+            month: currentMonthWords,
+            week: weekCount,
+            slots: slots,
+          },
         ]);
       } else {
         setAllWeeksSlots(prev => [
@@ -144,12 +159,12 @@ const DeliveryboySetAvailability = ({navigation}) => {
     }
   };
 
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
+  const toggleAvailable = () => {
+    setToggleAvailable24(!toggleAvailable24);
   };
 
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
+  const toggleApplySame = () => {
+    setToggleApplySameForAll(!toggleApplySameForAll);
   };
 
   const handleAddSlot = day => {
@@ -222,8 +237,35 @@ const DeliveryboySetAvailability = ({navigation}) => {
     }
 
     setAllWeeksSlots(updatedWeeksSlots);
+    let setup = toggleAvailable24
+      ? []
+      : toggleApplySameForAll
+      ? {slot: [{day: 'All', from_time: '', to_time: ''}]}
+      : updatedWeeksSlots;
+    let params = {
+      is_24x7: toggleAvailable24 ? 1 : 0,
+      is_apply_for_all_days: toggleApplySameForAll ? 1 : 0,
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+      setup,
+    };
 
-    console.log('All Weeks Time Slots:', JSON.stringify(updatedWeeksSlots));
+    console.log('All Weeks Time Slots:', JSON.stringify(params));
+    setLoading(true);
+    planningSetupUpdate(
+      params,
+      successResponse => {
+        if (successResponse[0]._success) {
+          console.log("print_data===>planningSetupUpdate", successResponse[0])
+          setLoading(false);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
   };
 
   return (
@@ -251,11 +293,11 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
           <View style={styles.applySlotCard}>
             <Text style={styles.applySlotText}>I am available 24/7</Text>
-            <TouchableOpacity onPress={togglePushNotifications}>
+            <TouchableOpacity onPress={toggleAvailable}>
               <MaterialCommunityIcons
-                name={pushNotifications ? 'toggle-switch' : 'toggle-switch-off'}
+                name={toggleAvailable24 ? 'toggle-switch' : 'toggle-switch-off'}
                 size={50}
-                color={pushNotifications ? '#FFC72B' : '#D3D3D3'}
+                color={toggleAvailable24 ? '#FFC72B' : '#D3D3D3'}
               />
             </TouchableOpacity>
           </View>
@@ -264,11 +306,13 @@ const DeliveryboySetAvailability = ({navigation}) => {
             <Text style={styles.applySlotText}>
               Apply same slots to all days
             </Text>
-            <TouchableOpacity onPress={togglePromoEmails}>
+            <TouchableOpacity onPress={toggleApplySame}>
               <MaterialCommunityIcons
-                name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
+                name={
+                  toggleApplySameForAll ? 'toggle-switch' : 'toggle-switch-off'
+                }
                 size={50}
-                color={promoEmails ? '#FFC72B' : '#D3D3D3'}
+                color={toggleApplySameForAll ? '#FFC72B' : '#D3D3D3'}
               />
             </TouchableOpacity>
           </View>
@@ -423,13 +467,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
         <TouchableOpacity style={styles.logbutton}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleSave}
-          // onPress={() =>
-          //   handleSave
-          //   // navigation.navigate('DeliveryboyScheduledDeliveryAlert')
-          // }
-          style={styles.saveBTn}>
+        <TouchableOpacity onPress={handleSave} style={styles.saveBTn}>
           <Text style={styles.okButton}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -763,3 +801,4 @@ const styles = StyleSheet.create({
 });
 
 export default DeliveryboySetAvailability;
+
