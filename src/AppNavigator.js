@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -108,6 +108,7 @@ import SignUpVerify from './components/register/SignUpVerify';
 import { LoaderProvider } from './utils/loaderContext';
 import Loader from './common/Loader';
 import PaymentSuccess from './components/PickupDrop-off/PaymentSuccess';
+import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createStackNavigator();
 
@@ -117,6 +118,12 @@ const AppNavigator = () => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  useEffect(() => {
+    if (SplashScreen) {
+      SplashScreen.hide();
+    }
+  }, []);
 
   return (
     <>
