@@ -73,7 +73,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
   const handleNextWeek = () => {
     if (weekCount < maxWeekCount) {
-      // Save current week's slots to tempWeekSlot
       const timeSlot = Object.keys(timeSlots).map(day => ({
         day,
         times: timeSlots[day].map(slot => ({
@@ -164,7 +163,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
         to_time: slot.to,
       })),
     }));
-    setTempWeekSlot({ week: weekCount, timeSlot });
   
     const updatedWeeksSlots = [
       ...allWeeksSlots.filter(week => week.week !== weekCount),
