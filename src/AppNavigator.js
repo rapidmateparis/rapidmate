@@ -109,11 +109,14 @@ import { LoaderProvider } from './utils/loaderContext';
 import Loader from './common/Loader';
 import PaymentSuccess from './components/PickupDrop-off/PaymentSuccess';
 import SplashScreen from 'react-native-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useUserDetails} from './components/commonComponent/StoreContext';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const {saveUserDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -123,6 +126,27 @@ const AppNavigator = () => {
     if (SplashScreen) {
       SplashScreen.hide();
     }
+  }, []);
+
+  useEffect(() => {
+    const getUserDetails = async () => {
+      try {
+        const userDetail = await AsyncStorage.getItem('userDetails');
+        if (userDetail !== null) {
+          saveUserDetails(JSON.parse(userDetail));
+          let userDetails = JSON.parse(userDetail);
+          if (userDetails.userDetails[0].role == 'CONSUMER') {
+            navigation.navigate('PickupBottomNav');
+          } else if (userDetails.userDetails[0].role == 'DELIVERY_BOY') {
+            navigation.navigate('DeliveryboyBottomNav');
+          } else {
+            navigation.navigate('EnterpriseBottomNav');
+          }
+        }
+      } catch (error) {}
+    };
+
+    getUserDetails();
   }, []);
 
   return (

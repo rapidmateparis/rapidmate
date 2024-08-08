@@ -15,7 +15,6 @@ import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
-
 // Constants
 const LATITUDE_DELTA = 0.0922; // Adjusted for more zoom
 const ASPECT_RATIO = 0.752;
@@ -24,18 +23,18 @@ const ASPECT_RATIO = 0.752;
 const MyCustomMarkerView = () => (
   <Image
     source={require('../../image/location-icon.png')}
-    style={{width: 24, height: 24}}
+    style={{width: 24, height: 24, resizeMode: 'contain'}}
   />
 );
 
 const MyCustomFlagMarker = () => (
   <Image
     source={require('../../image/destination-flag-icon.png')}
-    style={{width: 24, height: 24}}
+    style={{width: 24, height: 24, resizeMode: 'contain'}}
   />
 );
 
-const MapAddress = (props) => {
+const MapAddress = props => {
   const mapViewRef = useRef(null);
   const navigation = useNavigation();
   const {setPickupAddress} = usePickupAddress();
@@ -55,7 +54,6 @@ const MapAddress = (props) => {
   //   }, 6000);
   //   return () => clearInterval(interval);
   // }, []);
-
 
   const getLiveLocation = async () => {
     try {
@@ -89,7 +87,7 @@ const MapAddress = (props) => {
   const fetchTime = (d, t) => {
     setDistance(d);
     setTime(t);
-    props.onFetchDistanceAndTime({distance:d,time:t})
+    props.onFetchDistanceAndTime({distance: d, time: t});
   };
 
   return (
@@ -104,9 +102,11 @@ const MapAddress = (props) => {
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter pickup address"
-                styles={{textInput: {
-                  color: colors.text,
-                }}}
+                styles={{
+                  textInput: {
+                    color: colors.text,
+                  },
+                }}
                 onPress={(data, details = null) => {
                   const originCoordinates = {
                     latitude: details.geometry.location.lat,
@@ -114,7 +114,10 @@ const MapAddress = (props) => {
                   };
                   setOrigin(originCoordinates);
                   moveToLocation(originCoordinates);
-                  props.onSourceLocation({originCoordinates : originCoordinates, sourceDescription : data.description});
+                  props.onSourceLocation({
+                    originCoordinates: originCoordinates,
+                    sourceDescription: data.description,
+                  });
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -140,11 +143,16 @@ const MapAddress = (props) => {
                   };
                   setDestination(destinationCoordinates);
                   moveToLocation(destinationCoordinates);
-                  props.onDestinationLocation({destinationCoordinates : destinationCoordinates, destinationDescription : data.description});
+                  props.onDestinationLocation({
+                    destinationCoordinates: destinationCoordinates,
+                    destinationDescription: data.description,
+                  });
                 }}
-                styles={{textInput: {
-                  color: colors.text,
-                },}}
+                styles={{
+                  textInput: {
+                    color: colors.text,
+                  },
+                }}
                 query={{
                   key: MAPS_API_KEY,
                   language: 'en',
@@ -164,7 +172,9 @@ const MapAddress = (props) => {
           <Text style={[styles.distanceText, {marginBottom: 5}]}>
             Distance: {distance} km
           </Text>
-          <Text style={styles.distanceText}>Time left: {time} min</Text>
+          <Text style={styles.distanceText}>
+            Time left: {time.toFixed(2)} min
+          </Text>
         </View>
       )}
 
