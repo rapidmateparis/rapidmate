@@ -73,40 +73,66 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
   const handleNextWeek = () => {
     if (weekCount < maxWeekCount) {
-      const timeSlot = Object.keys(timeSlots).map(day => ({
-        day,
-        times: timeSlots[day].map(slot => ({
-          from_time: slot.from,
-          to_time: slot.to,
-        })),
-      }));
-  
-      setAllWeeksSlots(prev => [
-        ...prev.filter(week => week.week !== weekCount),
-        { week: weekCount, timeSlot },
-      ]);
-  
+      var selectedTimeSlots = {};
+
+      currentWeek.forEach(element => {
+        if (
+          toggleCheckBoxes.hasOwnProperty(element) &&
+          timeSlots.hasOwnProperty(element) &&
+          toggleCheckBoxes[element]
+        ) {
+          selectedTimeSlots = {
+            ...selectedTimeSlots,
+            [element]: timeSlots[element],
+          };
+        }
+      });
+
+      if (Object.keys(selectedTimeSlots).length) {
+        setAllWeeksSlots(prev => [
+          ...prev.filter(week => week.week !== weekCount),
+          {week: weekCount, selectedTimeSlots},
+        ]);
+      } else {
+        setAllWeeksSlots(prev => [
+          ...prev.filter(week => week.week !== weekCount),
+        ]);
+      }
+
       const newWeekCount = weekCount + 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
     }
   };
-  
+
   const handlePreviousWeek = () => {
     if (weekCount > 1) {
-      const timeSlot = Object.keys(timeSlots).map(day => ({
-        day,
-        times: timeSlots[day].map(slot => ({
-          from_time: slot.from,
-          to_time: slot.to,
-        })),
-      }));
-  
-      setAllWeeksSlots(prev => [
-        ...prev.filter(week => week.week !== weekCount),
-        { week: weekCount, timeSlot },
-      ]);
-  
+      var selectedTimeSlots = {};
+
+      currentWeek.forEach(element => {
+        if (
+          toggleCheckBoxes.hasOwnProperty(element) &&
+          timeSlots.hasOwnProperty(element) &&
+          toggleCheckBoxes[element]
+        ) {
+          selectedTimeSlots = {
+            ...selectedTimeSlots,
+            [element]: timeSlots[element],
+          };
+        }
+      });
+
+      if (Object.keys(selectedTimeSlots).length) {
+        setAllWeeksSlots(prev => [
+          ...prev.filter(week => week.week !== weekCount),
+          {week: weekCount, selectedTimeSlots},
+        ]);
+      } else {
+        setAllWeeksSlots(prev => [
+          ...prev.filter(week => week.week !== weekCount),
+        ]);
+      }
+
       const newWeekCount = weekCount - 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
@@ -154,22 +180,38 @@ const DeliveryboySetAvailability = ({navigation}) => {
     }
     return `${cleanedText.slice(0, 2)}:${cleanedText.slice(2, 4)}`;
   };
-  
+
   const handleSave = () => {
-    const timeSlot = Object.keys(timeSlots).map(day => ({
-      day,
-      times: timeSlots[day].map(slot => ({
-        from_time: slot.from,
-        to_time: slot.to,
-      })),
-    }));
-  
-    const updatedWeeksSlots = [
-      ...allWeeksSlots.filter(week => week.week !== weekCount),
-      { week: weekCount, timeSlot },
-    ];
+    var selectedTimeSlots = {};
+
+    currentWeek.forEach(element => {
+      if (
+        toggleCheckBoxes.hasOwnProperty(element) &&
+        timeSlots.hasOwnProperty(element) &&
+        toggleCheckBoxes[element]
+      ) {
+        selectedTimeSlots = {
+          ...selectedTimeSlots,
+          [element]: timeSlots[element],
+        };
+      }
+    });
+
+    var updatedWeeksSlots = [];
+
+    if (Object.keys(selectedTimeSlots).length) {
+      updatedWeeksSlots = [
+        ...allWeeksSlots.filter(week => week.week !== weekCount),
+        {week: weekCount, selectedTimeSlots},
+      ];
+    } else {
+      updatedWeeksSlots = [
+        ...allWeeksSlots.filter(week => week.week !== weekCount),
+      ];
+    }
+
     setAllWeeksSlots(updatedWeeksSlots);
-  
+
     console.log('All Weeks Time Slots:', JSON.stringify(updatedWeeksSlots));
   };
 
