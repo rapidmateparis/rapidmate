@@ -21,31 +21,30 @@ const VehicleDimensionsModal = ({
   // Determine which image and corresponding style to use based on vehicleDetails.name
   let vehicleImageSource;
   let vehicleImageStyle;
-
-  switch (vehicleDetails?.name) {
-    case 'Mini Truck':
+  switch (vehicleDetails?.vehicle_type_id) {
+    case 6:
       vehicleImageSource = MiniTruckImage;
       vehicleImageStyle = styles.miniTruckImage;
       break;
-    case 'Bicycle':
+    case 1:
       vehicleImageSource = BicycleImage;
       vehicleImageStyle = styles.bicycleImage;
       break;
-    case 'Motorbike':
+    case 2:
       vehicleImageSource = MotorbikeImage;
       vehicleImageStyle = styles.motorbikeImage;
       break;
-    case 'Mini Van':
+    case 5:
       vehicleImageSource = MiniVanImage;
       vehicleImageStyle = styles.miniVanImage;
       break;
-    case 'Semi Truck':
+    case 7:
       vehicleImageSource = SemiTruckImage;
       vehicleImageStyle = styles.semiTruckImage;
       break;
     default: // Handle the case where vehicleDetails.name is not matched
-      vehicleImageSource = null;
-      vehicleImageStyle = null;
+      vehicleImageSource = MiniVanImage;
+      vehicleImageStyle = styles.miniVanImage;
       break;
   }
 
@@ -74,8 +73,8 @@ const VehicleDimensionsModal = ({
               <Text style={styles.countText}>1</Text>
             </View>
             <Text style={styles.infoText}>
-              Length{' '}
-              <Text style={styles.boldText}>{vehicleDetails?.length}</Text>
+              Length{' '} 
+              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.length ? vehicleDetails.length + ' feet': 'null'}</Text>
             </Text>
           </View>
 
@@ -85,7 +84,7 @@ const VehicleDimensionsModal = ({
             </View>
             <Text style={styles.infoText}>
               Height{' '}
-              <Text style={styles.boldText}>{vehicleDetails?.height}</Text>
+              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.height ? vehicleDetails.height + ' feet': 'null'}</Text>
             </Text>
           </View>
 
@@ -94,7 +93,7 @@ const VehicleDimensionsModal = ({
               <Text style={styles.countText}>3</Text>
             </View>
             <Text style={styles.infoText}>
-              Width <Text style={styles.boldText}>{vehicleDetails?.width}</Text>
+              Width <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.width ? vehicleDetails.width + ' feet': 'null'}</Text>
             </Text>
           </View>
         </View>

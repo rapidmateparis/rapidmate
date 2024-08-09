@@ -29,9 +29,8 @@ const PickupPayment = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [orderResponse, setOrderResponse] = useState();
   const params = route.params.props;
-  const paymentAmount = 
-  (Math.round(params.selectedVehicleDetails.km_price *
-    params.distanceTime.distance)).toFixed(2)
+  const paymentAmount = Math.round(params.selectedVehicleDetails.base_price + (params.selectedVehicleDetails.km_price * 
+    (params.distanceTime.distance - 1))).toFixed(2)
   var orderNumber = ''
   
   const onPayment = async () => {

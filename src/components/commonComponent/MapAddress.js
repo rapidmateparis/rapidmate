@@ -98,7 +98,7 @@ const MapAddress = props => {
           <TouchableOpacity
             onPress={() => navigation.navigate('MapPickupAddress')}>
             <View style={styles.locationAddress}>
-              <Ionicons name="location-outline" size={18} color="#000000" />
+              <Ionicons style={{marginTop:15}} name="location-outline" size={18} color="#000000" />
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter pickup address"
@@ -125,14 +125,14 @@ const MapAddress = props => {
                 }}
                 onFail={() => console.error('Error')}
               />
-              <AntDesign name="arrowright" size={18} color="#000000" />
+              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
             </View>
           </TouchableOpacity>
           <View style={styles.borderDummy}></View>
           <TouchableOpacity
             onPress={() => navigation.navigate('MapDropAddress')}>
             <View style={styles.locationAddress}>
-              <MaterialIcons name="my-location" size={18} color="#000000" />
+              <MaterialIcons style={{marginTop:15}} name="my-location" size={18} color="#000000" />
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter drop address"
@@ -159,7 +159,7 @@ const MapAddress = props => {
                 }}
                 onFail={() => console.error('Error')}
               />
-              <AntDesign name="arrowright" size={18} color="#000000" />
+              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
             </View>
           </TouchableOpacity>
           <View style={styles.borderShowOff}></View>
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   locationAddress: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   borderDummy: {
     borderWidth: 1,
