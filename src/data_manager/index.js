@@ -16,14 +16,14 @@ export const authenticateUser = (params, successCallback, errorCallback) => {
 };
 
 export const signUpUser = (params, successCallback, errorCallback) => {
-  console.log("print_data===>signUpUser", params, API.signUpUrl)
+  console.log('print_data===>signUpUser', params, API.signUpUrl);
   axiosCall(
     API.signUpUrl,
     HTTPMethod.POST,
     params,
     response => {
       successCallback(response);
-      console.log("print_data===>signUpUser", response)
+      console.log('print_data===>signUpUser', response);
     },
     errorResponse => {
       errorCallback(errorResponse);
@@ -102,7 +102,7 @@ export const getLocationId = (params, successCallback, errorCallback) => {
 };
 
 export const createPickupOrder = (params, successCallback, errorCallback) => {
-  console.log("createPickupOrder", params, API.orderPickupUrl)
+  console.log('createPickupOrder', params, API.orderPickupUrl);
   axiosCall(
     API.orderPickupUrl,
     HTTPMethod.POST,
@@ -269,7 +269,6 @@ export const uploadDocumentsApi = (params, successCallback, errorCallback) => {
     .catch(error => errorCallback(error));
 };
 
-
 export const getAllVehicleTypes = (params, successCallback, errorCallback) => {
   axiosCall(
     API.vehicletypesUrl,
@@ -289,6 +288,25 @@ export const planningSetupUpdate = (params, successCallback, errorCallback) => {
     API.planningSetupUrl,
     HTTPMethod.POST,
     params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getCurrentPlanningSetup = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.planningSetupUrl +
+      `?year=${params.year}&month=${params.month}&week=${params.week}&ext_id=${params.ext_id}`,
+    HTTPMethod.GET,
+    null,
     response => {
       successCallback(response);
     },
