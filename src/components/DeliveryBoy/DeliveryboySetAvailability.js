@@ -7,7 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  Alert
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,7 +15,7 @@ import {colors} from '../../colors';
 import CheckBox from '@react-native-community/checkbox';
 import moment from 'moment';
 import {useUserDetails} from '../commonComponent/StoreContext';
-import {planningSetupUpdate} from '../../data_manager';
+import {planningSetupUpdate, getCurrentPlanningSetup} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 
 const DeliveryboySetAvailability = ({navigation}) => {
@@ -44,14 +44,54 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setTotalMonthWeek(totalMonthWeek);
     setMaxWeekCount(totalMonthWeek.length);
     setCurrentWeek(totalMonthWeek[0].dates);
+    
   }, []);
 
+  const getCurrentTimeSlot = () => {
+    let params = {
+      year: currentYear,
+      month: currentMonthWords,
+      week: weekCount,
+      ext_id: userDetails.userDetails[0].ext_id,
+    };
+    getCurrentPlanningSetup(
+      params,
+      successResponse => {
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response.setup[0].slots) {
+            const currentSlots = successResponse[0]._response.setup[0].slots;
+            const resultData = {};
+            currentSlots.forEach(item => {
+              const day = item.day;
+              resultData[day] = item.times.map(time => ({
+                from_time: time.from_time || '',
+                to_time: time.to_time || '',
+              }));
+            });
+            setTimeSlots(resultData);
+          } else {
+            const defaultTimeSlots = {};
+            currentWeek.forEach(day => {
+              defaultTimeSlots[day] = [{from_time: '', to_time: ''}];
+            });
+            setTimeSlots(defaultTimeSlots);
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]);
+      },
+    );
+  };
+
   useEffect(() => {
+    getCurrentTimeSlot();
     const defaultTimeSlots = {};
     currentWeek.forEach(day => {
       defaultTimeSlots[day] = [{from_time: '', to_time: ''}];
     });
     setTimeSlots(defaultTimeSlots);
+    console.log('defultdings', defaultTimeSlots);
   }, [currentWeek]);
 
   function getWeeksInMonth(year, month) {
@@ -204,21 +244,20 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const handleSave = () => {
     var slots = [];
     var slot = {};
+    var updatedWeeksSlots = [];
+
     currentWeek.forEach(element => {
-      if (
-        toggleCheckBoxes.hasOwnProperty(element) &&
-        timeSlots.hasOwnProperty(element) &&
-        toggleCheckBoxes[element]
-      ) {
+      if (timeSlots.hasOwnProperty(element)) {
         slot = {
           day: element,
           times: timeSlots[element],
+          selected: toggleCheckBoxes[element]
+            ? toggleCheckBoxes[element]
+            : false,
         };
         slots = [...slots, slot];
       }
     });
-
-    var updatedWeeksSlots = [];
 
     if (Object.keys(slots).length) {
       updatedWeeksSlots = [
@@ -229,10 +268,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
           week: weekCount,
           slots: slots,
         },
-      ];
-    } else {
-      updatedWeeksSlots = [
-        ...allWeeksSlots.filter(week => week.week !== weekCount),
       ];
     }
 
@@ -255,7 +290,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
       params,
       successResponse => {
         if (successResponse[0]._success) {
-          console.log("print_data===>planningSetupUpdate", successResponse[0])
           setLoading(false);
         }
       },
@@ -371,7 +405,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                             style={styles.loginput}
                             placeholder="From HH:MM"
                             placeholderTextColor="#999"
-                            value={slot.from}
+                            value={slot.from_time}
                             onChangeText={text =>
                               setTimeSlots({
                                 ...timeSlots,
@@ -398,7 +432,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                             style={styles.loginput}
                             placeholder="To HH:MM"
                             placeholderTextColor="#999"
-                            value={slot.to}
+                            value={slot.to_time}
                             onChangeText={text =>
                               setTimeSlots({
                                 ...timeSlots,
@@ -801,4 +835,3 @@ const styles = StyleSheet.create({
 });
 
 export default DeliveryboySetAvailability;
-
