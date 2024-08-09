@@ -116,7 +116,7 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [userDetail, setUserDetail] = useState();
+  const [userDetail, setUserDetail] = useState(null);
   const {saveUserDetails} = useUserDetails();
 
   const toggleModal = () => {
@@ -150,6 +150,7 @@ const AppNavigator = () => {
       <LoaderProvider>
         <NavigationContainer>
           <Stack.Navigator>
+            {console.log("userDetai===>", userDetail)}
             <Stack.Screen
               name="LoginSignup"
               component={

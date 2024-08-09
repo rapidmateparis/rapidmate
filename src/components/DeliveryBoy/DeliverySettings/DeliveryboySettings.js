@@ -19,7 +19,8 @@ const DeliveryboySettings = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
   const clearAsyncStorage = async () => {
-    AsyncStorage.clear();
+    await AsyncStorage.clear();
+    RNExitApp.exitApp();
   };
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -140,7 +141,6 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => {
               clearAsyncStorage();
-              RNExitApp.exitApp();
             }}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
