@@ -12,6 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUserDetails} from '../../commonComponent/StoreContext';
+import RNExitApp from 'react-native-exit-app';
 
 const EnterprisesSettins = ({navigation}) => {
   const {userDetails} = useUserDetails();
