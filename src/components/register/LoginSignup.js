@@ -52,14 +52,12 @@ const LoginSignup = ({navigation}) => {
             <Text style={[styles.loginDisclemar, {color: colors.white}]}>
               By logging in or registering, you agreed to the{' '}
               <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}
-                onPress={() => navigation.navigate('SignUp')}>
+                style={{textDecorationLine: 'underline', color: colors.white}}>
                 Terms & Conditions
               </Text>{' '}
               and{' '}
               <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}
-                onPress={() => navigation.navigate('LogInScreen')}>
+                style={{textDecorationLine: 'underline', color: colors.white}}>
                 Privacy Policy
               </Text>
               .
