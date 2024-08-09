@@ -139,7 +139,7 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => {
               clearAsyncStorage();
-              navigation.popToTop();
+              RNExitApp.exitApp();
             }}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>

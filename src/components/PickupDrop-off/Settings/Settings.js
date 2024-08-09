@@ -12,6 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNExitApp from 'react-native-exit-app';
 
 const Settings = ({navigation}) => {
   const {userDetails} = useUserDetails();
@@ -138,7 +139,7 @@ const Settings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => {
               clearAsyncStorage();
-              navigation.popToTop();
+              RNExitApp.exitApp();
             }}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
