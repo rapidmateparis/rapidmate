@@ -44,7 +44,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setTotalMonthWeek(totalMonthWeek);
     setMaxWeekCount(totalMonthWeek.length);
     setCurrentWeek(totalMonthWeek[0].dates);
-    
   }, []);
 
   const getCurrentTimeSlot = () => {
@@ -79,7 +78,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       },
     );
   };
@@ -291,6 +292,14 @@ const DeliveryboySetAvailability = ({navigation}) => {
       successResponse => {
         if (successResponse[0]._success) {
           setLoading(false);
+          Alert.alert('Error Alert', successResponse[0]._response, [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.goBack();
+              },
+            },
+          ]);
         }
       },
       errorResponse => {
