@@ -96,6 +96,7 @@ const LogInScreen = ({navigation}) => {
                   userInfo: successResponse[0]._response.user.idToken.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
+                console.log("userDetials===>", successResponse[0]._response)
                 if (
                   successResponse[0]._response.user_profile[0].role ==
                   'CONSUMER'
