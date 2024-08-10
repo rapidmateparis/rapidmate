@@ -126,17 +126,6 @@ const DeliveryboyBottomNav = ({navigation}) => {
         name="Account"
         component={DeliveryboySettings}
         options={{
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{paddingLeft: 10}}>
-              <MaterialIcons
-                name="keyboard-backspace"
-                size={25}
-                color={colors.text}
-              />
-            </TouchableOpacity>
-          ),
           headerTitle: 'Account',
           headerTitleStyle: {
             fontFamily: 'Montserrat-SemiBold',

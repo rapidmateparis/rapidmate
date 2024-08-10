@@ -243,7 +243,8 @@ const DeliveryboyHome = ({navigation}) => {
         </View>
 
         <View style={styles.companyLogoCard}>
-          <View style={styles.companyInfo}>
+          <Text style={styles.userName}>No Company Details</Text>
+          {/* <View style={styles.companyInfo}>
             <Image
               style={styles.companyLogosImage}
               source={require('../../image/Subway-logo.png')}
@@ -273,7 +274,7 @@ const DeliveryboyHome = ({navigation}) => {
               source={require('../../image/Spark-logo.png')}
             />
             <Text style={styles.companyNames}>Company Name</Text>
-          </View>
+          </View> */}
         </View>
       </View>
     </ScrollView>
@@ -473,6 +474,8 @@ const styles = StyleSheet.create({
   companyLogoCard: {
     flexDirection: 'row',
     marginVertical: 12,
+    paddingHorizontal: 15,
+    paddingTop: 5,
   },
   companyInfo: {
     width: 80,

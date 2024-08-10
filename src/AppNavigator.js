@@ -127,7 +127,6 @@ const AppNavigator = () => {
     const getUserDetails = async () => {
       try {
         const userDetail = await AsyncStorage.getItem('userDetails');
-        console.log('userDetail', userDetail);
         if (userDetail !== null) {
           saveUserDetails(JSON.parse(userDetail));
           let userDetails = JSON.parse(userDetail);
@@ -150,7 +149,6 @@ const AppNavigator = () => {
       <LoaderProvider>
         <NavigationContainer>
           <Stack.Navigator>
-            {console.log("userDetai===>", userDetail)}
             <Stack.Screen
               name="LoginSignup"
               component={

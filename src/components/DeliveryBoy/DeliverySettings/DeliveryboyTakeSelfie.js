@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,16 @@ import {
   Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { colors } from '../../../colors';
+import {colors} from '../../../colors';
 import ChoosePhotoByCameraGallaryModal from '../../commonComponent/ChoosePhotoByCameraGallaryModal';
-import { handleCameraLaunchFunction, handleImageLibraryLaunchFunction } from '../../../utils/common';
-import { useLoader } from '../../../utils/loaderContext';
-import { uploadDocumentsApi } from '../../../data_manager';
+import {
+  handleCameraLaunchFunction,
+  handleImageLibraryLaunchFunction,
+} from '../../../utils/common';
+import {useLoader} from '../../../utils/loaderContext';
+import {uploadDocumentsApi} from '../../../data_manager';
 
-const DeliveryboyTakeSelfie = ({ route, navigation }) => {
+const DeliveryboyTakeSelfie = ({route, navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
@@ -25,7 +28,7 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
     setModalVisibleCamera(!isModalVisibleCamera);
   };
 
-  const handlePhotoOpenClose = (visible) => {
+  const handlePhotoOpenClose = visible => {
     setModalVisibleCamera(!visible);
   };
 
@@ -55,7 +58,7 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
     }
   };
 
-  const getFileName = (uri) => {
+  const getFileName = uri => {
     // Function to extract file name from URI
     if (uri) {
       const path = uri.split('/');
@@ -69,9 +72,9 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
       uri: image.data.uri,
       type: image.data.type,
       name: image.data.fileName,
-  };
+    };
     const formdata = new FormData();
-    formdata.append("file", photo);
+    formdata.append('file', photo);
     setLoading(true);
     uploadDocumentsApi(
       formdata,
@@ -81,6 +84,9 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
           'print_data==>successResponseuploadDocumentsApi',
           '' + successResponse,
         );
+        navigation.navigate('AddVehicle', {
+          delivery_boy_details: route.params.delivery_boy_details,
+        });
       },
       errorResponse => {
         console.log(
@@ -96,7 +102,7 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView style={{ width: '100%', backgroundColor: '#FFF' }}>
+    <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
       <View>
         <TouchableOpacity onPress={toggleModal} style={styles.profilePicCard}>
           <Image
@@ -116,7 +122,9 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
         </TouchableOpacity>
 
         <View style={styles.titlesCard}>
-          <Text style={styles.statusTitle}>Please upload a Profile Picture</Text>
+          <Text style={styles.statusTitle}>
+            Please upload a Profile Picture
+          </Text>
           <Text style={styles.statusSubtitle}>
             Please see if this looks good, you can try once more if you want to.
           </Text>
@@ -126,9 +134,7 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
           <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
             <Text style={styles.buttonText}>Try again</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={uploadImage}
-            style={styles.saveBTn}>
+          <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
             <Text style={styles.okButton}>Use this</Text>
           </TouchableOpacity>
         </View>
