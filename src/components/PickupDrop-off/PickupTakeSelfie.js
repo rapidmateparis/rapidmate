@@ -15,13 +15,16 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
-import {uploadDocumentsApi} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import {updateUserProfile, uploadDocumentsApi} from '../../data_manager';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
-const PickupTakeSelfie = ({navigation}) => {
+const PickupTakeSelfie = ({route, navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
+  const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -36,7 +39,8 @@ const PickupTakeSelfie = ({navigation}) => {
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
-        setImage(imageData);
+        setPhotoFileName(getFileName(cameraData.data.uri));
+        setImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -48,6 +52,7 @@ const PickupTakeSelfie = ({navigation}) => {
     try {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
+        setPhotoFileName(getFileName(imageData.data.uri));
         setImage(imageData);
       }
     } catch (error) {
@@ -55,14 +60,23 @@ const PickupTakeSelfie = ({navigation}) => {
     }
   };
 
+  const getFileName = uri => {
+    // Function to extract file name from URI
+    if (uri) {
+      const path = uri.split('/');
+      return path[path.length - 1];
+    }
+    return '';
+  };
+
   const uploadImage = async () => {
     var photo = {
       uri: image.data.uri,
       type: image.data.type,
       name: image.data.fileName,
-  };
+    };
     const formdata = new FormData();
-    formdata.append("file", photo);
+    formdata.append('file', photo);
     setLoading(true);
     uploadDocumentsApi(
       formdata,
@@ -70,7 +84,30 @@ const PickupTakeSelfie = ({navigation}) => {
         setLoading(false);
         console.log(
           'print_data==>successResponseuploadDocumentsApi',
-          '' + successResponse,
+          '' + JSON.parse(successResponse).id,
+        );
+        let profileParams = {
+          ext_id: userDetails.userDetails[0].ext_id,
+          profile_pic: JSON.parse(successResponse).id,
+          work_type_id: 1,
+        };
+        updateUserProfile(
+          userDetails.userDetails[0].role,
+          profileParams,
+          successResponse => {
+            console.log('updateUserProfile', successResponse);
+            Alert.alert('Success', '' + successResponse[0]._response, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.goBack();
+                },
+              },
+            ]);
+          },
+          errorResponse => {
+            console.log('updateUserProfile', errorResponse);
+          },
         );
       },
       errorResponse => {
@@ -85,6 +122,8 @@ const PickupTakeSelfie = ({navigation}) => {
       },
     );
   };
+
+  console.log('userDetails', userDetails.userDetails[0].role);
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>

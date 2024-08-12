@@ -16,13 +16,16 @@ import {
   handleImageLibraryLaunchFunction,
 } from '../../../utils/common';
 import {useLoader} from '../../../utils/loaderContext';
-import {uploadDocumentsApi} from '../../../data_manager';
+import {uploadDocumentsApi, updateUserProfile} from '../../../data_manager';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import {API} from '../../../utils/constant';
 
 const DeliveryboyTakeSelfie = ({route, navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -82,11 +85,37 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
         setLoading(false);
         console.log(
           'print_data==>successResponseuploadDocumentsApi',
-          '' + successResponse,
+          '' + JSON.parse(successResponse).id,
         );
-        navigation.navigate('AddVehicle', {
-          delivery_boy_details: route.params.delivery_boy_details,
-        });
+        let profileParams = {
+          ext_id: userDetails.userDetails[0].ext_id,
+          profile_pic: JSON.parse(successResponse).id,
+          work_type_id: 1,
+        };
+        updateUserProfile(
+          userDetails.userDetails[0].role,
+          profileParams,
+          successResponse => {
+            console.log('updateUserProfile', successResponse);
+            if (route.params) {
+              navigation.navigate('AddVehicle', {
+                delivery_boy_details: route.params.delivery_boy_details,
+              });
+            } else {
+              Alert.alert('Success', '' + successResponse[0]._response, [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    navigation.goBack();
+                  },
+                },
+              ]);
+            }
+          },
+          errorResponse => {
+            console.log('updateUserProfile', errorResponse);
+          },
+        );
       },
       errorResponse => {
         console.log(
