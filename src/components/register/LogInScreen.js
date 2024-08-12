@@ -234,12 +234,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: '90%',
     fontFamily: 'Montserrat-Regular',
+    color: colors.black
   },
   forgotPasswordText: {
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     marginBottom: 20,
     textAlign: 'right',
+    color: colors.black
   },
   logbutton: {
     width: '100%',

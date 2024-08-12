@@ -374,7 +374,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                           handleCheckboxChange(day, newValue)
                         }
                         style={styles.checkBox}
-                        tintColors={{true: '#FFC72B', false: '#000000'}}
+                        tintColors={{true: colors.secondary, false: '#000000'}}
                       />
                       <Text style={styles.dateForShift}>
                         {moment(
@@ -430,7 +430,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                             <MaterialCommunityIcons
                               name="clock-time-four"
                               size={20}
-                              color="#D4D4D4"
+                              color={colors.secondary}
                               style={{marginTop: 15}}
                             />
                           </TouchableOpacity>
@@ -457,7 +457,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                             <MaterialCommunityIcons
                               name="clock-time-four"
                               size={20}
-                              color="#D4D4D4"
+                              color={colors.secondary}
                               style={{marginTop: 15}}
                             />
                           </TouchableOpacity>

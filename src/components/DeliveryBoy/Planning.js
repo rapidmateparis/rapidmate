@@ -108,6 +108,35 @@ const Planning = ({navigation}) => {
       <View style={{flex: 1}}>
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
           <View style={styles.packageDetailCard}>
+          <Text style={styles.listText}>No Record Found</Text>
+            {/* <View style={styles.packageHeader}>
+              <Image source={require('../../image/package-medium-icon.png')} />
+              <Text style={styles.deliveryTime}>
+                Delivered on Apr 19, 2024 at 11:30 AM
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <Ionicons name="location-outline" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                From <Text style={styles.Location}>North Street, ABC</Text>
+              </Text>
+            </View>
+
+            <View style={styles.packageMiddle}>
+              <MaterialIcons name="my-location" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+              </Text>
+            </View>
+
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>Order ID: 98237469</Text>
+              <Text style={styles.valueMoney}>For National Inc.</Text>
+            </View> */}
+          </View>
+
+          {/* <View style={styles.packageDetailCard}>
             <View style={styles.packageHeader}>
               <Image source={require('../../image/package-medium-icon.png')} />
               <Text style={styles.deliveryTime}>
@@ -133,35 +162,7 @@ const Planning = ({navigation}) => {
               <Text style={styles.orderId}>Order ID: 98237469</Text>
               <Text style={styles.valueMoney}>For National Inc.</Text>
             </View>
-          </View>
-
-          <View style={styles.packageDetailCard}>
-            <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
-              <Text style={styles.deliveryTime}>
-                Delivered on Apr 19, 2024 at 11:30 AM
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Street, ABC</Text>
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <MaterialIcons name="my-location" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-              </Text>
-            </View>
-
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>For National Inc.</Text>
-            </View>
-          </View>
+          </View> */}
         </View>
       </View>
       {/* Modal start here  */}
