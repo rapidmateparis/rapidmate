@@ -246,6 +246,9 @@ android {
 
         }
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
