@@ -13,6 +13,7 @@ import {colors} from '../../../colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import RNExitApp from 'react-native-exit-app';
+import {API} from '../../../utils/constant';
 
 const DeliveryboySettings = ({navigation}) => {
   const {userDetails} = useUserDetails();
@@ -27,10 +28,20 @@ const DeliveryboySettings = ({navigation}) => {
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.profileCard}>
           <View>
-            <Image
-              style={styles.profileImg}
-              source={require('../../../image/Selfie.png')}
-            />
+            {userDetails.userDetails[0].profile_pic ? (
+              <Image
+                style={styles.profileImg}
+                source={{
+                  uri:
+                    API.viewImageUrl + userDetails.userDetails[0].profile_pic,
+                }}
+              />
+            ) : (
+              <Image
+                style={styles.profileImg}
+                source={require('../../../image/Selfie.png')}
+              />
+            )}
           </View>
           <View style={{marginLeft: 15}}>
             <Text style={styles.username}>

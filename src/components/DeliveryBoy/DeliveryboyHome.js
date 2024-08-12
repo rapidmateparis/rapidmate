@@ -14,9 +14,13 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
-import {getDeliveryBoyViewOrdersList, getLocations} from '../../data_manager';
+import {
+  getDeliveryBoyViewOrdersList,
+  getLocations,
+  getLookupData,
+} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import {useUserDetails} from '../commonComponent/StoreContext';
+import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 
 const DeliveryboyHome = ({navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
@@ -25,6 +29,7 @@ const DeliveryboyHome = ({navigation}) => {
   const [orderList, setOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const {userDetails} = useUserDetails();
+  const {saveLookupData} = useLookupData();
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -37,7 +42,20 @@ const DeliveryboyHome = ({navigation}) => {
   useEffect(() => {
     getLocationsData();
     getOrderList();
+    getLookup();
   }, []);
+
+  const getLookup = () => {
+    getLookupData(
+      null,
+      successResponse => {
+        saveLookupData(successResponse[0]._response);
+      },
+      errorResponse => {
+        console.log('getLookup==>errorResponse', errorResponse);
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLoading(true);

@@ -315,3 +315,43 @@ export const getCurrentPlanningSetup = (
     },
   );
 };
+
+export const updateUserProfile = (
+  userRole,
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  let setUrl =
+    userRole == 'CONSUMER'
+      ? 'consumer'
+      : userRole == 'DELIVERY_BOY'
+      ? 'deliveryboy'
+      : 'enterprise';
+  console.log(userRole, params, API.updateUserProfile + setUrl);
+  axiosCall(
+    API.updateUserProfile + setUrl,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getLookupData = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.lookupDataUrl,
+    HTTPMethod.GET,
+    null,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

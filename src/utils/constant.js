@@ -51,5 +51,7 @@ export const API = {
   documentsUpload: BASE_URL + 'documents/upload',
   vehicletypesUrl: BASE_URL + 'vehicletypes',
   planningSetupUrl: BASE_URL + 'planning',
+  updateUserProfile: BASE_URL,
+  viewImageUrl: BASE_URL + 'documents/view/',
+  lookupDataUrl: BASE_URL + 'lookup',
 };
-

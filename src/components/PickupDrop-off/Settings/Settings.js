@@ -13,6 +13,7 @@ import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNExitApp from 'react-native-exit-app';
+import {API} from '../../../utils/constant';
 
 const Settings = ({navigation}) => {
   const {userDetails} = useUserDetails();
@@ -28,10 +29,20 @@ const Settings = ({navigation}) => {
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.profileCard}>
           <View>
-            <Image
-              style={styles.profileImg}
-              source={require('../../../image/settings-profile.jpeg')}
-            />
+            {userDetails.userDetails[0].profile_pic ? (
+              <Image
+                style={styles.profileImg}
+                source={{
+                  uri:
+                    API.viewImageUrl + userDetails.userDetails[0].profile_pic,
+                }}
+              />
+            ) : (
+              <Image
+                style={styles.profileImg}
+                source={require('../../../image/settings-profile.jpeg')}
+              />
+            )}
           </View>
           <View style={{marginLeft: 15}}>
             <Text style={styles.username}>
@@ -40,7 +51,7 @@ const Settings = ({navigation}) => {
                 userDetails.userDetails[0].last_name}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('DeliveryboyTakeSelfie')}
+              onPress={() => navigation.navigate('PickupTakeSelfie')}
               style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
