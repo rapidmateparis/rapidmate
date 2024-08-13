@@ -46,7 +46,7 @@ export const API = {
   cityList: BASE_URL + 'city',
   vehicles: BASE_URL + 'vehicles',
   viewDeliveryBoyOrderUrl: BASE_URL + 'order/deliveryboy/',
-  viewConsumerOrderUrl: BASE_URL + 'order/',
+  viewConsumerOrderUrl: BASE_URL + 'order/consumer/',
   payment: BASE_URL + 'payment',
   documentsUpload: BASE_URL + 'documents/upload',
   vehicletypesUrl: BASE_URL + 'vehicletypes',

@@ -206,10 +206,13 @@ export const getDeliveryBoyViewOrdersList = (
   successCallback,
   errorCallback,
 ) => {
-  console.log(API.viewDeliveryBoyOrderUrl +
-    postParams.extentedId +
-    '?status=' +
-    postParams.status, postParams)
+  console.log(
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status,
+    postParams,
+  );
   axiosCall(
     API.viewDeliveryBoyOrderUrl +
       postParams.extentedId +
@@ -227,13 +230,16 @@ export const getDeliveryBoyViewOrdersList = (
 };
 
 export const getConsumerViewOrdersList = (
-  extentedId,
+  postParams,
   params,
   successCallback,
   errorCallback,
 ) => {
   axiosCall(
-    API.viewConsumerOrderUrl + extentedId,
+    API.viewConsumerOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status,
     HTTPMethod.GET,
     params,
     response => {
@@ -246,7 +252,7 @@ export const getConsumerViewOrdersList = (
 };
 
 export const addPayment = (params, successCallback, errorCallback) => {
-  console.log('addPayment', params, API.payment)
+  console.log('addPayment', params, API.payment);
   axiosCall(
     API.payment,
     HTTPMethod.POST,

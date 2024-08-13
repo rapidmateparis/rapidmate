@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -20,18 +21,16 @@ import {
 import {getProfileInformation} from '../../data_manager';
 
 const OrderConfirm = ({navigation}) => {
-  const [driverDetails, setDriverDetails] = useState();
+  const [driverDetails, setDriverDetails] = useState(null); // Initialize with null
   const {userDetails} = useUserDetails();
   const {placedOrderDetails} = usePlacedOrderDetails();
-  const orderId = '9AS68D7G698GH';
-  const otp = '123456'; // Sample OTP
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
   const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
 
   const handleCopyOrderId = () => {
-    Clipboard.setString(orderId);
+    Clipboard.setString(placedOrderDetails[0]?.order_number || '');
     setShowCopiedOrderIdMessage(true);
     setTimeout(() => {
       setShowCopiedOrderIdMessage(false);
@@ -39,7 +38,7 @@ const OrderConfirm = ({navigation}) => {
   };
 
   const handleCopyOtp = () => {
-    Clipboard.setString(otp);
+    Clipboard.setString(placedOrderDetails[0]?.otp || '');
     setShowCopiedOtpMessage(true);
     setTimeout(() => {
       setShowCopiedOtpMessage(false);
@@ -47,21 +46,24 @@ const OrderConfirm = ({navigation}) => {
   };
 
   useEffect(() => {
-    let params = {
-      userRole: userDetails.userDetails[0].ext_id,
-      orderNumber: placedOrderDetails[0].order_number,
+    const params = {
+      userRole: userDetails?.userDetails[0]?.ext_id,
+      orderNumber: placedOrderDetails[0]?.order_number,
     };
     getProfileInformation(
       params,
       successResponse => {
-        console.log('getProfileInformation', successResponse[0]._response)
+        console.log('getProfileInformation', successResponse[0]._response);
         setDriverDetails(successResponse[0]._response);
       },
       errorResponse => {
         console.log('getProfile===>errorResponse', errorResponse);
+        Alert.alert('Error Alert', successResponse[0]._response.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       },
     );
-  }, []);
+  }, [userDetails, placedOrderDetails]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -96,7 +98,7 @@ const OrderConfirm = ({navigation}) => {
             <Text style={styles.oderIdText}>Order ID: </Text>
             <TouchableOpacity onPress={handleCopyOrderId}>
               <Text style={styles.text}>
-                {placedOrderDetails[0].order_number}
+                {placedOrderDetails[0]?.order_number}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCopyOrderId}>
@@ -114,7 +116,7 @@ const OrderConfirm = ({navigation}) => {
           <View style={styles.textContainer}>
             <Text style={styles.oderIdText}>OTP: </Text>
             <TouchableOpacity onPress={handleCopyOtp}>
-              <Text style={styles.text}>{placedOrderDetails[0].otp}</Text>
+              <Text style={styles.text}>{placedOrderDetails[0]?.otp}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCopyOtp}>
               <AntDesign
@@ -144,7 +146,7 @@ const OrderConfirm = ({navigation}) => {
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Delivering to</Text>
                 <Text style={styles.subAddress}>
-                  {placedOrderDetails[0].address}
+                  {placedOrderDetails[0]?.address}
                 </Text>
               </View>
               <View>
@@ -172,9 +174,12 @@ const OrderConfirm = ({navigation}) => {
               </View>
               <View style={{width: '40%'}}>
                 <Text style={styles.driverName}>
-                {driverDetails?.first_name + ' ' + driverDetails?.last_name || 'Driver Name'}
+                  {driverDetails?.deliveryBoy?.first_name || ''}{' '}
+                  {driverDetails?.deliveryBoy?.last_name || ''}
                 </Text>
-                <Text style={styles.truckName}>VOLVO FH16 2022</Text>
+                <Text style={styles.truckName}>
+                  {driverDetails?.vehicle?.plat_no || ''}
+                </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity style={{marginRight: 10}}>
