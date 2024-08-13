@@ -246,6 +246,7 @@ export const getConsumerViewOrdersList = (
 };
 
 export const addPayment = (params, successCallback, errorCallback) => {
+  console.log('addPayment', params, API.payment)
   axiosCall(
     API.payment,
     HTTPMethod.POST,

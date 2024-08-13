@@ -54,6 +54,7 @@ const OrderConfirm = ({navigation}) => {
     getProfileInformation(
       params,
       successResponse => {
+        console.log('getProfileInformation', successResponse[0]._response)
         setDriverDetails(successResponse[0]._response);
       },
       errorResponse => {
@@ -171,7 +172,7 @@ const OrderConfirm = ({navigation}) => {
               </View>
               <View style={{width: '40%'}}>
                 <Text style={styles.driverName}>
-                  {driverDetails.first_name + ' ' + driverDetails.last_name}
+                {driverDetails?.first_name + ' ' + driverDetails?.last_name || 'Driver Name'}
                 </Text>
                 <Text style={styles.truckName}>VOLVO FH16 2022</Text>
               </View>

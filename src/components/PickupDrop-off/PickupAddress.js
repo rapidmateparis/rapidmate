@@ -138,7 +138,7 @@ const PickupAddress = ({route, navigation}) => {
         distanceTime: distanceTime,
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
-        serviceTypeId: route.params.pickupService.id,
+        serviceTypeId: route?.params?.pickupService?.id || 1
       });
     } else {
       Alert.alert('Alert', 'Please choose location and vehicle / Vehicle price not available', [

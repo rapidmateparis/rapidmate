@@ -36,12 +36,18 @@ const PickupPayment = ({route, navigation}) => {
       params.selectedVehicleDetails.km_price *
         (params.distanceTime.distance - 1),
   ).toFixed(2);
-  var orderNumber = '';
+  const [orderNumber, setOrderNumber] = useState(0);
   
 
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  useEffect(() => {
+    if (orderNumber) {
+      createPaymentIntent();
+    }
+  }, [orderNumber]);
 
   useEffect(() => {}, [orderResponse]);
 
@@ -117,8 +123,7 @@ const PickupPayment = ({route, navigation}) => {
             savePlacedOrderDetails(successResponse[0]._response)
             setOrderResponse(successResponse[0]._response);
             setLoading(false);
-            orderNumber = successResponse[0]._response[0].order_number;
-            createPaymentIntent();
+            setOrderNumber(successResponse[0]._response[0].order_number);
           }
         },
         errorResponse => {
@@ -138,7 +143,7 @@ const PickupPayment = ({route, navigation}) => {
 
   const createPayment = async () => {
     let requestParams = {
-      order_number: orderResponse[0].order_number,
+      order_number: orderNumber,
       amount: paymentAmount,
     };
     setLoading(true);
