@@ -201,13 +201,20 @@ export const getLocations = (params, successCallback, errorCallback) => {
 };
 
 export const getDeliveryBoyViewOrdersList = (
-  extentedId,
+  postParams,
   params,
   successCallback,
   errorCallback,
 ) => {
+  console.log(API.viewDeliveryBoyOrderUrl +
+    postParams.extentedId +
+    '?status=' +
+    postParams.status, postParams)
   axiosCall(
-    API.viewDeliveryBoyOrderUrl + extentedId,
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status,
     HTTPMethod.GET,
     params,
     response => {
@@ -361,7 +368,11 @@ export const getProfileInformation = (
   successCallback,
   errorCallback,
 ) => {
-  console.log('getProfileInformation', params, API.updateUserProfile + params.orderNumber);
+  console.log(
+    'getProfileInformation',
+    params,
+    API.updateUserProfile + params.orderNumber,
+  );
   axiosCall(
     API.getAllocatedDeliveryBoy + params.orderNumber,
     HTTPMethod.GET,

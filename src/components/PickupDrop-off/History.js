@@ -64,8 +64,12 @@ const TodayList = () => {
   const getOrderList = () => {
     setLoading(true);
     setOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current'
+    };
     getConsumerViewOrdersList(
-      userDetails.userDetails[0].ext_id,
+      postParams,
       null,
       successResponse => {
         if (successResponse[0]._success) {
@@ -95,14 +99,20 @@ const TodayList = () => {
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From <Text style={styles.Location}>{getLocationAddress(item.pickup_location_id)}</Text>
+          From{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.pickup_location_id)}
+          </Text>
         </Text>
       </View>
 
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To <Text style={styles.Location}>{getLocationAddress(item.dropoff_location_id)}</Text>
+          To{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.dropoff_location_id)}
+          </Text>
         </Text>
       </View>
 
