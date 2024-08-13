@@ -54,4 +54,5 @@ export const API = {
   updateUserProfile: BASE_URL,
   viewImageUrl: BASE_URL + 'documents/view/',
   lookupDataUrl: BASE_URL + 'lookup',
+  getAllocatedDeliveryBoy: BASE_URL + '/order/allocated/details?o=',
 };

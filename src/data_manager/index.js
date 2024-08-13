@@ -355,3 +355,22 @@ export const getLookupData = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getProfileInformation = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('getProfileInformation', params, API.updateUserProfile + params.orderNumber);
+  axiosCall(
+    API.getAllocatedDeliveryBoy + params.orderNumber,
+    HTTPMethod.GET,
+    null,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

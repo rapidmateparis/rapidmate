@@ -17,15 +17,15 @@ import {colors} from '../../colors';
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = vehicleDetails => {
-    clearTimeout(timeOutId)
+    clearTimeout(timeOutId);
     setModalVisible(!isModalVisible);
   };
-var timeOutId = ''
+  var timeOutId = '';
   useEffect(() => {
     timeOutId = setTimeout(() => {
-      navigation.navigate('OrderConfirm')
+      navigation.navigate('OrderConfirm');
     }, 5000);
-    console.log('timeOutId',timeOutId)
+    console.log('timeOutId', timeOutId);
   }, []);
 
   return (

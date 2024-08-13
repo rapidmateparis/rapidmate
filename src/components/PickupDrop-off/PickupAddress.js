@@ -128,7 +128,7 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
-    if (selectedVehicle && sourceLocation && destinationLocation) {
+    if (selectedVehicle && sourceLocation && destinationLocation && selectedVehiclePrice) {
       navigation.push('AddPickupdetails', {
         selectedVehicle: selectedVehicle,
         selectedVehicleDetails: selectedVehicleDetails,
@@ -141,7 +141,7 @@ const PickupAddress = ({route, navigation}) => {
         serviceTypeId: route.params.pickupService.id,
       });
     } else {
-      Alert.alert('Alert', 'Please choose location and vehicle', [
+      Alert.alert('Alert', 'Please choose location and vehicle / Vehicle price not available', [
         {text: 'OK', onPress: () => {}},
       ]);
     }
@@ -211,7 +211,7 @@ const PickupAddress = ({route, navigation}) => {
                     onPress={() => {
                       setSelectedVehicle(vehicle.vehicle_type);
                       setSelectedVehicleDetails(vehicle);
-                      setSelectedVehiclePrice(vehicle.base_price != 0 ? vehicle.base_price : 1.0);
+                      setSelectedVehiclePrice(vehicle.base_price != 0 && vehicle.base_price);
                     }}
                     style={styles.cardVehicle}>
                     <View
