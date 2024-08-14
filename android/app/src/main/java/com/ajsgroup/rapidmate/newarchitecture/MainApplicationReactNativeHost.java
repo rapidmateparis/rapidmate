@@ -1,7 +1,9 @@
-package com.sideandbottomnaviagtion.newarchitecture;
+package com.ajsgroup.rapidmate.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
+
+import com.ajsgroup.rapidmate.BuildConfig;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -19,9 +21,8 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.sideandbottomnaviagtion.BuildConfig;
-import com.sideandbottomnaviagtion.newarchitecture.components.MainComponentsRegistry;
-import com.sideandbottomnaviagtion.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.ajsgroup.rapidmate.newarchitecture.components.MainComponentsRegistry;
+import com.ajsgroup.rapidmate.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

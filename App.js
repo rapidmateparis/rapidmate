@@ -6,6 +6,7 @@ import {StripeProvider} from '@stripe/stripe-react-native';
 import messaging from '@react-native-firebase/messaging';
 import {Alert, Platform} from 'react-native';
 import { requestNotificationPermission } from './src/utils/common';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const App = () => {
   useState(async () => {
@@ -27,7 +28,23 @@ const App = () => {
         );
       });
     }
+    onSignIn()
   }, []);
+
+  async function onSignIn() {
+    crashlytics().log('User signed in.');
+    await Promise.all([
+      crashlytics().setUserId('Aa0Bb1Cc2Dd3Ee4Ff5Gg6Hh7Ii8Jj9'),
+      crashlytics().setAttribute('credits', '1'),
+      crashlytics().setAttributes({
+        role: 'user',
+        followers: '13',
+        email: 'syszoomail@gmail.com',
+        username: 'syszoo',
+      }),
+    ]);
+  }
+  
   return (
     <StripeProvider
       publishableKey="pk_test_51PgiLhLF5J4TIxENPZOMh8xWRpEsBxheEx01qB576p0vUZ9R0iTbzBFz0QvnVaoCZUwJu39xkym38z6nfNmEgUMX00SSmS6l7e"
