@@ -7,6 +7,7 @@ const UserSignUpContext = createContext();
 const ForgotPasswordContext = createContext();
 const ServiceTypeContext = createContext();
 const LookupContext = createContext();
+const PlacedOrderDetailsContext = createContext();
 
 export const StoreContext = ({children}) => {
   const [pickupAddress, setPickupAddress] = useState(null);
@@ -16,6 +17,7 @@ export const StoreContext = ({children}) => {
   const [forgotPasswordDetails, setForgotPasswordDetails] = useState(null);
   const [serviceTypeDetails, setServiceTypeDetails] = useState(null);
   const [lookupData, setLookupData] = useState(null);
+  const [placedOrderDetails, setPlacedOrderDetails] = useState(null);
 
   const savePickupAddress = address => {
     setPickupAddress(address);
@@ -45,6 +47,10 @@ export const StoreContext = ({children}) => {
     setLookupData(lookupData);
   };
 
+  const savePlacedOrderDetails = lookupData => {
+    setPlacedOrderDetails(lookupData);
+  };
+
   return (
     <UserDetailsContext.Provider value={{userDetails, saveUserDetails}}>
       <PickupAddressContext.Provider value={{pickupAddress, savePickupAddress}}>
@@ -56,7 +62,9 @@ export const StoreContext = ({children}) => {
               <ServiceTypeContext.Provider
                 value={{serviceTypeDetails, saveServiceTypeDetails}}>
                 <LookupContext.Provider value={{lookupData, saveLookupData}}>
-                  {children}
+                  <PlacedOrderDetailsContext.Provider value={{placedOrderDetails, savePlacedOrderDetails}}>
+                    {children}
+                  </PlacedOrderDetailsContext.Provider>
                 </LookupContext.Provider>
               </ServiceTypeContext.Provider>
             </ForgotPasswordContext.Provider>
@@ -74,3 +82,4 @@ export const useSignUpDetails = () => useContext(UserSignUpContext);
 export const useForgotPasswordDetails = () => useContext(ForgotPasswordContext);
 export const useServiceTypeDetails = () => useContext(ServiceTypeContext);
 export const useLookupData = () => useContext(LookupContext);
+export const usePlacedOrderDetails = () => useContext(PlacedOrderDetailsContext);

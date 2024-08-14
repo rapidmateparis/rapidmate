@@ -60,14 +60,18 @@ const DeliveryboySetAvailability = ({navigation}) => {
           if (successResponse[0]._response.setup[0].slots) {
             const currentSlots = successResponse[0]._response.setup[0].slots;
             const resultData = {};
+            const selectedItem = {};
             currentSlots.forEach(item => {
               const day = item.day;
               resultData[day] = item.times.map(time => ({
                 from_time: time.from_time || '',
                 to_time: time.to_time || '',
               }));
+              selectedItem[day] = item.selected || false
             });
             setTimeSlots(resultData);
+            console.log('selectedItem', selectedItem)
+            setToggleCheckBoxes(selectedItem);
           } else {
             const defaultTimeSlots = {};
             currentWeek.forEach(day => {

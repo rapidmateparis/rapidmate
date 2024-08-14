@@ -128,6 +128,7 @@ const AppNavigator = () => {
       try {
         const userDetail = await AsyncStorage.getItem('userDetails');
         if (userDetail !== null) {
+          console.log("userDetail==>", userDetail)
           saveUserDetails(JSON.parse(userDetail));
           let userDetails = JSON.parse(userDetail);
           setUserDetail(userDetails);

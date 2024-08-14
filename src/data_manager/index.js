@@ -201,13 +201,23 @@ export const getLocations = (params, successCallback, errorCallback) => {
 };
 
 export const getDeliveryBoyViewOrdersList = (
-  extentedId,
+  postParams,
   params,
   successCallback,
   errorCallback,
 ) => {
+  console.log(
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status,
+    postParams,
+  );
   axiosCall(
-    API.viewDeliveryBoyOrderUrl + extentedId,
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status,
     HTTPMethod.GET,
     params,
     response => {
@@ -220,13 +230,16 @@ export const getDeliveryBoyViewOrdersList = (
 };
 
 export const getConsumerViewOrdersList = (
-  extentedId,
+  postParams,
   params,
   successCallback,
   errorCallback,
 ) => {
   axiosCall(
-    API.viewConsumerOrderUrl + extentedId,
+    API.viewConsumerOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status,
     HTTPMethod.GET,
     params,
     response => {
@@ -239,6 +252,7 @@ export const getConsumerViewOrdersList = (
 };
 
 export const addPayment = (params, successCallback, errorCallback) => {
+  console.log('addPayment', params, API.payment);
   axiosCall(
     API.payment,
     HTTPMethod.POST,
@@ -345,6 +359,29 @@ export const updateUserProfile = (
 export const getLookupData = (params, successCallback, errorCallback) => {
   axiosCall(
     API.lookupDataUrl,
+    HTTPMethod.GET,
+    null,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getProfileInformation = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'getProfileInformation',
+    params,
+    API.updateUserProfile + params.orderNumber,
+  );
+  axiosCall(
+    API.getAllocatedDeliveryBoy + params.orderNumber,
     HTTPMethod.GET,
     null,
     response => {

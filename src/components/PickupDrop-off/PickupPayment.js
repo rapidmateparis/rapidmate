@@ -21,21 +21,33 @@ import MotorbikeImage from '../../image/Motorbike.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
+import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
   const [clientSecret, setClientSecret] = useState(null);
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  const {savePlacedOrderDetails} = usePlacedOrderDetails();
   const [orderResponse, setOrderResponse] = useState();
   const params = route.params.props;
-  const paymentAmount = Math.round(params.selectedVehicleDetails.base_price + (params.selectedVehicleDetails.km_price * 
-    (params.distanceTime.distance - 1))).toFixed(2)
-  var orderNumber = ''
+  const paymentAmount = Math.round(
+    params.selectedVehicleDetails.base_price +
+      params.selectedVehicleDetails.km_price *
+        (params.distanceTime.distance - 1),
+  ).toFixed(2);
+  const [orderNumber, setOrderNumber] = useState(0);
   
+
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  useEffect(() => {
+    if (orderNumber) {
+      createPaymentIntent();
+    }
+  }, [orderNumber]);
 
   useEffect(() => {}, [orderResponse]);
 
@@ -83,8 +95,8 @@ const PickupPayment = ({route, navigation}) => {
 
   const checkout = async () => {
     const {error} = await presentPaymentSheet();
-    console.log('érror',error)
-    if(!error) {
+    console.log('érror', error);
+    if (!error) {
       createPayment();
     }
   };
@@ -108,15 +120,15 @@ const PickupPayment = ({route, navigation}) => {
         successResponse => {
           if (successResponse[0]._success) {
             console.log('placePickUpOrder', successResponse[0]._response);
+            savePlacedOrderDetails(successResponse[0]._response)
             setOrderResponse(successResponse[0]._response);
             setLoading(false);
-            orderNumber = successResponse[0]._response[0].order_number
-            createPaymentIntent();
+            setOrderNumber(successResponse[0]._response[0].order_number);
           }
         },
         errorResponse => {
           setLoading(false);
-          console.log("createPickupOrder==>errorResponse", errorResponse[0])
+          console.log('createPickupOrder==>errorResponse', errorResponse[0]);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
           ]);
@@ -131,7 +143,7 @@ const PickupPayment = ({route, navigation}) => {
 
   const createPayment = async () => {
     let requestParams = {
-      order_number: orderResponse[0].order_number,
+      order_number: orderNumber,
       amount: paymentAmount,
     };
     setLoading(true);
@@ -207,10 +219,7 @@ const PickupPayment = ({route, navigation}) => {
 
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
-            <Text style={styles.totalAmount}>
-              €{' '}
-              {paymentAmount}
-            </Text>
+            <Text style={styles.totalAmount}>€ {paymentAmount}</Text>
           </View>
         </View>
 
@@ -247,10 +256,7 @@ const PickupPayment = ({route, navigation}) => {
           </Text>
         </View>
         <View style={styles.ProceedCard}>
-          <Text style={styles.proceedPayment}>
-            €{' '}
-            {paymentAmount}
-          </Text>
+          <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>
           <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>
           </TouchableOpacity>
