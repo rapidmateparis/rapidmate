@@ -1,4 +1,4 @@
-package com.sideandbottomnaviagtion;
+package com.ajsgroup.rapidmate;
 
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -16,7 +16,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
-import com.sideandbottomnaviagtion.newarchitecture.MainApplicationReactNativeHost;
+import com.ajsgroup.rapidmate.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -89,7 +89,7 @@ public Intent registerReceiver(@Nullable BroadcastReceiver receiver, IntentFilte
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.sideandbottomnaviagtion.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.ajsgroup.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

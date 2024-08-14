@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "757497467079",
+    "project_id": "rapidmate-93445",
+    "storage_bucket": "rapidmate-93445.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757497467079:android:d5ec7df87a32f1c404eee2",
+        "android_client_info": {
+          "package_name": "com.ajsgroup.rapidmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAscKDX56eYTjHrr5y2fRB4aE1LB576DmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

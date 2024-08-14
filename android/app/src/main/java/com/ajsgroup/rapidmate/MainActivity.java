@@ -1,4 +1,4 @@
-package com.sideandbottomnaviagtion;
+package com.ajsgroup.rapidmate;
 
 import android.os.Bundle;
 
