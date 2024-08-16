@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -16,11 +16,12 @@ import {
   useUserDetails,
 } from '../../commonComponent/StoreContext';
 import {updateUserProfile} from '../../../data_manager';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DeliveryPreferance = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState({});
   const {lookupData} = useLookupData();
-  const {userDetails} = useUserDetails();
+  const {saveUserDetails, userDetails} = useUserDetails();
   const [deliveryPreferenceList, setDeliveryPreferenceList] = useState(
     lookupData.workType,
   );
@@ -28,6 +29,13 @@ const DeliveryPreferance = ({navigation}) => {
   const handleOptionSelect = option => {
     setSelectedOption(option);
   };
+
+  useEffect(() => {
+    var option = lookupData.workType.filter(
+      val => val.id == userDetails.userDetails[0].work_type_id,
+    );
+    setSelectedOption(option[0]);
+  }, []);
 
   // Define a variable to check if any option is selected
   const isOptionSelected = selectedOption !== null;
@@ -43,6 +51,10 @@ const DeliveryPreferance = ({navigation}) => {
     }
   };
 
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
+
   const updateProfile = () => {
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
@@ -53,6 +65,18 @@ const DeliveryPreferance = ({navigation}) => {
       profileParams,
       successResponse => {
         console.log('updateUserProfile', successResponse);
+        saveUserDetails({
+          userInfo: userDetails.userInfo,
+          userDetails: [
+            {...userDetails.userDetails[0], work_type_id: selectedOption.id},
+          ],
+        });
+        saveUserDetailsInAsync({
+          userInfo: userDetails.userInfo,
+          userDetails: [
+            {...userDetails.userDetails[0], work_type_id: selectedOption.id},
+          ],
+        });
         Alert.alert('Success', '' + successResponse[0]._response, [
           {
             text: 'OK',

@@ -58,7 +58,7 @@ const OrderConfirm = ({navigation}) => {
       },
       errorResponse => {
         console.log('getProfile===>errorResponse', errorResponse);
-        Alert.alert('Error Alert', successResponse[0]._response.message, [
+        Alert.alert('Error Alert', errorResponse[0]._response.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },
