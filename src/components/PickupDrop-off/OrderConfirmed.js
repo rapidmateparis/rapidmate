@@ -9,6 +9,7 @@ import {
   Image,
   ImageBackground,
   Alert,
+  BackHandler
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -28,6 +29,22 @@ const OrderConfirm = ({navigation}) => {
     useState(false);
   const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
+
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+    };
+  }, []);
+
+  function handleBackButtonClick() {
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'PickupBottomNav'}],
+    });
+    return true;
+  }
 
   const handleCopyOrderId = () => {
     Clipboard.setString(placedOrderDetails[0]?.order_number || '');

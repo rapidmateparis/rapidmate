@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   Alert,
+  BackHandler
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -39,6 +40,18 @@ const PickupAddress = ({route, navigation}) => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
   };
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+    };
+  }, []);
+
+  function handleBackButtonClick() {
+    navigation.goBack();
+    return true;
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -128,7 +141,9 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
-    if (selectedVehicle && sourceLocation && destinationLocation && selectedVehiclePrice) {
+    if (selectedVehicle && sourceLocation && destinationLocation && 
+      selectedVehiclePrice && distanceTime && selectedVehicleDetails &&
+      sourceLocationId && destinationLocationId) {
       navigation.push('AddPickupdetails', {
         selectedVehicle: selectedVehicle,
         selectedVehicleDetails: selectedVehicleDetails,
@@ -141,7 +156,7 @@ const PickupAddress = ({route, navigation}) => {
         serviceTypeId: route?.params?.pickupService?.id || 1
       });
     } else {
-      Alert.alert('Alert', 'Please choose location and vehicle / Vehicle price not available', [
+      Alert.alert('Alert', 'Please choose location and vehicle / Vehicle price or location not available', [
         {text: 'OK', onPress: () => {}},
       ]);
     }
