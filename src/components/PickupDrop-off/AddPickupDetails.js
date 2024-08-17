@@ -249,7 +249,6 @@ const AddPickupdetails = ({route, navigation }) => {
             onPress={() => {
               let userDetails = {name:name, lastname:lastname,email:email, number:number}
               route.params.userDetails = userDetails
-              console.log('oute.params', route.params)
               navigation.navigate('PickupOrderPreview',{props:route.params})
             }}
             style={[styles.logbutton, { backgroundColor: colors.primary }]}>
