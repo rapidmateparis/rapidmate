@@ -21,7 +21,10 @@ const EnterprisesSettins = ({navigation}) => {
 
   const clearAsyncStorage = async () => {
     await AsyncStorage.clear();
-    RNExitApp.exitApp();
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'LoginSignup'}],
+    });
   };
 
   return (

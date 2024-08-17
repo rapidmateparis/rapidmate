@@ -118,6 +118,7 @@ const AppNavigator = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [userDetail, setUserDetail] = useState(null);
   const {saveUserDetails} = useUserDetails();
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -133,6 +134,7 @@ const AppNavigator = () => {
           let userDetails = JSON.parse(userDetail);
           setUserDetail(userDetails);
         }
+        setIsLoading(false)
       } catch (error) {}
     };
 
@@ -147,7 +149,7 @@ const AppNavigator = () => {
 
   return (
     <>
-      <LoaderProvider>
+    {!isLoading ? <LoaderProvider>
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
@@ -2186,7 +2188,8 @@ const AppNavigator = () => {
           </Stack.Navigator>
         </NavigationContainer>
         <Loader />
-      </LoaderProvider>
+      </LoaderProvider> : null }
+      
     </>
   );
 };

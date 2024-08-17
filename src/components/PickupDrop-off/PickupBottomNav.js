@@ -68,7 +68,6 @@ const PickupBottomNav = ({navigation}) => {
     if (permission) {
       const fcmToken = await messaging().getToken();
       if (fcmToken) {
-        console.log('fcmtoken', fcmToken);
         updateProfile(fcmToken)
       }
 
@@ -103,7 +102,6 @@ const PickupBottomNav = ({navigation}) => {
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
-        console.log('updateUserProfile', successResponse);
       },
       errorResponse => {
         console.log('updateUserProfile', errorResponse);
