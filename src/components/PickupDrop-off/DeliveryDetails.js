@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,15 +7,23 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
+import { getAVehicleByTypeId, getLocationById, getViewOrderDetail } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 
-const DeliveryDetails = ({navigation}) => {
+const DeliveryDetails = ({route, navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+  const {setLoading} = useLoader();
+  const orderNumber = route.params.order_number;
+  const [order, serOrder] = useState({})
+  const [destinationAddress, setDestinationAddress] = useState({})
+  const [vehicleType, setVehicleType] = useState({})
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -24,6 +32,74 @@ const DeliveryDetails = ({navigation}) => {
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
   };
+
+  useEffect(()=>{
+    orderDetail()
+  },[])
+
+  const orderDetail = async () => {
+    setLoading(true);
+    getViewOrderDetail(
+      orderNumber,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          serOrder(successResponse[0]._response.order)
+          getDestinationAddress(successResponse[0]._response.order.dropoff_location_id)
+          vehicleDetail(successResponse[0]._response.order.vehicle_type_id)
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('orderDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getDestinationAddress = async (locationId) => {
+    setLoading(true);
+    getLocationById(
+      locationId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setDestinationAddress(successResponse[0]._response[0])
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('destination==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const vehicleDetail = async (vehicleTypeId) => {
+    setLoading(true);
+    getAVehicleByTypeId(
+      vehicleTypeId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setVehicleType(successResponse[0]._response[0])
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('vehicleDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -37,18 +113,21 @@ const DeliveryDetails = ({navigation}) => {
             source={require('../../image/driver.jpeg')}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>John Doe</Text>
+            <Text style={styles.driverName}>{order.first_name}</Text>
             <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
           </View>
         </View>
 
         <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/package-img.png')}
+          />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
+            <Text style={styles.companyInfo}>{order.company_name ? order.company_name : ''}</Text>
             <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
+              {destinationAddress.address}, {destinationAddress.city}, {destinationAddress.state}
             </Text>
           </View>
         </View>
@@ -60,29 +139,29 @@ const DeliveryDetails = ({navigation}) => {
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>Order fare</Text>
-              <Text style={styles.totalmoney}>€34.00</Text>
+              <Text style={styles.totalmoney}>€{order.amount}</Text>
             </View>
 
-            <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
+            <Text style={styles.travel}>Travelled {order.distance ? order.distance.toFixed(2): ''} km in 32 mins</Text>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Order fare</Text>
-              <Text style={styles.value}>€30.00</Text>
+              <Text style={styles.value}>€{order.delivery_boy_amount}</Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>€03.00</Text>
+              <Text style={styles.value}>€0</Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Platform fee</Text>
-              <Text style={styles.value}>€01.00</Text>
+              <Text style={styles.value}>€{order.commission_amount}</Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Amount charged</Text>
-              <Text style={styles.value}>€34.00</Text>
+              <Text style={styles.value}>€{order.amount}</Text>
             </View>
 
             <View style={styles.masterCard}>
@@ -95,17 +174,16 @@ const DeliveryDetails = ({navigation}) => {
         <View style={styles.packageInformationCard}>
           <Text style={styles.packageTitle}>Package information</Text>
           <Text style={styles.orderdetails}>
-            Order ID:<Text style={styles.detailsId}>20394</Text>
+            Order ID:<Text style={styles.detailsId}> {order.order_number}</Text>
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.detailsId}>
-              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
+            <Text style={styles.detailsId}> Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
               sed.
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Vehicle:<Text style={styles.detailsId}>Pickup truck</Text>
+            Vehicle:<Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
         </View>
 

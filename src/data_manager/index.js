@@ -392,3 +392,45 @@ export const getProfileInformation = (
     },
   );
 };
+
+export const getViewOrderDetail = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.viewOrderDetail + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getLocationById = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.locationIdUrl + '/'+params,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getAVehicleByTypeId = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.vehicletypesUrl + '/' + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

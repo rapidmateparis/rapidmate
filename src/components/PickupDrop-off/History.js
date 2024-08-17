@@ -20,10 +20,11 @@ import {getConsumerViewOrdersList, getLocations} from '../../data_manager';
 import {RefreshControl} from 'react-native-gesture-handler';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
+import moment from 'moment'
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = () => {
+const TodayList = (navigation) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   const {setLoading} = useLoader();
@@ -89,14 +90,16 @@ const TodayList = () => {
   };
 
   const renderItem = ({item}) => (
-    <TouchableOpacity style={styles.packageDetailCard}>
+    <TouchableOpacity onPress={() => {
+      navigation.navigation.navigate('DeliveryDetails',{order_number:item.order_number})
+    }} style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image
           style={styles.packageManage}
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on {item.delivery_date}
+          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at {moment(item.delivery_date).format('hh:mm A')}
         </Text>
       </View>
 
@@ -124,7 +127,7 @@ const TodayList = () => {
 
       <View style={styles.footerCard}>
         <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
-        <Text style={styles.valueMoney}>€34.00</Text>
+        <Text style={styles.valueMoney}>€{item.amount}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -298,10 +301,10 @@ const PastList = ({navigation}) => {
   );
 };
 
-const Ongoing = () => {
+const Ongoing = (navigation) => {
   return (
     <View style={{flex: 1}}>
-      <TodayList />
+      <TodayList navigation = {navigation} />
     </View>
   );
 };
@@ -360,7 +363,9 @@ function History({navigation}) {
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
           tabBarStyle: {backgroundColor: '#fff'},
         }}>
-        <Tab.Screen name="Ongoing" component={Ongoing} />
+        <Tab.Screen name="Ongoing">
+          {() => <TodayList navigation = {navigation} />}
+        </Tab.Screen>
         <Tab.Screen name="Past">
           {() => <PastList navigation={navigation} />}
         </Tab.Screen>
