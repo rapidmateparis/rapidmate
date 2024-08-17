@@ -42,6 +42,7 @@ const TodayList = ({navigation}) => {
         postParams,
         null,
         successResponse => {
+          console.log('ordr',successResponse[0]._response)
           setCurrentOrderList(successResponse[0]._response);
           setLoading(false);
         },
@@ -89,7 +90,7 @@ const TodayList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}
+          onPress={() => navigation.navigate('DeliveryboyDeliveryDetails',{order_number:item.item.order_number})}
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -134,7 +135,7 @@ const TodayList = ({navigation}) => {
 
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
+            <Text style={styles.valueMoney}>€{item.item.amount? item.item.amount : '34.00'}</Text>
           </View>
         </TouchableOpacity>
       </View>

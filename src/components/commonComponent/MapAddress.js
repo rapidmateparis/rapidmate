@@ -106,6 +106,7 @@ const MapAddress = props => {
                   textInput: {
                     color: colors.text,
                   },
+                  description : {color : colors.text}
                 }}
                 onPress={(data, details = null) => {
                   const originCoordinates = {
@@ -136,6 +137,12 @@ const MapAddress = props => {
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter drop address"
+                styles={{
+                  textInput: {
+                    color: colors.text,
+                  },
+                  description : {color : colors.text},
+                }}
                 onPress={(data, details = null) => {
                   const destinationCoordinates = {
                     latitude: details.geometry.location.lat,
@@ -147,11 +154,6 @@ const MapAddress = props => {
                     destinationCoordinates: destinationCoordinates,
                     destinationDescription: data.description,
                   });
-                }}
-                styles={{
-                  textInput: {
-                    color: colors.text,
-                  },
                 }}
                 query={{
                   key: MAPS_API_KEY,

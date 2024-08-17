@@ -133,7 +133,7 @@ const PickupOrderPreview = ({route, navigation}) => {
               <Text style={styles.vehicleName}>
                 €
                 {(params.selectedVehicleDetails.base_price + (params.selectedVehicleDetails.km_price * 
-                (params.distanceTime.distance - 1))).toFixed(0)}
+                params.distanceTime.distance)).toFixed(0)}
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text

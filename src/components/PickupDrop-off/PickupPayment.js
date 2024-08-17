@@ -34,7 +34,7 @@ const PickupPayment = ({route, navigation}) => {
   const paymentAmount = Math.round(
     params.selectedVehicleDetails.base_price +
       params.selectedVehicleDetails.km_price *
-        (params.distanceTime.distance - 1),
+        params.distanceTime.distance,
   ).toFixed(2);
   const [orderNumber, setOrderNumber] = useState(0);
   
@@ -113,6 +113,8 @@ const PickupPayment = ({route, navigation}) => {
         dropoff_location_id: params.destinationLocationId
           ? params.destinationLocationId
           : 2,
+        distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+        total_amount:parseFloat(paymentAmount)
       };
       setLoading(true);
       createPickupOrder(
