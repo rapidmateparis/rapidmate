@@ -56,7 +56,7 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
+          <TouchableOpacity onPress={() => navigation.navigate('PickupBillingDetails')} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Billing details</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

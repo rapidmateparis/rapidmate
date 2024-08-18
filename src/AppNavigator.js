@@ -111,6 +111,7 @@ import PickupUnsuccessfulPayment from './components/PickupDrop-off/PickupUnsucce
 import AddCustomVehicle from './components/DeliveryBoy/AddCustomVehicle';
 import DeliveryboyOtherOptions from './components/DeliveryBoy/DeliveryboyOtherOptions';
 import EnterpriseShiftFillter from './components/Enterprise/EnterpriseShiftFillter';
+import PickupBillingDetails from './components/PickupDrop-off/Settings/PickupBillingDetails';
 
 const Stack = createStackNavigator();
 
@@ -730,6 +731,34 @@ const AppNavigator = () => {
                 </TouchableOpacity>
               ),
               headerTitle: 'Change password',
+              headerTitleStyle: {
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 16,
+              },
+              headerTintColor: colors.text,
+              headerTitleAlign: 'center',
+              headerStyle: {
+                borderBottomWidth: 0,
+                elevation: 0,
+              },
+            })}
+          />
+          <Stack.Screen
+            name="PickupBillingDetails"
+            component={PickupBillingDetails}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={{paddingLeft: 10}}>
+                  <MaterialIcons
+                    name="keyboard-backspace"
+                    size={25}
+                    color={colors.text}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitle: 'Billing Details',
               headerTitleStyle: {
                 fontFamily: 'Montserrat-SemiBold',
                 fontSize: 16,
