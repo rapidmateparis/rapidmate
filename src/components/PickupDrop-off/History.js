@@ -214,7 +214,7 @@ const PastList = ({navigation}) => {
     setPastOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
-      status: 'current',
+      status: 'past',
     };
     getConsumerViewOrdersList(
       postParams,
@@ -243,7 +243,7 @@ const PastList = ({navigation}) => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on {item.delivery_date}
+          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at {moment(item.delivery_date).format('hh:mm A')}
         </Text>
       </View>
 
@@ -271,7 +271,7 @@ const PastList = ({navigation}) => {
 
       <View style={styles.footerCard}>
         <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
-        <Text style={styles.valueMoney}>€34.00</Text>
+        <Text style={styles.valueMoney}>€{item.amount}</Text>
       </View>
     </TouchableOpacity>
   );
