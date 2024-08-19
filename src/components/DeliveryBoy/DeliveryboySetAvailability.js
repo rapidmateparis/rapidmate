@@ -286,7 +286,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
       is_24x7: toggleAvailable24 ? 1 : 0,
       is_apply_for_all_days: toggleApplySameForAll ? 1 : 0,
       delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
-      setup,
+      setup: setup[weekCount - 1],
     };
 
     console.log('All Weeks Time Slots:', JSON.stringify(params));
