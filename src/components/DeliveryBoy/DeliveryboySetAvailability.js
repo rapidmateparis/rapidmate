@@ -35,6 +35,10 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const {setLoading} = useLoader();
 
   useEffect(() => {
+    getCurrentTimeSlot();
+  }, [currentWeek]);
+
+  useEffect(() => {
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
     let totalMonthWeek = getWeeksInMonth(currentYear, currentMonth);
@@ -57,6 +61,10 @@ const DeliveryboySetAvailability = ({navigation}) => {
       params,
       successResponse => {
         if (successResponse[0]._success) {
+          console.log(
+            'getCurrentPlanningSetup==>',
+            JSON.stringify(successResponse[0]),
+          );
           if (successResponse[0]._response.setup[0].slots) {
             const currentSlots = successResponse[0]._response.setup[0].slots;
             const resultData = {};
@@ -67,10 +75,17 @@ const DeliveryboySetAvailability = ({navigation}) => {
                 from_time: time.from_time || '',
                 to_time: time.to_time || '',
               }));
-              selectedItem[day] = item.selected || false
+              selectedItem[day] = item.selected || false;
             });
+            setToggleApplySameForAll(
+              successResponse[0]._response.is_apply_for_all_days == 1
+                ? true
+                : false,
+            );
+            setToggleAvailable24(
+              successResponse[0]._response.is_24x7 == 1 ? true : false,
+            );
             setTimeSlots(resultData);
-            console.log('selectedItem', selectedItem)
             setToggleCheckBoxes(selectedItem);
           } else {
             const defaultTimeSlots = {};
@@ -82,6 +97,10 @@ const DeliveryboySetAvailability = ({navigation}) => {
         }
       },
       errorResponse => {
+        console.log(
+          'getCurrentPlanningSetup==>errorResponse',
+          ""+errorResponse[0],
+        );
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -89,15 +108,28 @@ const DeliveryboySetAvailability = ({navigation}) => {
     );
   };
 
+  
+
   useEffect(() => {
-    getCurrentTimeSlot();
     const defaultTimeSlots = {};
-    currentWeek.forEach(day => {
-      defaultTimeSlots[day] = [{from_time: '', to_time: ''}];
-    });
+    const selectedItem = {};
+    if (toggleApplySameForAll) {
+      selectedItem[currentWeek[0]] = true;
+      currentWeek.forEach(day => {
+        defaultTimeSlots[currentWeek[0]] = [{from_time: '', to_time: ''}];
+      });
+    } else if (toggleAvailable24) {
+      currentWeek.forEach(day => {
+        defaultTimeSlots[day] = [{from_time: '', to_time: ''}];
+      });
+    } else {
+      currentWeek.forEach(day => {
+        defaultTimeSlots[day] = [{from_time: '', to_time: ''}];
+      });
+    }
+    setToggleCheckBoxes(selectedItem);
     setTimeSlots(defaultTimeSlots);
-    console.log('defultdings', defaultTimeSlots);
-  }, [currentWeek]);
+  }, [toggleApplySameForAll, toggleAvailable24]);
 
   function getWeeksInMonth(year, month) {
     const weeks = [],
@@ -278,15 +310,38 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
     setAllWeeksSlots(updatedWeeksSlots);
     let setup = toggleAvailable24
-      ? []
+      ? {}
       : toggleApplySameForAll
-      ? {slot: [{day: 'All', from_time: '', to_time: ''}]}
+      ? {
+          year: currentYear,
+          month: currentMonthWords,
+          week: weekCount,
+          slots: [
+            {
+              day: '1',
+              times: [
+                {
+                  from_time:
+                    updatedWeeksSlots[updatedWeeksSlots.length - 1].slots[0]
+                      .times[0].from_time,
+                  to_time:
+                    updatedWeeksSlots[updatedWeeksSlots.length - 1].slots[0]
+                      .times[0].to_time,
+                },
+              ],
+              selected: true,
+            },
+          ],
+        }
       : updatedWeeksSlots;
     let params = {
       is_24x7: toggleAvailable24 ? 1 : 0,
       is_apply_for_all_days: toggleApplySameForAll ? 1 : 0,
       delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
-      setup: setup[weekCount - 1],
+      setup:
+        toggleAvailable24 || toggleApplySameForAll
+          ? setup
+          : setup[weekCount - 1],
     };
 
     console.log('All Weeks Time Slots:', JSON.stringify(params));
@@ -318,10 +373,11 @@ const DeliveryboySetAvailability = ({navigation}) => {
   return (
     <>
       <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-        <View style={{padding: 15, backgroundColor: '#fff'}}>
+        <View style={{backgroundColor: '#fff'}}>
           <View style={styles.header}>
             <TouchableOpacity
               onPress={handlePreviousWeek}
+              disabled={toggleAvailable24 || toggleApplySameForAll}
               style={styles.slideBt}>
               <AntDesign name="arrowleft" size={20} color={colors.text} />
             </TouchableOpacity>
@@ -333,12 +389,20 @@ const DeliveryboySetAvailability = ({navigation}) => {
               <Text style={styles.weekFillter}>Week {weekCount}</Text>
             </View>
 
-            <TouchableOpacity onPress={handleNextWeek} style={styles.slideBt}>
+            <TouchableOpacity
+              disabled={toggleAvailable24 || toggleApplySameForAll}
+              onPress={handleNextWeek}
+              style={styles.slideBt}>
               <AntDesign name="arrowright" size={20} color={colors.text} />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.applySlotCard}>
+          <View
+            style={[
+              styles.applySlotCard,
+              {backgroundColor: toggleApplySameForAll ? '#F0F0F0' : '#FBFAF5'},
+            ]}
+            pointerEvents={toggleApplySameForAll ? 'none' : 'auto'}>
             <Text style={styles.applySlotText}>I am available 24/7</Text>
             <TouchableOpacity onPress={toggleAvailable}>
               <MaterialCommunityIcons
@@ -349,7 +413,12 @@ const DeliveryboySetAvailability = ({navigation}) => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.applySlotCard}>
+          <View
+            style={[
+              styles.applySlotCard,
+              {backgroundColor: toggleAvailable24 ? '#F0F0F0' : '#FBFAF5'},
+            ]}
+            pointerEvents={toggleAvailable24 ? 'none' : 'auto'}>
             <Text style={styles.applySlotText}>
               Apply same slots to all days
             </Text>
@@ -365,7 +434,12 @@ const DeliveryboySetAvailability = ({navigation}) => {
           </View>
         </View>
         <View>
-          <View style={{paddingHorizontal: 15}}>
+          <View
+            style={{
+              paddingHorizontal: 15,
+              backgroundColor: toggleAvailable24 ? '#F0F0F0' : '#FBFAF5',
+            }}
+            pointerEvents={toggleAvailable24 ? 'none' : 'auto'}>
             {currentWeek.map((day, index) => (
               <View key={index}>
                 <View>
@@ -688,6 +762,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   applySlotText: {
     fontSize: 12,
