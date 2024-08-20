@@ -86,8 +86,12 @@ const DeliveryboyHome = ({navigation}) => {
   const getOrderList = () => {
     setLoading(true);
     setOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+    };
     getDeliveryBoyViewOrdersList(
-      userDetails.userDetails[0].ext_id,
+      postParams,
       null,
       successResponse => {
         if (successResponse[0]._success) {
