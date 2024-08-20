@@ -56,6 +56,18 @@ const DeliveryboyBottomNav = ({navigation}) => {
   }, []);
 
   useEffect(async () => {
+    messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Background Msg!!!!', JSON.stringify(remoteMessage));
+      navigation.navigate('Notifications', {
+        params: JSON.stringify(remoteMessage),
+      });
+    });
+  }, []);
+
+  useEffect(async () => {
     var permission = true;
     if (Platform.Version >= 33) {
       permission = await requestNotificationPermission();
@@ -66,13 +78,6 @@ const DeliveryboyBottomNav = ({navigation}) => {
       if (fcmToken) {
         updateProfile(fcmToken);
       }
-
-      messaging().onMessage(async remoteMessage => {
-        Alert.alert(
-          'A new FCM message arrived!',
-          JSON.stringify(remoteMessage),
-        );
-      });
     }
     onSignIn();
   }, []);
