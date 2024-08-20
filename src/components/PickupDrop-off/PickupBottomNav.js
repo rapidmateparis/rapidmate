@@ -68,7 +68,7 @@ const PickupBottomNav = ({navigation}) => {
     if (permission) {
       const fcmToken = await messaging().getToken();
       if (fcmToken) {
-        updateProfile(fcmToken)
+        updateProfile(fcmToken);
       }
 
       messaging().onMessage(async remoteMessage => {
@@ -102,9 +102,10 @@ const PickupBottomNav = ({navigation}) => {
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
+        console.log('updateUserProfile', '' + successResponse);
       },
       errorResponse => {
-        console.log('updateUserProfile', errorResponse);
+        console.log('updateUserProfile', '' + errorResponse);
       },
     );
   };

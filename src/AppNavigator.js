@@ -116,7 +116,7 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [userDetail, setUserDetail] = useState(null);
+  const [userDetails, setUserDetail] = useState(null);
   const {saveUserDetails} = useUserDetails();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -127,11 +127,11 @@ const AppNavigator = () => {
   useEffect(() => {
     const getUserDetails = async () => {
       try {
-        const userDetail = await AsyncStorage.getItem('userDetails');
-        if (userDetail !== null) {
-          console.log("userDetail==>", userDetail)
-          saveUserDetails(JSON.parse(userDetail));
-          let userDetails = JSON.parse(userDetail);
+        const getUserDetails = await AsyncStorage.getItem('userDetails');
+        if (getUserDetails !== null) {
+          console.log("userDetail==>", getUserDetails)
+          saveUserDetails(JSON.parse(getUserDetails));
+          let userDetails = JSON.parse(getUserDetails);
           setUserDetail(userDetails);
         }
         setIsLoading(false)
@@ -155,11 +155,11 @@ const AppNavigator = () => {
             <Stack.Screen
               name="LoginSignup"
               component={
-                userDetail == null
+                userDetails == null
                   ? LoginSignup
-                  : userDetail.userDetails[0].role == 'CONSUMER'
+                  : userDetails.userDetails[0].role == 'CONSUMER'
                   ? PickupBottomNav
-                  : userDetail.userDetails[0].role == 'DELIVERY_BOY'
+                  : userDetails.userDetails[0].role == 'DELIVERY_BOY'
                   ? DeliveryboyBottomNav
                   : EnterpriseBottomNav
               }

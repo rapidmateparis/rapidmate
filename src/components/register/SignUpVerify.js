@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
+  Platform
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -17,12 +18,50 @@ import {
   useUserDetails,
 } from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
+import {requestNotificationPermission} from '../../utils/common';
+import messaging from '@react-native-firebase/messaging';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const SignUpVerify = ({route, navigation}) => {
   const {saveUserDetails} = useUserDetails();
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
   const [code, setCode] = useState('');
   const {setLoading} = useLoader();
+  const [fcmToken, setFcmToken] = useState('');
+
+  useEffect(async () => {
+    var permission = true;
+    if (Platform.Version >= 33) {
+      permission = await requestNotificationPermission();
+    }
+
+    if (permission) {
+      const fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        setFcmToken(fcmToken);
+      }
+
+      messaging().onMessage(async remoteMessage => {
+        Alert.alert(
+          'A new FCM message arrived!',
+          JSON.stringify(remoteMessage),
+        );
+      });
+    }
+    onSignIn();
+  }, []);
+
+  async function onSignIn() {
+    crashlytics().log('User signed in.');
+    await Promise.all([
+      crashlytics().setUserId(userDetails.userDetails[0].ext_id.toString()),
+      crashlytics().setAttributes({
+        role: userDetails.userDetails[0].role,
+        email: userDetails.userDetails[0].email,
+        extId: userDetails.userDetails[0].ext_id,
+      }),
+    ]);
+  }
 
   const handleVerifyCode = async () => {
     console.log('signUpDetails', signUpDetails);
@@ -45,6 +84,7 @@ const SignUpVerify = ({route, navigation}) => {
               info: {
                 userName: signUpDetails.userName,
                 password: signUpDetails.password,
+                token: fcmToken,
               },
             };
             setLoading(true);
