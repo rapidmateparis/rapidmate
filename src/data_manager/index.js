@@ -409,7 +409,7 @@ export const getViewOrderDetail = (param, successCallback, errorCallback) => {
 
 export const getLocationById = (params, successCallback, errorCallback) => {
   axiosCall(
-    API.locationIdUrl + '/'+params,
+    API.locationIdUrl + '/' + params,
     HTTPMethod.GET,
     {},
     response => {
@@ -424,6 +424,20 @@ export const getLocationById = (params, successCallback, errorCallback) => {
 export const getAVehicleByTypeId = (param, successCallback, errorCallback) => {
   axiosCall(
     API.vehicletypesUrl + '/' + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getNotificationList = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.getNotificationUrl + param + '?page=1&size=15',
     HTTPMethod.GET,
     {},
     response => {

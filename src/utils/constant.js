@@ -55,5 +55,6 @@ export const API = {
   viewImageUrl: BASE_URL + 'documents/view/',
   lookupDataUrl: BASE_URL + 'lookup',
   getAllocatedDeliveryBoy: BASE_URL + '/order/allocated/details?o=',
-  viewOrderDetail: BASE_URL + 'order/view/'
+  viewOrderDetail: BASE_URL + 'order/view/',
+  getNotificationUrl: BASE_URL + 'notification/list/',
 };
