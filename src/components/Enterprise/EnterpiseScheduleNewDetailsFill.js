@@ -38,8 +38,10 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [orderid, setOrderid] = useState('');
   const [number, setNumber] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
-  const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
+  const [selectedRepeatEvery, setSelectedRepeatEvery] = useState(null);
+  const [selectedRepeatType, setSelectedRepeatType] = useState(null);
+  const [isFocusRepeatEvery, setIsFocusRepeatEvery] = useState(false);
+  const [isFocusRepeatType, setIsFocusRepeatType] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [repeatOrder, setRepeatOrder] = useState('Daily');
@@ -53,11 +55,17 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [sourceLocationId, setSourceLocationId] = useState();
   const [destinationLocationId, setDestinationLocationId] = useState();
   const [date, setDate] = useState(new Date());
+  const [untilDate, setUntilDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [dateOpen, setDateOpen] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
-  const [pickupDate, setPickupDate] = useState('')
-  const [pickupTime, setPickupTime] = useState('')
+  const [dateUntilOpen, setDateUntilOpen] = useState(false);
+  const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
+  const [pickupUntilDate, setPickupUntilDate] = useState('');
+
+  const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
 
   console.log('props', route);
   const handleDayPress = day => {
@@ -80,9 +88,14 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const data = [
+  const repeatType = [{label: 'Day', value: '1'}];
+
+  const days = [
     {label: '1', value: '1'},
     {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
   ];
 
   const toggleModal = () => {
@@ -149,6 +162,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       longitude: location.originCoordinates.longitude,
     };
     setLoading(true);
+    console.log('locationParams',locationParams)
     getLocationId(
       locationParams,
       successResponse => {
@@ -199,246 +213,355 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15, paddingTop: 8}}>
-        <View>
-          <View style={{height: 150, position: 'relative'}}>
-            <MapAddress
-              onFetchDistanceAndTime={onFetchDistanceAndTime}
-              onSourceLocation={onSourceLocation}
-              onDestinationLocation={onDestinationLocation}
-            />
-          </View>
+    <View style={{flex:1}}>
+      <View style={{height: 200, position: 'relative'}}>
+        <MapAddress
+          onFetchDistanceAndTime={onFetchDistanceAndTime}
+          onSourceLocation={onSourceLocation}
+          onDestinationLocation={onDestinationLocation}
+        />
+      </View>
 
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Company</Text>
-            <TextInput
-              style={styles.inputTextStyle}
-              placeholder="Type here"
-              value={company}
-              onChangeText={text => setCompany(text)}
-            />
-          </View>
-
+      <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+        <View style={{paddingHorizontal: 15, paddingTop: 8}}>
           <View>
-            <Text style={styles.textlable}>Phone number</Text>
-            <View style={styles.mobileNumberInput}>
-              <View style={{width: 95}}>
-                <View style={styles.containerDropdown}>
-                  <Dropdown
-                    data={numberData}
-                    search
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? '+33' : '...'}
-                    searchPlaceholder="+.."
-                    value={dropdownValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownValue(item.value);
-                      setIsFocus(false);
+            <View style={{flex: 1}}>
+              <Text style={styles.textlable}>Company</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                placeholder="Type here"
+                value={company}
+                onChangeText={text => setCompany(text)}
+              />
+            </View>
+
+            <View>
+              <Text style={styles.textlable}>Phone number</Text>
+              <View style={styles.mobileNumberInput}>
+                <View style={{width: 95}}>
+                  <View style={styles.containerDropdown}>
+                    <Dropdown
+                      data={numberData}
+                      search
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? '+33' : '...'}
+                      searchPlaceholder="+.."
+                      value={dropdownValue}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setDropdownValue(item.value);
+                        setIsFocus(false);
+                      }}
+                      renderLeftIcon={() => (
+                        <Image
+                          style={{marginRight: 10}}
+                          source={require('../../image/flagIcon.png')}
+                        />
+                      )}
+                    />
+                  </View>
+                </View>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {fontFamily: 'Montserrat-Regular', fontSize: 16},
+                  ]}
+                  placeholder="00 00 00 00 00"
+                  placeholderTextColor="#999"
+                  keyboardType="numeric"
+                  maxLength={11}
+                  value={number}
+                  onChangeText={text => setNumber(text)}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity
+              onPress={toggleModal}
+              style={{flex: 1, backgroundColor: '#fff'}}>
+              <Text style={styles.textlable}>Package photo</Text>
+              <View style={styles.dottedLine}>
+                <Entypo
+                  name="attachment"
+                  size={13}
+                  color="#131314"
+                  style={{marginTop: 13}}
+                />
+                <Text style={styles.packagePhoto}>Package photo</Text>
+                <View style={styles.packagePhotoPath}>
+                  <Text style={styles.packagePhotoText}>{photoFileName}</Text>
+                  <MaterialCommunityIcons name="close" color="#000" size={13} />
+                </View>
+              </View>
+            </TouchableOpacity>
+
+            <View style={{flex: 1}}>
+              <Text style={styles.textlable}>Order ID</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                placeholder="Type here"
+                value={orderid}
+                onChangeText={text => setOrderid(text)}
+              />
+            </View>
+            <View style={{flex: 1}}>
+              <Text style={styles.textlable}>Pickup notes</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                multiline={true}
+                numberOfLines={4} // Set the number of lines you want to display initially
+                placeholder="Type here"
+                textAlignVertical="top"
+                value={pickupNotes}
+                onChangeText={text => setPickupNotes(text)}
+              />
+            </View>
+
+            <View style={styles.datetimeCard}>
+              <View style={{width: '50%', marginRight: 8}}>
+                <Text style={styles.pickupDates}>Pickup date</Text>
+                <View style={styles.nameInputDiv}>
+                  <DatePicker
+                    modal
+                    open={dateOpen}
+                    date={date}
+                    mode="date"
+                    onConfirm={date => {
+                      setDateOpen(false);
+                      setDate(date);
+                      setPickupDate(moment(date).format('DD/MM/YYYY'));
                     }}
-                    renderLeftIcon={() => (
-                      <Image
-                        style={{marginRight: 10}}
-                        source={require('../../image/flagIcon.png')}
-                      />
-                    )}
+                    onCancel={() => {
+                      setDateOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="12/06/2024"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupDate}
+                  />
+                  <AntDesign
+                    name="calendar"
+                    size={20}
+                    onPress={() => setDateOpen(true)}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
                   />
                 </View>
               </View>
-              <TextInput
-                style={[
-                  styles.input,
-                  {fontFamily: 'Montserrat-Regular', fontSize: 16},
-                ]}
-                placeholder="00 00 00 00 00"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-                maxLength={11}
-                value={number}
-                onChangeText={text => setNumber(text)}
-              />
-            </View>
-          </View>
 
-          <TouchableOpacity
-            onPress={toggleModal}
-            style={{flex: 1, backgroundColor: '#fff'}}>
-            <Text style={styles.textlable}>Package photo</Text>
-            <View style={styles.dottedLine}>
-              <Entypo
-                name="attachment"
-                size={13}
-                color="#131314"
-                style={{marginTop: 13}}
-              />
-              <Text style={styles.packagePhoto}>Package photo</Text>
-              <View style={styles.packagePhotoPath}>
-                <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                <MaterialCommunityIcons name="close" color="#000" size={13} />
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Order ID</Text>
-            <TextInput
-              style={styles.inputTextStyle}
-              placeholder="Type here"
-              value={orderid}
-              onChangeText={text => setOrderid(text)}
-            />
-          </View>
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Pickup notes</Text>
-            <TextInput
-              style={styles.inputTextStyle}
-              multiline={true}
-              numberOfLines={4} // Set the number of lines you want to display initially
-              placeholder="Type here"
-              textAlignVertical="top"
-              value={pickupNotes}
-              onChangeText={text => setPickupNotes(text)}
-            />
-          </View>
-
-          <View style={styles.datetimeCard}>
-            <View style={{width: '50%', marginRight: 8}}>
-              <Text style={styles.pickupDates}>Pickup date</Text>
-              <View style={styles.nameInputDiv}>
-                <DatePicker
-                  modal
-                  open={dateOpen}
-                  date={date}
-                  mode = 'date'
-                  onConfirm={date => {
-                    setDateOpen(false);
-                    setDate(date);
-                    setPickupDate(moment(date).format(
-                      'DD/MM/YYYY',
-                    ))
-                  }}
-                  onCancel={() => {
-                    setDateOpen(false);
-                  }}
-                />
-                <TextInput
-                  style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                  placeholder="12/06/2024"
-                  placeholderTextColor="#999"
-                  editable = {false}
-                  value={pickupDate}
-                />
-                <AntDesign
-                  name="calendar"
-                  size={20}
-                  onPress={() => setDateOpen(true)}
-                  color={colors.secondary}
-                  style={{marginTop: 13}}
-                />
-              </View>
-            </View>
-
-            <View style={{width: '50%'}}>
-              <Text style={styles.pickupDates}>Pickup time</Text>
-              <View style={styles.nameInputDiv}>
-              <DatePicker
-                  modal
-                  open={timeOpen}
-                  date={time}
-                  mode = 'time'
-                  onConfirm={date => {
-                    setTimeOpen(false);
-                    setTime(date);
-                    setPickupTime(moment(date).format(
-                      'hh:mm A',
-                    ))
-                  }}
-                  onCancel={() => {
-                    setTimeOpen(false);
-                  }}
-                />
-                <TextInput
-                  style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                  placeholder="10:30 AM"
-                  placeholderTextColor="#999"
-                  editable = {false}
-                  value={pickupTime}
-                />
-                <Ionicons
-                  name="time-outline"
-                  size={20}
-                  onPress={()=>{setTimeOpen(true)}}
-                  color={colors.secondary}
-                  style={{marginTop: 13}}
-                />
+              <View style={{width: '50%'}}>
+                <Text style={styles.pickupDates}>Pickup time</Text>
+                <View style={styles.nameInputDiv}>
+                  <DatePicker
+                    modal
+                    open={timeOpen}
+                    date={time}
+                    mode="time"
+                    onConfirm={date => {
+                      setTimeOpen(false);
+                      setTime(date);
+                      setPickupTime(moment(date).format('hh:mm A'));
+                    }}
+                    onCancel={() => {
+                      setTimeOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="10:30 AM"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupTime}
+                  />
+                  <Ionicons
+                    name="time-outline"
+                    size={20}
+                    onPress={() => {
+                      setTimeOpen(true);
+                    }}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
+                  />
+                </View>
               </View>
             </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.addressCard}>
-        <View style={styles.bookAddress}>
-          <Text style={styles.cardTitle}>Repeat this order</Text>
-          <TouchableOpacity onPress={togglePromoEmails}>
-            <MaterialCommunityIcons
-              name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
-              size={55}
-              color={promoEmails ? '#FFC72B' : '#D3D3D3'}
-            />
-          </TouchableOpacity>
-        </View>
-        {promoEmails && (
-          <View style={styles.mainDateCard}>
-            <TouchableOpacity
-              onPress={() => setRepeatOrder('Daily')}
-              style={styles.datesCards}>
-              <FontAwesome
-                name={repeatOrder === 'Daily' ? 'dot-circle-o' : 'circle-thin'}
-                size={20}
-                color={repeatOrder === 'Daily' ? colors.secondary : colors.text}
+        <View style={styles.addressCard}>
+          <View style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Repeat this order</Text>
+            <TouchableOpacity onPress={togglePromoEmails}>
+              <MaterialCommunityIcons
+                name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
+                size={55}
+                color={promoEmails ? '#FFC72B' : '#D3D3D3'}
               />
-              <Text style={styles.deliveryDates}>Daily</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setRepeatOrder('Weekly')}
-              style={styles.datesCards}>
-              <FontAwesome
-                name={repeatOrder === 'Weekly' ? 'dot-circle-o' : 'circle-thin'}
-                size={20}
-                color={
-                  repeatOrder === 'Weekly' ? colors.secondary : colors.text
-                }
-              />
-              <Text style={styles.deliveryDates}>Weekly</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setRepeatOrder('Monthly')}
-              style={styles.datesCards}>
-              <FontAwesome
-                name={
-                  repeatOrder === 'Monthly' ? 'dot-circle-o' : 'circle-thin'
-                }
-                size={20}
-                color={
-                  repeatOrder === 'Monthly' ? colors.secondary : colors.text
-                }
-              />
-              <Text style={styles.deliveryDates}>Monthly</Text>
             </TouchableOpacity>
           </View>
-        )}
-        <View>
-          {promoEmails && repeatOrder === 'Daily' && (
+          {promoEmails && (
+            <View style={styles.mainDateCard}>
+              <TouchableOpacity
+                onPress={() => setRepeatOrder('Daily')}
+                style={styles.datesCards}>
+                <FontAwesome
+                  name={
+                    repeatOrder === 'Daily' ? 'dot-circle-o' : 'circle-thin'
+                  }
+                  size={20}
+                  color={
+                    repeatOrder === 'Daily' ? colors.secondary : colors.text
+                  }
+                />
+                <Text style={styles.deliveryDates}>Daily</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setRepeatOrder('Weekly')}
+                style={styles.datesCards}>
+                <FontAwesome
+                  name={
+                    repeatOrder === 'Weekly' ? 'dot-circle-o' : 'circle-thin'
+                  }
+                  size={20}
+                  color={
+                    repeatOrder === 'Weekly' ? colors.secondary : colors.text
+                  }
+                />
+                <Text style={styles.deliveryDates}>Weekly</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setRepeatOrder('Monthly')}
+                style={styles.datesCards}>
+                <FontAwesome
+                  name={
+                    repeatOrder === 'Monthly' ? 'dot-circle-o' : 'circle-thin'
+                  }
+                  size={20}
+                  color={
+                    repeatOrder === 'Monthly' ? colors.secondary : colors.text
+                  }
+                />
+                <Text style={styles.deliveryDates}>Monthly</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          <View>
+            {promoEmails && repeatOrder === 'Daily' && (
+              <View>
+                <View style={styles.dailyCardMain}>
+                  <View style={styles.repeatdayCard}>
+                    <AntDesign name="retweet" size={20} color={colors.text} />
+                    <Text style={styles.repeatEvery}>Repeat every</Text>
+                  </View>
+                  <View style={styles.containerCity}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={days}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
+                      placeholder={!isFocusRepeatEvery ? '1' : '1'}
+                      searchPlaceholder="Search.."
+                      value={selectedRepeatEvery}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setSelectedRepeatEvery(item.value);
+                        setIsFocusRepeatEvery(false);
+                      }}
+                    />
+                  </View>
+
+                  <View style={styles.containerCity}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={repeatType}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
+                      placeholder={!isFocusRepeatType ? 'Day' : 'Day'}
+                      searchPlaceholder="Search.."
+                      value={selectedRepeatType}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setSelectedRepeatType(item.value);
+                        setIsFocusRepeatType(false);
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.untilDateCard}>
+                  <Text style={styles.untilDateText}>until</Text>
+                  <View style={styles.dateUntilDiv}>
+                    <DatePicker
+                      modal
+                      open={dateUntilOpen}
+                      date={untilDate}
+                      mode="date"
+                      onConfirm={date => {
+                        setDateUntilOpen(false);
+                        setUntilDate(date);
+                        setPickupUntilDate(moment(date).format('DD/MM/YYYY'));
+                      }}
+                      onCancel={() => {
+                        setDateUntilOpen(false);
+                      }}
+                    />
+                    <TextInput
+                      style={[
+                        styles.loginput,
+                        {fontFamily: 'Montserrat-Regular'},
+                      ]}
+                      placeholder="12/06/2024"
+                      placeholderTextColor="#999"
+                      editable={false}
+                      value={pickupUntilDate}
+                    />
+                    <AntDesign
+                      name="calendar"
+                      size={20}
+                      onPress={() => setDateUntilOpen(true)}
+                      color={colors.secondary}
+                      style={{marginTop: 13}}
+                    />
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.untilDayOccurs}>
+                    Occurs every day until{' '}
+                    <Text style={styles.untilDateOccurs}>
+                      {moment(untilDate).format('MMMM DD, YYYY')}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+
+          {promoEmails && repeatOrder === 'Weekly' && (
             <View>
               <View style={styles.dailyCardMain}>
                 <View style={styles.repeatdayCard}>
@@ -448,7 +571,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <View style={styles.containerCity}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={data}
+                    data={days}
                     search
                     maxHeight={300}
                     labelField="label"
@@ -465,15 +588,15 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   />
                 </View>
 
-                <View style={styles.containerCity}>
+                <View style={styles.containerWeek}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={data}
+                    data={repeatType}
                     search
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
-                    placeholder={!isFocus ? 'Day' : 'Day'}
+                    placeholder={!isFocus ? 'Week' : 'Week'}
                     searchPlaceholder="Search.."
                     value={dropdownCountryValue}
                     onFocus={() => setIsFocus(true)}
@@ -491,7 +614,110 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <View style={styles.containeruntil}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={data}
+                    data={days}
+                    search
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
+                    searchPlaceholder="Search.."
+                    value={dropdownCountryValue}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                      setDropdownCountryValue(item.value);
+                      setIsFocus(false);
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={styles.weekDaysMainCard}>
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(
+                  (day, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.weekDaysCard,
+                        selectedDays.includes(day) && {
+                          backgroundColor: colors.secondary,
+                        },
+                      ]}
+                      onPress={() => handleDayPress(day)}>
+                      <Text
+                        style={[
+                          styles.dayOfWeek,
+                          selectedDays.includes(day) && styles.selectedText,
+                        ]}>
+                        {day}
+                      </Text>
+                    </TouchableOpacity>
+                  ),
+                )}
+              </View>
+              <View>
+                <Text style={styles.untilDayOccurs}>
+                  Occurs every <Text>Monday</Text> & <Text>Tuesday</Text> from{' '}
+                  <Text style={styles.untilDateOccurs}>11 AM</Text> to{' '}
+                  <Text style={styles.untilDateOccurs}>4 PM</Text> unti{' '}
+                  <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {promoEmails && repeatOrder === 'Monthly' && (
+            <View>
+              <View style={styles.dailyCardMain}>
+                <View style={styles.repeatdayCard}>
+                  <AntDesign name="retweet" size={20} color={colors.text} />
+                  <Text style={styles.repeatEvery}>Repeat every</Text>
+                </View>
+                <View style={styles.containerCity}>
+                  <Dropdown
+                    style={styles.dateDropdown}
+                    data={days}
+                    search
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={!isFocus ? '1' : '1'}
+                    searchPlaceholder="Search.."
+                    value={dropdownCountryValue}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                      setDropdownCountryValue(item.value);
+                      setIsFocus(false);
+                    }}
+                  />
+                </View>
+
+                <View style={styles.containerWeek}>
+                  <Dropdown
+                    style={styles.dateDropdown}
+                    data={days}
+                    search
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={!isFocus ? 'Week' : 'Week'}
+                    searchPlaceholder="Search.."
+                    value={dropdownCountryValue}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                      setDropdownCountryValue(item.value);
+                      setIsFocus(false);
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={styles.untilDateCard}>
+                <Text style={styles.untilDateText}>until</Text>
+                <View style={styles.containeruntil}>
+                  <Dropdown
+                    style={styles.dateDropdown}
+                    data={days}
                     search
                     maxHeight={300}
                     labelField="label"
@@ -509,305 +735,125 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 </View>
               </View>
               <View>
+                <View style={styles.onDayCard}>
+                  <TouchableOpacity
+                    style={[
+                      styles.datesCards,
+                      selectedCard === 1 && styles.selectedCard,
+                    ]}
+                    onPress={() => setSelectedCard(1)}>
+                    <FontAwesome
+                      name={selectedCard === 1 ? 'dot-circle-o' : 'circle-thin'}
+                      size={20}
+                      color={selectedCard === 1 ? '#ff6347' : '#000'}
+                    />
+                    <Text style={styles.deliveryDates}>On day</Text>
+                  </TouchableOpacity>
+                  <View style={styles.containerCity}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={days}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? '1' : '1'}
+                      searchPlaceholder="Search.."
+                      value={dropdownCountryValue}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setDropdownCountryValue(item.value);
+                        setIsFocus(false);
+                      }}
+                    />
+                  </View>
+                </View>
+
+                {/* Second onDayCard */}
+                <View style={styles.onDayCard}>
+                  <TouchableOpacity
+                    style={[
+                      styles.datesCards,
+                      selectedCard === 2 && styles.selectedCard,
+                    ]}
+                    onPress={() => setSelectedCard(2)}>
+                    <FontAwesome
+                      name={selectedCard === 2 ? 'dot-circle-o' : 'circle-thin'}
+                      size={20}
+                      color={selectedCard === 2 ? '#ff6347' : '#000'}
+                    />
+                    <Text style={styles.deliveryDates}>On the</Text>
+                  </TouchableOpacity>
+                  <View style={styles.containeruntil}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={days}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Second' : 'Second'}
+                      searchPlaceholder="Search.."
+                      value={dropdownCountryValue}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setDropdownCountryValue(item.value);
+                        setIsFocus(false);
+                      }}
+                    />
+                  </View>
+                  <View style={styles.containeruntil}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={days}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Tuesday' : 'Tuesday'}
+                      searchPlaceholder="Search.."
+                      value={dropdownCountryValue}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setDropdownCountryValue(item.value);
+                        setIsFocus(false);
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+              <View>
                 <Text style={styles.untilDayOccurs}>
-                  Occurs every day from{' '}
-                  <Text style={styles.untilDateOccurs}>11 AM</Text> to{' '}
-                  <Text style={styles.untilDateOccurs}>4 PM</Text> until{' '}
+                  Occurs every day until{' '}
                   <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
                 </Text>
               </View>
             </View>
           )}
-        </View>
 
-        {promoEmails && repeatOrder === 'Weekly' && (
           <View>
-            <View style={styles.dailyCardMain}>
-              <View style={styles.repeatdayCard}>
-                <AntDesign name="retweet" size={20} color={colors.text} />
-                <Text style={styles.repeatEvery}>Repeat every</Text>
-              </View>
-              <View style={styles.containerCity}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '1' : '1'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-
-              <View style={styles.containerWeek}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? 'Week' : 'Week'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-
-            <View style={styles.untilDateCard}>
-              <Text style={styles.untilDateText}>until</Text>
-              <View style={styles.containeruntil}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-            <View style={styles.weekDaysMainCard}>
-              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.weekDaysCard,
-                    selectedDays.includes(day) && {
-                      backgroundColor: colors.secondary,
-                    },
-                  ]}
-                  onPress={() => handleDayPress(day)}>
-                  <Text
-                    style={[
-                      styles.dayOfWeek,
-                      selectedDays.includes(day) && styles.selectedText,
-                    ]}>
-                    {day}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <View>
-              <Text style={styles.untilDayOccurs}>
-                Occurs every <Text>Monday</Text> & <Text>Tuesday</Text> from{' '}
-                <Text style={styles.untilDateOccurs}>11 AM</Text> to{' '}
-                <Text style={styles.untilDateOccurs}>4 PM</Text> unti{' '}
-                <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
-              </Text>
-            </View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('EnterprisePickupOrderPriview')
+              }
+              style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+              <Text style={styles.buttonText}>Next</Text>
+            </TouchableOpacity>
           </View>
-        )}
-
-        {promoEmails && repeatOrder === 'Monthly' && (
-          <View>
-            <View style={styles.dailyCardMain}>
-              <View style={styles.repeatdayCard}>
-                <AntDesign name="retweet" size={20} color={colors.text} />
-                <Text style={styles.repeatEvery}>Repeat every</Text>
-              </View>
-              <View style={styles.containerCity}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '1' : '1'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-
-              <View style={styles.containerWeek}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? 'Week' : 'Week'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-            <View style={styles.untilDateCard}>
-              <Text style={styles.untilDateText}>until</Text>
-              <View style={styles.containeruntil}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-            <View>
-              <View style={styles.onDayCard}>
-                <TouchableOpacity
-                  style={[
-                    styles.datesCards,
-                    selectedCard === 1 && styles.selectedCard,
-                  ]}
-                  onPress={() => setSelectedCard(1)}>
-                  <FontAwesome
-                    name={selectedCard === 1 ? 'dot-circle-o' : 'circle-thin'}
-                    size={20}
-                    color={selectedCard === 1 ? '#ff6347' : '#000'}
-                  />
-                  <Text style={styles.deliveryDates}>On day</Text>
-                </TouchableOpacity>
-                <View style={styles.containerCity}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={data}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? '1' : '1'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
-                    }}
-                  />
-                </View>
-              </View>
-
-              {/* Second onDayCard */}
-              <View style={styles.onDayCard}>
-                <TouchableOpacity
-                  style={[
-                    styles.datesCards,
-                    selectedCard === 2 && styles.selectedCard,
-                  ]}
-                  onPress={() => setSelectedCard(2)}>
-                  <FontAwesome
-                    name={selectedCard === 2 ? 'dot-circle-o' : 'circle-thin'}
-                    size={20}
-                    color={selectedCard === 2 ? '#ff6347' : '#000'}
-                  />
-                  <Text style={styles.deliveryDates}>On the</Text>
-                </TouchableOpacity>
-                <View style={styles.containeruntil}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={data}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? 'Second' : 'Second'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
-                    }}
-                  />
-                </View>
-                <View style={styles.containeruntil}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={data}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? 'Tuesday' : 'Tuesday'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-            <View>
-              <Text style={styles.untilDayOccurs}>
-                Occurs every day until{' '}
-                <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
-              </Text>
-            </View>
-          </View>
-        )}
-
-        <View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('EnterprisePickupOrderPriview')}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
         </View>
-      </View>
-      {/* -------------- Modal --------------------- */}
-      <ChoosePhotoByCameraGallaryModal
-        visible={isModalVisibleCamera}
-        handlePhotoOpenClose={handlePhotoOpenClose}
-        handleCameraLaunch={handleCameraLaunch}
-        handleImageLibraryLaunch={handleImageLibraryLaunch}
-      />
-      {/* -------------- Modal --------------------- */}
-    </ScrollView>
+        {/* -------------- Modal --------------------- */}
+        <ChoosePhotoByCameraGallaryModal
+          visible={isModalVisibleCamera}
+          handlePhotoOpenClose={handlePhotoOpenClose}
+          handleCameraLaunch={handleCameraLaunch}
+          handleImageLibraryLaunch={handleImageLibraryLaunch}
+        />
+        {/* -------------- Modal --------------------- */}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -1197,6 +1243,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f1f1f1',
   },
+  dateUntilDiv: {
+    backgroundColor: colors.white,
+    width: '40%',
+    flexDirection: 'row',
+    borderRadius: 5,
+    paddingRight: 15,
+    borderWidth: 1,
+    borderColor: '#f1f1f1',
+  },
   pickupDates: {
     fontSize: 13,
     color: colors.text,
@@ -1246,7 +1301,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   containerCity: {
-    width: '20%',
+    width: '25%',
     borderWidth: 1,
     borderColor: '#ccc',
     paddingVertical: 3,
