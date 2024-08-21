@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -22,8 +23,13 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
+import MapAddress from '../commonComponent/MapAddress';
+import {useLoader} from '../../utils/loaderContext';
+import {getLocationId} from '../../data_manager';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
-const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
+const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [pickupAddress, setPickupAddress] = useState('');
   const [dropAddress, setDropAddress] = useState('');
   const [company, setCompany] = useState('');
@@ -31,8 +37,6 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
   const [pickupNotes, setPickupNotes] = useState('');
   const [orderid, setOrderid] = useState('');
   const [number, setNumber] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -42,7 +46,20 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
+  const [distanceTime, setDistanceTime] = useState();
+  const [sourceLocation, setSourceLocation] = useState();
+  const [destinationLocation, setDestinationLocation] = useState();
+  const {setLoading} = useLoader();
+  const [sourceLocationId, setSourceLocationId] = useState();
+  const [destinationLocationId, setDestinationLocationId] = useState();
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
+  const [dateOpen, setDateOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
+  const [pickupDate, setPickupDate] = useState('')
+  const [pickupTime, setPickupTime] = useState('')
 
+  console.log('props', route);
   const handleDayPress = day => {
     let updatedSelectedDays;
 
@@ -113,41 +130,84 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
     return fileName.length > 35 ? '...' + fileName : fileName;
   };
 
+  const onFetchDistanceAndTime = value => {
+    setDistanceTime(value);
+  };
+
+  const onSourceLocation = location => {
+    setSourceLocation(location);
+
+    let locationDetails = location.sourceDescription.split(',');
+    let locationParams = {
+      location_name: locationDetails[0] ? locationDetails[0] : '',
+      address: locationDetails[0] ? locationDetails[0] : '',
+      city: locationDetails[1] ? locationDetails[1] : '',
+      state: locationDetails[2] ? locationDetails[2] : '',
+      country: locationDetails[3] ? locationDetails[3] : '',
+      postal_code: '23424',
+      latitude: location.originCoordinates.latitude,
+      longitude: location.originCoordinates.longitude,
+    };
+    setLoading(true);
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setSourceLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const onDestinationLocation = location => {
+    setDestinationLocation(location);
+
+    let locationDetails = location.destinationDescription.split(',');
+    let locationParams = {
+      location_name: locationDetails[0] ? locationDetails[0] : '',
+      address: locationDetails[0] ? locationDetails[0] : '',
+      city: locationDetails[1] ? locationDetails[1] : '',
+      state: locationDetails[2] ? locationDetails[2] : '',
+      country: locationDetails[3] ? locationDetails[3] : '',
+      postal_code: '23425',
+      latitude: location.destinationCoordinates.latitude,
+      longitude: location.destinationCoordinates.longitude,
+    };
+    setLoading(true);
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setDestinationLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
-        
         <View>
-          <View style={styles.locationAddress}>
-            <View style={styles.locationCompanyCard}>
-              <Ionicons name="location-outline" size={18} color="#000000" />
-              <TextInput
-                style={styles.loginput}
-                placeholder="Enter pickup address"
-                placeholderTextColor="#999"
-                value={pickupAddress}
-                onChangeText={text => setPickupAddress(text)}
-              />
-              <TouchableOpacity  onPress={() => navigation.navigate('EnterpriseMapPickupAddress')}>
-                <AntDesign name="arrowright" size={18} color="#000000" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.borderDummy} />
-
-            <View style={styles.locationCompanyCard}>
-              <MaterialIcons name="my-location" size={18} color="#000000" />
-              <TextInput
-                style={styles.loginput}
-                placeholder="Enter drop-off address"
-                placeholderTextColor="#999"
-                value={dropAddress}
-                onChangeText={text => setDropAddress(text)}
-              />
-              <TouchableOpacity  onPress={() => navigation.navigate('EnterpriseMapDropAddress')}>
-                <AntDesign name="arrowright" size={18} color="#000000" />
-              </TouchableOpacity>
-            </View>
+          <View style={{height: 150, position: 'relative'}}>
+            <MapAddress
+              onFetchDistanceAndTime={onFetchDistanceAndTime}
+              onSourceLocation={onSourceLocation}
+              onDestinationLocation={onDestinationLocation}
+            />
           </View>
 
           <View style={{flex: 1}}>
@@ -252,16 +312,33 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
             <View style={{width: '50%', marginRight: 8}}>
               <Text style={styles.pickupDates}>Pickup date</Text>
               <View style={styles.nameInputDiv}>
+                <DatePicker
+                  modal
+                  open={dateOpen}
+                  date={date}
+                  mode = 'date'
+                  onConfirm={date => {
+                    setDateOpen(false);
+                    setDate(date);
+                    setPickupDate(moment(date).format(
+                      'DD/MM/YYYY',
+                    ))
+                  }}
+                  onCancel={() => {
+                    setDateOpen(false);
+                  }}
+                />
                 <TextInput
                   style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                   placeholder="12/06/2024"
                   placeholderTextColor="#999"
-                  value={date}
-                  onChangeText={text => setDate(text)}
+                  editable = {false}
+                  value={pickupDate}
                 />
                 <AntDesign
                   name="calendar"
                   size={20}
+                  onPress={() => setDateOpen(true)}
                   color={colors.secondary}
                   style={{marginTop: 13}}
                 />
@@ -271,16 +348,33 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
             <View style={{width: '50%'}}>
               <Text style={styles.pickupDates}>Pickup time</Text>
               <View style={styles.nameInputDiv}>
+              <DatePicker
+                  modal
+                  open={timeOpen}
+                  date={time}
+                  mode = 'time'
+                  onConfirm={date => {
+                    setTimeOpen(false);
+                    setTime(date);
+                    setPickupTime(moment(date).format(
+                      'hh:mm A',
+                    ))
+                  }}
+                  onCancel={() => {
+                    setTimeOpen(false);
+                  }}
+                />
                 <TextInput
                   style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                   placeholder="10:30 AM"
                   placeholderTextColor="#999"
-                  value={time}
-                  onChangeText={text => setTime(text)}
+                  editable = {false}
+                  value={pickupTime}
                 />
                 <Ionicons
                   name="time-outline"
                   size={20}
+                  onPress={()=>{setTimeOpen(true)}}
                   color={colors.secondary}
                   style={{marginTop: 13}}
                 />
@@ -698,7 +792,7 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
         )}
 
         <View>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => navigation.navigate('EnterprisePickupOrderPriview')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Next</Text>

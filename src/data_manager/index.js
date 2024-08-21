@@ -434,3 +434,18 @@ export const getAVehicleByTypeId = (param, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getEnterpriseBranch = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterprisebranch + params,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
