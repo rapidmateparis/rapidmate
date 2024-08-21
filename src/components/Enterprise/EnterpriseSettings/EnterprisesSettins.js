@@ -12,7 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUserDetails} from '../../commonComponent/StoreContext';
-import RNExitApp from 'react-native-exit-app';
+import RNRestart from 'react-native-restart';
 import {API} from '../../../utils/constant';
 
 const EnterprisesSettins = ({navigation}) => {
@@ -21,10 +21,7 @@ const EnterprisesSettins = ({navigation}) => {
 
   const clearAsyncStorage = async () => {
     await AsyncStorage.clear();
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'LoginSignup'}],
-    });
+    RNRestart.restart();
   };
 
   return (
