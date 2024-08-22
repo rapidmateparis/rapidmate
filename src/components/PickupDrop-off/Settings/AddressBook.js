@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -84,14 +85,21 @@ const AddressBook = ({route, navigation}) => {
       createConsumerAddressBook(
         consumerParams,
         successResponse => {
-          console.log('successResponse', successResponse);
-          setLoading(false);
-          toggleModal(0);
+          if (successResponse[0]._success) {
+            Alert.alert('Success', 'Address added successfully', [
+              {text: 'OK', onPress: () => {}},
+            ]);
+            setLoading(false);
+            toggleModal(0);
+          }
         },
         errorResponse => {
-          console.log('errorResponse', errorResponse, consumerParams);
           setLoading(false);
           toggleModal(0);
+          console.log(errorResponse[0]);
+          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
         },
       );
     } else if (userDetails.role == 'DELIVERY_BOY') {
@@ -102,14 +110,20 @@ const AddressBook = ({route, navigation}) => {
       createDeliveryBoyAddressBook(
         deliveryBoyParams,
         successResponse => {
-          console.log('successResponse', successResponse);
-          setLoading(false);
-          toggleModal(0);
+          if (successResponse[0]._success) {
+            Alert.alert('Success', 'Address added successfully', [
+              {text: 'OK', onPress: () => {}},
+            ]);
+            setLoading(false);
+            toggleModal(0);
+          }
         },
         errorResponse => {
-          console.log('errorResponse', errorResponse, deliveryBoyParams);
           setLoading(false);
           toggleModal(0);
+          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
         },
       );
     }
@@ -165,7 +179,13 @@ const AddressBook = ({route, navigation}) => {
         </TouchableOpacity>
       </View>
       <View style={{paddingHorizontal: 15}}>
-        <FlatList data={deliveryBoyAddressList} renderItem={renderItem} />
+        <FlatList
+          data={
+            (consumerAddressList && consumerAddressList) ||
+            (deliveryBoyAddressList && deliveryBoyAddressList)
+          }
+          renderItem={renderItem}
+        />
       </View>
 
       <AddOrEditAddressModal
