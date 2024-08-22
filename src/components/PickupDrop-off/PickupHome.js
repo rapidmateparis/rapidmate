@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -15,10 +16,29 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MapLiveTracking from '../commonComponent/MapLiveTracking';
 import {colors} from '../../colors';
+import {
+  useServiceTypeDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
+import {getServiceTypeApi} from '../../data_manager';
 
 const PickupHome = ({navigation}) => {
+  const {userDetails} = useUserDetails();
+  const {serviceTypeDetails, saveServiceTypeDetails} = useServiceTypeDetails();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+
+  useEffect(() => {
+    getServiceTypeApi(
+      null,
+      successResponse => {
+        saveServiceTypeDetails(successResponse[0]._response);
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse);
+      },
+    );
+  }, []);
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -34,7 +54,12 @@ const PickupHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome <Text style={styles.userName}>John!</Text>
+              Welcome{' '}
+              <Text style={styles.userName}>
+                {userDetails.userDetails[0].first_name +
+                  ' ' +
+                  userDetails.userDetails[0].last_name}
+              </Text>
             </Text>
             <Text style={styles.aboutPage}>
               This is your Rapidmate dashboard!
@@ -46,7 +71,13 @@ const PickupHome = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.requestPickup}>
+        <TouchableOpacity
+          style={styles.requestPickup}
+          onPress={() => {
+            navigation.push('PickupAddress', {
+              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+            });
+          }}>
           <View style={styles.pickcard}>
             <Text style={styles.packageRequst}>Request a Pick up</Text>
             <Text style={styles.packageDiscription}>
@@ -111,7 +142,7 @@ const PickupHome = ({navigation}) => {
                 source={require('../../image/PackageMove-img.png')}
               />
             </View>
-            <View style={{marginTop: 10,}}>
+            <View style={{marginTop: 10}}>
               <Text style={styles.packageRequst}>Request a Mover</Text>
               <Text style={styles.packageDiscription}>
                 Avail service of our professional packer & movers

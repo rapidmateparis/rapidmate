@@ -139,6 +139,30 @@ export const requestCameraPermission = async () => {
   }
 };
 
+export const requestNotificationPermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATION,
+      {
+        title: 'Notification Permission',
+        message:
+          'App needs to send you notification',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Notification permission granted');
+    } else {
+      console.log('Notification permission denied');
+    }
+    return granted;
+  } catch (err) {
+    console.warn(err);
+  }
+};
+
 export const getEstablishmentYear = () => {
   const currentYear = new Date().getFullYear();
   const startYear = currentYear - 100;

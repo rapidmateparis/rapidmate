@@ -1,7 +1,14 @@
-package com.sideandbottomnaviagtion;
+package com.ajsgroup.rapidmate;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
+
+import androidx.annotation.Nullable;
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -9,7 +16,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
-import com.sideandbottomnaviagtion.newarchitecture.MainApplicationReactNativeHost;
+import com.ajsgroup.rapidmate.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -49,6 +56,15 @@ public class MainApplication extends Application implements ReactApplication {
     }
   }
 
+@Override
+public Intent registerReceiver(@Nullable BroadcastReceiver receiver, IntentFilter filter) {
+    if (Build.VERSION.SDK_INT >= 34 && getApplicationInfo().targetSdkVersion >= 34) {
+        return super.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
+    } else {
+        return super.registerReceiver(receiver, filter);
+    }
+}
+
   @Override
   public void onCreate() {
     super.onCreate();
@@ -73,7 +89,7 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.sideandbottomnaviagtion.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.ajsgroup.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

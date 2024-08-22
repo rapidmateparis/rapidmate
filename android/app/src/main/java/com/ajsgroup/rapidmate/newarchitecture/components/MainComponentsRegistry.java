@@ -1,4 +1,4 @@
-package com.sideandbottomnaviagtion.newarchitecture.components;
+package com.ajsgroup.rapidmate.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

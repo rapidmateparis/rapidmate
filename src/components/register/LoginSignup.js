@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {colors} from '../../colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const LoginSignup = ({navigation}) => {
+
   return (
     <View style={{width: '100%', backgroundColor: colors.primary}}>
       <View>
@@ -22,7 +23,7 @@ const LoginSignup = ({navigation}) => {
             source={require('../../image/Logo.png')}
             style={styles.deliveryScootericon}
           />
-          <Text style={[styles.companyName, {color: colors.text,}]}>
+          <Text style={[styles.companyName, {color: colors.text}]}>
             Rapidmate
           </Text>
         </View>
@@ -36,7 +37,7 @@ const LoginSignup = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('ProfileChoose')}
             style={[styles.createAcBtn, {backgroundColor: colors.white}]}>
-            <Text style={[styles.pageDirections, {color: colors.text,}]}>
+            <Text style={[styles.pageDirections, {color: colors.text}]}>
               Create account
             </Text>
           </TouchableOpacity>
@@ -51,14 +52,12 @@ const LoginSignup = ({navigation}) => {
             <Text style={[styles.loginDisclemar, {color: colors.white}]}>
               By logging in or registering, you agreed to the{' '}
               <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}
-                onPress={() => navigation.navigate('SignUp')}>
+                style={{textDecorationLine: 'underline', color: colors.white}}>
                 Terms & Conditions
               </Text>{' '}
               and{' '}
               <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}
-                onPress={() => navigation.navigate('LogInScreen')}>
+                style={{textDecorationLine: 'underline', color: colors.white}}>
                 Privacy Policy
               </Text>
               .

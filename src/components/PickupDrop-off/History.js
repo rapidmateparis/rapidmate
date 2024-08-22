@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -7,277 +7,304 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
+  FlatList,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {useLoader} from '../../utils/loaderContext';
+import {getConsumerViewOrdersList, getLocations} from '../../data_manager';
+import {RefreshControl} from 'react-native-gesture-handler';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {useFocusEffect} from '@react-navigation/native';
+import moment from 'moment'
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = () => {
+const TodayList = (navigation) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const {setLoading} = useLoader();
+  const [orderList, setOrderList] = useState([]);
+  const {userDetails} = useUserDetails();
+  const [locationList, setLocationList] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getLocationsData();
+      getOrderList();
+    }, []),
+  );
+
+  const getLocationsData = () => {
+    setLoading(true);
+    setLocationList([]);
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setLocationList([]);
+        }
+      },
+    );
+  };
+
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
+  const getOrderList = () => {
+    setLoading(true);
+    setOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+    };
+    getConsumerViewOrdersList(
+      postParams,
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          console.log('tempOrderList', tempOrderList);
+          setOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+      },
+    );
+  };
+
+  const renderItem = ({item}) => (
+    <TouchableOpacity onPress={() => {
+      navigation.navigation.navigate('DeliveryDetails',{order_number:item.order_number})
+    }} style={styles.packageDetailCard}>
+      <View style={styles.packageHeader}>
+        <Image
+          style={styles.packageManage}
+          source={require('../../image/Big-Package.png')}
+        />
+        <Text style={styles.deliveryTime}>
+          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at {moment(item.delivery_date).format('hh:mm A')}
+        </Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <Ionicons name="location-outline" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          From{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.pickup_location_id)}
+          </Text>
+        </Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <MaterialIcons name="my-location" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          To{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.dropoff_location_id)}
+          </Text>
+        </Text>
+      </View>
+
+      <View style={styles.borderShow}></View>
+
+      <View style={styles.footerCard}>
+        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.valueMoney}>€{item.amount}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <ScrollView>
-      <View style={styles.scrollViewContainer}>
-        <View
-          style={{
-            width: 350,
-            height: 500,
-            position: 'relative',
-            marginVertical: 40,
-          }}>
-          <View style={styles.container}>
-            <Image
-              style={styles.loaderMap}
-              source={require('../../image/No-Data-Table.png')}
-            />
-            <Text style={styles.text}>No orders to show</Text>
-            <Text style={styles.subText}>
-              If there is any active order, it will be shown here..
-            </Text>
+    <View style={{flex: 1}}>
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: 15,
+          paddingTop: 5,
+          backgroundColor: '#FBFAF5',
+        }}>
+        {orderList.length === 0 ? (
+          <View style={styles.scrollViewContainer}>
+            <View
+              style={{
+                width: 350,
+                height: 500,
+                position: 'relative',
+                marginVertical: 40,
+              }}>
+              <View style={styles.container}>
+                <Image
+                  style={styles.loaderMap}
+                  source={require('../../image/No-Data-Table.png')}
+                />
+                <Text style={styles.text}>No orders to show</Text>
+                <Text style={styles.subText}>
+                  If there is any active order, it will be shown here.
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
+        ) : (
+          <FlatList data={orderList} renderItem={renderItem} />
+        )}
       </View>
-      {/* <View style={{flex: 1}}>
-      <View style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5',}}>
-        <View style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image source={require('../../image/package-medium-icon.png')} />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </View>
-
-        <View style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image source={require('../../image/package-medium-icon.png')} />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </View>
-
-        <View style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image source={require('../../image/package-medium-icon.png')} />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </View>
-      </View>
-    </View> */}
-    </ScrollView>
+    </View>
   );
 };
 
 const PastList = ({navigation}) => {
-  return (
-    <ScrollView>
-      {/* <View style={styles.scrollViewContainer}>
-        <View
-          style={{
-            width: 350,
-            height: 500,
-            position: 'relative',
-            marginVertical: 40,
-          }}>
-          <View style={styles.container}>
-            <Image
-              style={styles.loaderMap}
-              source={require('../../image/No-Data-Table.png')}
-            />
-            <Text style={styles.text}>No orders to show</Text>
-            <Text style={styles.subText}>
-              If there is any active order, it will be shown here..
-            </Text>
-          </View>
-        </View>
-      </View> */}
-      <View style={{flex: 1}}>
-        <View
-          style={{
-            paddingHorizontal: 15,
-            paddingTop: 5,
-            backgroundColor: '#FBFAF5',
-          }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('DeliveryDetails')}
-            style={styles.packageDetailCard}>
-            <View style={styles.packageHeader}>
-              <Image
-                style={styles.packageManage}
-                source={require('../../image/Big-Package.png')}
-              />
-              <Text style={styles.deliveryTime}>
-                Delivered on Apr 19, 2024 at 11:30 AM
-              </Text>
-            </View>
+  const {setLoading} = useLoader();
+  const [pastOrderList, setPastOrderList] = useState([]);
+  const {userDetails} = useUserDetails();
+  const [locationList, setLocationList] = useState([]);
 
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Street, ABC</Text>
-              </Text>
-            </View>
+  useFocusEffect(
+    useCallback(() => {
+      getLocationsData();
+      getOrderList();
+    }, []),
+  );
 
-            <View style={styles.packageMiddle}>
-              <MaterialIcons name="my-location" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-              </Text>
-            </View>
+  const getLocationsData = () => {
+    setLoading(true);
+    setLocationList([]);
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setLocationList([]);
+        }
+      },
+    );
+  };
 
-            <View style={styles.borderShow}></View>
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
 
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>€34.00</Text>
-            </View>
-          </TouchableOpacity>
+  const getOrderList = () => {
+    setLoading(true);
+    setPastOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+    };
+    getConsumerViewOrdersList(
+      postParams,
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          console.log('tempOrderList', tempOrderList);
+          setPastOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+      },
+    );
+  };
 
-          <View style={styles.packageDetailCard}>
-            <View style={styles.packageHeader}>
-              <Image
-                style={styles.packageManage}
-                source={require('../../image/Big-Package.png')}
-              />
-              <Text style={styles.deliveryTime}>
-                Delivered on Apr 19, 2024 at 11:30 AM
-              </Text>
-            </View>
+  const renderItem = ({item}) => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('DeliveryDetails')}
+      style={styles.packageDetailCard}>
+      <View style={styles.packageHeader}>
+        <Image
+          style={styles.packageManage}
+          source={require('../../image/Big-Package.png')}
+        />
+        <Text style={styles.deliveryTime}>
+          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at {moment(item.delivery_date).format('hh:mm A')}
+        </Text>
+      </View>
 
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Street, ABC</Text>
-              </Text>
-            </View>
+      <View style={styles.packageMiddle}>
+        <Ionicons name="location-outline" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          From{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.pickup_location_id)}{' '}
+          </Text>
+        </Text>
+      </View>
 
-            <View style={styles.packageMiddle}>
-              <MaterialIcons name="my-location" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-              </Text>
-            </View>
+      <View style={styles.packageMiddle}>
+        <MaterialIcons name="my-location" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          To{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(item.dropoff_location_id)}
+          </Text>
+        </Text>
+      </View>
 
-            <View style={styles.borderShow}></View>
+      <View style={styles.borderShow}></View>
 
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>€34.00</Text>
-            </View>
-          </View>
-
-          <View style={styles.packageDetailCard}>
-            <View style={styles.packageHeader}>
-              <Image
-                style={styles.packageManage}
-                source={require('../../image/Big-Package.png')}
-              />
-              <Text style={styles.deliveryTime}>
-                Delivered on Apr 19, 2024 at 11:30 AM
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Street, ABC</Text>
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <MaterialIcons name="my-location" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-              </Text>
-            </View>
-
-            <View style={styles.borderShow}></View>
-
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>€34.00</Text>
-            </View>
-          </View>
+      <View style={styles.footerCard}>
+        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.valueMoney}>€{item.amount}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+  return pastOrderList.length != 0 ? (
+    <FlatList data={pastOrderList} renderItem={renderItem} />
+  ) : (
+    <View style={styles.scrollViewContainer}>
+      <View
+        style={{
+          width: 350,
+          height: 500,
+          position: 'relative',
+          marginVertical: 40,
+        }}>
+        <View style={styles.container}>
+          <Image
+            style={styles.loaderMap}
+            source={require('../../image/No-Data-Table.png')}
+          />
+          <Text style={styles.text}>No orders to show</Text>
+          <Text style={styles.subText}>
+            If there is any active order, it will be shown here..
+          </Text>
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
-const Ongoing = () => {
+const Ongoing = (navigation) => {
   return (
     <View style={{flex: 1}}>
-      <TodayList />
+      <TodayList navigation = {navigation} />
     </View>
   );
 };
@@ -336,7 +363,9 @@ function History({navigation}) {
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
           tabBarStyle: {backgroundColor: '#fff'},
         }}>
-        <Tab.Screen name="Ongoing" component={Ongoing} />
+        <Tab.Screen name="Ongoing">
+          {() => <TodayList navigation = {navigation} />}
+        </Tab.Screen>
         <Tab.Screen name="Past">
           {() => <PastList navigation={navigation} />}
         </Tab.Screen>

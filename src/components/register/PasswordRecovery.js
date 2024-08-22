@@ -6,17 +6,66 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import { forgotPasswordApi } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
+import { useForgotPasswordDetails } from '../commonComponent/StoreContext';
 
 const PasswordRecovery = ({navigation}) => {
   const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({});
+  const { setLoading } = useLoader();
+  const { forgotPasswordDetails, saveForgotPasswordDetails } = useForgotPasswordDetails();
+
+  const validateForm = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let errors = {};
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
+  };
 
   const handleResetPassword = async () => {
-    // Implement your password reset logic here
-    console.log('Resetting password for email:', email);
+    const isValid = validateForm();
+    if(isValid) {
+      let params = {
+        info: {
+          userName:email
+        }
+      };
+      setLoading(true)
+      forgotPasswordApi(params, (successResponse) => {
+        console.log('successResponse',successResponse)
+        setLoading(false)
+        if(successResponse[0]._success){
+          if(successResponse[0]._response) {
+            if(successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              saveForgotPasswordDetails({...forgotPasswordDetails, userName:email})
+              navigation.navigate('ForgotPassword')
+            }
+          }
+        }
+      }, (errorResponse)=> {
+        console.log('errorResponse',errorResponse)
+        setLoading(false)
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      })
+    }
   };
 
   return (
@@ -45,8 +94,8 @@ const PasswordRecovery = ({navigation}) => {
               />
             </View>
             <TouchableOpacity
-              //   onPress={handleResetPassword}
-              onPress={() => navigation.navigate('ForgotPassword')}
+              onPress={handleResetPassword}
+              // onPress={() => navigation.navigate('ForgotPassword')}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
               <Text
                 style={styles.submitBtn}>
@@ -88,6 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingHorizontal: 10,
     width: '90%',
+    color:colors.text
   },
   forgotPasswordText: {
     fontSize: 16,

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -14,9 +15,22 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 import DeliveryboySubmitOTPModal from '../commonComponent/DeliveryboySubmitOTPModal';
+import {
+  getAVehicleByTypeId,
+  getLocationById,
+  getViewOrderDetail,
+} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import moment from 'moment';
 
-const DeliveryboyDeliveryDetails = ({navigation}) => {
+const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const [delivered, setDelivered] = useState(false);
+  const {setLoading} = useLoader();
+  const orderNumber = route.params.order_number;
+  const [order, serOrder] = useState({});
+  const [pickUpLocation, setPickUpLocation] = useState({});
+  const [dropOffLocation, setDropOffLocation] = useState({});
+  const [vehicleType, setVehicleType] = useState({});
 
   const handleMarkAsDelivered = () => {
     setDelivered(true);
@@ -29,6 +43,97 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
   };
   const toggleModalOTP = () => {
     setOTPModalVisible(!isOTPModalVisible);
+  };
+
+  useEffect(() => {
+    orderDetail();
+  }, []);
+
+  const orderDetail = async () => {
+    setLoading(true);
+    getViewOrderDetail(
+      orderNumber,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          serOrder(successResponse[0]._response);
+          getPickUpLocation(
+            successResponse[0]._response.order.pickup_location_id,
+          );
+          getDropOffLocation(
+            successResponse[0]._response.order.dropoff_location_id,
+          );
+          vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('orderDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getPickUpLocation = async locationId => {
+    setLoading(true);
+    getLocationById(
+      locationId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setPickUpLocation(successResponse[0]._response[0]);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('destination==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getDropOffLocation = async locationId => {
+    setLoading(true);
+    getLocationById(
+      locationId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setDropOffLocation(successResponse[0]._response[0]);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('destination==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const vehicleDetail = async vehicleTypeId => {
+    setLoading(true);
+    getAVehicleByTypeId(
+      vehicleTypeId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setVehicleType(successResponse[0]._response[0]);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('vehicleDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
   };
 
   return (
@@ -51,9 +156,16 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
-                <Text style={styles.companyInfo}>Company Name</Text>
+                <Text style={styles.companyInfo}>
+                  {order.order
+                    ? order.order.company_name
+                      ? order.order.company_name
+                      : 'Company Name'
+                    : ''}
+                </Text>
                 <Text style={styles.dropInfo}>
-                  22 Rue de la Liberté, Paris, Île-de-France.
+                  {pickUpLocation.address}, {pickUpLocation.city},{' '}
+                  {pickUpLocation.state}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
@@ -70,14 +182,22 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
 
             <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>OTP</Text>
-              <Text style={styles.subheadingOTP}>123456</Text>
+              <Text style={styles.subheadingOTP}>
+                {order.order ? order.order.otp : ''}
+              </Text>
             </View>
 
             <View style={styles.borderShowOff} />
 
             <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>When?</Text>
-              <Text style={styles.subheadingOTP}>Today, 04:30 PM</Text>
+              <Text style={styles.subheadingOTP}>
+                {order.order
+                  ? moment(order.order.order_date).format(
+                      'MMM DD, YYYY hh:mm A',
+                    )
+                  : ''}
+              </Text>
             </View>
 
             <View style={styles.borderShowOff} />
@@ -123,7 +243,8 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
               <View style={{width: '65%'}}>
                 <Text style={styles.companyInfo}>Company Name</Text>
                 <Text style={styles.dropInfo}>
-                  22 Rue de la Liberté, Paris, Île-de-France.
+                  {dropOffLocation.address}, {dropOffLocation.city},{' '}
+                  {dropOffLocation.state}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
@@ -141,7 +262,11 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
         <View style={styles.packageInformationCard}>
           <Text style={styles.packageTitle}>Package information</Text>
           <Text style={styles.orderdetails}>
-            Order ID:<Text style={styles.detailsId}>20394</Text>
+            Order ID:
+            <Text style={styles.detailsId}>
+              {' '}
+              {order.order ? order.order.order_number : '123456'}
+            </Text>
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
@@ -151,18 +276,19 @@ const DeliveryboyDeliveryDetails = ({navigation}) => {
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Vehicle:<Text style={styles.detailsId}>Pickup truck</Text>
+            Vehicle:
+            <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
         </View>
 
         <View style={styles.vehicleCardInfo}>
           <View>
             <Text style={styles.packageTitle}>Vehicle requested</Text>
-            <Text style={styles.orderdetails}>Pickup truck</Text>
+            <Text style={styles.orderdetails}>{vehicleType.vehicle_type}</Text>
           </View>
           <View>
             <Image
-              style={{width: 55, height: 35,}}
+              style={{width: 55, height: 35}}
               source={require('../../image/Delivery-PickupTruck-Icon.png')}
             />
           </View>
