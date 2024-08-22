@@ -44,6 +44,16 @@ function AddOrEditAddressModal({
     {label: '+33', value: '+33'},
   ];
 
+  const clearAddressData = () => {
+    setName('');
+    setAddress('');
+    setLastname('');
+    setCompany('');
+    setEmail('');
+    setComments('');
+    setNumber('');
+  };
+
   return (
     <View style={{flex: 1}}>
       <Modal isVisible={modalVisible}>
@@ -171,7 +181,6 @@ function AddOrEditAddressModal({
             <TouchableOpacity
               style={styles.saveBTn}
               onPress={() => {
-                console.log('onPress');
                 saveAddress({
                   first_name: name,
                   last_name: lastname,
@@ -181,6 +190,7 @@ function AddOrEditAddressModal({
                   company_name: company,
                   comments: comments,
                 });
+                clearAddressData();
               }}>
               <Text style={styles.okButton}>Save</Text>
             </TouchableOpacity>
