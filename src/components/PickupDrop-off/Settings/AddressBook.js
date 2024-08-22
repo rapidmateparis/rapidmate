@@ -76,56 +76,62 @@ const AddressBook = ({route, navigation}) => {
   }, []);
 
   const createAddress = probs => {
-    setLoading(true);
-    if (userDetails.role == 'CONSUMER') {
-      let consumerParams = {
-        consumer_ext_id: userDetails.ext_id,
-        ...probs,
-      };
-      createConsumerAddressBook(
-        consumerParams,
-        successResponse => {
-          if (successResponse[0]._success) {
-            Alert.alert('Success', 'Address added successfully', [
-              {text: 'OK', onPress: () => {}},
-            ]);
+    if (addressId == 0) {
+      setLoading(true);
+      if (userDetails.role == 'CONSUMER') {
+        let consumerParams = {
+          consumer_ext_id: userDetails.ext_id,
+          ...probs,
+        };
+        createConsumerAddressBook(
+          consumerParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              Alert.alert('Success', 'Address added successfully', [
+                {text: 'OK', onPress: () => {}},
+              ]);
+              setLoading(false);
+              toggleModal(0);
+            }
+          },
+          errorResponse => {
             setLoading(false);
             toggleModal(0);
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          toggleModal(0);
-          console.log(errorResponse[0]);
-          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
-    } else if (userDetails.role == 'DELIVERY_BOY') {
-      let deliveryBoyParams = {
-        delivery_boy_ext_id: userDetails.ext_id,
-        ...probs,
-      };
-      createDeliveryBoyAddressBook(
-        deliveryBoyParams,
-        successResponse => {
-          if (successResponse[0]._success) {
-            Alert.alert('Success', 'Address added successfully', [
+            console.log(errorResponse[0]);
+            Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
               {text: 'OK', onPress: () => {}},
             ]);
+          },
+        );
+      } else if (userDetails.role == 'DELIVERY_BOY') {
+        let deliveryBoyParams = {
+          delivery_boy_ext_id: userDetails.ext_id,
+          ...probs,
+        };
+        createDeliveryBoyAddressBook(
+          deliveryBoyParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              Alert.alert('Success', 'Address added successfully', [
+                {text: 'OK', onPress: () => {}},
+              ]);
+              setLoading(false);
+              toggleModal(0);
+            }
+          },
+          errorResponse => {
             setLoading(false);
             toggleModal(0);
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          toggleModal(0);
-          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
+            Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      }
+    } else {
+      Alert.alert('Error Alert', 'Need to implement API', [
+        {text: 'OK', onPress: () => {}},
+      ]);
     }
   };
 
