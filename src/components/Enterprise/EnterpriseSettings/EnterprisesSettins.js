@@ -57,7 +57,9 @@ const EnterprisesSettins = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddressBook')}
+            onPress={() =>
+              navigation.navigate('AddressBook', {userDetails: userDetails})
+            }
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
             <Text style={styles.titleStatus}>3 addresses</Text>

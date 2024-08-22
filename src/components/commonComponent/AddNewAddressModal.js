@@ -12,7 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dropdown} from 'react-native-element-dropdown';
 
-function AddNewAddressModal({isModalVisible, setModalVisible}) {
+function AddNewAddressModal({isModalVisible, setModalVisible, saveAddress}) {
   const [address, setAddress] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
@@ -152,7 +152,17 @@ function AddNewAddressModal({isModalVisible, setModalVisible}) {
             <TouchableOpacity style={styles.logbutton}>
               <Text style={styles.buttonText}>Delete</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.saveBTn}>
+            <TouchableOpacity
+              style={styles.saveBTn}
+              onPress={saveAddress({
+                first_name: name,
+                last_name: lastname,
+                address: address,
+                email: email,
+                phone: number,
+                company_name: company,
+                comments: comments,
+              })}>
               <Text style={styles.okButton}>Save</Text>
             </TouchableOpacity>
           </View>

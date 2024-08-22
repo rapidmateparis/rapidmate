@@ -448,3 +448,75 @@ export const getNotificationList = (param, successCallback, errorCallback) => {
     },
   );
 };
+
+export const createDeliveryBoyAddressBook = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.createDeliveryBoyAddressUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const createConsumerAddressBook = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.createConsumerAddressUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyAddressBookList = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.getDeliveryBoyAddressListUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getConsumerAddressBookList = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.getConsumerAddressListUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
