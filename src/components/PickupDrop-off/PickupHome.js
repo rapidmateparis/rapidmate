@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -34,9 +35,7 @@ const PickupHome = ({navigation}) => {
         saveServiceTypeDetails(successResponse[0]._response);
       },
       errorResponse => {
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        console.log('errorResponse', errorResponse);
       },
     );
   }, []);
@@ -76,7 +75,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails[0],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
             });
           }}>
           <View style={styles.pickcard}>
