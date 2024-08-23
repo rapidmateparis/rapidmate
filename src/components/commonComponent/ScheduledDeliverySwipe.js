@@ -12,8 +12,13 @@ import SwipeButton from 'rn-swipe-button';
 import iconAccept from '../../image/correct.png';
 import iconReject from '../../image/multiply.png';
 import {colors} from '../../colors';
+import DeliveryboyScheduleCancellationModal from '../DeliveryBoy/DeliveryboyScheduleCancellationModal';
 
 const ScheduledDeliverySwipe = () => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = vehicleDetails => {
+    setModalVisible(!isModalVisible);
+  };
   const [disableCBButton, setDisableCBButton] = useState(false);
   const defaultStatusMessage = 'Swipe to accept the request';
   const [swipeStatusMessage, setSwipeStatusMessage] =
@@ -39,7 +44,10 @@ const ScheduledDeliverySwipe = () => {
           <SwipeButton
             onSwipeFail={() => updateSwipeStatusMessage('Incomplete swipe!')}
             onSwipeStart={() => updateSwipeStatusMessage('Swipe started!')}
-            onSwipeSuccess={() => updateSwipeStatusMessage('Request accepted')}
+            onSwipeSuccess={() => {
+              updateSwipeStatusMessage('Request accepted');
+              toggleModal();
+            }}
             thumbIconImageSource={iconAccept}
             railBackgroundColor="#27AE601F"
             enable
@@ -51,24 +59,24 @@ const ScheduledDeliverySwipe = () => {
             thumbIconStyles={{padding: 0, width: 0, borderWidth: 0}}
             thumbIconWidth={50}
             title={
-                <View style={styles.swipeTitleComp}>
-                  <Text>I am ready</Text>
-                  <AntDesign
-                    name="doubleright"
-                    size={18}
-                    color="#000"
-                    style={styles.arrowIcon}
-                  />
-                </View>
-              }
-              titleStyles={{
-                color: '#19151C',
-                fontSize: 14,
-                fontFamily: 'Montserrat-Regular',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
+              <View style={styles.swipeTitleComp}>
+                <Text>I am ready</Text>
+                <AntDesign
+                  name="doubleright"
+                  size={18}
+                  color="#000"
+                  style={styles.arrowIcon}
+                />
+              </View>
+            }
+            titleStyles={{
+              color: '#19151C',
+              fontSize: 14,
+              fontFamily: 'Montserrat-Regular',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
           />
           <SwipeButton
             onSwipeFail={() => updateSwipeStatusMessage('Incomplete swipe!')}
@@ -105,13 +113,18 @@ const ScheduledDeliverySwipe = () => {
             }}
           />
         </View>
+        {/* CancellationModal Modal  */}
+        <DeliveryboyScheduleCancellationModal
+          isModalVisible={isModalVisible}
+          setModalVisible={setModalVisible}
+        />
       </SafeAreaView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {padding: 15, paddingTop: 30, paddingBottom: 30,},
+  container: {padding: 15, paddingTop: 30, paddingBottom: 30},
   swipeStatus: {
     color: colors.secondary,
     fontSize: 14,
@@ -127,11 +140,11 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   copyIcon: {
-    position:'absolute',
+    position: 'absolute',
     right: -120,
   },
   arrowIcon: {
-    position:'absolute',
+    position: 'absolute',
     right: -127,
   },
 });

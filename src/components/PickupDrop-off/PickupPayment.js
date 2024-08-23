@@ -18,9 +18,12 @@ import {useLoader} from '../../utils/loaderContext';
 import {addPayment, createPickupOrder} from '../../data_manager';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Img.png';
+import PartnerImage from '../../image/Partner.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
+import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 
 const PickupPayment = ({route, navigation}) => {
@@ -33,11 +36,9 @@ const PickupPayment = ({route, navigation}) => {
   const params = route.params.props;
   const paymentAmount = Math.round(
     params.selectedVehicleDetails.base_price +
-      params.selectedVehicleDetails.km_price *
-        params.distanceTime.distance,
+      params.selectedVehicleDetails.km_price * params.distanceTime.distance,
   ).toFixed(2);
   const [orderNumber, setOrderNumber] = useState(0);
-  
 
   const onPayment = async () => {
     placePickUpOrder();
@@ -114,7 +115,7 @@ const PickupPayment = ({route, navigation}) => {
           ? params.destinationLocationId
           : 2,
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
-        total_amount:parseFloat(paymentAmount)
+        total_amount: parseFloat(paymentAmount),
       };
       setLoading(true);
       createPickupOrder(
@@ -122,7 +123,7 @@ const PickupPayment = ({route, navigation}) => {
         successResponse => {
           if (successResponse[0]._success) {
             console.log('placePickUpOrder', successResponse[0]._response);
-            savePlacedOrderDetails(successResponse[0]._response)
+            savePlacedOrderDetails(successResponse[0]._response);
             setOrderResponse(successResponse[0]._response);
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
@@ -173,19 +174,23 @@ const PickupPayment = ({route, navigation}) => {
           <View style={styles.semiTruckDetails}>
             <View style={{marginRight: 15}}>
               <Image
-                style={{width: 90, height: 70}}
+                style={[styles.vehicleImage, {width: 100, height: 100}]}
                 source={
-                  params.selectedVehicle == 'Bicycle'
+                  params.selectedVehicle == 'Cycle'
                     ? BicycleImage
-                    : params.selectedVehicle == 'Motorbike'
+                    : params.selectedVehicle == 'Scooter'
                     ? MotorbikeImage
-                    : params.selectedVehicle == 'Mini Truck'
+                    : params.selectedVehicle == 'Car'
+                    ? CarImage
+                    : params.selectedVehicle == 'Partner'
+                    ? PartnerImage
+                    : params.selectedVehicle == 'Pickup'
                     ? MiniTruckImage
-                    : params.selectedVehicle == 'Mini Van'
-                    ? MiniTruckImage
-                    : params.selectedVehicle == 'Semi Truck'
+                    : params.selectedVehicle == 'Van'
+                    ? MiniVanImage
+                    : params.selectedVehicle == 'Truck'
                     ? SemiTruckImage
-                    : SemiTruckImage
+                    : OtherImage
                 }
               />
             </View>
@@ -447,6 +452,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
+  },
+  vehicleImage: {
+    height: 62,
+    resizeMode: 'center',
   },
 });
 

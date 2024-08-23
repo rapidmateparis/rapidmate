@@ -3,13 +3,14 @@ import {Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import MiniTruckImage from '../../image/modal-minitruck.png';
-import BicycleImage from '../../image/VehicleModal1.png';
-import MotorbikeImage from '../../image/VehicleModal2.png';
-import CarImage from '../../image/VehicleModal6.png';
-import MiniVanImage from '../../image/VehicleModal4.png';
-import SemiTruckImage from '../../image/VehicleModal5.png';
-import PackageImage from '../../image/VehicleModal7.png';
+import BicycleImage from '../../image/Bicycle-Modal.png';
+import MotorbikeImage from '../../image/Motorbike-Modal.png';
+import CarImage from '../../image/Car-Modal.png';
+import PartnerImage from '../../image/Partner-Modal.png';
+import VanImage from '../../image/Van-Modal.png';
+import MiniVanImage from '../../image/Pickup-Modal.png';
+import SemiTruckImage from '../../image/Truck-Modal.png';
+import OtherImage from '../../image/Other-Modal.png';
 
 const EnterpriseVehcleDimensions = ({
   setModalVisible,
@@ -180,37 +181,37 @@ const styles = StyleSheet.create({
     width: 200,
     textAlign: 'center',
   },
-  miniTruckImage: {
-    width: 250,
-    height: 250,
-  },
   bicycleImage: {
-    width: 250,
-    height: 250,
+    width: 215,
+    height: 215,
   },
   motorbikeImage: {
-    width: 250,
-    height: 250,
+    width: 215,
+    height: 218,
   },
   carImage: {
-    width: 250,
-    height: 250,
+    width: 233,
+    height: 162,
+  },
+  partnerImage: {
+    width: 265,
+    height: 156,
+  },
+  vanImage: {
+    width: 247,
+    height: 156,
   },
   miniVanImage: {
-    width: 250,
-    height: 250,
-  },
-  miniVanImage: {
-    width: 250,
-    height: 250,
+    width: 233,
+    height: 184,
   },
   semiTruckImage: {
-    width: 250,
-    height: 250,
+    width: 285,
+    height: 160,
   },
-  packageImage: {
-    width: 200,
-    height: 200,
+  otherImage: {
+    width: 215,
+    height: 215,
   },
 });
 

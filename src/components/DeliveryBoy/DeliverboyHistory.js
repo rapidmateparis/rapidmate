@@ -618,8 +618,7 @@ const DeliveryboyHistory = ({navigation}) => {
         {/* Your Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}>
+          <TouchableOpacity>
             <AntDesign name="filter" size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>

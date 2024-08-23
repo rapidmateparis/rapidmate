@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  Alert,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -18,25 +17,15 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
-import {useLoader} from '../../utils/loaderContext';
-import {addVehicleApi} from '../../data_manager';
-import BicycleImage from '../../image/Cycle-Icon.png';
-import MotorbikeImage from '../../image/Motorbike.png';
-import CarImage from '../../image/Car-Icon.png';
-import PartnerImage from '../../image/Partner-icon.png';
-import VanImage from '../../image/Van-Icon.png';
-import PickupImage from '../../image/Pickup-Icon.png';
-import TruckImage from '../../image/Truck-Icon.png';
-import MiniTruckImage from '../../image/Mini-Truck.png';
-import MiniVanImage from '../../image/Mini-Van.png';
-import SemiTruckImage from '../../image/Semi-Truck.png';
-import BigTruckImage from '../../image/Big-Package.png';
 
-const AddPickupVehicle = ({route, navigation}) => {
+const AddCustomVehicle = ({navigation}) => {
   const [vehicleNo, setVehicleNo] = useState('');
   const [vehicleModel, setVehicleModel] = useState('');
   const [vehicleMake, setVehicleMake] = useState('');
   const [vehicleVariant, setVehicleVariant] = useState('');
+  const [length, setLength] = useState('');
+  const [width, setWidth] = useState('');
+  const [height, setHeight] = useState('');
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [imageFileVehicleReg, setImageFileNameVehicleReg] = useState([]);
@@ -46,9 +35,6 @@ const AddPickupVehicle = ({route, navigation}) => {
   );
   const [imageFilePassport, setImageFilePassport] = useState([]);
   const [imageFileUrl, setImageFileUrl] = useState();
-  const {setLoading} = useLoader();
-  const [errors, setErrors] = useState({});
-
   const toggleModal = item => {
     setImageFileUrl(item);
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -106,155 +92,86 @@ const AddPickupVehicle = ({route, navigation}) => {
     return fileName.length > 30 ? '...' + fileName : fileName;
   };
 
-  const validateForm = () => {
-    let errors = {};
-    if (!vehicleNo.trim()) {
-      errors.vehicleNo = 'Vehicle number is required';
-    }
-    if (!vehicleModel.trim()) {
-      errors.vehicleModel = 'Vehicle model is required';
-    }
-    if (!vehicleMake.trim()) {
-      errors.vehicleMake = 'Vehicle make is required';
-    }
-    if (!vehicleVariant.trim()) {
-      errors.vehicleVariant = 'Vehicle Variant is required';
-    }
-    console.log(errors);
-    setErrors(errors);
-    return Object.keys(errors).length === 0; // Return true if no errors
-  };
-
-  const handleSubmit = () => {
-    const isValid = validateForm();
-
-    if (isValid) {
-      let params = {
-        delivery_boy_ext_id: route.params.delivery_boy_details.extId,
-        vehicle_type_id: route.params.selectedVehicle.vehicle_id,
-        plat_no: vehicleNo,
-        modal: vehicleModel,
-        make: vehicleMake,
-        variant: vehicleVariant,
-        reg_doc: '1',
-        driving_license: '1',
-        insurance: '1',
-        passport: '1',
-      };
-      setLoading(true);
-      addVehicleApi(
-        params,
-        successResponse => {
-          console.log('successResponse', successResponse);
-          setLoading(false);
-          if (successResponse[0]._success) {
-            if (successResponse[0]._response) {
-              console.log('print_data==>addVehicle', successResponse[0]);
-              if (
-                successResponse[0]._response.name == 'NotAuthorizedException'
-              ) {
-                Alert.alert('Error Alert', successResponse[0]._response.name, [
-                  {text: 'OK', onPress: () => {}},
-                ]);
-              } else if (successResponse[0]._httpsStatusCode == 200) {
-                navigation.navigate('ChooseDeliveryType');
-              }
-            }
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
-    }
-  };
-
-  const getVechicleImage = vehicleTypeId => {
-    switch (vehicleTypeId) {
-      case 1:
-        return BicycleImage;
-      case 2:
-        return MotorbikeImage;
-      case 3:
-        return CarImage;
-      case 4:
-        return PartnerImage;
-      case 5:
-        return VanImage;
-      case 6:
-        return PickupImage;
-      case 7:
-        return TruckImage;
-      default:
-        return BigTruckImage;
-    }
-  };
-
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fbfaf5'}}>
-      {console.log(route.params.selectedVehicle.vehicle_id)}
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.headerMiniTruck}>
           <Image
-            style={{height: 80, width: 80, resizeMode: 'contain'}}
-            source={getVechicleImage(route.params.selectedVehicle.vehicle_id)}
+            style={styles.customVehicle}
+            source={require('../../image/Custom-Vehicle.png')}
           />
         </View>
         <View style={styles.logFormView}>
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle No.</Text>
-            {errors.vehicleNo ? (
-              <Text style={[{color: 'red'}]}>{errors.vehicleNo}</Text>
-            ) : null}
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
-              placeholderTextColor={'#999'}
               value={vehicleNo}
               onChangeText={text => setVehicleNo(text)}
             />
           </View>
+
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>Vehicle Model</Text>
-            {errors.vehicleModel ? (
-              <Text style={[{color: 'red'}]}>{errors.vehicleModel}</Text>
-            ) : null}
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
-              placeholderTextColor={'#999'}
               value={vehicleModel}
               onChangeText={text => setVehicleModel(text)}
             />
           </View>
+
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
               <Text style={styles.textlable}>Vehicle make</Text>
-              {errors.vehicleMake ? (
-                <Text style={[{color: 'red'}]}>{errors.vehicleMake}</Text>
-              ) : null}
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
-                placeholderTextColor={'#999'}
                 value={vehicleMake}
                 onChangeText={text => setVehicleMake(text)}
               />
             </View>
+
             <View style={{flex: 1, marginLeft: 10}}>
               <Text style={styles.textlable}>Vehicle variant</Text>
-              {errors.vehicleVariant ? (
-                <Text style={[{color: 'red'}]}>{errors.vehicleVariant}</Text>
-              ) : null}
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
-                placeholderTextColor={'#999'}
                 value={vehicleVariant}
                 onChangeText={text => setVehicleVariant(text)}
+              />
+            </View>
+          </View>
+
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, marginRight: 10}}>
+              <Text style={styles.textlable}>Length</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                placeholder="00”"
+                value={length}
+                onChangeText={text => setLength(text)}
+              />
+            </View>
+
+            <View style={{flex: 1,}}>
+              <Text style={styles.textlable}>Height</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                placeholder="00”"
+                value={height}
+                onChangeText={text => setHeight(text)}
+              />
+            </View>
+
+            <View style={{flex: 1, marginLeft: 10}}>
+              <Text style={styles.textlable}>Width</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                placeholder="00”"
+                value={width}
+                onChangeText={text => setWidth(text)}
               />
             </View>
           </View>
@@ -353,9 +270,7 @@ const AddPickupVehicle = ({route, navigation}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
-              handleSubmit();
-            }}
+            onPress={() => navigation.navigate('ChooseDeliveryType')}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
@@ -508,7 +423,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 12,
     padding: 10,
-    color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   dottedLine: {
@@ -559,6 +473,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 8,
   },
+  customVehicle: {
+    width: 119,
+    height: 120,
+  },
 });
 
-export default AddPickupVehicle;
+export default AddCustomVehicle;

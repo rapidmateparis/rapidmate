@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
   Alert,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -16,9 +16,12 @@ import VehicleDimensionsModal from '../commonComponent/VehicleDimensions';
 import MapAddress from '../commonComponent/MapAddress';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Img.png';
+import PartnerImage from '../../image/Partner.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
+import OtherImage from '../../image/Big-Package.png';
 import {getLocationId, getAllVehicleTypes} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 
@@ -42,9 +45,12 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
     };
   }, []);
 
@@ -141,9 +147,16 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
-    if (selectedVehicle && sourceLocation && destinationLocation && 
-      selectedVehiclePrice && distanceTime && selectedVehicleDetails &&
-      sourceLocationId && destinationLocationId) {
+    if (
+      selectedVehicle &&
+      sourceLocation &&
+      destinationLocation &&
+      selectedVehiclePrice &&
+      distanceTime &&
+      selectedVehicleDetails &&
+      sourceLocationId &&
+      destinationLocationId
+    ) {
       navigation.push('AddPickupdetails', {
         selectedVehicle: selectedVehicle,
         selectedVehicleDetails: selectedVehicleDetails,
@@ -153,12 +166,14 @@ const PickupAddress = ({route, navigation}) => {
         distanceTime: distanceTime,
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
-        serviceTypeId: route?.params?.pickupService?.id || 1
+        serviceTypeId: route?.params?.pickupService?.id || 1,
       });
     } else {
-      Alert.alert('Alert', 'Please choose location and vehicle / Vehicle price or location not available', [
-        {text: 'OK', onPress: () => {}},
-      ]);
+      Alert.alert(
+        'Alert',
+        'Please choose location and vehicle / Vehicle price or location not available',
+        [{text: 'OK', onPress: () => {}}],
+      );
     }
   };
 
@@ -168,14 +183,18 @@ const PickupAddress = ({route, navigation}) => {
         return BicycleImage;
       case 2:
         return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return MiniVanImage;
       case 6:
         return MiniTruckImage;
       case 7:
         return SemiTruckImage;
-      case 5:
-        return MiniVanImage;
       default:
-        return MiniVanImage;
+        return OtherImage;
     }
   };
 
@@ -202,7 +221,7 @@ const PickupAddress = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView contentContainerStyle={{paddingHorizontal: 15}}>
+      <ScrollView contentContainerStyle={{paddingHorizontal: 15, backgroundColor: colors.white,}}>
         <View>
           <View style={styles.chooseVehicleCard}>
             <View
@@ -226,7 +245,9 @@ const PickupAddress = ({route, navigation}) => {
                     onPress={() => {
                       setSelectedVehicle(vehicle.vehicle_type);
                       setSelectedVehicleDetails(vehicle);
-                      setSelectedVehiclePrice(vehicle.base_price != 0 && vehicle.base_price);
+                      setSelectedVehiclePrice(
+                        vehicle.base_price != 0 && vehicle.base_price,
+                      );
                     }}
                     style={styles.cardVehicle}>
                     <View
@@ -328,7 +349,7 @@ const styles = StyleSheet.create({
   },
   vehicleImage: {
     height: 62,
-    resizeMode: 'contain',
+    resizeMode: 'center',
   },
   vehicleTypeName: {
     fontSize: 14,

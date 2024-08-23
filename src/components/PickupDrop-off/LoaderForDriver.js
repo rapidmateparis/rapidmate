@@ -23,7 +23,7 @@ const LoaderForDriver = ({navigation}) => {
   var timeOutId = '';
   useEffect(() => {
     timeOutId = setTimeout(() => {
-      navigation.navigate('OrderConfirm');
+      navigation.navigate('OrderPickup');
     }, 5000);
     console.log('timeOutId', timeOutId);
   }, []);
