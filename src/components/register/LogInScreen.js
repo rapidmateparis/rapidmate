@@ -55,20 +55,7 @@ const LogInScreen = ({navigation}) => {
         );
       });
     }
-    onSignIn();
   }, []);
-
-  async function onSignIn() {
-    crashlytics().log('User signed in.');
-    await Promise.all([
-      crashlytics().setUserId(userDetails.userDetails[0].ext_id.toString()),
-      crashlytics().setAttributes({
-        role: userDetails.userDetails[0].role,
-        email: userDetails.userDetails[0].email,
-        extId: userDetails.userDetails[0].ext_id,
-      }),
-    ]);
-  }
 
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

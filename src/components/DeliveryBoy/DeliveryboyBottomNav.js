@@ -22,6 +22,7 @@ import RNExitApp from 'react-native-exit-app';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
+import { updateUserProfile } from '../../data_manager';
 
 const Bottom = createBottomTabNavigator();
 

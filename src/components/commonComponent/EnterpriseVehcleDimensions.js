@@ -25,42 +25,30 @@ const EnterpriseVehcleDimensions = ({
   let vehicleImageSource;
   let vehicleImageStyle;
 
-  switch (vehicleDetails?.name) {
-    case 'Cycle':
+  switch (vehicleDetails?.vehicle_type_id) {
+    case 6:
+      vehicleImageSource = MiniTruckImage;
+      vehicleImageStyle = styles.miniTruckImage;
+      break;
+    case 1:
       vehicleImageSource = BicycleImage;
       vehicleImageStyle = styles.bicycleImage;
       break;
-    case 'Scooter':
+    case 2:
       vehicleImageSource = MotorbikeImage;
       vehicleImageStyle = styles.motorbikeImage;
       break;
-    case 'Car':
-      vehicleImageSource = CarImage;
-      vehicleImageStyle = styles.carImage;
-      break;
-    case 'Partner':
-      vehicleImageSource = PartnerImage;
-      vehicleImageStyle = styles.partnerImage;
-      break;
-    case 'Mini Van':
-      vehicleImageSource = VanImage;
-      vehicleImageStyle = styles.vanImage;
-      break;
-    case 'Pickup':
+    case 5:
       vehicleImageSource = MiniVanImage;
       vehicleImageStyle = styles.miniVanImage;
       break;
-    case 'Semi Truck':
+    case 7:
       vehicleImageSource = SemiTruckImage;
       vehicleImageStyle = styles.semiTruckImage;
       break;
-    case 'Other':
-      vehicleImageSource = OtherImage;
-      vehicleImageStyle = styles.otherImage;
-      break;
     default: // Handle the case where vehicleDetails.name is not matched
-      vehicleImageSource = null;
-      vehicleImageStyle = null;
+      vehicleImageSource = MiniVanImage;
+      vehicleImageStyle = styles.miniVanImage;
       break;
   }
 
@@ -90,7 +78,7 @@ const EnterpriseVehcleDimensions = ({
             </View>
             <Text style={styles.infoText}>
               Length{' '}
-              <Text style={styles.boldText}>{vehicleDetails?.length}</Text>
+              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.length ? vehicleDetails.length + ' feet': 'null'}</Text>
             </Text>
           </View>
 
@@ -100,7 +88,7 @@ const EnterpriseVehcleDimensions = ({
             </View>
             <Text style={styles.infoText}>
               Height{' '}
-              <Text style={styles.boldText}>{vehicleDetails?.height}</Text>
+              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.height ? vehicleDetails.height + ' feet': 'null'}</Text>
             </Text>
           </View>
 
@@ -109,7 +97,7 @@ const EnterpriseVehcleDimensions = ({
               <Text style={styles.countText}>3</Text>
             </View>
             <Text style={styles.infoText}>
-              Width <Text style={styles.boldText}>{vehicleDetails?.width}</Text>
+              Width <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.width ? vehicleDetails.width + ' feet': 'null'}</Text>
             </Text>
           </View>
         </View>
