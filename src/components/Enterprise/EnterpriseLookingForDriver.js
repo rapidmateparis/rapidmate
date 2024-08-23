@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -15,8 +15,17 @@ import EnterpriseOrderCancellationModal from '../commonComponent/EnterpriseOrder
 const EnterpriseLookingForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = (vehicleDetails) => {
+    clearTimeout(timeOutId);
     setModalVisible(!isModalVisible);
   };
+
+  var timeOutId = '';
+  useEffect(() => {
+    timeOutId = setTimeout(() => {
+      navigation.navigate('OrderConfirm');
+    }, 5000);
+    console.log('timeOutId', timeOutId);
+  }, []);
 
   return (
     <ScrollView

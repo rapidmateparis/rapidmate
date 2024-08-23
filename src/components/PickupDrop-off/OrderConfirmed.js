@@ -39,10 +39,18 @@ const OrderConfirm = ({navigation}) => {
   }, []);
 
   function handleBackButtonClick() {
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'PickupBottomNav'}],
-    });
+    if (userDetails?.userDetails[0]?.role == 'CONSUMER') {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'PickupBottomNav'}],
+      });
+    } else if (userDetails?.userDetails[0]?.role == 'ENTERPRISE')  {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'EnterpriseBottomNav'}],
+      });
+    }
+
     return true;
   }
 
@@ -64,7 +72,7 @@ const OrderConfirm = ({navigation}) => {
 
   useEffect(() => {
     const params = {
-      userRole: userDetails?.userDetails[0]?.ext_id,
+      userRole: userDetails?.userDetails[0]?.role,
       orderNumber: placedOrderDetails[0]?.order_number,
     };
     getProfileInformation(
@@ -75,7 +83,7 @@ const OrderConfirm = ({navigation}) => {
       },
       errorResponse => {
         console.log('getProfile===>errorResponse', errorResponse);
-        Alert.alert('Error Alert', errorResponse[0]._response.message, [
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },

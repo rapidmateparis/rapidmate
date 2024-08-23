@@ -435,11 +435,40 @@ export const getAVehicleByTypeId = (param, successCallback, errorCallback) => {
   );
 };
 
+
+export const getEnterpriseBranch = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterprisebranch + params,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const getNotificationList = (param, successCallback, errorCallback) => {
   axiosCall(
     API.getNotificationUrl + param + '?page=1&size=15',
     HTTPMethod.GET,
     {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const createEnterpriseOrder = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterpriseOrder,
+    HTTPMethod.POST,
+    params,
     response => {
       successCallback(response);
     },
