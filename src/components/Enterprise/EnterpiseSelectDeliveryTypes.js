@@ -28,10 +28,14 @@ import { getAllVehicleTypes } from '../../data_manager';
 const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   const [selectedOption, setSelectedOption] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState('');
+  const [serviceTypeId, setServiceTypeId] = useState('');
 
-  const handleOptionSelect = (option, vehicle) => {
+  const handleOptionSelect = (option, vehicle, id) => {
     setSelectedOption(option);
     setSelectedVehicle(vehicle);
+    if (id) {
+      setServiceTypeId(id)
+    }
   };
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -77,7 +81,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
               },
             ]}
             onPress={() =>
-              handleOptionSelect('Delivery boy with scooter', vehicleTypeList.filter(val => val.vehicle_type == 'Scooter')[0])
+              handleOptionSelect('Delivery boy with scooter', vehicleTypeList.filter(val => val.vehicle_type == 'Scooter')[0],1)
             }>
             {selectedOption === 'Delivery boy with scooter' ? (
               <FontAwesome
@@ -105,7 +109,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
               selectedOption === 'Delivery boy without scooter',
             ]}
             onPress={() =>
-              handleOptionSelect('Delivery boy without scooter', '')
+              handleOptionSelect('Delivery boy without scooter', '',2)
             }>
             {selectedOption === 'Delivery boy without scooter' ? (
               <FontAwesome
@@ -132,7 +136,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Multi-task employee',
             ]}
-            onPress={() => handleOptionSelect('Multi-task employee', '')}>
+            onPress={() => handleOptionSelect('Multi-task employee', '', 3)}>
             {selectedOption === 'Multi-task employee' ? (
               <FontAwesome
                 name="dot-circle-o"
@@ -158,7 +162,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Cleaning staff',
             ]}
-            onPress={() => handleOptionSelect('Cleaning staff', '')}>
+            onPress={() => handleOptionSelect('Cleaning staff', '', 4)}>
             {selectedOption === 'Cleaning staff' ? (
               <FontAwesome
                 name="dot-circle-o"
@@ -225,7 +229,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           </TouchableOpacity>
         ))}
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpiseScheduleNewDetailsFill',{...route.params,vehicle_type_id:selectedVehicle.vehicle_type_id})}
+          onPress={() => navigation.navigate('EnterpiseScheduleNewDetailsFill',{...route.params,vehicle_type:selectedVehicle, service_type_id:serviceTypeId})}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>

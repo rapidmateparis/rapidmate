@@ -449,3 +449,17 @@ export const getEnterpriseBranch = (params, successCallback, errorCallback) => {
   );
 };
 
+export const createEnterpriseOrder = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterpriseOrder,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+

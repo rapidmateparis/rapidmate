@@ -38,7 +38,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [orderid, setOrderid] = useState('');
   const [number, setNumber] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
-  const [selectedRepeatEvery, setSelectedRepeatEvery] = useState(null);
+  const [selectedRepeatEvery, setSelectedRepeatEvery] = useState('1');
   const [selectedRepeatType, setSelectedRepeatType] = useState(null);
   const [isFocusRepeatEvery, setIsFocusRepeatEvery] = useState(false);
   const [isFocusRepeatType, setIsFocusRepeatType] = useState(false);
@@ -66,8 +66,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const [selectedWeekDay, setSelectedWeekDay] = useState(null);
 
-  console.log('props', route);
   const handleDayPress = day => {
     let updatedSelectedDays;
 
@@ -88,7 +88,10 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const repeatType = [{label: 'Day', value: '1'}];
+  const repeatType = [
+    {label: 'Day', value: 'Day'}
+    // {label: 'Week', value: 'Week'},
+  ];
 
   const days = [
     {label: '1', value: '1'},
@@ -96,6 +99,16 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     {label: '3', value: '3'},
     {label: '4', value: '4'},
     {label: '5', value: '5'},
+  ];
+
+  const weekList = [
+    {label: 'Sunday', value: 'Sunday'},
+    {label: 'Monday', value: 'Monday'},
+    {label: 'Tuesday', value: 'Tusday'},
+    {label: 'Wednesday', value: 'Wednesday'},
+    {label: 'Thursday', value: 'Thursday'},
+    {label: 'Friday', value: 'Friday'},
+    {label: 'Saturday', value: 'Saturday'},
   ];
 
   const toggleModal = () => {
@@ -144,6 +157,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   const onFetchDistanceAndTime = value => {
+    console.log('onFetchDistanceAndTime', value);
     setDistanceTime(value);
   };
 
@@ -162,7 +176,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       longitude: location.originCoordinates.longitude,
     };
     setLoading(true);
-    console.log('locationParams',locationParams)
     getLocationId(
       locationParams,
       successResponse => {
@@ -213,7 +226,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   return (
-    <View style={{flex:1}}>
+    <View style={{flex: 1}}>
       <View style={{height: 200, position: 'relative'}}>
         <MapAddress
           onFetchDistanceAndTime={onFetchDistanceAndTime}
@@ -572,18 +585,19 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <Dropdown
                     style={styles.dateDropdown}
                     data={days}
-                    search
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
                     placeholder={!isFocus ? '1' : '1'}
                     searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
+                    value={selectedRepeatEvery}
+                    onFocus={() => setIsFocusRepeatEvery(true)}
+                    onBlur={() => setIsFocusRepeatEvery(false)}
                     onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                      setSelectedRepeatEvery(item.value);
+                      setIsFocusRepeatEvery(false);
                     }}
                   />
                 </View>
@@ -592,18 +606,19 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <Dropdown
                     style={styles.dateDropdown}
                     data={repeatType}
-                    search
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
                     placeholder={!isFocus ? 'Week' : 'Week'}
                     searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
+                    value={selectedRepeatType}
+                    onFocus={() => setIsFocusRepeatType(true)}
+                    onBlur={() => setIsFocusRepeatType(false)}
                     onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                      setSelectedRepeatType(item.value);
+                      setIsFocusRepeatType(false);
                     }}
                   />
                 </View>
@@ -611,23 +626,37 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
               <View style={styles.untilDateCard}>
                 <Text style={styles.untilDateText}>until</Text>
-                <View style={styles.containeruntil}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={days}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                <View style={styles.dateUntilDiv}>
+                  <DatePicker
+                    modal
+                    open={dateUntilOpen}
+                    date={untilDate}
+                    mode="date"
+                    onConfirm={date => {
+                      setDateUntilOpen(false);
+                      setUntilDate(date);
+                      setPickupUntilDate(moment(date).format('DD/MM/YYYY'));
                     }}
+                    onCancel={() => {
+                      setDateUntilOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="12/06/2024"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupUntilDate}
+                  />
+                  <AntDesign
+                    name="calendar"
+                    size={20}
+                    onPress={() => setDateUntilOpen(true)}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
                   />
                 </View>
               </View>
@@ -676,18 +705,19 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <Dropdown
                     style={styles.dateDropdown}
                     data={days}
-                    search
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
                     placeholder={!isFocus ? '1' : '1'}
                     searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
+                    value={selectedRepeatEvery}
+                    onFocus={() => setIsFocusRepeatEvery(true)}
+                    onBlur={() => setIsFocusRepeatEvery(false)}
                     onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                      setSelectedRepeatEvery(item.value);
+                      setIsFocusRepeatEvery(false);
                     }}
                   />
                 </View>
@@ -695,42 +725,57 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <View style={styles.containerWeek}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={days}
-                    search
+                    data={repeatType}
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
                     placeholder={!isFocus ? 'Week' : 'Week'}
                     searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
+                    value={selectedRepeatType}
+                    onFocus={() => setIsFocusRepeatType(true)}
+                    onBlur={() => setIsFocusRepeatType(false)}
                     onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                      setSelectedRepeatType(item.value);
+                      setIsFocusRepeatType(false);
                     }}
                   />
                 </View>
               </View>
               <View style={styles.untilDateCard}>
                 <Text style={styles.untilDateText}>until</Text>
-                <View style={styles.containeruntil}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={days}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                <View style={styles.dateUntilDiv}>
+                  <DatePicker
+                    modal
+                    open={dateUntilOpen}
+                    date={untilDate}
+                    mode="date"
+                    onConfirm={date => {
+                      setDateUntilOpen(false);
+                      setUntilDate(date);
+                      setPickupUntilDate(moment(date).format('DD/MM/YYYY'));
                     }}
+                    onCancel={() => {
+                      setDateUntilOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="12/06/2024"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupUntilDate}
+                  />
+                  <AntDesign
+                    name="calendar"
+                    size={20}
+                    onPress={() => setDateUntilOpen(true)}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
                   />
                 </View>
               </View>
@@ -753,18 +798,19 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     <Dropdown
                       style={styles.dateDropdown}
                       data={days}
-                      search
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
                       placeholder={!isFocus ? '1' : '1'}
                       searchPlaceholder="Search.."
-                      value={dropdownCountryValue}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
+                      value={selectedRepeatEvery}
+                      onFocus={() => setIsFocusRepeatEvery(true)}
+                      onBlur={() => setIsFocusRepeatEvery(false)}
                       onChange={item => {
-                        setDropdownCountryValue(item.value);
-                        setIsFocus(false);
+                        setSelectedRepeatEvery(item.value);
+                        setIsFocusRepeatEvery(false);
                       }}
                     />
                   </View>
@@ -789,36 +835,38 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     <Dropdown
                       style={styles.dateDropdown}
                       data={days}
-                      search
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
-                      placeholder={!isFocus ? 'Second' : 'Second'}
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
+                      placeholder={!isFocus ? '1' : '1'}
                       searchPlaceholder="Search.."
-                      value={dropdownCountryValue}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
+                      value={selectedRepeatEvery}
+                      onFocus={() => setIsFocusRepeatEvery(true)}
+                      onBlur={() => setIsFocusRepeatEvery(false)}
                       onChange={item => {
-                        setDropdownCountryValue(item.value);
-                        setIsFocus(false);
+                        setSelectedRepeatEvery(item.value);
+                        setIsFocusRepeatEvery(false);
                       }}
                     />
                   </View>
                   <View style={styles.containeruntil}>
                     <Dropdown
                       style={styles.dateDropdown}
-                      data={days}
-                      search
+                      data={weekList}
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
                       placeholder={!isFocus ? 'Tuesday' : 'Tuesday'}
                       searchPlaceholder="Search.."
-                      value={dropdownCountryValue}
+                      value={selectedWeekDay}
                       onFocus={() => setIsFocus(true)}
                       onBlur={() => setIsFocus(false)}
                       onChange={item => {
-                        setDropdownCountryValue(item.value);
+                        setSelectedWeekDay(item.value);
                         setIsFocus(false);
                       }}
                     />
@@ -836,9 +884,35 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
           <View>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('EnterprisePickupOrderPriview')
-              }
+              onPress={() => {
+                let params = {
+                  ...route.params,
+                  delivery_type_id: 'One time delivery',
+                  distanceTime: distanceTime,
+                  pickup_location: sourceLocation,
+                  dropoff_location: destinationLocation,
+                  pickup_location_id: sourceLocationId,
+                  dropoff_location_id: destinationLocationId,
+                  mobile: number,
+                  company_name: company,
+                  package_note: pickupNotes,
+                  pickup_date: moment(date).format('YYYY-MM-DD'),
+                  pickup_time: moment(time).format('HH:MM'),
+                  is_repeat_mode: promoEmails ? 1 : 0,
+                  package_id: orderid,
+                  amount: Math.round(
+                    route.params.vehicle_type.base_price +
+                      route.params.vehicle_type.km_price *
+                        distanceTime.distance,
+                  ).toFixed(2),
+                  distance: distanceTime.distance.toFixed(2),
+                  time: distanceTime.time.toFixed(0),
+                  repeat_mode: repeatOrder,
+                  repeat_every: selectedRepeatEvery,
+                  repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                };
+                navigation.navigate('EnterprisePickupOrderPriview', params);
+              }}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
               <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>
@@ -1301,7 +1375,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   containerCity: {
-    width: '25%',
+    width: '30%',
     borderWidth: 1,
     borderColor: '#ccc',
     paddingVertical: 3,
@@ -1426,6 +1500,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
+    color: colors.text,
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     backgroundColor: colors.white,

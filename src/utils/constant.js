@@ -56,5 +56,6 @@ export const API = {
   lookupDataUrl: BASE_URL + 'lookup',
   getAllocatedDeliveryBoy: BASE_URL + '/order/allocated/details?o=',
   viewOrderDetail: BASE_URL + 'order/view/',
-  enterprisebranch: BASE_URL + 'enterprisebranch/get/'
+  enterprisebranch: BASE_URL + 'enterprisebranch/get/',
+  enterpriseOrder: BASE_URL + 'enterprise/order/'
 };
