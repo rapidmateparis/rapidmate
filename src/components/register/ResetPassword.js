@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { colors } from '../../colors';
+import { resetPasswordApi } from '../../data_manager';
+import { useForgotPasswordDetails } from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
 
 const ResetPassword = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const { forgotPasswordDetails, saveForgotPasswordDetails } = useForgotPasswordDetails();
+  const { setLoading } = useLoader();
 
   const togglePasswordVisibility = (field) => {
     if (field === 'password') {
@@ -19,8 +24,46 @@ const ResetPassword = ({ navigation }) => {
   };
 
   const handleResetPassword = async () => {
-    // Implement password reset logic here
-    // Example: Call API to reset password
+    if (password != confirmPassword) {
+      Alert.alert('Error Alert', 'Passwords do not match', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    } else {
+      let params = {
+        info: {
+          userName:forgotPasswordDetails.userName,
+          verificationCode:forgotPasswordDetails.code,
+          newPassword:password,
+        }
+      };
+      setLoading(true)
+      resetPasswordApi(params, (successResponse) => {
+        console.log('successResponse',successResponse)
+        setLoading(false)
+        if(successResponse[0]._success){
+          if(successResponse[0]._response) {
+            if(successResponse[0]._response.name == 'CodeMismatchException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else if (successResponse[0]._response.name == 'LimitExceededException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              navigation.navigate('LogInScreen')
+            }
+          }
+        }
+      }, (errorResponse)=> {
+        console.log('errorResponse',errorResponse)
+        setLoading(false)
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      })
+    }
+      
   };
 
   return (

@@ -42,7 +42,7 @@ const PickupOrderCancelled = ({navigation}) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('OrderPickup')}
+          onPress={() => navigation.navigate('PickupHome')}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Order again</Text>
         </TouchableOpacity>

@@ -7,15 +7,31 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../colors';
+import BicycleImage from '../../image/Bicycle.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import MiniTruckImage from '../../image/Mini-Truck.png';
+import MiniVanImage from '../../image/Mini-Van.png';
+import SemiTruckImage from '../../image/Semi-Truck.png';
+import {createPickupOrder} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
-const PickupOrderPreview = ({navigation}) => {
+const PickupOrderPreview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const params = route.params.props;
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
+
+  const pickupOrderRequest = () => {
+    navigation.navigate('PickupPayment',{props:params})
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -24,14 +40,18 @@ const PickupOrderPreview = ({navigation}) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              3891 Ranchview , California 62639
+              {params.destinationLocation.destinationDescription
+                ? params.destinationLocation.destinationDescription
+                : null}
             </Text>
           </View>
           <View style={styles.borderDummy}></View>
           <View style={styles.locationAddress}>
             <MaterialIcons name="my-location" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              1901 Thornridge Cir. Shiloh, California
+              {params.sourceLocation.sourceDescription
+                ? params.sourceLocation.sourceDescription
+                : null}
             </Text>
           </View>
           <View style={styles.borderShowOff}></View>
@@ -40,13 +60,33 @@ const PickupOrderPreview = ({navigation}) => {
           <Text style={styles.vehicleDetails}>Vehicle details</Text>
           <View style={styles.semiTruckDetails}>
             <View>
-              <Text style={styles.vehicleName}>Semi Truck</Text>
+              <Text style={styles.vehicleName}>{params.selectedVehicle}</Text>
               <Text style={styles.vehicleCapacity}>
-                20000 liters max capacity
+                {params.selectedVehicleDetails.capacity
+                  ? params.selectedVehicleDetails.capacity
+                  : null}{' '}
+                max capacity
               </Text>
             </View>
             <View>
-              <Image style={{width: 130, height: 75,}} source={require('../../image/Semi-Truck.png')} />
+            {console.log("params.selectedVehicle", params.selectedVehicle)}
+              <Image
+                style={{width: 130, height: 75}}
+                
+                source={
+                  params.selectedVehicle == 'Cycle'
+                    ? BicycleImage
+                    : params.selectedVehicle == 'Scooter'
+                    ? MotorbikeImage
+                    : params.selectedVehicle == 'Pickup'
+                    ? MiniTruckImage
+                    : params.selectedVehicle == 'Van'
+                    ? MiniTruckImage
+                    : params.selectedVehicle == 'Car'
+                    ? SemiTruckImage
+                    : SemiTruckImage
+                }
+              />
             </View>
           </View>
         </View>
@@ -54,8 +94,8 @@ const PickupOrderPreview = ({navigation}) => {
         <View style={styles.pickupCard}>
           <Text style={styles.pickupDetails}>Pickup details</Text>
           <View>
-            <Text style={styles.vehicleName}>Adam Smith</Text>
-            <Text style={styles.vehicleCapacity}>Adam Inc.</Text>
+            <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
+            <Text style={styles.vehicleCapacity}></Text>
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -65,7 +105,7 @@ const PickupOrderPreview = ({navigation}) => {
                 size={12}
                 color="#000000"
               />
-              <Text style={styles.contactInfo}>adaminc@email.com</Text>
+              <Text style={styles.contactInfo}>{params.userDetails.email}</Text>
             </View>
 
             <View style={styles.pickupManDetails}>
@@ -75,16 +115,14 @@ const PickupOrderPreview = ({navigation}) => {
                 size={15}
                 color="#000000"
               />
-              <Text style={styles.contactInfo}>+33 1 23 45 67 89</Text>
+              <Text style={styles.contactInfo}>
+                {params.userDetails.number}
+              </Text>
             </View>
           </View>
 
           <View>
-            <Text style={styles.pickupNotes}>
-              Lorem ipsum dolor sit amet consectetur. Ornare faucibus ac
-              ultricies sed penatibus. Integer sit sagit tis tempor cursus amet.
-              Nunc cursus cras fermen tum elit pulvinar amet.
-            </Text>
+            <Text style={styles.pickupNotes}></Text>
           </View>
         </View>
 
@@ -92,24 +130,28 @@ const PickupOrderPreview = ({navigation}) => {
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
-              <Text style={styles.vehicleName}>€34</Text>
+              <Text style={styles.vehicleName}>
+                €
+                {(params.selectedVehicleDetails.base_price + (params.selectedVehicleDetails.km_price * 
+                params.distanceTime.distance)).toFixed(0)}
+              </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text
                   style={[
                     styles.bookininfo,
                     {borderRightWidth: 1, paddingRight: 5},
                   ]}>
-                  2.6 km
+                  {params.distanceTime.distance.toFixed(1)} km
                 </Text>
                 <Text
                   style={[
                     styles.bookininfo,
                     {borderRightWidth: 1, paddingHorizontal: 5},
                   ]}>
-                  Semi truck
+                  {params.selectedVehicle}
                 </Text>
                 <Text style={[styles.bookininfo, {paddingLeft: 5}]}>
-                  23 minutes
+                  {params.distanceTime.time.toFixed(0)} minutes
                 </Text>
               </View>
             </View>
@@ -132,7 +174,7 @@ const PickupOrderPreview = ({navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('PickupPayment')}
+          onPress={pickupOrderRequest}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>

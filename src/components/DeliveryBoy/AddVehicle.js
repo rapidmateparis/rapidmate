@@ -1,14 +1,53 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Image,
+  Alert,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native'; 
-import { colors } from '../../colors';
+import {colors} from '../../colors';
+import BicycleImage from '../../image/Cycle-Icon.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Icon.png';
+import PartnerImage from '../../image/Partner-icon.png';
+import VanImage from '../../image/Van-Icon.png';
+import PickupImage from '../../image/Pickup-Icon.png';
+import TruckImage from '../../image/Truck-Icon.png';
+import MiniTruckImage from '../../image/Mini-Truck.png';
+import MiniVanImage from '../../image/Mini-Van.png';
+import SemiTruckImage from '../../image/Semi-Truck.png';
+import BigTruckImage from '../../image/Big-Package.png';
+import {getAllVehicleTypes} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
-const AddVehicle = () => {
-  const navigation = useNavigation();
+const AddVehicle = ({route, navigation}) => {
+  const {setLoading} = useLoader();
+  const [selectedOption, setSelectedOption] = useState({});
+  const [vehicleTypeList, setVehicleTypeList] = useState([]);
 
-  const [selectedOption, setSelectedOption] = useState(null);
+  useEffect(() => {
+    setLoading(true);
+    getAllVehicleTypes(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setVehicleTypeList(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -22,24 +61,55 @@ const AddVehicle = () => {
     }
   };
 
-  const renderCard = (option, iconSource, title, imageStyle) => {
-    const isSelected = selectedOption === option;
+  const getVechicleImage = vehicleTypeId => {
+    switch (vehicleTypeId) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 6:
+        return MiniTruckImage;
+      case 7:
+        return SemiTruckImage;
+      case 5:
+        return MiniVanImage;
+      default:
+        return MiniVanImage;
+    }
+  };
 
+  const renderCard = item => {
+    let renderItem = JSON.parse(JSON.stringify(item));
+    const isSelected = selectedOption.vehicle_name === renderItem.vehicle_type;
     return (
       <LinearGradient
         colors={['rgba(255, 0, 88, 0.07)', 'rgba(153, 0, 53, 0)']}
-        style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}>
+        style={[styles.gradient]}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}>
         <TouchableOpacity
-          onPress={() => handleOptionSelect(option)}
+          onPress={() =>
+            handleOptionSelect({
+              vehicle_name: renderItem.vehicle_type,
+              vehicle_id: renderItem.vehicle_type_id,
+            })
+          }
           style={[
             styles.addressCard,
             isSelected ? styles.selectedCard : null, // Apply selected card style conditionally
           ]}>
-          <Image source={iconSource} style={[styles.cardImage, imageStyle]} />
-          <View style={{ marginLeft: 10, flex: 1 }}>
-            <Text style={styles.paymentPlateform}>{title}</Text>
+          <Image
+            source={getVechicleImage(renderItem.vehicle_type_id)}
+            style={[styles.cardImage, {resizeMode: 'center'}]}
+          />
+          <View style={{marginLeft: 10, flex: 1}}>
+            <Text style={styles.paymentPlateform}>
+              {renderItem.vehicle_type}
+            </Text>
           </View>
 
           {!isSelected && <View style={styles.cricleRound} />}
@@ -55,22 +125,27 @@ const AddVehicle = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
-      <View style={{ paddingHorizontal: 15 }}>
-        {renderCard('Cycle', require('../../image/Cycle-Icon.png'), 'Cycle', styles.cycleImage)}
-        {renderCard('Scooter', require('../../image/Scooter-Icon.png'), 'Scooter', styles.scooterImage)}
-        {renderCard('Car', require('../../image/Car-Icon.png'), 'Car', styles.carImage)}
-        {renderCard('Partner', require('../../image/Partner-icon.png'), 'Partner', styles.partnerImage)}
-        {renderCard('Van', require('../../image/Van-Icon.png'), 'Van', styles.vanImage)}
-        {renderCard('Pickup', require('../../image/Pickup-Icon.png'), 'Pickup', styles.pickupImage)}
-        {renderCard('Truck', require('../../image/Truck-Icon.png'), 'Truck', styles.truckImage)}
-        {renderCard('Other', require('../../image/Big-Package.png'), 'Other', styles.otherImage)}
-
-        {/* Continue Button */}
+    <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
+      <View style={{paddingHorizontal: 15}}>
+        {vehicleTypeList.map(item => (
+          <View>{renderCard(item)}</View>
+        ))}
         <TouchableOpacity
-          onPress={handleContinue}
-          style={[styles.logbutton, { backgroundColor: colors.primary }]}>
-          <Text style={styles.buttonText}>Continue</Text>
+          onPress={() => {
+            console.log('selectedOption.selectedVehicle', selectedOption);
+            if (!selectedOption.vehicle_id) {
+              Alert.alert('Error Alert', 'Please select a vehicle', [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              navigation.navigate('AddPickupVehicle', {
+                delivery_boy_details: route.params.delivery_boy_details,
+                selectedVehicle: selectedOption,
+              });
+            }
+          }}
+          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -1,4 +1,4 @@
-package com.sideandbottomnaviagtion.newarchitecture.modules;
+package com.ajsgroup.rapidmate.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

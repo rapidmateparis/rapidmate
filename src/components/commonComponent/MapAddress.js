@@ -15,7 +15,6 @@ import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
-
 // Constants
 const LATITUDE_DELTA = 0.0922; // Adjusted for more zoom
 const ASPECT_RATIO = 0.752;
@@ -24,18 +23,18 @@ const ASPECT_RATIO = 0.752;
 const MyCustomMarkerView = () => (
   <Image
     source={require('../../image/location-icon.png')}
-    style={{width: 24, height: 24}}
+    style={{width: 24, height: 24, resizeMode: 'contain'}}
   />
 );
 
 const MyCustomFlagMarker = () => (
   <Image
     source={require('../../image/destination-flag-icon.png')}
-    style={{width: 24, height: 24}}
+    style={{width: 24, height: 24, resizeMode: 'contain'}}
   />
 );
 
-const MapAddress = () => {
+const MapAddress = props => {
   const mapViewRef = useRef(null);
   const navigation = useNavigation();
   const {setPickupAddress} = usePickupAddress();
@@ -88,6 +87,7 @@ const MapAddress = () => {
   const fetchTime = (d, t) => {
     setDistance(d);
     setTime(t);
+    props.onFetchDistanceAndTime({distance: d, time: t});
   };
 
   return (
@@ -98,10 +98,16 @@ const MapAddress = () => {
           <TouchableOpacity
             onPress={() => navigation.navigate('MapPickupAddress')}>
             <View style={styles.locationAddress}>
-              <Ionicons name="location-outline" size={18} color="#000000" />
+              <Ionicons style={{marginTop:15}} name="location-outline" size={18} color="#000000" />
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter pickup address"
+                styles={{
+                  textInput: {
+                    color: colors.text,
+                  },
+                  description : {color : colors.text}
+                }}
                 onPress={(data, details = null) => {
                   const originCoordinates = {
                     latitude: details.geometry.location.lat,
@@ -109,6 +115,10 @@ const MapAddress = () => {
                   };
                   setOrigin(originCoordinates);
                   moveToLocation(originCoordinates);
+                  props.onSourceLocation({
+                    originCoordinates: originCoordinates,
+                    sourceDescription: data.description,
+                  });
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -116,17 +126,23 @@ const MapAddress = () => {
                 }}
                 onFail={() => console.error('Error')}
               />
-              <AntDesign name="arrowright" size={18} color="#000000" />
+              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
             </View>
           </TouchableOpacity>
           <View style={styles.borderDummy}></View>
           <TouchableOpacity
             onPress={() => navigation.navigate('MapDropAddress')}>
             <View style={styles.locationAddress}>
-              <MaterialIcons name="my-location" size={18} color="#000000" />
+              <MaterialIcons style={{marginTop:15}} name="my-location" size={18} color="#000000" />
               <GooglePlacesAutocomplete
                 fetchDetails
                 placeholder="Enter drop address"
+                styles={{
+                  textInput: {
+                    color: colors.text,
+                  },
+                  description : {color : colors.text},
+                }}
                 onPress={(data, details = null) => {
                   const destinationCoordinates = {
                     latitude: details.geometry.location.lat,
@@ -134,6 +150,10 @@ const MapAddress = () => {
                   };
                   setDestination(destinationCoordinates);
                   moveToLocation(destinationCoordinates);
+                  props.onDestinationLocation({
+                    destinationCoordinates: destinationCoordinates,
+                    destinationDescription: data.description,
+                  });
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -141,7 +161,7 @@ const MapAddress = () => {
                 }}
                 onFail={() => console.error('Error')}
               />
-              <AntDesign name="arrowright" size={18} color="#000000" />
+              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
             </View>
           </TouchableOpacity>
           <View style={styles.borderShowOff}></View>
@@ -154,7 +174,9 @@ const MapAddress = () => {
           <Text style={[styles.distanceText, {marginBottom: 5}]}>
             Distance: {distance} km
           </Text>
-          <Text style={styles.distanceText}>Time left: {time} min</Text>
+          <Text style={styles.distanceText}>
+            Time left: {time.toFixed(2)} min
+          </Text>
         </View>
       )}
 
@@ -233,7 +255,7 @@ const styles = StyleSheet.create({
   },
   locationAddress: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   borderDummy: {
     borderWidth: 1,

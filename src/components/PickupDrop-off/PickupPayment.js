@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,165 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {useStripe} from '@stripe/stripe-react-native';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
+import {addPayment, createPickupOrder} from '../../data_manager';
+import BicycleImage from '../../image/Bicycle.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import MiniTruckImage from '../../image/Mini-Truck.png';
+import MiniVanImage from '../../image/Mini-Van.png';
+import SemiTruckImage from '../../image/Semi-Truck.png';
+import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 
-const PickupPayment = ({navigation}) => {
+const PickupPayment = ({route, navigation}) => {
+  const {initPaymentSheet, presentPaymentSheet} = useStripe();
+  const [clientSecret, setClientSecret] = useState(null);
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
+  const {savePlacedOrderDetails} = usePlacedOrderDetails();
+  const [orderResponse, setOrderResponse] = useState();
+  const params = route.params.props;
+  const paymentAmount = Math.round(
+    params.selectedVehicleDetails.base_price +
+      params.selectedVehicleDetails.km_price *
+        params.distanceTime.distance,
+  ).toFixed(2);
+  const [orderNumber, setOrderNumber] = useState(0);
+  
+
+  const onPayment = async () => {
+    placePickUpOrder();
+  };
+
+  useEffect(() => {
+    if (orderNumber) {
+      createPaymentIntent();
+    }
+  }, [orderNumber]);
+
+  useEffect(() => {}, [orderResponse]);
+
+  const createPaymentIntent = async () => {
+    try {
+      const response = await fetch(
+        'https://api.stripe.com/v1/payment_intents',
+        {
+          method: 'POST',
+          headers: {
+            Authorization:
+              'Bearer sk_test_51PgiLhLF5J4TIxENpifRFYuB13xzQzszqugfYchc33Meu4vh6zDM6tDCX0Fbv863qGGfM69PwF1CTHwkiSEm5XHv00wtIuDU2O', // Replace with your test secret key
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            amount: paymentAmount * 100, // Amount in cents
+            currency: 'EUR',
+            //payment_method_types: ['card', 'google_pay']
+          }).toString(),
+        },
+      );
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+      setClientSecret(data.client_secret);
+      setup(data.client_secret);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const setup = async client_secret => {
+    console.log('setup called ' + client_secret);
+    const {error} = await initPaymentSheet({
+      merchantDisplayName: 'RapidMate LLC',
+      paymentIntentClientSecret: client_secret, // retrieve this from your server
+    });
+    if (!error) {
+      checkout();
+    } else {
+      Alert.alert('Payment Error', error.message);
+    }
+  };
+
+  const checkout = async () => {
+    const {error} = await presentPaymentSheet();
+    console.log('érror', error);
+    if (!error) {
+      createPayment();
+    }
+  };
+
+  const placePickUpOrder = async () => {
+    if (userDetails.userDetails[0]) {
+      let requestParams = {
+        consumer_ext_id: userDetails.userDetails[0].ext_id,
+        service_type_id: params.serviceTypeId,
+        vehicle_type_id: params.selectedVehicleDetails.id,
+        pickup_location_id: params.sourceLocationId
+          ? params.sourceLocationId
+          : 1,
+        dropoff_location_id: params.destinationLocationId
+          ? params.destinationLocationId
+          : 2,
+        distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+        total_amount:parseFloat(paymentAmount)
+      };
+      setLoading(true);
+      createPickupOrder(
+        requestParams,
+        successResponse => {
+          if (successResponse[0]._success) {
+            console.log('placePickUpOrder', successResponse[0]._response);
+            savePlacedOrderDetails(successResponse[0]._response)
+            setOrderResponse(successResponse[0]._response);
+            setLoading(false);
+            setOrderNumber(successResponse[0]._response[0].order_number);
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log('createPickupOrder==>errorResponse', errorResponse[0]);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      Alert.alert('Error Alert', 'Consumer extended ID missing', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
+  };
+
+  const createPayment = async () => {
+    let requestParams = {
+      order_number: orderNumber,
+      amount: paymentAmount,
+    };
+    setLoading(true);
+    addPayment(
+      requestParams,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          navigation.navigate('PaymentSuccess');
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -21,32 +174,54 @@ const PickupPayment = ({navigation}) => {
             <View style={{marginRight: 15}}>
               <Image
                 style={{width: 90, height: 70}}
-                source={require('../../image/semi-truck-small.png')}
+                source={
+                  params.selectedVehicle == 'Bicycle'
+                    ? BicycleImage
+                    : params.selectedVehicle == 'Motorbike'
+                    ? MotorbikeImage
+                    : params.selectedVehicle == 'Mini Truck'
+                    ? MiniTruckImage
+                    : params.selectedVehicle == 'Mini Van'
+                    ? MiniTruckImage
+                    : params.selectedVehicle == 'Semi Truck'
+                    ? SemiTruckImage
+                    : SemiTruckImage
+                }
               />
             </View>
             <View>
               <Text style={styles.vehicleName}>Order Summary</Text>
-              <Text style={styles.vehicleCapacity}>Semi truck 20000 liter</Text>
+              <Text style={styles.vehicleCapacity}>
+                {params.selectedVehicle}{' '}
+                {params.selectedVehicleDetails.capacity}
+              </Text>
               <View style={styles.distanceTime}>
                 <Text style={[styles.vehicleCapacity, {marginRight: 10}]}>
-                  2.6 Km
+                  {params.distanceTime.distance.toFixed(1)} Km
                 </Text>
-                <Text style={styles.vehicleCapacity}>23 min</Text>
+                <Text style={styles.vehicleCapacity}>
+                  {params.distanceTime.time.toFixed(0)} min
+                </Text>
               </View>
             </View>
           </View>
           <View style={[styles.distanceTime, {marginVertical: 15}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From North Street to South Street, California
+              From{' '}
+              {params.sourceLocation.sourceDescription
+                ? params.sourceLocation.sourceDescription
+                : ''}{' '}
+              to{' '}
+              {params.destinationLocation.destinationDescription
+                ? params.destinationLocation.destinationDescription
+                : ''}
             </Text>
           </View>
 
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
-            <Text style={styles.totalAmount}>
-              <Text>€</Text> 34.00
-            </Text>
+            <Text style={styles.totalAmount}>€ {paymentAmount}</Text>
           </View>
         </View>
 
@@ -70,7 +245,7 @@ const PickupPayment = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={styles.selectPaymentMethod}>Credi & Debit Cards</Text>
+          <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
         </View>
 
         <View style={styles.discountCard}>
@@ -83,11 +258,8 @@ const PickupPayment = ({navigation}) => {
           </Text>
         </View>
         <View style={styles.ProceedCard}>
-          <Text style={styles.proceedPayment}>
-            <Text>€</Text>34.00
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('PickupSuccessfulPayment')}>
+          <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>
+          <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>
           </TouchableOpacity>
         </View>

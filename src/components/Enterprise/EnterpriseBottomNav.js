@@ -1,5 +1,13 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Alert,
+  BackHandler,
+  Platform,
+} from 'react-native';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,9 +20,76 @@ import EnterpriseHome from './EnterpriseHome';
 import EnterprisesSettins from './EnterpriseSettings/EnterprisesSettins';
 import EnterpriseHistory from './EnterpriseHistory';
 import Notifications from '../PickupDrop-off/Settings/Notifications';
+import RNExitApp from 'react-native-exit-app';
+import {requestNotificationPermission} from '../../utils/common';
+import messaging from '@react-native-firebase/messaging';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const Bottom = createBottomTabNavigator();
 const EnterpriseBottomNav = ({navigation}) => {
+  useEffect(() => {
+    const onBackPress = () => {
+      Alert.alert(
+        'Exit App',
+        'Do you want to exit?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => {
+              // Do nothing
+            },
+            style: 'cancel',
+          },
+          {text: 'YES', onPress: () => RNExitApp.exitApp()},
+        ],
+        {cancelable: false},
+      );
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(async () => {
+    var permission = true;
+    if (Platform.Version >= 33) {
+      permission = await requestNotificationPermission();
+    }
+
+    if (permission) {
+      const fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        updateProfile(fcmToken);
+      }
+
+      messaging().onMessage(async remoteMessage => {
+        Alert.alert(
+          'A new FCM message arrived!',
+          JSON.stringify(remoteMessage),
+        );
+      });
+    }
+    onSignIn();
+  }, []);
+
+  async function onSignIn() {
+    crashlytics().log('User signed in.');
+    await Promise.all([
+      crashlytics().setUserId(userDetails.userDetails[0].ext_id.toString()),
+      crashlytics().setAttributes({
+        role: userDetails.userDetails[0].role,
+        email: userDetails.userDetails[0].email,
+        extId: userDetails.userDetails[0].ext_id,
+      }),
+    ]);
+  }
+
   return (
     <Bottom.Navigator
       tabBarOptions={{

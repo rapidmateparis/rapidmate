@@ -1,19 +1,96 @@
-import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {colors} from '../../../colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  useLookupData,
+  useUserDetails,
+} from '../../commonComponent/StoreContext';
+import {updateUserProfile} from '../../../data_manager';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DeliveryPreferance = ({navigation}) => {
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState({});
+  const {lookupData} = useLookupData();
+  const {saveUserDetails, userDetails} = useUserDetails();
+  const [deliveryPreferenceList, setDeliveryPreferenceList] = useState(
+    lookupData.workType,
+  );
 
   const handleOptionSelect = option => {
     setSelectedOption(option);
   };
 
+  useEffect(() => {
+    var option = lookupData.workType.filter(
+      val => val.id == userDetails.userDetails[0].work_type_id,
+    );
+    setSelectedOption(option[0]);
+  }, []);
+
   // Define a variable to check if any option is selected
   const isOptionSelected = selectedOption !== null;
+
+  const getImage = item => {
+    switch (item.id) {
+      case 1:
+        return require('../../../image/Calender-icon2x.png');
+      case 2:
+        return require('../../../image/Location-Icon2x.png');
+      case 3:
+        return require('../../../image/Calender-icon2x.png');
+    }
+  };
+
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
+
+  const updateProfile = () => {
+    let profileParams = {
+      ext_id: userDetails.userDetails[0].ext_id,
+      work_type_id: selectedOption.id,
+    };
+    updateUserProfile(
+      userDetails.userDetails[0].role,
+      profileParams,
+      successResponse => {
+        console.log('updateUserProfile', successResponse);
+        saveUserDetails({
+          userInfo: userDetails.userInfo,
+          userDetails: [
+            {...userDetails.userDetails[0], work_type_id: selectedOption.id},
+          ],
+        });
+        saveUserDetailsInAsync({
+          userInfo: userDetails.userInfo,
+          userDetails: [
+            {...userDetails.userDetails[0], work_type_id: selectedOption.id},
+          ],
+        });
+        Alert.alert('Success', '' + successResponse[0]._response, [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ]);
+      },
+      errorResponse => {
+        console.log('updateUserProfile', errorResponse);
+      },
+    );
+  };
 
   return (
     <ScrollView>
@@ -22,159 +99,56 @@ const DeliveryPreferance = ({navigation}) => {
           Select how would you like to work?
         </Text>
         <View style={{marginTop: 35}}>
-          <TouchableOpacity
-            style={styles.profileCard}
-            onPress={() => {
-              handleOptionSelect('ShiftWise');
-            }}>
-            <LinearGradient
-              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={[
-                styles.container,
-                selectedOption === 'ShiftWise' && {
-                  backgroundColor: '#FFF8C9',
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                },
-              ]}>
-              <View style={styles.content}>
-                <Image
-                  style={{width: 40, height: 40}}
-                  source={require('../../../image/Calender-icon2x.png')}
-                />
-                <View style={styles.profileText}>
-                  <Text style={styles.roleTypeText}>Shift wise</Text>
-                  <Text style={styles.roleText}>
-                    You will set your availability for a time period on select
-                    days
-                  </Text>
-                </View>
-                {selectedOption !== 'ShiftWise' && (
-                  <View style={styles.cricleRound} />
-                )}
-                {selectedOption === 'ShiftWise' && (
-                  <View
-                    style={{
-                      backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
-                      padding: 3,
-                      borderRadius: 15,
-                    }}>
-                    <MaterialIcons
-                      name="check"
-                      size={24}
-                      color={colors.white}
-                    />
+          {deliveryPreferenceList.map(item => (
+            <TouchableOpacity
+              style={styles.profileCard}
+              onPress={() => {
+                handleOptionSelect(item);
+              }}>
+              <LinearGradient
+                colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
+                start={{x: 1, y: 0}}
+                end={{x: 0, y: 0}}
+                style={[
+                  styles.container,
+                  selectedOption === item && {
+                    backgroundColor: '#FFF8C9',
+                    borderWidth: 1,
+                    borderColor: colors.primary,
+                  },
+                ]}>
+                <View style={styles.content}>
+                  <Image
+                    style={{width: 40, height: 40, resizeMode: 'contain'}}
+                    source={getImage(item)}
+                  />
+                  <View style={styles.profileText}>
+                    <Text style={styles.roleTypeText}>{item.work_type}</Text>
+                    <Text style={styles.roleText}>{item.work_type_desc}</Text>
                   </View>
-                )}
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.profileCard}
-            onPress={() => {
-              handleOptionSelect('PickupDrop');
-            }}>
-            <LinearGradient
-              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={[
-                styles.container,
-                selectedOption === 'PickupDrop' && {
-                  backgroundColor: '#FFF8C9',
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                },
-              ]}>
-              <View style={styles.content}>
-                <Image
-                  style={{width: 32, height: 38}}
-                  source={require('../../../image/Location-Icon2x.png')}
-                />
-                <View style={styles.profileText}>
-                  <Text style={styles.roleTypeText}>Pickup & Drop-off</Text>
-                  <Text style={styles.roleText}>
-                    Accept deliveries any time of the day
-                  </Text>
+                  {selectedOption !== item && (
+                    <View style={styles.cricleRound} />
+                  )}
+                  {selectedOption === item && (
+                    <View
+                      style={{
+                        backgroundColor: colors.primary,
+                        width: 30,
+                        height: 30,
+                        padding: 3,
+                        borderRadius: 15,
+                      }}>
+                      <MaterialIcons
+                        name="check"
+                        size={24}
+                        color={colors.white}
+                      />
+                    </View>
+                  )}
                 </View>
-                {selectedOption !== 'PickupDrop' && (
-                  <View style={styles.cricleRound} />
-                )}
-                {selectedOption === 'PickupDrop' && (
-                  <View
-                    style={{
-                      backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
-                      padding: 3,
-                      borderRadius: 15,
-                    }}>
-                    <MaterialIcons
-                      name="check"
-                      size={24}
-                      color={colors.white}
-                    />
-                  </View>
-                )}
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.profileCard}
-            onPress={() => {
-              handleOptionSelect('Both');
-            }}>
-            <LinearGradient
-              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={[
-                styles.container,
-                selectedOption === 'Both' && {
-                  backgroundColor: '#FFF8C9',
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                },
-              ]}>
-              <View style={styles.content}>
-                <Image
-                  style={{width: 40, height: 40}}
-                  source={require('../../../image/Calender-Both2x.png')}
-                />
-                <View style={styles.profileText}>
-                  <Text style={styles.roleTypeText}>Both</Text>
-                  <Text style={styles.roleText}>
-                    Work as shift wise and pickup/dropoff both
-                  </Text>
-                </View>
-                {selectedOption !== 'Both' && (
-                  <View style={styles.cricleRound} />
-                )}
-                {selectedOption === 'Both' && (
-                  <View
-                    style={{
-                      backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
-                      padding: 3,
-                      borderRadius: 15,
-                    }}>
-                    <MaterialIcons
-                      name="check"
-                      size={24}
-                      color={colors.white}
-                    />
-                  </View>
-                )}
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
+              </LinearGradient>
+            </TouchableOpacity>
+          ))}
         </View>
         <TouchableOpacity
           style={[
@@ -189,8 +163,7 @@ const DeliveryPreferance = ({navigation}) => {
           disabled={!isOptionSelected}
           onPress={() => {
             if (isOptionSelected) {
-              // Proceed with the action
-              // navigation.navigate('ForgotPassword');
+              updateProfile();
             }
           }}>
           <Text

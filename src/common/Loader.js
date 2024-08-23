@@ -1,8 +1,16 @@
-import {StyleSheet, Text, ActivityIndicator, Image, View} from 'react-native';
+import {StyleSheet,Modal, Text, ActivityIndicator, Image, View} from 'react-native';
 import React from 'react';
-
+import {useLoader} from '../utils/loaderContext'
 const Loader = () => {
+  const { loading } = useLoader();
+
   return (
+    <Modal
+    transparent={true}
+    animationType="none"
+    visible={loading}
+    onRequestClose={() => {}}
+  >
     <View style={styles.loaderContainer}>
       <ActivityIndicator size="large" color="#fff" />
       <Text
@@ -10,6 +18,7 @@ const Loader = () => {
         Loading...
       </Text>
     </View>
+    </Modal>
   );
 };
 

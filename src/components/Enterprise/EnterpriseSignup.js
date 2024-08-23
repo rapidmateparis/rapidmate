@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -21,38 +22,48 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
-import Restaurant from '../../image/Restaurant-Icon.png';
-import Grocery from '../../image/Grocery-Icon.png';
-import Gift from '../../image/Gift-Icon.png';
-import Health from '../../image/Health-Icon.png';
-import Tech from '../../image/Tech-Icon.png';
-import Shopping from '../../image/Shopping-Icon.png';
-import Professional from '../../image/Professional-Icon.png';
-import Other from '../../image/Other-Icon.png';
+import {
+  getCityList,
+  getCountryList,
+  getStateList,
+  signUpUser,
+} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {useSignUpDetails} from '../commonComponent/StoreContext';
 // import DropDownDropdown from '../common component/dropdown';
 
 const EnterpriseSignup = ({navigation}) => {
   const [toggleCheckBoxFirst, setToggleCheckBoxFirst] = useState(false);
   const [toggleCheckBoxSecond, setToggleCheckBoxSecond] = useState(false);
-  const [name, setName] = useState(false);
-  const [lastname, setLastname] = useState(false);
-  const [email, setEmail] = useState(false);
+  const [name, setName] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [deliveries, setDeliveries] = useState('');
   const [number, setNumber] = useState('');
   const [siret, setSiret] = useState('');
   const [comments, setComments] = useState('');
   const [openDropDown, setOpenDropDown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
+  const [dropdownStateValue, setDropdownStateValue] = useState(null);
+  const [dropdownCityValue, setDropdownCityValue] = useState(null);
   const [dropdownIndustryValue, setDropdownIndustryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
-  const [selectedIndustry, setSelectedIndustry] = useState(null);
-  const [showIndustryOptions, setShowIndustryOptions] = useState(false);
+  const {setLoading} = useLoader();
+  const [masterCountryList, setMasterCountryList] = useState(null);
+  const [countryList, setCountryList] = useState([]);
+  const [masterStateList, setMasterStateList] = useState(null);
+  const [masterCityList, setMasterCityList] = useState(null);
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
+  const [errors, setErrors] = useState({});
+  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -75,51 +86,200 @@ const EnterpriseSignup = ({navigation}) => {
     {label: '+33', value: '+33'},
   ];
 
-  const industryData = [
-    {
-      name: 'Restaurant and takeaway',
-      image: Restaurant,
-      style: styles.restaurantImage,
-    },
-    {
-      name: 'Grocery and speciality',
-      image: Grocery,
-      style: styles.GroceryImage,
-    },
-    {
-      name: 'Gift delivery',
-      image: Gift,
-      style: styles.GiftImage,
-    },
-    {
-      name: 'Health and beauty',
-      image: Health,
-      style: styles.HealthImage,
-    },
-    {
-      name: 'Tech and electronics',
-      image: Tech,
-      style: styles.TechImage,
-    },
-    {
-      name: 'Retail and shopping',
-      image: Shopping,
-      style: styles.ShoppingImage,
-    },
-    {
-      name: 'Professional services',
-      image: Professional,
-      style: styles.ProfessionalImage,
-    },
-    {
-      name: 'Other',
-      image: Other,
-      style: styles.OtherImage,
-    },
+  const industryList = [
+    {label: 'Restaurants', value: 1},
+    {label: 'Hospitals', value: 2},
+    {label: 'Logistics', value: 3},
   ];
 
-  const toggleIndustryOptions = () => {
-    setShowIndustryOptions(!showIndustryOptions);
+  useEffect(() => {
+    getCountryList(
+      (param = {}),
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCountryList(successResponse[0]._response);
+              var formattedCountryList = [];
+              successResponse[0]._response.forEach(element => {
+                formattedCountryList.push({
+                  label: element.country_name,
+                  value: element.id,
+                });
+              });
+              setCountryList(formattedCountryList);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+    getStateList(
+      (param = {}),
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterStateList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+
+    getCityList(
+      null,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCityList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
+
+  const validateForm = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\+?\d{10,15}$/;
+    let errors = {};
+    if (!name.trim()) {
+      errors.name = 'First name is required';
+    }
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters long';
+    }
+    if (!confirmPassword.trim()) {
+      errors.confirmPassword = 'Confirm password is required';
+    } else if (confirmPassword.length < 6) {
+      errors.confirmPassword =
+        'Confirm password must be at least 6 characters long';
+    }
+    if (password !== confirmPassword) {
+      errors.confirmPassword = 'Passwords does not match';
+    }
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    } else if (isNaN(number)) {
+      errors.number = 'Number should be numeric';
+    }
+    if (!companyName.trim()) {
+      errors.companyName = 'Company name is required';
+    }
+    if (!deliveries.trim()) {
+      errors.deliveries = 'Deliveries per month is required';
+    }
+    if (!dropdownCountryValue) {
+      errors.dropdownCountryValue = 'Please select a country';
+    }
+    if (!dropdownStateValue) {
+      errors.dropdownStateValue = 'Please select a state';
+    }
+    if (!dropdownCityValue) {
+      errors.dropdownCityValue = 'Please select a city';
+    }
+    if (!comments) {
+      errors.comments = 'Please describe your projects';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
+  };
+
+  const handleSignUp = async () => {
+    const isValid = validateForm();
+
+    if (isValid) {
+      let params = {
+        info: {
+          userName: email,
+          email: email,
+          phoneNumber: dropdownValue + number,
+          password: password,
+          userrole: signUpDetails.profile,
+          firstName: name,
+          lastName: lastname,
+          companyName: companyName,
+          deliveryMonthHours: deliveries + 'hours',
+          description: comments,
+          industryId: dropdownIndustryValue.toString(),
+          city: dropdownCityValue.toString(),
+          state: dropdownStateValue.toString(),
+          country: dropdownCountryValue.toString(),
+          siretNo: '4352354',
+          termone: 1,
+        },
+      };
+      setLoading(true);
+      signUpUser(
+        params,
+        successResponse => {
+          console.log('successResponse', successResponse);
+          setLoading(false);
+          if (successResponse[0]._success) {
+            if (successResponse[0]._response) {
+              saveSignUpDetails({
+                ...signUpDetails,
+                userName: email,
+                password: password,
+              });
+              navigation.navigate('SignUpVerify');
+            }
+          }
+        },
+        errorResponse => {
+          console.log('errorResponse', errorResponse[0]._errors.message[0]);
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }
   };
 
   return (
@@ -142,6 +302,9 @@ const EnterpriseSignup = ({navigation}) => {
           />
         </View>
         <View style={styles.logFormView}>
+          {errors.name ? (
+            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+          ) : null}
           <View
             style={{
               flexDirection: 'row',
@@ -170,6 +333,9 @@ const EnterpriseSignup = ({navigation}) => {
               />
             </View>
           </View>
+          {errors.email ? (
+            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
@@ -180,6 +346,9 @@ const EnterpriseSignup = ({navigation}) => {
               onChangeText={text => setEmail(text)}
             />
           </View>
+          {errors.password ? (
+            <Text style={[{color: 'red'}]}>{errors.password}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -199,6 +368,9 @@ const EnterpriseSignup = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
+          {errors.confirmPassword ? (
+            <Text style={[{color: 'red'}]}>{errors.confirmPassword}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -218,6 +390,9 @@ const EnterpriseSignup = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
+          {errors.number ? (
+            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+          ) : null}
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -225,6 +400,8 @@ const EnterpriseSignup = ({navigation}) => {
                   data={data}
                   search
                   maxHeight={300}
+                  itemTextStyle={{color: colors.text}}
+                  selectedTextStyle={{color: colors.text}}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? '+33' : '...'}
@@ -255,6 +432,9 @@ const EnterpriseSignup = ({navigation}) => {
               onChangeText={text => setNumber(text)}
             />
           </View>
+          {errors.companyName ? (
+            <Text style={[{color: 'red'}]}>{errors.companyName}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <FontAwesome6 name="warehouse" size={15} color="#131314" />
             <TextInput
@@ -265,60 +445,58 @@ const EnterpriseSignup = ({navigation}) => {
               onChangeText={text => setCompanyName(text)}
             />
           </View>
-          <View style={styles.industryMainCard}>
-            <TouchableOpacity
-              style={styles.selectIndustryCard}
-              onPress={toggleIndustryOptions}>
-              <Image
-                style={styles.industryLeftIcons}
-                source={require('../../image/bulding.png')}
-              />
-              <Text style={styles.industryText}>Select industry</Text>
-              <AntDesign
-                name={showIndustryOptions ? 'up' : 'down'}
-                size={12}
-                color={colors.text}
-              />
-            </TouchableOpacity>
-
-            {showIndustryOptions && (
-              <View>
-                {industryData.map((industry, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.typesIndustryCard}
-                    onPress={() => toggleIndustrySelection(index)}>
-                    <Image
-                      style={[styles.industryLeftIcons, industry.style]}
-                      source={industry.image}
-                    />
-                    <Text style={styles.industryText}>{industry.name}</Text>
-
-                    <View style={styles.industrySelectCircle}>
-                      {selectedIndustry === index && (
-                        <Entypo name="check" size={17} color={colors.primary} />
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
+          <View style={styles.containerCountry}>
+            <Dropdown
+              data={industryList}
+              search
+              maxHeight={300}
+              itemTextStyle={{color: colors.text}}
+              selectedTextStyle={{color: colors.text}}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Industry' : '...'}
+              searchPlaceholder="Search.."
+              value={dropdownIndustryValue}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setDropdownIndustryValue(item.value);
+                setIsFocus(false);
+              }}
+              renderLeftIcon={() => (
+                <AntDesign
+                  style={{marginRight: 10}}
+                  name="API"
+                  size={18}
+                  color={colors.text}
+                />
+              )}
+            />
           </View>
+          {errors.deliveries ? (
+            <Text style={[{color: 'red'}]}>{errors.deliveries}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <MaterialCommunityIcons name="package" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Deliveries per month / Hours per month"
               placeholderTextColor="#999"
-              value={companyName}
-              onChangeText={text => setCompanyName(text)}
+              keyboardType="numeric"
+              value={deliveries}
+              onChangeText={text => setDeliveries(text)}
             />
           </View>
+          {errors.dropdownCountryValue ? (
+            <Text style={[{color: 'red'}]}>{errors.dropdownCountryValue}</Text>
+          ) : null}
           <View style={styles.containerCountry}>
             <Dropdown
-              data={data}
+              data={countryList}
               search
               maxHeight={300}
+              itemTextStyle={{color: colors.text}}
+              selectedTextStyle={{color: colors.text}}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Country' : '...'}
@@ -329,6 +507,16 @@ const EnterpriseSignup = ({navigation}) => {
               onChange={item => {
                 setDropdownCountryValue(item.value);
                 setIsFocus(false);
+                var formattedStateList = [];
+                masterStateList.forEach(element => {
+                  if (item.value == element.country_id) {
+                    formattedStateList.push({
+                      label: element.state_name,
+                      value: element.id,
+                    });
+                  }
+                });
+                setStateList(formattedStateList);
               }}
               renderLeftIcon={() => (
                 <FontAwesome6
@@ -343,14 +531,31 @@ const EnterpriseSignup = ({navigation}) => {
           <View
             style={{
               flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+            }}>
+            {errors.dropdownStateValue ? (
+              <Text style={[{color: 'red'}]}>{errors.dropdownStateValue}</Text>
+            ) : (
+              <Text />
+            )}
+            {errors.dropdownCityValue ? (
+              <Text style={[{color: 'red'}]}>{errors.dropdownCityValue}</Text>
+            ) : null}
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
             <View style={styles.containerCity}>
               <Dropdown
-                data={data}
+                data={stateList}
                 search
                 maxHeight={300}
+                itemTextStyle={{color: colors.text}}
+                selectedTextStyle={{color: colors.text}}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Ain' : '...'}
@@ -359,8 +564,18 @@ const EnterpriseSignup = ({navigation}) => {
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
-                  setDropdownCountryValue(item.value);
+                  setDropdownStateValue(item.value);
                   setIsFocus(false);
+                  var formattedCityList = [];
+                  masterCityList.forEach(element => {
+                    if (item.value == element.state_id) {
+                      formattedCityList.push({
+                        label: element.city_name,
+                        value: element.id,
+                      });
+                    }
+                  });
+                  setCityList(formattedCityList);
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
@@ -372,12 +587,13 @@ const EnterpriseSignup = ({navigation}) => {
                 )}
               />
             </View>
-
             <View style={styles.containerCity}>
               <Dropdown
-                data={data}
+                data={cityList}
                 search
                 maxHeight={300}
+                itemTextStyle={{color: colors.text}}
+                selectedTextStyle={{color: colors.text}}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'ambérieu-e...' : '...'}
@@ -386,7 +602,7 @@ const EnterpriseSignup = ({navigation}) => {
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
-                  setDropdownCountryValue(item.value);
+                  setDropdownCityValue(item.value);
                   setIsFocus(false);
                 }}
                 renderLeftIcon={() => (
@@ -410,6 +626,9 @@ const EnterpriseSignup = ({navigation}) => {
               onChangeText={text => setSiret(text)}
             />
           </View>
+          {errors.comments ? (
+            <Text style={[{color: 'red'}]}>{errors.comments}</Text>
+          ) : null}
           <View>
             <TextInput
               style={styles.inputTextStyle}
@@ -456,7 +675,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('EnterprisesTakeSelfie')}
+            onPress={handleSignUp}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
@@ -503,6 +722,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 10,
     width: '90%',
+    color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   mobileNumberInput: {

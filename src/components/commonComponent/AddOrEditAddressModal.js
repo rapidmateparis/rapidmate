@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,32 +12,56 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dropdown} from 'react-native-element-dropdown';
 
-function EditAddressModal({editModalVisible, setEditModalVisible}) {
+function AddOrEditAddressModal({
+  modalVisible,
+  saveAddress,
+  addressId,
+  toggleModal,
+  addressData,
+}) {
   const [address, setAddress] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
   const [comments, setComments] = useState('');
-  const [number, setNumber] = useState('');
+  const [number, setNumber] = useState();
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [isFocus, setIsFocus] = useState(false);
 
-  const toggleModal = () => {
-    setEditModalVisible(!editModalVisible);
-  };
+  useEffect(() => {
+    setName(addressData?.item.first_name);
+    setAddress(addressData?.item.address);
+    setLastname(addressData?.item.last_name);
+    setCompany(addressData?.item.company_name);
+    setEmail(addressData?.item.email);
+    setComments(addressData?.item.comments);
+    setNumber(addressData?.item.phone);
+  }, [addressData]);
 
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 
+  const clearAddressData = () => {
+    setName('');
+    setAddress('');
+    setLastname('');
+    setCompany('');
+    setEmail('');
+    setComments('');
+    setNumber('');
+  };
+
   return (
     <View style={{flex: 1}}>
-      <Modal isVisible={editModalVisible}>
+      <Modal isVisible={modalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Edit address</Text>
+            <Text style={styles.headerTitle}>
+              {addressId == 0 ? 'Add new address' : 'Edit address'}
+            </Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
@@ -149,10 +173,25 @@ function EditAddressModal({editModalVisible, setEditModalVisible}) {
             </View>
           </View>
           <View style={styles.buttonCard}>
-            <TouchableOpacity style={styles.logbutton}>
-              <Text style={styles.buttonText}>Delete</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.saveBTn}>
+            {addressId == 1 && (
+              <TouchableOpacity style={styles.logbutton}>
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.saveBTn}
+              onPress={() => {
+                saveAddress({
+                  first_name: name,
+                  last_name: lastname,
+                  address: address,
+                  email: email,
+                  phone: number,
+                  company_name: company,
+                  comments: comments,
+                });
+                clearAddressData();
+              }}>
               <Text style={styles.okButton}>Save</Text>
             </TouchableOpacity>
           </View>
@@ -366,4 +405,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditAddressModal;
+export default AddOrEditAddressModal;

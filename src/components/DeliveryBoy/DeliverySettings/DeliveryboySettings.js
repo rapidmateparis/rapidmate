@@ -10,23 +10,48 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import RNRestart from 'react-native-restart';
+import {API} from '../../../utils/constant';
 
 const DeliveryboySettings = ({navigation}) => {
+  const {userDetails} = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
+  const clearAsyncStorage = async () => {
+    await AsyncStorage.clear();
+    RNRestart.restart();
+  };
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.profileCard}>
           <View>
-            <Image
-              style={styles.profileImg}
-              source={require('../../../image/Selfie.png')}
-            />
+            {userDetails.userDetails[0].profile_pic ? (
+              <Image
+                style={styles.profileImg}
+                source={{
+                  uri:
+                    API.viewImageUrl + userDetails.userDetails[0].profile_pic,
+                }}
+              />
+            ) : (
+              <Image
+                style={styles.profileImg}
+                source={require('../../../image/Selfie.png')}
+              />
+            )}
           </View>
           <View style={{marginLeft: 15}}>
-            <Text style={styles.username}>John Doe</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyTakeSelfie')} style={styles.goprofile}> 
+            <Text style={styles.username}>
+              {userDetails.userDetails[0].first_name +
+                ' ' +
+                userDetails.userDetails[0].last_name}
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('DeliveryboyTakeSelfie')}
+              style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
             </TouchableOpacity>
@@ -35,7 +60,9 @@ const DeliveryboySettings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddressBook')}
+            onPress={() =>
+              navigation.navigate('AddressBook', {userDetails: userDetails})
+            }
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
             <Text style={styles.titleStatus}>3 addresses</Text>
@@ -97,7 +124,9 @@ const DeliveryboySettings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('')}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Help</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
@@ -122,7 +151,11 @@ const DeliveryboySettings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity onPress={() => navigation.navigate('')} style={styles.bookAddress}>
+          <TouchableOpacity
+            onPress={() => {
+              clearAsyncStorage();
+            }}
+            style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Logout</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

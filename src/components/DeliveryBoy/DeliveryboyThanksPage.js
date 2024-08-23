@@ -39,7 +39,8 @@ const DeliveryboyThanksPage = ({navigation}) => {
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('DeliveryboyBottomNav')}
+        // onPress={() => navigation.navigate('DeliveryboyBottomNav')}
+        onPress={() => navigation.popToTop()}
         style={[styles.logbutton, {backgroundColor: colors.primary}]}>
         <Text style={styles.buttonText}>Ok</Text>
       </TouchableOpacity>

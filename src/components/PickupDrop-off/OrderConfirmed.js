@@ -8,22 +8,46 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
+  BackHandler
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
+import {
+  usePlacedOrderDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
+import {getProfileInformation} from '../../data_manager';
 
 const OrderConfirm = ({navigation}) => {
-  const orderId = '9AS68D7G698GH';
-  const otp = '123456'; // Sample OTP
+  const [driverDetails, setDriverDetails] = useState(null); // Initialize with null
+  const {userDetails} = useUserDetails();
+  const {placedOrderDetails} = usePlacedOrderDetails();
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
   const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
 
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+    };
+  }, []);
+
+  function handleBackButtonClick() {
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'PickupBottomNav'}],
+    });
+    return true;
+  }
+
   const handleCopyOrderId = () => {
-    Clipboard.setString(orderId);
+    Clipboard.setString(placedOrderDetails[0]?.order_number || '');
     setShowCopiedOrderIdMessage(true);
     setTimeout(() => {
       setShowCopiedOrderIdMessage(false);
@@ -31,12 +55,32 @@ const OrderConfirm = ({navigation}) => {
   };
 
   const handleCopyOtp = () => {
-    Clipboard.setString(otp);
+    Clipboard.setString(placedOrderDetails[0]?.otp || '');
     setShowCopiedOtpMessage(true);
     setTimeout(() => {
       setShowCopiedOtpMessage(false);
     }, 2000);
   };
+
+  useEffect(() => {
+    const params = {
+      userRole: userDetails?.userDetails[0]?.ext_id,
+      orderNumber: placedOrderDetails[0]?.order_number,
+    };
+    getProfileInformation(
+      params,
+      successResponse => {
+        console.log('getProfileInformation', successResponse[0]._response);
+        setDriverDetails(successResponse[0]._response);
+      },
+      errorResponse => {
+        console.log('getProfile===>errorResponse', errorResponse);
+        Alert.alert('Error Alert', errorResponse[0]._response.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, [userDetails, placedOrderDetails]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -70,7 +114,9 @@ const OrderConfirm = ({navigation}) => {
           <View style={styles.textContainer}>
             <Text style={styles.oderIdText}>Order ID: </Text>
             <TouchableOpacity onPress={handleCopyOrderId}>
-              <Text style={styles.text}>{orderId}</Text>
+              <Text style={styles.text}>
+                {placedOrderDetails[0]?.order_number}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCopyOrderId}>
               <AntDesign
@@ -87,7 +133,7 @@ const OrderConfirm = ({navigation}) => {
           <View style={styles.textContainer}>
             <Text style={styles.oderIdText}>OTP: </Text>
             <TouchableOpacity onPress={handleCopyOtp}>
-              <Text style={styles.text}>{otp}</Text>
+              <Text style={styles.text}>{placedOrderDetails[0]?.otp}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCopyOtp}>
               <AntDesign
@@ -117,7 +163,7 @@ const OrderConfirm = ({navigation}) => {
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Delivering to</Text>
                 <Text style={styles.subAddress}>
-                  1901 Thornridge Cir. Shiloh, California
+                  {placedOrderDetails[0]?.address}
                 </Text>
               </View>
               <View>
@@ -127,15 +173,30 @@ const OrderConfirm = ({navigation}) => {
 
             <View style={styles.driverCard}>
               <View style={{position: 'relative'}}>
-                <Image style={{width: 60, height: 60, borderRadius: 30,}} source={require('../../image/driver.jpeg')} />
                 <Image
-                  style={{position: 'absolute', bottom: 1, left: 40, height: 40, width: 40, borderRadius: 30,}}
+                  style={{width: 60, height: 60, borderRadius: 30}}
+                  source={require('../../image/driver.jpeg')}
+                />
+                <Image
+                  style={{
+                    position: 'absolute',
+                    bottom: 1,
+                    left: 40,
+                    height: 40,
+                    width: 40,
+                    borderRadius: 30,
+                  }}
                   source={require('../../image/Drivers-Truck.jpg')}
                 />
               </View>
               <View style={{width: '40%'}}>
-                <Text style={styles.driverName}>John Doe</Text>
-                <Text style={styles.truckName}>VOLVO FH16 2022</Text>
+                <Text style={styles.driverName}>
+                  {driverDetails?.deliveryBoy?.first_name || ''}{' '}
+                  {driverDetails?.deliveryBoy?.last_name || ''}
+                </Text>
+                <Text style={styles.truckName}>
+                  {driverDetails?.vehicle?.plat_no || ''}
+                </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity style={{marginRight: 10}}>
@@ -148,7 +209,9 @@ const OrderConfirm = ({navigation}) => {
               </View>
             </View>
 
-            <TouchableOpacity onPress={() => navigation.navigate('TrackDeiver')} style={styles.trackOrderBtn}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('TrackDeiver')}
+              style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>Track order</Text>
             </TouchableOpacity>
           </View>

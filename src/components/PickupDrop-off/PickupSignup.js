@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,18 +7,20 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Dropdown } from 'react-native-element-dropdown';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import { colors } from '../../colors';
-import { useNavigation } from '@react-navigation/native';
+import {colors} from '../../colors';
+import {useSignUpDetails} from '../commonComponent/StoreContext';
+import {getCountryList, signUpUser} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+// import DropDownDropdown from '../common component/dropdown';
 
-const PickupSignup = () => {
-  const navigation = useNavigation();
-
+const PickupSignup = ({navigation}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -30,6 +32,11 @@ const PickupSignup = () => {
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
+  const [errors, setErrors] = useState({});
+  const {setLoading} = useLoader();
+  const [masterCountryList, setMasterCountryList] = useState(null);
+  const [countryList, setCountryList] = useState([]);
 
   const togglePasswordVisibility = (field) => {
     if (field === 'password') {
@@ -43,18 +50,139 @@ const PickupSignup = () => {
     setSelectedAccountType(accountType);
   };
 
-  const handleContinue = () => {
-    if (selectedAccountType === 'individual') {
-      navigation.navigate('PickupTakeSelfie');
-    } else if (selectedAccountType === 'company') {
-      navigation.navigate('PickupCompanySignup');
+  const validateForm = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\+?\d{10,15}$/;
+
+    let errors = {};
+    if (!name.trim()) {
+      errors.name = 'Name is required';
     }
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters long';
+    }
+    if (password !== confirmPassword) {
+      errors.confirmPassword = 'Passwords does not match';
+    }
+    if (!selectedAccountType) {
+      errors.selectedAccountType = 'Please select an account type';
+    }
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    } else if (isNaN(number)) {
+      errors.number = 'Number should be numeric';
+    }
+    if (!dropdownCountryValue) {
+      errors.dropdownCountryValue = 'Please select a country';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
   };
 
   const data = [
     { label: '+91', value: '+91' },
     { label: '+33', value: '+33' },
   ];
+
+  useEffect(() => {
+    getCountryList(
+      (param = {}),
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCountryList(successResponse[0]._response);
+              var formattedCountryList = [];
+              successResponse[0]._response.forEach(element => {
+                formattedCountryList.push({
+                  label: element.country_name,
+                  value: element.id,
+                });
+              });
+              setCountryList(formattedCountryList);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
+
+  const handleSignUp = async () => {
+    const isValid = validateForm();
+
+    if (isValid) {
+      let params = {
+        info: {
+          userName: email,
+          email: email,
+          phoneNumber: '+91' + number,
+          password: password,
+          userrole: 'CONSUMER',
+          firstName: name,
+          lastName: '',
+          country: dropdownCountryValue.toString(),
+        },
+      };
+      setLoading(true);
+      signUpUser(
+        params,
+        successResponse => {
+          setLoading(false);
+          if (successResponse[0]._success) {
+            if (successResponse[0]._response) {
+              if (
+                successResponse[0]._response.name == 'NotAuthorizedException'
+              ) {
+                Alert.alert('Error Alert', successResponse[0]._response.name, [
+                  {text: 'OK', onPress: () => {}},
+                ]);
+              } else {
+                saveSignUpDetails({
+                  ...signUpDetails,
+                  userName: email,
+                  password: password,
+                });
+                navigation.navigate('SignUpVerify');
+              }
+            }
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }
+    // else {
+    //   // Show error message for invalid email or phone number
+    //   console.log('Invalid email or phone number');
+    //   Alert.alert('Error Alert', 'Invalid email or phone number', [
+    //     {text: 'OK', onPress: () => {}},
+    //   ]);
+    // }
+  };
 
   return (
     <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
@@ -76,6 +204,9 @@ const PickupSignup = () => {
           />
         </View>
         <View style={styles.logFormView}>
+          {errors.name ? (
+            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign name="user" size={18} color="#131314" />
             <TextInput
@@ -86,6 +217,9 @@ const PickupSignup = () => {
               onChangeText={(text) => setName(text)}
             />
           </View>
+          {errors.email ? (
+            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
@@ -96,6 +230,9 @@ const PickupSignup = () => {
               onChangeText={(text) => setEmail(text)}
             />
           </View>
+          {errors.password ? (
+            <Text style={[{color: 'red'}]}>{errors.password}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -115,6 +252,9 @@ const PickupSignup = () => {
               />
             </TouchableOpacity>
           </View>
+          {errors.confirmPassword ? (
+            <Text style={[{color: 'red'}]}>{errors.confirmPassword}</Text>
+          ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
@@ -134,6 +274,9 @@ const PickupSignup = () => {
               />
             </TouchableOpacity>
           </View>
+          {errors.number ? (
+            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+          ) : null}
           <View style={styles.mobileNumberInput}>
             <View style={{ width: 95 }}>
               <View style={styles.containerDropdown}>
@@ -143,6 +286,8 @@ const PickupSignup = () => {
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
+                  itemTextStyle={{color: colors.text}}
+                  selectedTextStyle={{color: colors.text}}
                   placeholder={!isFocus ? '+33' : '...'}
                   searchPlaceholder="+.."
                   value={dropdownValue}
@@ -171,13 +316,20 @@ const PickupSignup = () => {
               onChangeText={(text) => setNumber(text)}
             />
           </View>
+          {errors.dropdownCountryValue ? (
+            <Text style={[{color: 'red', marginTop: 20}]}>
+              {errors.dropdownCountryValue}
+            </Text>
+          ) : null}
           <View style={styles.containerCountry}>
             <Dropdown
-              data={data}
+              data={countryList}
               search
               maxHeight={300}
               labelField="label"
               valueField="value"
+              itemTextStyle={{color: colors.text}}
+              selectedTextStyle={{color: colors.text}}
               placeholder={!isFocus ? 'Country' : '...'}
               searchPlaceholder="Search.."
               value={dropdownCountryValue}
@@ -197,6 +349,9 @@ const PickupSignup = () => {
               )}
             />
           </View>
+          {errors.selectedAccountType ? (
+            <Text style={[{color: 'red'}]}>{errors.selectedAccountType}</Text>
+          ) : null}
           <View>
             <Text style={styles.accountType}>Create account as:</Text>
 
@@ -250,8 +405,11 @@ const PickupSignup = () => {
           </View>
 
           <TouchableOpacity
-            onPress={handleContinue}
-            style={[styles.logbutton, { backgroundColor: colors.primary }]}>
+            onPress={() => {
+              handleSignUp();
+              // navigation.navigate('SignUpVerify');
+            }}
+            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -386,6 +544,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     fontSize: 14,
     marginLeft: 5,
+    color: colors.text,
   },
   checkIcon: {
     backgroundColor: colors.primary,

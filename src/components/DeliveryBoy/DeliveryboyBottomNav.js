@@ -1,5 +1,13 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  BackHandler,
+  Alert,
+  Platform,
+} from 'react-native';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,10 +18,99 @@ import Planning from './Planning';
 import DeliveryboyHistory from './DeliverboyHistory';
 import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
 import Notifications from '../PickupDrop-off/Settings/Notifications';
+import RNExitApp from 'react-native-exit-app';
+import {requestNotificationPermission} from '../../utils/common';
+import messaging from '@react-native-firebase/messaging';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const Bottom = createBottomTabNavigator();
 
 const DeliveryboyBottomNav = ({navigation}) => {
+  useEffect(() => {
+    const onBackPress = () => {
+      Alert.alert(
+        'Exit App',
+        'Do you want to exit?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => {
+              // Do nothing
+            },
+            style: 'cancel',
+          },
+          {text: 'YES', onPress: () => RNExitApp.exitApp()},
+        ],
+        {cancelable: false},
+      );
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(async () => {
+    messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Background Msg!!!!', JSON.stringify(remoteMessage));
+      navigation.navigate('Notifications', {
+        params: JSON.stringify(remoteMessage),
+      });
+    });
+  }, []);
+
+  useEffect(async () => {
+    var permission = true;
+    if (Platform.Version >= 33) {
+      permission = await requestNotificationPermission();
+    }
+
+    if (permission) {
+      const fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        updateProfile(fcmToken);
+      }
+    }
+    onSignIn();
+  }, []);
+
+  async function onSignIn() {
+    crashlytics().log('User signed in.');
+    await Promise.all([
+      crashlytics().setUserId(userDetails.userDetails[0].ext_id.toString()),
+      crashlytics().setAttributes({
+        role: userDetails.userDetails[0].role,
+        email: userDetails.userDetails[0].email,
+        extId: userDetails.userDetails[0].ext_id,
+      }),
+    ]);
+  }
+
+  const updateProfile = token => {
+    let profileParams = {
+      ext_id: userDetails.userDetails[0].ext_id,
+      token: token,
+    };
+    updateUserProfile(
+      userDetails.userDetails[0].role,
+      profileParams,
+      successResponse => {
+        console.log('updateUserProfile', '' + successResponse);
+      },
+      errorResponse => {
+        console.log('updateUserProfile', '' + errorResponse);
+      },
+    );
+  };
+
   return (
     <Bottom.Navigator
       tabBarOptions={{
@@ -49,7 +146,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
             <Ionicons
               name="chatbox-ellipses-outline"
               size={25}
-              color={focused ? '#FF0058' : '#B5B3B2'} 
+              color={focused ? '#FF0058' : '#B5B3B2'}
             />
           ),
         }}
@@ -89,17 +186,6 @@ const DeliveryboyBottomNav = ({navigation}) => {
         name="Account"
         component={DeliveryboySettings}
         options={{
-          headerLeft: () => (
-            <TouchableOpacity
-            onPress={() => navigation.goBack()}
-              style={{paddingLeft: 10}}>
-              <MaterialIcons
-                name="keyboard-backspace"
-                size={25}
-                color={colors.text}
-              />
-            </TouchableOpacity>
-          ),
           headerTitle: 'Account',
           headerTitleStyle: {
             fontFamily: 'Montserrat-SemiBold',
