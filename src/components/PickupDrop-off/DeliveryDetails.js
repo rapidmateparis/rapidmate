@@ -13,17 +13,21 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
-import { getAVehicleByTypeId, getLocationById, getViewOrderDetail } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
+import {
+  getAVehicleByTypeId,
+  getLocationById,
+  getViewOrderDetail,
+} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
 const DeliveryDetails = ({route, navigation}) => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
   const {setLoading} = useLoader();
   const orderNumber = route.params.order_number;
-  const [order, serOrder] = useState({})
-  const [destinationAddress, setDestinationAddress] = useState({})
-  const [vehicleType, setVehicleType] = useState({})
+  const [order, serOrder] = useState({});
+  const [destinationAddress, setDestinationAddress] = useState({});
+  const [vehicleType, setVehicleType] = useState({});
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -33,9 +37,9 @@ const DeliveryDetails = ({route, navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  useEffect(()=>{
-    orderDetail()
-  },[])
+  useEffect(() => {
+    orderDetail();
+  }, []);
 
   const orderDetail = async () => {
     setLoading(true);
@@ -44,9 +48,11 @@ const DeliveryDetails = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order)
-          getDestinationAddress(successResponse[0]._response.order.dropoff_location_id)
-          vehicleDetail(successResponse[0]._response.order.vehicle_type_id)
+          serOrder(successResponse[0]._response.order);
+          getDestinationAddress(
+            successResponse[0]._response.order.dropoff_location_id,
+          );
+          vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
       errorResponse => {
@@ -59,14 +65,14 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  const getDestinationAddress = async (locationId) => {
+  const getDestinationAddress = async locationId => {
     setLoading(true);
     getLocationById(
       locationId,
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          setDestinationAddress(successResponse[0]._response[0])
+          setDestinationAddress(successResponse[0]._response[0]);
         }
       },
       errorResponse => {
@@ -79,14 +85,14 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  const vehicleDetail = async (vehicleTypeId) => {
+  const vehicleDetail = async vehicleTypeId => {
     setLoading(true);
     getAVehicleByTypeId(
       vehicleTypeId,
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          setVehicleType(successResponse[0]._response[0])
+          setVehicleType(successResponse[0]._response[0]);
         }
       },
       errorResponse => {
@@ -98,8 +104,6 @@ const DeliveryDetails = ({route, navigation}) => {
       },
     );
   };
-
-  
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -125,9 +129,12 @@ const DeliveryDetails = ({route, navigation}) => {
           />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>{order.company_name ? order.company_name : ''}</Text>
+            <Text style={styles.companyInfo}>
+              {order.company_name ? order.company_name : ''}
+            </Text>
             <Text style={styles.dropInfo}>
-              {destinationAddress.address}, {destinationAddress.city}, {destinationAddress.state}
+              {destinationAddress.address}, {destinationAddress.city},{' '}
+              {destinationAddress.state}
             </Text>
           </View>
         </View>
@@ -139,29 +146,46 @@ const DeliveryDetails = ({route, navigation}) => {
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>Order fare</Text>
-              <Text style={styles.totalmoney}>€{order.amount}</Text>
+              <Text style={styles.totalmoney}>
+                €{order.amount ? order.amount.toFixed(2) : '0.00'}
+              </Text>
             </View>
 
-            <Text style={styles.travel}>Travelled {order.distance ? order.distance.toFixed(2): ''} km in 32 mins</Text>
+            <Text style={styles.travel}>
+              Travelled {order.distance ? order.distance.toFixed(2) : '0.00'} km
+              in 32 mins
+            </Text>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Order fare</Text>
-              <Text style={styles.value}>€{order.delivery_boy_amount}</Text>
+              <Text style={styles.value}>
+                €
+                {order.delivery_boy_amount
+                  ? order.delivery_boy_amount.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>€0</Text>
+              <Text style={styles.value}>€0.00</Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Platform fee</Text>
-              <Text style={styles.value}>€{order.commission_amount}</Text>
+              <Text style={styles.value}>
+                €
+                {order.commission_amount
+                  ? order.commission_amount.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Amount charged</Text>
-              <Text style={styles.value}>€{order.amount}</Text>
+              <Text style={styles.value}>
+                €{order.amount ? order.amount.toFixed(2) : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.masterCard}>
@@ -178,12 +202,15 @@ const DeliveryDetails = ({route, navigation}) => {
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.detailsId}> Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
+            <Text style={styles.detailsId}>
+              {' '}
+              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
               sed.
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Vehicle:<Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
+            Vehicle:
+            <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
         </View>
 

@@ -3,11 +3,14 @@ import {Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import MiniTruckImage from '../../image/modal-minitruck.png';
-import BicycleImage from '../../image/VehicleModal1.png';
-import MotorbikeImage from '../../image/VehicleModal2.png';
-import MiniVanImage from '../../image/VehicleModal4.png';
-import SemiTruckImage from '../../image/VehicleModal5.png';
+import BicycleImage from '../../image/Bicycle-Modal.png';
+import MotorbikeImage from '../../image/Motorbike-Modal.png';
+import CarImage from '../../image/Car-Modal.png';
+import PartnerImage from '../../image/Partner-Modal.png';
+import VanImage from '../../image/Van-Modal.png';
+import MiniVanImage from '../../image/Pickup-Modal.png';
+import SemiTruckImage from '../../image/Truck-Modal.png';
+import OtherImage from '../../image/Other-Modal.png';
 
 const VehicleDimensionsModal = ({
   setModalVisible,
@@ -22,10 +25,6 @@ const VehicleDimensionsModal = ({
   let vehicleImageSource;
   let vehicleImageStyle;
   switch (vehicleDetails?.vehicle_type_id) {
-    case 6:
-      vehicleImageSource = MiniTruckImage;
-      vehicleImageStyle = styles.miniTruckImage;
-      break;
     case 1:
       vehicleImageSource = BicycleImage;
       vehicleImageStyle = styles.bicycleImage;
@@ -34,7 +33,19 @@ const VehicleDimensionsModal = ({
       vehicleImageSource = MotorbikeImage;
       vehicleImageStyle = styles.motorbikeImage;
       break;
+    case 3:
+      vehicleImageSource = CarImage;
+      vehicleImageStyle = styles.carImage;
+      break;
+    case 4:
+      vehicleImageSource = PartnerImage;
+      vehicleImageStyle = styles.partnerImage;
+      break;
     case 5:
+      vehicleImageSource = VanImage;
+      vehicleImageStyle = styles.vanImage;
+      break;
+    case 6:
       vehicleImageSource = MiniVanImage;
       vehicleImageStyle = styles.miniVanImage;
       break;
@@ -43,8 +54,8 @@ const VehicleDimensionsModal = ({
       vehicleImageStyle = styles.semiTruckImage;
       break;
     default: // Handle the case where vehicleDetails.name is not matched
-      vehicleImageSource = MiniVanImage;
-      vehicleImageStyle = styles.miniVanImage;
+      vehicleImageSource = OtherImage;
+      vehicleImageStyle = styles.otherImage;
       break;
   }
 
@@ -73,8 +84,12 @@ const VehicleDimensionsModal = ({
               <Text style={styles.countText}>1</Text>
             </View>
             <Text style={styles.infoText}>
-              Length{' '} 
-              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.length ? vehicleDetails.length + ' feet': 'null'}</Text>
+              Length{' '}
+              <Text style={styles.boldText}>
+                {vehicleDetails && vehicleDetails.length
+                  ? vehicleDetails.length + ' feet'
+                  : 'null'}
+              </Text>
             </Text>
           </View>
 
@@ -84,7 +99,11 @@ const VehicleDimensionsModal = ({
             </View>
             <Text style={styles.infoText}>
               Height{' '}
-              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.height ? vehicleDetails.height + ' feet': 'null'}</Text>
+              <Text style={styles.boldText}>
+                {vehicleDetails && vehicleDetails.height
+                  ? vehicleDetails.height + ' feet'
+                  : 'null'}
+              </Text>
             </Text>
           </View>
 
@@ -93,7 +112,12 @@ const VehicleDimensionsModal = ({
               <Text style={styles.countText}>3</Text>
             </View>
             <Text style={styles.infoText}>
-              Width <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.width ? vehicleDetails.width + ' feet': 'null'}</Text>
+              Width{' '}
+              <Text style={styles.boldText}>
+                {vehicleDetails && vehicleDetails.width
+                  ? vehicleDetails.width + ' feet'
+                  : 'null'}
+              </Text>
             </Text>
           </View>
         </View>
@@ -131,7 +155,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 20,
   },
   infoContainer: {
     marginBottom: 20,
@@ -182,20 +206,36 @@ const styles = StyleSheet.create({
     height: 250,
   },
   bicycleImage: {
-    width: 250,
-    height: 250,
+    width: 215,
+    height: 215,
   },
   motorbikeImage: {
-    width: 250,
-    height: 250,
+    width: 215,
+    height: 218,
+  },
+  carImage: {
+    width: 233,
+    height: 162,
+  },
+  partnerImage: {
+    width: 265,
+    height: 156,
+  },
+  vanImage: {
+    width: 247,
+    height: 156,
   },
   miniVanImage: {
-    width: 250,
-    height: 250,
+    width: 233,
+    height: 184,
   },
   semiTruckImage: {
-    width: 250,
-    height: 250,
+    width: 285,
+    height: 160,
+  },
+  otherImage: {
+    width: 215,
+    height: 215,
   },
 });
 
