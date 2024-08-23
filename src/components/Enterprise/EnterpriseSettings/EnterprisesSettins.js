@@ -12,7 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUserDetails} from '../../commonComponent/StoreContext';
-import RNExitApp from 'react-native-exit-app';
+import RNRestart from 'react-native-restart';
 import {API} from '../../../utils/constant';
 
 const EnterprisesSettins = ({navigation}) => {
@@ -21,10 +21,7 @@ const EnterprisesSettins = ({navigation}) => {
 
   const clearAsyncStorage = async () => {
     await AsyncStorage.clear();
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'LoginSignup'}],
-    });
+    RNRestart.restart();
   };
 
   return (
@@ -60,7 +57,9 @@ const EnterprisesSettins = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('AddressBook')}
+            onPress={() =>
+              navigation.navigate('AddressBook', {userDetails: userDetails})
+            }
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
             <Text style={styles.titleStatus}>3 addresses</Text>

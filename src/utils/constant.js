@@ -57,5 +57,10 @@ export const API = {
   getAllocatedDeliveryBoy: BASE_URL + '/order/allocated/details?o=',
   viewOrderDetail: BASE_URL + 'order/view/',
   enterprisebranch: BASE_URL + 'enterprisebranch/get/',
-  enterpriseOrder: BASE_URL + 'enterprise/order/'
+  enterpriseOrder: BASE_URL + 'enterprise/order/',
+  getNotificationUrl: BASE_URL + 'notification/list/',
+  createDeliveryBoyAddressUrl: BASE_URL + 'daddressbook/create',
+  getDeliveryBoyAddressListUrl: BASE_URL + 'daddressbook/list/',
+  createConsumerAddressUrl: BASE_URL + 'caddressbook/create',
+  getConsumerAddressListUrl: BASE_URL + 'caddressbook/list/'
 };

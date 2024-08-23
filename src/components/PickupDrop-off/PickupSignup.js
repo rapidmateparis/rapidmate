@@ -136,7 +136,7 @@ const PickupSignup = ({navigation}) => {
         info: {
           userName: email,
           email: email,
-          phoneNumber: '+33' + number,
+          phoneNumber: '+91' + number,
           password: password,
           userrole: 'CONSUMER',
           firstName: name,

@@ -37,7 +37,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [number, setNumber] = useState('');
   const [siret, setSiret] = useState('');
   const [openDropDown, setOpenDropDown] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState('+33');
+  const [dropdownValue, setDropdownValue] = useState('+91');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [dropdownStateValue, setDropdownStateValue] = useState(null);
   const [dropdownCityValue, setDropdownCityValue] = useState(null);

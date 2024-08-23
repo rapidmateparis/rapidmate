@@ -39,17 +39,21 @@ const DeliveryboyHome = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  useEffect(() => {
-    getLocationsData();
-    getOrderList();
-    getLookup();
+  useEffect(async () => {
+    const [locationResponse, orderListResponse, lookupResponse] =
+      await new Promise.all[
+        (getLocationsData(), getOrderList(), getLookup())
+      ]();
+    setLocationList(locationResponse);
+    setOrderList(orderListResponse);
+    saveLookupData(lookupResponse);
   }, []);
 
   const getLookup = () => {
     getLookupData(
       null,
       successResponse => {
-        saveLookupData(successResponse[0]._response);
+        return successResponse[0]._response;
       },
       errorResponse => {
         console.log('getLookup==>errorResponse', errorResponse);
@@ -63,11 +67,11 @@ const DeliveryboyHome = ({navigation}) => {
     getLocations(
       null,
       successResponse => {
+        setLoading(false);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
-          setLocationList(tempOrderList);
+          return tempOrderList;
         }
-        setLoading(false);
       },
       errorResponse => {
         setLoading(false);
@@ -94,11 +98,11 @@ const DeliveryboyHome = ({navigation}) => {
       postParams,
       null,
       successResponse => {
+        setLoading(false);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
-          setOrderList(tempOrderList);
+          return tempOrderList;
         }
-        setLoading(false);
       },
       errorResponse => {
         setLoading(false);

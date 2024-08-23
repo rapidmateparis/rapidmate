@@ -409,7 +409,7 @@ export const getViewOrderDetail = (param, successCallback, errorCallback) => {
 
 export const getLocationById = (params, successCallback, errorCallback) => {
   axiosCall(
-    API.locationIdUrl + '/'+params,
+    API.locationIdUrl + '/' + params,
     HTTPMethod.GET,
     {},
     response => {
@@ -435,9 +435,24 @@ export const getAVehicleByTypeId = (param, successCallback, errorCallback) => {
   );
 };
 
+
 export const getEnterpriseBranch = (params, successCallback, errorCallback) => {
   axiosCall(
     API.enterprisebranch + params,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getNotificationList = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.getNotificationUrl + param + '?page=1&size=15',
     HTTPMethod.GET,
     {},
     response => {
@@ -463,3 +478,74 @@ export const createEnterpriseOrder = (params, successCallback, errorCallback) =>
   );
 };
 
+export const createDeliveryBoyAddressBook = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.createDeliveryBoyAddressUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const createConsumerAddressBook = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.createConsumerAddressUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyAddressBookList = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.getDeliveryBoyAddressListUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getConsumerAddressBookList = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.getConsumerAddressListUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

@@ -709,43 +709,44 @@ const AppNavigator = () => {
               <Stack.Screen
                 name="AddressBook"
                 component={AddressBook}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
-                  headerTitle: 'Address book',
-                  headerTitleStyle: {
-                    fontFamily: 'Montserrat-SemiBold',
-                    fontSize: 16,
-                  },
-                  headerTintColor: colors.text,
-                  headerTitleAlign: 'center',
-                  headerStyle: {
-                    borderBottomWidth: 0,
-                    elevation: 0,
-                  },
-                  headerRight: () => (
-                    <View style={{marginTop: 15}}>
-                      <TouchableOpacity
-                        onPress={toggleModal}
-                        style={{paddingRight: 10}}>
-                        <AntDesign name="plus" size={25} color={colors.text} />
-                      </TouchableOpacity>
-                      <AddNewAddressModal
-                        isModalVisible={isModalVisible}
-                        setModalVisible={setModalVisible}
-                      />
-                    </View>
-                  ),
-                })}
+                options={{headerShown: false}}
+                // options={({navigation}) => ({
+                //   headerLeft: () => (
+                //     <TouchableOpacity
+                //       onPress={() => navigation.goBack()}
+                //       style={{paddingLeft: 10}}>
+                //       <MaterialIcons
+                //         name="keyboard-backspace"
+                //         size={25}
+                //         color={colors.text}
+                //       />
+                //     </TouchableOpacity>
+                //   ),
+                //   headerTitle: 'Address book',
+                //   headerTitleStyle: {
+                //     fontFamily: 'Montserrat-SemiBold',
+                //     fontSize: 16,
+                //   },
+                //   headerTintColor: colors.text,
+                //   headerTitleAlign: 'center',
+                //   headerStyle: {
+                //     borderBottomWidth: 0,
+                //     elevation: 0,
+                //   },
+                //   headerRight: () => (
+                //     <View style={{marginTop: 15}}>
+                //       <TouchableOpacity
+                //         onPress={toggleModal}
+                //         style={{paddingRight: 10}}>
+                //         <AntDesign name="plus" size={25} color={colors.text} />
+                //       </TouchableOpacity>
+                //       <AddNewAddressModal
+                //         isModalVisible={isModalVisible}
+                //         setModalVisible={setModalVisible}
+                //       />
+                //     </View>
+                //   ),
+                // })}
               />
               <Stack.Screen
                 name="PickupChangePassword"
