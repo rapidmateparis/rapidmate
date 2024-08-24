@@ -61,7 +61,7 @@ const DeliveryboyHome = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('getLookup==>errorResponse', '' + errorResponse[0]);
+        console.log('getCompanyConnectionList==>errorResponse', '' + errorResponse[0]);
       },
     );
   };

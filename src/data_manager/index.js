@@ -2,6 +2,7 @@ import {axiosCall} from '../api_manager';
 import {API, HTTPMethod} from '../utils/constant';
 
 export const authenticateUser = (params, successCallback, errorCallback) => {
+  console.log('print_data===>loginUser', params, API.loginAuthenticateUrl);
   axiosCall(
     API.loginAuthenticateUrl,
     HTTPMethod.POST,

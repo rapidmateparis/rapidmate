@@ -21,7 +21,13 @@ export const HTTPMethod = {
   DELETE: 'delete',
 };
 
-export const BASE_URL = 'http://16.171.224.246:3000/api/';
+export const PORT = {
+  qa: '3009',
+  uat: '3000',
+  prod: '3008'
+}
+
+export const BASE_URL = `http://16.171.224.246:${PORT.qa}/api/`;
 
 export const apiHost = {
   // baseURL: 'http://10.0.2.2:3005/api/',
