@@ -2,13 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  ScrollView,
   StyleSheet,
-  Image,
-  ImageBackground,
   Alert,
+  FlatList,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,7 +13,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../../colors';
 import AddOrEditAddressModal from '../../commonComponent/AddOrEditAddressModal';
-import AddNewAddressModal from '../../commonComponent/AddNewAddressModal';
 import {
   getConsumerAddressBookList,
   getDeliveryBoyAddressBookList,
@@ -24,7 +20,6 @@ import {
   createDeliveryBoyAddressBook,
 } from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
-import {FlatList} from 'react-native-gesture-handler';
 
 const AddressBook = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,9 +40,12 @@ const AddressBook = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    console.log('userDetails', userDetails);
+    getAddressBookList();
+  }, [addressId, addressData]);
+
+  const getAddressBookList = () => {
     setLoading(true);
-    if (userDetails.role == 'CONSUMER') {
+    if (userDetails.role === 'CONSUMER') {
       getConsumerAddressBookList(
         userDetails.ext_id,
         successResponse => {
@@ -59,7 +57,7 @@ const AddressBook = ({route, navigation}) => {
           setLoading(false);
         },
       );
-    } else if (userDetails.role == 'DELIVERY_BOY') {
+    } else if (userDetails.role === 'DELIVERY_BOY') {
       getDeliveryBoyAddressBookList(
         userDetails.ext_id,
         successResponse => {
@@ -71,14 +69,13 @@ const AddressBook = ({route, navigation}) => {
           setLoading(false);
         },
       );
-    } else {
     }
-  }, []);
+  };
 
   const createAddress = probs => {
-    if (addressId == 0) {
+    if (addressId === 0) {
       setLoading(true);
-      if (userDetails.role == 'CONSUMER') {
+      if (userDetails.role === 'CONSUMER') {
         let consumerParams = {
           consumer_ext_id: userDetails.ext_id,
           ...probs,
@@ -88,10 +85,16 @@ const AddressBook = ({route, navigation}) => {
           successResponse => {
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
-                {text: 'OK', onPress: () => {}},
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    setAddressData(null);
+                    getAddressBookList();
+                  },
+                },
               ]);
-              setLoading(false);
               toggleModal(0);
+              setLoading(false);
             }
           },
           errorResponse => {
@@ -103,7 +106,7 @@ const AddressBook = ({route, navigation}) => {
             ]);
           },
         );
-      } else if (userDetails.role == 'DELIVERY_BOY') {
+      } else if (userDetails.role === 'DELIVERY_BOY') {
         let deliveryBoyParams = {
           delivery_boy_ext_id: userDetails.ext_id,
           ...probs,
@@ -113,10 +116,16 @@ const AddressBook = ({route, navigation}) => {
           successResponse => {
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
-                {text: 'OK', onPress: () => {}},
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    setAddressData(null);
+                    getAddressBookList();
+                  },
+                },
               ]);
-              setLoading(false);
               toggleModal(0);
+              setLoading(false);
             }
           },
           errorResponse => {
@@ -151,13 +160,12 @@ const AddressBook = ({route, navigation}) => {
   );
 
   return (
-    <View style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+    <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           backgroundColor: colors.white,
-          alignContent: 'center',
           justifyContent: 'space-between',
           height: 50,
         }}>
@@ -184,16 +192,15 @@ const AddressBook = ({route, navigation}) => {
           <AntDesign name="plus" size={25} color={colors.text} />
         </TouchableOpacity>
       </View>
-      <View style={{paddingHorizontal: 15}}>
-        <FlatList
-          data={
-            (consumerAddressList && consumerAddressList) ||
-            (deliveryBoyAddressList && deliveryBoyAddressList)
-          }
-          renderItem={renderItem}
-        />
-      </View>
-
+      <FlatList
+        data={
+          (consumerAddressList && consumerAddressList) ||
+          (deliveryBoyAddressList && deliveryBoyAddressList)
+        }
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        contentContainerStyle={{paddingHorizontal: 15, paddingBottom: 20}}
+      />
       <AddOrEditAddressModal
         modalVisible={modalVisible}
         saveAddress={createAddress}
@@ -220,12 +227,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 0.5, // for Android
     marginTop: 15,
-  },
-  cardTitle: {
-    fontSize: 14,
-    flex: 1,
-    color: colors.text,
-    fontFamily: 'Montserrat-Medium',
   },
   paymentPlateform: {
     color: colors.text,

@@ -520,3 +520,23 @@ export const getConsumerAddressBookList = (
     },
   );
 };
+
+export const getCompanyList = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.getCompanyListUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+
