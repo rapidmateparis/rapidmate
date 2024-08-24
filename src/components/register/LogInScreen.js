@@ -121,7 +121,7 @@ const LogInScreen = ({navigation}) => {
                 ]);
               } else {
                 saveUserDetails({
-                  userInfo: successResponse[0]._response.user.idToken.payload,
+                  userInfo: successResponse[0]._response.user?.idToken?.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
                 console.log('userDetials===>', successResponse[0]._response);

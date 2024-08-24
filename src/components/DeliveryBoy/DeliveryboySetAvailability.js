@@ -129,7 +129,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
     }
     setToggleCheckBoxes(selectedItem);
     setTimeSlots(defaultTimeSlots);
-  }, [toggleApplySameForAll, toggleAvailable24]);
+  }, [toggleApplySameForAll, toggleAvailable24, currentWeek]);
 
   function getWeeksInMonth(year, month) {
     const weeks = [],
@@ -394,40 +394,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
               onPress={handleNextWeek}
               style={styles.slideBt}>
               <AntDesign name="arrowright" size={20} color={colors.text} />
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={[
-              styles.applySlotCard,
-              {backgroundColor: toggleApplySameForAll ? '#F0F0F0' : '#FBFAF5'},
-            ]}
-            pointerEvents={toggleApplySameForAll ? 'none' : 'auto'}>
-            <Text style={styles.applySlotText}>I am available 24/7</Text>
-            <TouchableOpacity onPress={toggleAvailable}>
-              <MaterialCommunityIcons
-                name={toggleAvailable24 ? 'toggle-switch' : 'toggle-switch-off'}
-                size={50}
-                color={toggleAvailable24 ? '#FFC72B' : '#D3D3D3'}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={[
-              styles.applySlotCard,
-              {backgroundColor: toggleAvailable24 ? '#F0F0F0' : '#FBFAF5'},
-            ]}
-            pointerEvents={toggleAvailable24 ? 'none' : 'auto'}>
-            <Text style={styles.applySlotText}>
-            I am available 24/7
-            </Text>
-            <TouchableOpacity onPress={togglePushNotifications}>
-              <MaterialCommunityIcons
-                name={pushNotifications ? 'toggle-switch' : 'toggle-switch-off'}
-                size={50}
-                color={pushNotifications ? '#FFC72B' : '#D3D3D3'}
-              />
             </TouchableOpacity>
           </View>
 
