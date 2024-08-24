@@ -18,6 +18,7 @@ import {
   getDeliveryBoyViewOrdersList,
   getLocations,
   getLookupData,
+  getCompanyList,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
@@ -28,6 +29,7 @@ const DeliveryboyHome = ({navigation}) => {
   const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
+  const [companyList, setCompanyList] = useState([]);
   const {userDetails} = useUserDetails();
   const {saveLookupData} = useLookupData();
 
@@ -39,24 +41,39 @@ const DeliveryboyHome = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  useEffect(async () => {
-    const [locationResponse, orderListResponse, lookupResponse] =
-      await new Promise.all[
-        (getLocationsData(), getOrderList(), getLookup())
-      ]();
-    setLocationList(locationResponse);
-    setOrderList(orderListResponse);
-    saveLookupData(lookupResponse);
+  useEffect(() => {
+    const fetchData = async () => {
+      await getLocationsData();
+      await getOrderList();
+      await getLookup();
+      await getCompanyConnectionList();
+    };
+
+    fetchData();
   }, []);
+
+  const getCompanyConnectionList = () => {
+    getCompanyList(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setCompanyList(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        console.log('getLookup==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
 
   const getLookup = () => {
     getLookupData(
       null,
       successResponse => {
-        return successResponse[0]._response;
+        saveLookupData(successResponse[0]._response);
       },
       errorResponse => {
-        console.log('getLookup==>errorResponse', errorResponse);
+        console.log('getLookup==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
@@ -70,7 +87,7 @@ const DeliveryboyHome = ({navigation}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
-          return tempOrderList;
+          setLocationList(tempOrderList);
         }
       },
       errorResponse => {
@@ -101,7 +118,7 @@ const DeliveryboyHome = ({navigation}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
-          return tempOrderList;
+          setLocationList(tempOrderList);
         }
       },
       errorResponse => {
@@ -113,7 +130,7 @@ const DeliveryboyHome = ({navigation}) => {
     );
   };
 
-  const renderItem = ({item}) => (
+  const renderItem = item => (
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
@@ -146,7 +163,7 @@ const DeliveryboyHome = ({navigation}) => {
     </View>
   );
 
-  const renderDeliveryItem = ({item}) => {
+  const renderDeliveryItem = item => (
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
@@ -176,8 +193,18 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.footerCard}>
         <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
       </View>
-    </View>;
-  };
+    </View>
+  );
+
+  const renderCompanyItem = companyItem => (
+    <View style={styles.companyInfo}>
+      <Image
+        style={styles.companyLogosImage}
+        source={require('../../image/Subway-logo.png')}
+      />
+      <Text style={styles.companyNames}>{companyItem.item.company_name}</Text>
+    </View>
+  );
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -250,15 +277,14 @@ const DeliveryboyHome = ({navigation}) => {
           {orderList.length === 0 ? (
             <Text style={styles.userName}>No orders to show</Text>
           ) : (
-            <FlatList data={orderList} renderItem={renderItem} />
+            <FlatList
+              horizontal
+              data={orderList}
+              renderItem={renderDeliveryItem}
+              keyExtractor={item => item.id.toString()}
+            />
           )}
         </View>
-        <FlatList
-          horizontal
-          data={orderList}
-          renderItem={renderDeliveryItem}
-          keyExtractor={item => item.id.toString()}
-        />
 
         <ScrollView horizontal={true}>
           <View style={styles.allDeleveryCard}></View>
@@ -269,38 +295,15 @@ const DeliveryboyHome = ({navigation}) => {
         </View>
 
         <View style={styles.companyLogoCard}>
-          <Text style={styles.userName}>No Company Details</Text>
-          {/* <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Subway-logo.png')}
+          {companyList.length == 0 ? (
+            <Text style={styles.userName}>No Company Details</Text>
+          ) : (
+            <FlatList
+              data={companyList}
+              horizontal
+              renderItem={renderCompanyItem}
             />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View>
-
-          <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Levis-logo.png')}
-            />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View>
-
-          <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Nike-logo.png')}
-            />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View>
-
-          <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Spark-logo.png')}
-            />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View> */}
+          )}
         </View>
       </View>
     </ScrollView>

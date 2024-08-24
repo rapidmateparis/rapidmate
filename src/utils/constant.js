@@ -62,5 +62,6 @@ export const API = {
   createDeliveryBoyAddressUrl: BASE_URL + 'daddressbook/create',
   getDeliveryBoyAddressListUrl: BASE_URL + 'daddressbook/list/',
   createConsumerAddressUrl: BASE_URL + 'caddressbook/create',
-  getConsumerAddressListUrl: BASE_URL + 'caddressbook/list/'
+  getConsumerAddressListUrl: BASE_URL + 'caddressbook/list/',
+  getCompanyListUrl: BASE_URL + 'deliveryboy/connections/',
 };
