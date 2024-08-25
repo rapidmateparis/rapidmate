@@ -22,7 +22,11 @@ import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
-import {getLocationId, getAllVehicleTypes} from '../../data_manager';
+import {
+  getLocationId,
+  getAllVehicleTypes,
+  getDistancePriceList,
+} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 
 const PickupAddress = ({route, navigation}) => {
@@ -38,6 +42,7 @@ const PickupAddress = ({route, navigation}) => {
   const [sourceLocationId, setSourceLocationId] = useState();
   const [destinationLocationId, setDestinationLocationId] = useState();
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
+  const [distancePriceList, setDistancePriceList] = useState([]);
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
@@ -61,6 +66,10 @@ const PickupAddress = ({route, navigation}) => {
 
   useEffect(() => {
     setLoading(true);
+    getAllVehiclesType();
+  }, []);
+
+  const getAllVehiclesType = () => {
     getAllVehicleTypes(
       null,
       successResponse => {
@@ -76,7 +85,7 @@ const PickupAddress = ({route, navigation}) => {
         ]);
       },
     );
-  }, []);
+  };
 
   const onSourceLocation = location => {
     setSourceLocation(location);
@@ -108,6 +117,30 @@ const PickupAddress = ({route, navigation}) => {
         ]);
       },
     );
+  };
+
+  useEffect(() => {
+    getDistancePrice();
+  }, [distanceTime]);
+
+  const getDistancePrice = () => {
+    getDistancePriceList(
+      distanceTime?.distance,
+      successResponse => {
+        setDistancePriceList(successResponse[0]._response);
+      },
+      errorResponse => {
+        console.log('errorResponse==>', '' + errorResponse[0]);
+      },
+    );
+  };
+
+  const getPriceUsingVechicelType = vehicleTypeId => {
+    //€
+    let result = distancePriceList.filter(
+      priceList => priceList.vehicle_type_id == vehicleTypeId,
+    );
+    return result[0]?.total_price;
   };
 
   const onDestinationLocation = location => {
@@ -147,6 +180,25 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
+    console.log(
+      'navigateToAddPickupAddress',
+      'selectedVehicle',
+      selectedVehicle,
+      'sourceLocation',
+      sourceLocation,
+      'destinationLocation',
+      destinationLocation,
+      'selectedVehiclePrice',
+      selectedVehiclePrice,
+      'distanceTime',
+      distanceTime,
+      'selectedVehicleDetails',
+      selectedVehicleDetails,
+      'sourceLocationId',
+      sourceLocationId,
+      'destinationLocationId',
+      destinationLocationId,
+    );
     if (
       selectedVehicle &&
       sourceLocation &&
@@ -221,7 +273,11 @@ const PickupAddress = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView contentContainerStyle={{paddingHorizontal: 15, backgroundColor: colors.white,}}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 15,
+          backgroundColor: colors.white,
+        }}>
         <View>
           <View style={styles.chooseVehicleCard}>
             <View
@@ -231,11 +287,9 @@ const PickupAddress = ({route, navigation}) => {
                 paddingBottom: 10,
               }}>
               <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
-              {selectedVehiclePrice && (
-                <Text style={styles.selectedVehiclePrice}>
-                  €{selectedVehiclePrice}
-                </Text>
-              )}
+              <Text style={styles.selectedVehiclePrice}>
+                €{getPriceUsingVechicelType(selectedVehicleDetails?.id)}
+              </Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={{flexDirection: 'row'}}>
@@ -243,11 +297,18 @@ const PickupAddress = ({route, navigation}) => {
                   <TouchableOpacity
                     key={index}
                     onPress={() => {
-                      setSelectedVehicle(vehicle.vehicle_type);
-                      setSelectedVehicleDetails(vehicle);
-                      setSelectedVehiclePrice(
-                        vehicle.base_price != 0 && vehicle.base_price,
-                      );
+                      if (sourceLocation && destinationLocation) {
+                        setSelectedVehicle(vehicle.vehicle_type);
+                        setSelectedVehicleDetails(vehicle);
+                        const price = getPriceUsingVechicelType(vehicle.id);
+                        setSelectedVehiclePrice(price);
+                      } else {
+                        Alert.alert(
+                          'Error Alert',
+                          'Please select source and distination',
+                          [{text: 'OK', onPress: () => {}}],
+                        );
+                      }
                     }}
                     style={styles.cardVehicle}>
                     <View
@@ -362,6 +423,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
     marginBottom: 10,
+    width: 100,
   },
   selectedVehiclePrice: {
     fontSize: 16,
