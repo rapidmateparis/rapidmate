@@ -101,7 +101,9 @@ const PickupOrderPreview = ({route, navigation}) => {
           <Text style={styles.pickupDetails}>Pickup details</Text>
           <View>
             <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
-            <Text style={styles.vehicleCapacity}>{params.userDetails.company}</Text>
+            <Text style={styles.vehicleCapacity}>
+              {params.userDetails.company}
+            </Text>
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -128,7 +130,9 @@ const PickupOrderPreview = ({route, navigation}) => {
           </View>
 
           <View>
-            <Text style={styles.pickupNotes}>{params.userDetails.pickupNotes}</Text>
+            <Text style={styles.pickupNotes}>
+              {params.userDetails.pickupNotes}
+            </Text>
           </View>
         </View>
 
@@ -137,12 +141,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
               <Text style={styles.vehicleName}>
-                €
-                {(
-                  params.selectedVehicleDetails.base_price +
-                  params.selectedVehicleDetails.km_price *
-                    params.distanceTime.distance
-                ).toFixed(0)}
+                €{params.selectedVehiclePrice.toFixed(0)}
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text

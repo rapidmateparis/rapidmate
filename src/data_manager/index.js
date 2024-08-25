@@ -436,7 +436,6 @@ export const getAVehicleByTypeId = (param, successCallback, errorCallback) => {
   );
 };
 
-
 export const getEnterpriseBranch = (params, successCallback, errorCallback) => {
   axiosCall(
     API.enterprisebranch + params,
@@ -465,7 +464,11 @@ export const getNotificationList = (param, successCallback, errorCallback) => {
   );
 };
 
-export const createEnterpriseOrder = (params, successCallback, errorCallback) => {
+export const createEnterpriseOrder = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
   axiosCall(
     API.enterpriseOrder,
     HTTPMethod.POST,
@@ -551,11 +554,7 @@ export const getConsumerAddressBookList = (
   );
 };
 
-export const getCompanyList = (
-  param,
-  successCallback,
-  errorCallback,
-) => {
+export const getCompanyList = (param, successCallback, errorCallback) => {
   axiosCall(
     API.getCompanyListUrl + param,
     HTTPMethod.GET,
@@ -569,4 +568,16 @@ export const getCompanyList = (
   );
 };
 
-
+export const getDistancePriceList = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.getDistancePriceListUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

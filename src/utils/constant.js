@@ -24,8 +24,8 @@ export const HTTPMethod = {
 export const PORT = {
   qa: '3009',
   uat: '3000',
-  prod: '3008'
-}
+  prod: '3008',
+};
 
 export const BASE_URL = `http://16.171.224.246:${PORT.qa}/api/`;
 
@@ -70,4 +70,5 @@ export const API = {
   createConsumerAddressUrl: BASE_URL + 'caddressbook/create',
   getConsumerAddressListUrl: BASE_URL + 'caddressbook/list/',
   getCompanyListUrl: BASE_URL + 'deliveryboy/connections/',
+  getDistancePriceListUrl: BASE_URL + 'vehicletypes/price/list?d=',
 };
