@@ -32,6 +32,7 @@ const PickupHome = ({navigation}) => {
     getServiceTypeApi(
       null,
       successResponse => {
+        console.log('getServiceTypeApi', successResponse[0]._response);
         saveServiceTypeDetails(successResponse[0]._response);
       },
       errorResponse => {
@@ -92,7 +93,13 @@ const PickupHome = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.requestPickup}>
+        <TouchableOpacity
+          style={styles.requestPickup}
+          onPress={() => {
+            navigation.push('PickupAddress', {
+              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+            });
+          }}>
           <View>
             <Image
               style={{width: 60, height: 112}}
@@ -107,7 +114,13 @@ const PickupHome = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.requestPickup}>
+        <TouchableOpacity
+          style={styles.requestPickup}
+          onPress={() => {
+            navigation.push('PickupAddress', {
+              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+            });
+          }}>
           <View style={styles.pickcard}>
             <Text style={styles.packageRequst}>Request a Mover</Text>
             <Text style={styles.packageDiscription}>
@@ -122,7 +135,13 @@ const PickupHome = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.requestPickupPack}>
+        <TouchableOpacity
+          style={styles.requestPickupPack}
+          onPress={() => {
+            navigation.push('PickupAddress', {
+              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+            });
+          }}>
           <View style={styles.packingCardImgas}>
             <Image
               style={{width: 125, height: 106}}
@@ -152,23 +171,6 @@ const PickupHome = ({navigation}) => {
               style={styles.timingIcon}
               source={require('../../image/timing-icon.png')}
             />
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.requestPickup}>
-          <View>
-            <View>
-              <Image
-                style={{width: 163, height: 132}}
-                source={require('../../image/PackageMove-img.png')}
-              />
-            </View>
-            <View style={{marginTop: 10}}>
-              <Text style={styles.packageRequst}>Request a Mover</Text>
-              <Text style={styles.packageDiscription}>
-                Avail service of our professional packer & movers
-              </Text>
-            </View>
           </View>
         </TouchableOpacity>
       </View>

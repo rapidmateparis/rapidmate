@@ -258,20 +258,22 @@ const PickupAddress = ({route, navigation}) => {
           onSourceLocation={onSourceLocation}
           onDestinationLocation={onDestinationLocation}
         />
-        <View style={styles.dateCard}>
-          <EvilIcons name="calendar" size={25} color="#000" />
-          <Text style={styles.dateCardText}>When do you need it?</Text>
-          <TouchableOpacity>
-            <Text
-              style={{
-                color: colors.secondary,
-                fontSize: 14,
-                fontFamily: 'Montserrat-SemiBold',
-              }}>
-              Now
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {route?.params?.pickupService?.id == 2 && (
+          <View style={styles.dateCard}>
+            <EvilIcons name="calendar" size={25} color="#000" />
+            <Text style={styles.dateCardText}>When do you need it?</Text>
+            <TouchableOpacity>
+              <Text
+                style={{
+                  color: colors.secondary,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat-SemiBold',
+                }}>
+                Now
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <ScrollView
         contentContainerStyle={{

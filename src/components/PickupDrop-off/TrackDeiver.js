@@ -11,9 +11,16 @@ import StepIndicator from 'react-native-step-indicator';
 import TrackLiveLocation from '../commonComponent/TrackLiveLocation'; // Assuming this is a custom component
 import {colors} from '../../colors'; // Assuming you have a colors file
 
-const TrackDelivery = ({navigation}) => {
+const TrackDelivery = ({route, navigation}) => {
   const [remainingTime, setRemainingTime] = useState(3600); // 3600 seconds = 60 minutes
   const [currentPosition, setCurrentPosition] = useState(0); // Initialize currentPosition state
+  const [driverDetails, setDriverDetails] = useState(
+    route.params.driverDetails,
+  );
+  const [locationList, setLocationList] = useState(route.params.locationList);
+  const [orderDetails, setOrderDetails] = useState(
+    route.params.placedOrderDetails,
+  );
 
   // Number of steps in the step indicator
   const stepCount = 4;
@@ -25,6 +32,8 @@ const TrackDelivery = ({navigation}) => {
     'Your order has been picked up for delivery',
     'Order arriving soon!',
   ];
+
+  console.log("routes", route)
 
   // Custom styles for the step indicator
   const customStyles = {
