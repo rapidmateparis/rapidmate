@@ -10,6 +10,7 @@ import {
 import StepIndicator from 'react-native-step-indicator';
 import TrackLiveLocation from '../commonComponent/TrackLiveLocation'; // Assuming this is a custom component
 import {colors} from '../../colors'; // Assuming you have a colors file
+import { API } from '../../utils/constant';
 
 const TrackDelivery = ({route, navigation}) => {
   const [remainingTime, setRemainingTime] = useState(3600); // 3600 seconds = 60 minutes
@@ -33,7 +34,7 @@ const TrackDelivery = ({route, navigation}) => {
     'Order arriving soon!',
   ];
 
-  console.log("routes", route)
+  console.log('routes', route);
 
   // Custom styles for the step indicator
   const customStyles = {
@@ -111,10 +112,20 @@ const TrackDelivery = ({route, navigation}) => {
           {/* Driver Info Card */}
           <View style={styles.driverCard}>
             <View style={{position: 'relative'}}>
-              <Image
-                style={{width: 60, height: 60, borderRadius: 30}}
-                source={require('../../image/driver.jpeg')}
-              />
+              {driverDetails?.deliveryBoy?.profile_pic ? (
+                <Image
+                  style={{width: 60, height: 60, borderRadius: 30}}
+                  source={{
+                    uri:
+                      API.viewImageUrl + driverDetails.deliveryBoy.profile_pic,
+                  }}
+                />
+              ) : (
+                <Image
+                  style={{width: 60, height: 60, borderRadius: 30}}
+                  source={require('../../image/driver.jpeg')}
+                />
+              )}
               <Image
                 style={{
                   position: 'absolute',
@@ -128,8 +139,14 @@ const TrackDelivery = ({route, navigation}) => {
               />
             </View>
             <View style={{width: '40%'}}>
-              <Text style={styles.driverName}>John Doe</Text>
-              <Text style={styles.truckName}>VOLVO FH16 2022</Text>
+              <Text style={styles.driverName}>
+                {driverDetails?.deliveryBoy?.first_name +
+                  ' ' +
+                  driverDetails?.deliveryBoy?.last_name}
+              </Text>
+              <Text style={styles.truckName}>
+                {driverDetails?.vehicle?.plat_no}
+              </Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity style={{marginRight: 10}}>
