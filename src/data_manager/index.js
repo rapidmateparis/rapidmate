@@ -371,15 +371,15 @@ export const getLookupData = (params, successCallback, errorCallback) => {
   );
 };
 
-export const getProfileInformation = (
+export const getAllocatedDeliveryBoy = (
   params,
   successCallback,
   errorCallback,
 ) => {
   console.log(
-    'getProfileInformation',
+    'getAllocatedDeliveryBoy',
     params,
-    API.updateUserProfile + params.orderNumber,
+    API.getAllocatedDeliveryBoy + params.orderNumber,
   );
   axiosCall(
     API.getAllocatedDeliveryBoy + params.orderNumber,
