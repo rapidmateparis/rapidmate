@@ -7,13 +7,14 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../colors';
-import { useUserDetails } from '../commonComponent/StoreContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
 import BicycleImage from '../../image/Cycle-Icon.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import CarImage from '../../image/Car-Icon.png';
@@ -22,12 +23,14 @@ import VanImage from '../../image/Van-Icon.png';
 import PickupImage from '../../image/Pickup-Icon.png';
 import TruckImage from '../../image/Truck-Icon.png';
 import BigTruckImage from '../../image/Big-Package.png';
+import {useLoader} from '../../utils/loaderContext';
+import {createEnterpriseOrder} from '../../data_manager';
 
 const EnterprisePickupOrderPriview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const {userDetails} = useUserDetails();
-  const params = route.params
-
+  const {setLoading} = useLoader();
+  const params = route.params;
 
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
@@ -50,6 +53,66 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
     }
   };
 
+  const placeEnterpriseOrder = async () => {
+    if (params.distance) {
+      let requestParams = {
+        enterprise_ext_id: userDetails.userDetails[0].ext_id,
+        branch_id: params.branch_id,
+        delivery_type_id: 1,
+        service_type_id: 2,
+        vehicle_type_id: params.vehicle_type.vehicle_type_id,
+        pickup_date: params.pickup_date,
+        pickup_time: params.pickup_time,
+        pickup_location_id: params.pickup_location_id,
+        dropoff_location_id: params.dropoff_location_id,
+        is_repeat_mode: params.is_repeat_mode,
+        repeat_day: '',
+        is_my_self: 1,
+        first_name: userDetails.userDetails[0].first_name,
+        last_name: userDetails.userDetails[0].last_name,
+        company_name: params.company_name,
+        email: userDetails.userDetails[0].email,
+        mobile: params.mobile,
+        package_id: params.package_id,
+        package_note: params.package_note,
+        is_same_dropoff_location: 0,
+        repeat_dropoff_location_id: '',
+        distance: parseFloat(params.distance).toFixed(1),
+        total_amount: parseFloat(params.amount),
+        package_photo: 'https://example.com/package.jpg',
+        repeat_mode: params.repeat_mode,
+        repeat_every: params.repeat_every,
+        repeat_until: params.repeat_until,
+      };
+      console.log('requestParams', requestParams);
+      setLoading(true);
+      createEnterpriseOrder(
+        requestParams,
+        successResponse => {
+          if (successResponse[0]._success) {
+            console.log('createEnterpriseOrder', successResponse[0]._response);
+            setLoading(false);
+            navigation.navigate('EnterpriseScheduleApproved');
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log(
+            'createEnterpriseOrder==>errorResponse',
+            errorResponse[0],
+          );
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      Alert.alert('Error Alert', 'Please choose pickup and drop location', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -64,7 +127,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           <View style={styles.locationAddress}>
             <MaterialIcons name="my-location" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-            {params.pickup_location.sourceDescription}
+              {params.pickup_location.sourceDescription}
             </Text>
           </View>
           <View style={styles.borderShowOff}></View>
@@ -73,13 +136,18 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           <Text style={styles.vehicleDetails}>Vehicle details</Text>
           <View style={styles.semiTruckDetails}>
             <View>
-              <Text style={styles.vehicleName}>{params.vehicle_type.vehicle_type}</Text>
+              <Text style={styles.vehicleName}>
+                {params.vehicle_type.vehicle_type}
+              </Text>
               <Text style={styles.vehicleCapacity}>
                 20000 liters max capacity
               </Text>
             </View>
             <View>
-              <Image style={{width: 130, height: 75,}} source={getVechicleImage(params.vehicle_type.vehicle_type_id)} />
+              <Image
+                style={{width: 130, height: 75}}
+                source={getVechicleImage(params.vehicle_type.vehicle_type_id)}
+              />
             </View>
           </View>
         </View>
@@ -87,7 +155,11 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         <View style={styles.pickupCard}>
           <Text style={styles.pickupDetails}>Pickup details</Text>
           <View>
-            <Text style={styles.vehicleName}>{userDetails.userDetails[0].first_name}</Text>
+            <Text style={styles.vehicleName}>
+              {userDetails.userDetails[0].first_name +
+                ' ' +
+                userDetails.userDetails[0].last_name}
+            </Text>
             <Text style={styles.vehicleCapacity}>{params.company_name}</Text>
           </View>
           <View style={styles.pickupinfoCard}>
@@ -98,7 +170,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
                 size={12}
                 color="#000000"
               />
-              <Text style={styles.contactInfo}>{userDetails.userDetails[0].email}</Text>
+              <Text style={styles.contactInfo}>
+                {userDetails.userDetails[0].email}
+              </Text>
             </View>
 
             <View style={styles.pickupManDetails}>
@@ -113,9 +187,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           </View>
 
           <View>
-            <Text style={styles.pickupNotes}>
-              {params.package_note}
-            </Text>
+            <Text style={styles.pickupNotes}>{params.package_note}</Text>
           </View>
         </View>
 
@@ -163,9 +235,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpriseOrderPayment',{...params})}
+          onPress={placeEnterpriseOrder}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Proceed to payment</Text>
+          <Text style={styles.buttonText}>Submit Order</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -58,6 +58,9 @@ const LoaderForDriver = ({navigation}) => {
       },
       errorResponse => {
         if (errorResponse[0]._errors.message) {
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
         }
       },
     );

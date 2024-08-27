@@ -104,7 +104,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       merchantDisplayName: 'RapidMate LLC',
       paymentIntentClientSecret: client_secret, // retrieve this from your server
     });
-    console.log('érror',error)
+    console.log('érror', error);
     if (!error) {
       checkout();
     } else {
@@ -123,9 +123,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
     let requestParams = {
       order_number: orderNumber,
       amount: params.amount,
-      order_type: 2
+      order_type: 2,
     };
-    console.log('requestParams', requestParams)
+    console.log('requestParams', requestParams);
     setLoading(true);
     addPayment(
       requestParams,
@@ -173,7 +173,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       repeat_dropoff_location_id: '',
       distance: parseFloat(params.distance).toFixed(1),
       total_amount: parseFloat(params.amount),
-      package_photo: "https://example.com/package.jpg",
+      package_photo: 'https://example.com/package.jpg',
       repeat_mode: params.repeat_mode,
       repeat_every: params.repeat_every,
       repeat_until: params.repeat_until,
@@ -274,7 +274,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         </View>
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
-            <Text>€</Text>34.00
+            <Text>€</Text>
+            {params.amount}
           </Text>
           <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>

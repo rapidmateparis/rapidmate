@@ -89,7 +89,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   const repeatType = [
-    {label: 'Day', value: 'Day'}
+    {label: 'Day', value: 'Day'},
     // {label: 'Week', value: 'Week'},
   ];
 
@@ -885,33 +885,41 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           <View>
             <TouchableOpacity
               onPress={() => {
-                let params = {
-                  ...route.params,
-                  delivery_type_id: 'One time delivery',
-                  distanceTime: distanceTime,
-                  pickup_location: sourceLocation,
-                  dropoff_location: destinationLocation,
-                  pickup_location_id: sourceLocationId,
-                  dropoff_location_id: destinationLocationId,
-                  mobile: number,
-                  company_name: company,
-                  package_note: pickupNotes,
-                  pickup_date: moment(date).format('YYYY-MM-DD'),
-                  pickup_time: moment(time).format('HH:MM'),
-                  is_repeat_mode: promoEmails ? 1 : 0,
-                  package_id: orderid,
-                  amount: Math.round(
-                    route.params.vehicle_type.base_price +
-                      route.params.vehicle_type.km_price *
-                        distanceTime.distance,
-                  ).toFixed(2),
-                  distance: distanceTime.distance.toFixed(2),
-                  time: distanceTime.time.toFixed(0),
-                  repeat_mode: repeatOrder,
-                  repeat_every: selectedRepeatEvery,
-                  repeat_until: moment(untilDate).format('YYYY-MM-DD'),
-                };
-                navigation.navigate('EnterprisePickupOrderPriview', params);
+                if (sourceLocationId && destinationLocationId) {
+                  let params = {
+                    ...route.params,
+                    delivery_type_id: 'One time delivery',
+                    distanceTime: distanceTime,
+                    pickup_location: sourceLocation,
+                    dropoff_location: destinationLocation,
+                    pickup_location_id: sourceLocationId,
+                    dropoff_location_id: destinationLocationId,
+                    mobile: number,
+                    company_name: company,
+                    package_note: pickupNotes,
+                    pickup_date: moment(date).format('YYYY-MM-DD'),
+                    pickup_time: moment(time).format('HH:MM'),
+                    is_repeat_mode: promoEmails ? 1 : 0,
+                    package_id: orderid,
+                    amount: Math.round(
+                      route.params.vehicle_type.base_price +
+                        route.params.vehicle_type.km_price *
+                          distanceTime.distance,
+                    ).toFixed(2),
+                    distance: distanceTime.distance.toFixed(2),
+                    time: distanceTime.time.toFixed(0),
+                    repeat_mode: repeatOrder,
+                    repeat_every: selectedRepeatEvery,
+                    repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                  };
+                  navigation.navigate('EnterprisePickupOrderPriview', params);
+                } else {
+                  Alert.alert(
+                    'Error Alert',
+                    'Please choose pickup and drop location',
+                    [{text: 'OK', onPress: () => {}}],
+                  );
+                }
               }}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
               <Text style={styles.buttonText}>Next</Text>
