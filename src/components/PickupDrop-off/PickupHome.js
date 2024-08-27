@@ -162,16 +162,6 @@ const PickupHome = ({navigation}) => {
               <Text style={styles.discountPercentage}>15% OFF</Text>
             </View>
           </View>
-          <View style={styles.packingCardImgas}>
-            <Image
-              style={{width: 146, height: 112}}
-              source={require('../../image/package-packing.png')}
-            />
-            <Image
-              style={styles.timingIcon}
-              source={require('../../image/timing-icon.png')}
-            />
-          </View>
         </TouchableOpacity>
       </View>
     </ScrollView>
