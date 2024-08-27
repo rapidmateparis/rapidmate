@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
   loginput: {
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',
-    color: colors.text,
+    color: colors.black,
     paddingHorizontal: 10,
     width: '90%',
   },
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     paddingHorizontal: 10,
-    color: colors.text,
+    color: colors.black,
     fontFamily: 'Montserrat-Regular',
   },
   accountType: {

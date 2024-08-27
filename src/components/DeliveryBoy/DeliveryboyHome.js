@@ -24,27 +24,19 @@ import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 
 const DeliveryboyHome = ({navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
   const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
+  const [recentOrderList, setRecentOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
   const {userDetails} = useUserDetails();
   const {saveLookupData} = useLookupData();
 
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
-  };
-
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       await getLocationsData();
-      await getOrderList();
+      await getOrderList(0);
+      await getOrderList(1);
       await getLookup();
       await getCompanyConnectionList();
     };
@@ -61,7 +53,10 @@ const DeliveryboyHome = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('getCompanyConnectionList==>errorResponse', '' + errorResponse[0]);
+        console.log(
+          'getCompanyConnectionList==>errorResponse',
+          '' + errorResponse[0],
+        );
       },
     );
   };
@@ -101,15 +96,15 @@ const DeliveryboyHome = ({navigation}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0].address;
+    return result[0]?.address;
   };
 
-  const getOrderList = () => {
+  const getOrderList = status => {
     setLoading(true);
     setOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
-      status: 'current',
+      status: status == 0 ? 'upcoming' : 'past',
     };
     getDeliveryBoyViewOrdersList(
       postParams,
@@ -118,7 +113,9 @@ const DeliveryboyHome = ({navigation}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
-          setLocationList(tempOrderList);
+          status == 0
+            ? setOrderList(tempOrderList)
+            : setRecentOrderList(tempOrderList);
         }
       },
       errorResponse => {
@@ -130,11 +127,13 @@ const DeliveryboyHome = ({navigation}) => {
     );
   };
 
-  const renderItem = item => (
+  const renderItem = Orderitem => (
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
-        <Text style={styles.deliveryTime}>Pickup in 00:23:19</Text>
+        <Text style={styles.deliveryTime}>
+          Pickup in {Orderitem.item.delivery_date}
+        </Text>
       </View>
 
       <View style={styles.packageMiddle}>
@@ -142,7 +141,7 @@ const DeliveryboyHome = ({navigation}) => {
         <Text style={styles.fromLocation}>
           From{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.pickup_location_id)}
+            {getLocationAddress(Orderitem.item.pickup_location_id)}
           </Text>
         </Text>
       </View>
@@ -152,18 +151,20 @@ const DeliveryboyHome = ({navigation}) => {
         <Text style={styles.fromLocation}>
           To{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.dropoff_location_id)}
+            {getLocationAddress(Orderitem.item.dropoff_location_id)}
           </Text>
         </Text>
       </View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>
+          Order ID: {Orderitem.item.order_number}
+        </Text>
       </View>
     </View>
   );
 
-  const renderDeliveryItem = item => (
+  const renderDeliveryItem = recentItem => (
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
@@ -175,7 +176,7 @@ const DeliveryboyHome = ({navigation}) => {
         <Text style={styles.fromLocation}>
           From{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.pickup_location_id)}
+            {getLocationAddress(recentItem.item.pickup_location_id)}
           </Text>
         </Text>
       </View>
@@ -185,13 +186,15 @@ const DeliveryboyHome = ({navigation}) => {
         <Text style={styles.fromLocation}>
           To{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.dropoff_location_id)}
+            {getLocationAddress(recentItem.item.dropoff_location_id)}
           </Text>
         </Text>
       </View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>
+          Order ID: {recentItem.item.order_number}
+        </Text>
       </View>
     </View>
   );
@@ -240,7 +243,6 @@ const DeliveryboyHome = ({navigation}) => {
         <View style={styles.allDeleveryCard}>
           <View
             style={{
-              flex: 1,
               paddingHorizontal: 15,
               paddingTop: 5,
               backgroundColor: '#FBFAF5',
@@ -248,15 +250,14 @@ const DeliveryboyHome = ({navigation}) => {
             {orderList.length === 0 ? (
               <Text style={styles.userName}>No orders to show</Text>
             ) : (
-              <FlatList data={orderList} renderItem={renderItem} />
+              <FlatList
+                horizontal
+                data={orderList}
+                renderItem={renderItem}
+                keyExtractor={item => item.id.toString()}
+              />
             )}
           </View>
-          <FlatList
-            horizontal
-            data={orderList}
-            renderItem={renderItem}
-            keyExtractor={item => item.id.toString()}
-          />
         </View>
 
         <View style={styles.recentlyInfo}>
@@ -274,12 +275,12 @@ const DeliveryboyHome = ({navigation}) => {
             paddingTop: 5,
             backgroundColor: '#FBFAF5',
           }}>
-          {orderList.length === 0 ? (
+          {recentOrderList.length === 0 ? (
             <Text style={styles.userName}>No orders to show</Text>
           ) : (
             <FlatList
               horizontal
-              data={orderList}
+              data={recentOrderList}
               renderItem={renderDeliveryItem}
               keyExtractor={item => item.id.toString()}
             />
