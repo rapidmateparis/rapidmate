@@ -71,4 +71,5 @@ export const API = {
   getConsumerAddressListUrl: BASE_URL + 'caddressbook/list/',
   getCompanyListUrl: BASE_URL + 'deliveryboy/connections/',
   getDistancePriceListUrl: BASE_URL + 'vehicletypes/price/list?d=',
+  getFaqListUrl: BASE_URL + 'faq',
 };

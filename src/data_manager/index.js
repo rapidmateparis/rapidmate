@@ -581,3 +581,17 @@ export const getDistancePriceList = (param, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getFaqsList = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.getFaqListUrl,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
