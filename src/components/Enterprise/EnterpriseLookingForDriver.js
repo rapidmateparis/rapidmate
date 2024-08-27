@@ -8,23 +8,65 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert
 } from 'react-native';
 import {colors} from '../../colors';
 import EnterpriseOrderCancellationModal from '../commonComponent/EnterpriseOrderCancellationModal';
+import {
+  usePlacedOrderDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
+import {getAllocatedDeliveryBoy, getLocations} from '../../data_manager';
 
 const EnterpriseLookingForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = (vehicleDetails) => {
+  const {placedOrderDetails} = usePlacedOrderDetails();
+  const {userDetails} = useUserDetails();
+
+  const toggleModal = vehicleDetails => {
     clearTimeout(timeOutId);
     setModalVisible(!isModalVisible);
   };
 
-  var timeOutId = '';
+  const getLocationsData = () => {
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          const params = {
+            userRole: userDetails?.userDetails[0]?.role,
+            orderNumber: placedOrderDetails[0]?.order_number,
+          };
+          getAllocatedDeliveryBoy(
+            params,
+            successResponse => {
+              navigation.navigate('OrderPickup', {
+                driverDetails: successResponse[0]._response,
+                locationList: tempOrderList,
+              });
+            },
+            errorResponse => {
+              console.log('getProfile===>errorResponse', errorResponse);
+              Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            },
+          );
+        }
+      },
+      errorResponse => {
+        if (errorResponse[0]._errors.message) {
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        }
+      },
+    );
+  };
+
   useEffect(() => {
-    timeOutId = setTimeout(() => {
-      navigation.navigate('OrderConfirm');
-    }, 5000);
-    console.log('timeOutId', timeOutId);
+    getLocationsData();
   }, []);
 
   return (
@@ -65,7 +107,9 @@ const EnterpriseLookingForDriver = ({navigation}) => {
           source={require('../../image/Driver-Bg2.png')}
         />
       </View>
-      <TouchableOpacity onPress={()=>toggleModal()} style={styles.requestTouch}>
+      <TouchableOpacity
+        onPress={() => toggleModal()}
+        style={styles.requestTouch}>
         <Text style={styles.cancelRequest}>Cancel request</Text>
       </TouchableOpacity>
 
