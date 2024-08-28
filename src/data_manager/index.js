@@ -620,9 +620,9 @@ export const deleteAddressBookforDeliveryBoy = (
   errorCallback,
 ) => {
   axiosCall(
-    API.addressBookUpDeleteDeliveryBoyUrl + param,
+    API.addressBookUpDeleteDeliveryBoyUrl + param.id,
     HTTPMethod.DELETE,
-    {},
+    param,
     response => {
       successCallback(response);
     },
@@ -638,9 +638,9 @@ export const deleteAddressBookforConsumer = (
   errorCallback,
 ) => {
   axiosCall(
-    API.addressBookUpDeleteConsumerUrl + param,
+    API.addressBookUpDeleteConsumerUrl + param.id,
     HTTPMethod.DELETE,
-    {},
+    param,
     response => {
       successCallback(response);
     },

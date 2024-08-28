@@ -212,7 +212,7 @@ const AddressBook = ({route, navigation}) => {
     if (userDetails.role === 'CONSUMER') {
       let consumerParams = {
         consumer_ext_id: userDetails.ext_id,
-        ...probs.id,
+        ...probs,
       };
       deleteAddressBookforConsumer(
         consumerParams,
@@ -242,7 +242,7 @@ const AddressBook = ({route, navigation}) => {
     } else if (userDetails.role === 'DELIVERY_BOY') {
       let deliveryBoyParams = {
         delivery_boy_ext_id: userDetails.ext_id,
-        ...probs.id,
+        ...probs,
       };
       deleteAddressBookforDeliveryBoy(
         deliveryBoyParams,
