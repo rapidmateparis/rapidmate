@@ -189,7 +189,7 @@ const PickupSignup = ({navigation}) => {
       <View style={{ paddingHorizontal: 15 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ width: '85%' }}>
-            <Text style={[styles.logInText, { color: colors.text }]}>
+            <Text style={[styles.logInText, { color: colors.black }]}>
               Pickup & Drop-off{' '}
               <Text style={{ fontFamily: 'Montserrat-Medium' }}>signup</Text>
             </Text>
@@ -286,8 +286,8 @@ const PickupSignup = ({navigation}) => {
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
-                  itemTextStyle={{color: colors.text}}
-                  selectedTextStyle={{color: colors.text}}
+                  itemTextStyle={{color: colors.black}}
+                  selectedTextStyle={{color: colors.black}}
                   placeholder={!isFocus ? '+33' : '...'}
                   searchPlaceholder="+.."
                   value={dropdownValue}
@@ -328,8 +328,8 @@ const PickupSignup = ({navigation}) => {
               maxHeight={300}
               labelField="label"
               valueField="value"
-              itemTextStyle={{color: colors.text}}
-              selectedTextStyle={{color: colors.text}}
+              itemTextStyle={{color: colors.black}}
+              selectedTextStyle={{color: colors.black}}
               placeholder={!isFocus ? 'Country' : '...'}
               searchPlaceholder="Search.."
               value={dropdownCountryValue}
@@ -344,7 +344,7 @@ const PickupSignup = ({navigation}) => {
                   style={{ marginRight: 10 }}
                   name="globe"
                   size={18}
-                  color={colors.text}
+                  color={colors.black}
                 />
               )}
             />
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.black,
     fontFamily: 'Montserrat-Medium',
   },
   signUpContainer: {
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
     fontSize: 12,
-    color: colors.text,
+    color: colors.black,
   },
   accountCard: {
     flexDirection: 'row',
@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     fontSize: 14,
     marginLeft: 5,
-    color: colors.text,
+    color: colors.black,
   },
   checkIcon: {
     backgroundColor: colors.primary,
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   termOfRapidmate: {
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
-    color: colors.text,
+    color: colors.black,
     textAlign: 'center',
     marginTop: 10,
     marginHorizontal: 50,
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
     height: 20,
     padding: 3,
     borderRadius: 15,
-    borderBlockColor: colors.text,
+    borderBlockColor: colors.black,
     borderWidth: 1,
   },
 });
