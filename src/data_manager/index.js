@@ -595,3 +595,57 @@ export const getFaqsList = (param, successCallback, errorCallback) => {
     },
   );
 };
+
+export const updateAddressBookforConsumer = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookUpdateConsumerUrl,
+    HTTPMethod.PUT,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const deleteAddressBookforDeliveryBoy = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookUpDeleteDeliveryBoyUrl + param.id,
+    HTTPMethod.DELETE,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const deleteAddressBookforConsumer = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookUpDeleteConsumerUrl + param.id,
+    HTTPMethod.DELETE,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
