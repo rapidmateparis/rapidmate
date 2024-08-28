@@ -18,6 +18,10 @@ import {
   getDeliveryBoyAddressBookList,
   createConsumerAddressBook,
   createDeliveryBoyAddressBook,
+  updateAddressBookforConsumer,
+  updateAddressBookforDeliveryBoy,
+  deleteAddressBookforConsumer,
+  deleteAddressBookforDeliveryBoy,
 } from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 
@@ -138,9 +142,133 @@ const AddressBook = ({route, navigation}) => {
         );
       }
     } else {
-      Alert.alert('Error Alert', 'Need to implement API', [
-        {text: 'OK', onPress: () => {}},
-      ]);
+      setLoading(true);
+      if (userDetails.role === 'CONSUMER') {
+        let consumerParams = {
+          consumer_ext_id: userDetails.ext_id,
+          ...probs,
+        };
+        updateAddressBookforConsumer(
+          consumerParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              Alert.alert('Success', 'Address added successfully', [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    setAddressData(null);
+                    getAddressBookList();
+                  },
+                },
+              ]);
+              toggleModal(0);
+              setLoading(false);
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            toggleModal(0);
+            Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      } else if (userDetails.role === 'DELIVERY_BOY') {
+        let deliveryBoyParams = {
+          delivery_boy_ext_id: userDetails.ext_id,
+          ...probs,
+        };
+        updateAddressBookforDeliveryBoy(
+          deliveryBoyParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              Alert.alert('Success', 'Address added successfully', [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    setAddressData(null);
+                    getAddressBookList();
+                  },
+                },
+              ]);
+              toggleModal(0);
+              setLoading(false);
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            toggleModal(0);
+            Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      }
+    }
+  };
+
+  const deleteAddress = probs => {
+    setLoading(true);
+    if (userDetails.role === 'CONSUMER') {
+      let consumerParams = {
+        consumer_ext_id: userDetails.ext_id,
+        ...probs.id,
+      };
+      deleteAddressBookforConsumer(
+        consumerParams,
+        successResponse => {
+          if (successResponse[0]._success) {
+            Alert.alert('Success', successResponse[0]._response, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  setAddressData(null);
+                  getAddressBookList();
+                },
+              },
+            ]);
+            toggleModal(0);
+            setLoading(false);
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          toggleModal(0);
+          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else if (userDetails.role === 'DELIVERY_BOY') {
+      let deliveryBoyParams = {
+        delivery_boy_ext_id: userDetails.ext_id,
+        ...probs.id,
+      };
+      deleteAddressBookforDeliveryBoy(
+        deliveryBoyParams,
+        successResponse => {
+          if (successResponse[0]._success) {
+            Alert.alert('Success', successResponse[0]._response, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  setAddressData(null);
+                  getAddressBookList();
+                },
+              },
+            ]);
+            toggleModal(0);
+            setLoading(false);
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          toggleModal(0);
+          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
     }
   };
 
@@ -207,6 +335,7 @@ const AddressBook = ({route, navigation}) => {
         addressId={addressId}
         toggleModal={() => toggleModal(0)}
         addressData={addressData}
+        deleteAddress={deleteAddress}
       />
     </View>
   );
