@@ -103,6 +103,7 @@ const MapAddress = props => {
                   color: colors.black,
                 },
                 description: {color: colors.black},
+                color: colors.black,
               }}
               onPress={(data, details = null) => {
                 const originCoordinates = {
@@ -140,6 +141,7 @@ const MapAddress = props => {
                   color: colors.black,
                 },
                 description: {color: colors.black},
+                color: colors.black,
               }}
               onPress={(data, details = null) => {
                 const destinationCoordinates = {

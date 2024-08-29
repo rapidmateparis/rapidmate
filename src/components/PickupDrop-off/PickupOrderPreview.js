@@ -141,7 +141,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
               <Text style={styles.vehicleName}>
-                €{params.selectedVehiclePrice.toFixed(0)}
+                €{params.selectedVehiclePrice}
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text
