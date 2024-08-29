@@ -31,9 +31,12 @@ const PickupOrderPreview = ({route, navigation}) => {
   const params = route.params.props;
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
-  var finalPrice = params.selectedVehiclePrice
-    ? params.selectedVehiclePrice.toFixed(2)
-    : 0;
+  var finalPrice;
+  if (typeof params.selectedVehiclePrice === 'number') {
+    finalPrice = params.selectedVehiclePrice.toFixed(2);
+  } else {
+    finalPrice = params.selectedVehiclePrice;
+  }
 
   const pickupOrderRequest = () => {
     navigation.navigate('PickupPayment', {props: params});
