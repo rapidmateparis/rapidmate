@@ -137,10 +137,12 @@ const PickupAddress = ({route, navigation}) => {
 
   const getPriceUsingVechicelType = vehicleTypeId => {
     //€
+    let finalPrice = 0;
     let result = distancePriceList.filter(
       priceList => priceList.vehicle_type_id == vehicleTypeId,
     );
-    return result[0]?.total_price;
+    finalPrice = result[0]?.total_price;
+    return finalPrice;
   };
 
   const onDestinationLocation = location => {
@@ -290,7 +292,7 @@ const PickupAddress = ({route, navigation}) => {
               }}>
               <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
               <Text style={styles.selectedVehiclePrice}>
-                €{getPriceUsingVechicelType(selectedVehicleDetails?.id)}
+                € {getPriceUsingVechicelType(selectedVehicleDetails?.id)}
               </Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>

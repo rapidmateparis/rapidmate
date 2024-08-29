@@ -34,7 +34,7 @@ const PickupPayment = ({route, navigation}) => {
   const {savePlacedOrderDetails} = usePlacedOrderDetails();
   const [orderResponse, setOrderResponse] = useState();
   const params = route.params.props;
-  const paymentAmount = params.selectedVehiclePrice;
+  var paymentAmount = params.selectedVehiclePrice.toFixed(2);
   const [orderNumber, setOrderNumber] = useState(0);
 
   const onPayment = async () => {
@@ -61,7 +61,7 @@ const PickupPayment = ({route, navigation}) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            amount: paymentAmount * 100, // Amount in cents
+            amount: parseInt(paymentAmount * 100), // Amount in cents
             currency: 'EUR',
             //payment_method_types: ['card', 'google_pay']
           }).toString(),
