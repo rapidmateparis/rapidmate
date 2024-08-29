@@ -31,6 +31,12 @@ const PickupOrderPreview = ({route, navigation}) => {
   const params = route.params.props;
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  var finalPrice;
+  if (typeof params.selectedVehiclePrice === 'number') {
+    finalPrice = params.selectedVehiclePrice.toFixed(2);
+  } else {
+    finalPrice = params.selectedVehiclePrice;
+  }
 
   const pickupOrderRequest = () => {
     navigation.navigate('PickupPayment', {props: params});
@@ -140,9 +146,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
-              <Text style={styles.vehicleName}>
-                €{params.selectedVehiclePrice}
-              </Text>
+              <Text style={styles.vehicleName}>€ {finalPrice}</Text>
               <View style={{flexDirection: 'row'}}>
                 <Text
                   style={[
