@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Dropdown } from 'react-native-element-dropdown';
+import {Dropdown} from 'react-native-element-dropdown';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {colors} from '../../colors';
@@ -38,7 +38,7 @@ const PickupSignup = ({navigation}) => {
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
 
-  const togglePasswordVisibility = (field) => {
+  const togglePasswordVisibility = field => {
     if (field === 'password') {
       setPasswordVisible(!passwordVisible);
     } else if (field === 'confirmPassword') {
@@ -46,7 +46,7 @@ const PickupSignup = ({navigation}) => {
     }
   };
 
-  const handleAccountTypeSelection = (accountType) => {
+  const handleAccountTypeSelection = accountType => {
     setSelectedAccountType(accountType);
   };
 
@@ -88,8 +88,8 @@ const PickupSignup = ({navigation}) => {
   };
 
   const data = [
-    { label: '+91', value: '+91' },
-    { label: '+33', value: '+33' },
+    {label: '+91', value: '+91'},
+    {label: '+33', value: '+33'},
   ];
 
   useEffect(() => {
@@ -185,13 +185,13 @@ const PickupSignup = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
-      <View style={{ paddingHorizontal: 15 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ width: '85%' }}>
-            <Text style={[styles.logInText, { color: colors.black }]}>
+    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
+      <View style={{paddingHorizontal: 15}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{width: '85%'}}>
+            <Text style={[styles.logInText, {color: colors.black}]}>
               Pickup & Drop-off{' '}
-              <Text style={{ fontFamily: 'Montserrat-Medium' }}>signup</Text>
+              <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
             </Text>
             <Text style={styles.loginAccessText}>
               Let’s create your profile so you can have a complete experience of
@@ -199,7 +199,7 @@ const PickupSignup = ({navigation}) => {
             </Text>
           </View>
           <Image
-            style={{ width: 40, height: 40 }}
+            style={{width: 40, height: 40}}
             source={require('../../image/location-map.png')}
           />
         </View>
@@ -210,11 +210,11 @@ const PickupSignup = ({navigation}) => {
           <View style={styles.textInputDiv}>
             <AntDesign name="user" size={18} color="#131314" />
             <TextInput
-              style={[styles.loginput, { fontFamily: 'Montserrat-Regular' }]}
+              style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
               placeholder="Name"
               placeholderTextColor="#999"
               value={name}
-              onChangeText={(text) => setName(text)}
+              onChangeText={text => setName(text)}
             />
           </View>
           {errors.email ? (
@@ -227,7 +227,7 @@ const PickupSignup = ({navigation}) => {
               placeholder="Email"
               placeholderTextColor="#999"
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={text => setEmail(text)}
             />
           </View>
           {errors.password ? (
@@ -236,12 +236,12 @@ const PickupSignup = ({navigation}) => {
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
-              style={[styles.input, { fontFamily: 'Montserrat-Regular' }]}
+              style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
               placeholder="New Password"
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
               value={password}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={text => setPassword(text)}
             />
             <TouchableOpacity
               onPress={() => togglePasswordVisibility('password')}>
@@ -263,7 +263,7 @@ const PickupSignup = ({navigation}) => {
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
-              onChangeText={(text) => setConfirmPassword(text)}
+              onChangeText={text => setConfirmPassword(text)}
             />
             <TouchableOpacity
               onPress={() => togglePasswordVisibility('confirmPassword')}>
@@ -278,7 +278,7 @@ const PickupSignup = ({navigation}) => {
             <Text style={[{color: 'red'}]}>{errors.number}</Text>
           ) : null}
           <View style={styles.mobileNumberInput}>
-            <View style={{ width: 95 }}>
+            <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
                 <Dropdown
                   data={data}
@@ -288,18 +288,19 @@ const PickupSignup = ({navigation}) => {
                   valueField="value"
                   itemTextStyle={{color: colors.black}}
                   selectedTextStyle={{color: colors.black}}
+                  style={{color: colors.black}}
                   placeholder={!isFocus ? '+33' : '...'}
                   searchPlaceholder="+.."
                   value={dropdownValue}
                   onFocus={() => setIsFocus(true)}
                   onBlur={() => setIsFocus(false)}
-                  onChange={(item) => {
+                  onChange={item => {
                     setDropdownValue(item.value);
                     setIsFocus(false);
                   }}
                   renderLeftIcon={() => (
                     <Image
-                      style={{ marginRight: 10 }}
+                      style={{marginRight: 10}}
                       source={require('../../image/flagIcon.png')}
                     />
                   )}
@@ -313,7 +314,7 @@ const PickupSignup = ({navigation}) => {
               keyboardType="numeric"
               maxLength={11}
               value={number}
-              onChangeText={(text) => setNumber(text)}
+              onChangeText={text => setNumber(text)}
             />
           </View>
           {errors.dropdownCountryValue ? (
@@ -335,13 +336,13 @@ const PickupSignup = ({navigation}) => {
               value={dropdownCountryValue}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
-              onChange={(item) => {
+              onChange={item => {
                 setDropdownCountryValue(item.value);
                 setIsFocus(false);
               }}
               renderLeftIcon={() => (
                 <FontAwesome6
-                  style={{ marginRight: 10 }}
+                  style={{marginRight: 10}}
                   name="globe"
                   size={18}
                   color={colors.black}
@@ -367,11 +368,7 @@ const PickupSignup = ({navigation}) => {
               <Text style={styles.accountTitle}>Individual</Text>
               {selectedAccountType === 'individual' && (
                 <View style={styles.checkIcon}>
-                  <MaterialIcons
-                    name="check"
-                    size={15}
-                    color={colors.white}
-                  />
+                  <MaterialIcons name="check" size={15} color={colors.white} />
                 </View>
               )}
               {selectedAccountType !== 'individual' && (
@@ -391,11 +388,7 @@ const PickupSignup = ({navigation}) => {
               <Text style={styles.accountTitle}>Company</Text>
               {selectedAccountType === 'company' && (
                 <View style={styles.checkIcon}>
-                  <MaterialIcons
-                    name="check"
-                    size={15}
-                    color={colors.white}
-                  />
+                  <MaterialIcons name="check" size={15} color={colors.white} />
                 </View>
               )}
               {selectedAccountType !== 'company' && (
@@ -417,14 +410,14 @@ const PickupSignup = ({navigation}) => {
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
               Already have an account yet?{' '}
-              <Text style={{ color: colors.primary }}>Login</Text>
+              <Text style={{color: colors.primary}}>Login</Text>
             </Text>
 
             <View>
               <Text style={styles.termOfRapidmate}>
                 By signing up you agree to{' '}
-                <Text style={{ color: colors.primary }}>Privacy policy</Text> &{' '}
-                <Text style={{ color: colors.primary }}>Terms</Text> of RapidMate
+                <Text style={{color: colors.primary}}>Privacy policy</Text> &{' '}
+                <Text style={{color: colors.primary}}>Terms</Text> of RapidMate
               </Text>
             </View>
           </TouchableOpacity>
