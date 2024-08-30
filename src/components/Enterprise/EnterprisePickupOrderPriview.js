@@ -84,6 +84,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         repeat_every: params.repeat_every,
         repeat_until: params.repeat_until,
       };
+      if (params.branches) {
+        requestParams.branches = params.branches
+      }
       console.log('requestParams', requestParams);
       setLoading(true);
       createEnterpriseOrder(

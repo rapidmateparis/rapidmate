@@ -649,3 +649,17 @@ export const deleteAddressBookforConsumer = (
     },
   );
 };
+
+export const createEnterpriseBranch = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterprisebranchCreate,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
