@@ -38,8 +38,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [orderid, setOrderid] = useState('');
   const [number, setNumber] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
+  const [selectedRepeatMonth1, setSelectedRepeatMonth1] = useState('First');
   const [selectedRepeatEvery, setSelectedRepeatEvery] = useState('1');
-  const [selectedRepeatType, setSelectedRepeatType] = useState(null);
+  const [selectedRepeatType, setSelectedRepeatType] = useState('Day');
   const [isFocusRepeatEvery, setIsFocusRepeatEvery] = useState(false);
   const [isFocusRepeatType, setIsFocusRepeatType] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
@@ -90,7 +91,50 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
   const repeatType = [
     {label: 'Day', value: 'Day'},
-    // {label: 'Week', value: 'Week'},
+    {label: 'Week', value: 'Week'},
+  ];
+
+
+  const monthValue1 = [
+    {label: 'First', value: 'First'},
+    {label: 'Second', value: 'Second'},
+    {label: 'Third', value: 'Third'},
+    {label: 'Fourth', value: 'Fourth'},
+    {label: 'Fifth', value: 'Fifth'},
+  ];
+
+  const monthDays = [
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
+    {label: '6', value: '6'},
+    {label: '7', value: '7'},
+    {label: '8', value: '8'},
+    {label: '9', value: '9'},
+    {label: '10', value: '10'},
+    {label: '11', value: '11'},
+    {label: '12', value: '12'},
+    {label: '13', value: '13'},
+    {label: '14', value: '14'},
+    {label: '15', value: '15'},
+    {label: '16', value: '16'},
+    {label: '17', value: '17'},
+    {label: '18', value: '18'},
+    {label: '19', value: '19'},
+    {label: '20', value: '20'},
+    {label: '21', value: '21'},
+    {label: '22', value: '22'},
+    {label: '23', value: '23'},
+    {label: '24', value: '24'},
+    {label: '25', value: '25'},
+    {label: '26', value: '26'},
+    {label: '27', value: '27'},
+    {label: '28', value: '28'},
+    {label: '29', value: '29'},
+    {label: '30', value: '30'},
+    {label: '31', value: '31'},
   ];
 
   const days = [
@@ -430,7 +474,10 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           {promoEmails && (
             <View style={styles.mainDateCard}>
               <TouchableOpacity
-                onPress={() => setRepeatOrder('Daily')}
+                onPress={() => {
+                  setRepeatOrder('Daily');
+                  setSelectedRepeatType('Day');
+                }}
                 style={styles.datesCards}>
                 <FontAwesome
                   name={
@@ -445,7 +492,10 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => setRepeatOrder('Weekly')}
+                onPress={() => {
+                  setSelectedRepeatType('Day')
+                  setRepeatOrder('Weekly')
+                } }
                 style={styles.datesCards}>
                 <FontAwesome
                   name={
@@ -508,6 +558,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     <Dropdown
                       style={styles.dateDropdown}
                       data={repeatType}
+                      disable
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
@@ -606,6 +657,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <Dropdown
                     style={styles.dateDropdown}
                     data={repeatType}
+                    disable
                     itemTextStyle={{color: colors.text}}
                     selectedTextStyle={{color: colors.text}}
                     maxHeight={300}
@@ -797,7 +849,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <View style={styles.containerCity}>
                     <Dropdown
                       style={styles.dateDropdown}
-                      data={days}
+                      data={monthDays}
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
@@ -834,7 +886,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <View style={styles.containeruntil}>
                     <Dropdown
                       style={styles.dateDropdown}
-                      data={days}
+                      data={monthValue1}
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
@@ -842,11 +894,11 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       selectedTextStyle={{color: colors.text}}
                       placeholder={!isFocus ? '1' : '1'}
                       searchPlaceholder="Search.."
-                      value={selectedRepeatEvery}
+                      value={selectedRepeatMonth1}
                       onFocus={() => setIsFocusRepeatEvery(true)}
                       onBlur={() => setIsFocusRepeatEvery(false)}
                       onChange={item => {
-                        setSelectedRepeatEvery(item.value);
+                        setSelectedRepeatMonth1(item.value);
                         setIsFocusRepeatEvery(false);
                       }}
                     />

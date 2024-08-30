@@ -76,4 +76,5 @@ export const API = {
   getCompanyListUrl: BASE_URL + 'deliveryboy/connections/',
   getDistancePriceListUrl: BASE_URL + 'vehicletypes/price/list?d=',
   getFaqListUrl: BASE_URL + 'faq',
+  enterprisebranchCreate: BASE_URL + 'enterprisebranch',
 };

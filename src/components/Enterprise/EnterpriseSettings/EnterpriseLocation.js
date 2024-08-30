@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,65 +7,92 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
+  FlatList,
 } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../../colors';
 import MapDeliveryDetails from '../../commonComponent/MapDeliveryDetails';
+import {getEnterpriseBranch} from '../../../data_manager';
+import {useLoader} from '../../../utils/loaderContext';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import { useIsFocused } from '@react-navigation/native';
 
 const EnterpriseLocation = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
+  const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+  const isVisible = useIsFocused();
+
+  useEffect(() => {
+    getEnterpriseBranch(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              var branches = [];
+              for (
+                let index = 0;
+                index < successResponse[0]._response.length;
+                index++
+              ) {
+                const element = successResponse[0]._response[index];
+                element.isSelected = false;
+                branches.push(element);
+              }
+              setEnterpriseBranches(branches);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, [isVisible]);
+
+  const renderItem = ({item,index}) => (
+    <View>
+      {/* <View pointerEvents="none" style={{width: '100%', height: 120}}>
+        <MapDeliveryDetails />
+      </View> */}
+
+      <View style={styles.addressCard}>
+        <Image
+          style={styles.companyImga}
+          source={require('../../../image/home.png')}
+        />
+
+        <View style={{flex: 1, marginLeft: 8}}>
+          <Text style={styles.franchiseLocations}>{item.branch_name}</Text>
+          <View style={styles.locationCard}>
+            <Ionicons name="location-outline" size={13} color="#000" />
+            <Text style={styles.franchiseAddress}>{item.city}, {item.state}, {item.country}</Text>
+          </View>
+        </View>
+        <TouchableOpacity>
+          <FontAwesome6 name="pencil" size={20} color="#000" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15}}>
-        <View>
-          <View style={{width: '100%', height: 250}}>
-            <MapDeliveryDetails />
-          </View>
-
-          <View style={styles.addressCard}>
-            <Image style={styles.companyImga} source={require('../../../image/home.png')} />
-
-            <View style={{flex: 1, marginLeft: 8}}>
-              <Text style={styles.franchiseLocations}>
-                North Street Franchise
-              </Text>
-              <View style={styles.locationCard}>
-                <Ionicons name="location-outline" size={13} color="#000" />
-                <Text style={styles.franchiseAddress}>North Street, ABC</Text>
-              </View>
-            </View>
-            <TouchableOpacity>
-              <FontAwesome6 name="pencil" size={20} color="#000" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={{marginVertical: 15,}}>
-          <View style={{width: '100%', height: 250}}>
-            <MapDeliveryDetails />
-          </View>
-
-          <View style={styles.addressCard}>
-            <Image style={styles.companyImga} source={require('../../../image/home.png')} />
-
-            <View style={{flex: 1, marginLeft: 8}}>
-              <Text style={styles.franchiseLocations}>
-                North Street Franchise
-              </Text>
-              <View style={styles.locationCard}>
-                <Ionicons name="location-outline" size={13} color="#000" />
-                <Text style={styles.franchiseAddress}>North Street, ABC</Text>
-              </View>
-            </View>
-            <TouchableOpacity>
-              <FontAwesome6 name="pencil" size={20} color="#000" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+    <View style={{flex: 1, paddingHorizontal: 15}}>
+      <FlatList data={enterpriseBranches} renderItem={renderItem} />
+    </View>
   );
 };
 
