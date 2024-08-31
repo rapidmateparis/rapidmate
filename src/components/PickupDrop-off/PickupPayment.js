@@ -106,6 +106,10 @@ const PickupPayment = ({route, navigation}) => {
 
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
+      console.log('params.schedule_date_time', params.schedule_date_time);
+      if (params.serviceTypeId == 2) {
+        var scheduleParam = {schedule_date_time: params.schedule_date_time};
+      }
       let requestParams = {
         consumer_ext_id: userDetails.userDetails[0].ext_id,
         service_type_id: params.serviceTypeId,
@@ -118,6 +122,7 @@ const PickupPayment = ({route, navigation}) => {
           : 2,
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
         total_amount: parseFloat(paymentAmount),
+        ...scheduleParam,
       };
       setLoading(true);
       createPickupOrder(
