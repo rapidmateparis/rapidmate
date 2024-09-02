@@ -7,7 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
-  Platform
+  Platform,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,7 +19,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-
 
 const LogInScreen = ({navigation}) => {
   const {saveUserDetails} = useUserDetails();
@@ -148,6 +147,11 @@ const LogInScreen = ({navigation}) => {
                 });
               }
             }
+          } else {
+            setLoading(false);
+            Alert.alert('Error Alert', " Invalid credentials ", [
+              {text: 'OK', onPress: () => {}},
+            ]);
           }
         },
         errorResponse => {
