@@ -149,7 +149,7 @@ const LogInScreen = ({navigation}) => {
             }
           } else {
             setLoading(false);
-            Alert.alert('Error Alert', " Invalid credentials ", [
+            Alert.alert('Error Alert', "Invalid credentials", [
               {text: 'OK', onPress: () => {}},
             ]);
           }

@@ -25,12 +25,23 @@ import OtherImage from '../../image/Big-Package.png';
 import {createPickupOrder} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 
 const PickupOrderPreview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
+  const toggleModal = () => {
+    setImageModalVisible(!isImageModalVisible);
+  };
   const params = route.params.props;
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  var finalPrice;
+  if (typeof params.selectedVehiclePrice === 'number') {
+    finalPrice = params.selectedVehiclePrice.toFixed(2);
+  } else {
+    finalPrice = params.selectedVehiclePrice;
+  }
 
   const pickupOrderRequest = () => {
     navigation.navigate('PickupPayment', {props: params});
@@ -65,8 +76,8 @@ const PickupOrderPreview = ({route, navigation}) => {
             <View>
               <Text style={styles.vehicleName}>{params.selectedVehicle}</Text>
               <Text style={styles.vehicleCapacity}>
-                {params.selectedVehicleDetails.capacity
-                  ? params.selectedVehicleDetails.capacity
+                {params.selectedVehicleDetails.vehicle_type_desc
+                  ? params.selectedVehicleDetails.vehicle_type_desc
                   : null}{' '}
                 max capacity
               </Text>
@@ -99,11 +110,22 @@ const PickupOrderPreview = ({route, navigation}) => {
 
         <View style={styles.pickupCard}>
           <Text style={styles.pickupDetails}>Pickup details</Text>
-          <View>
-            <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
-            <Text style={styles.vehicleCapacity}>
-              {params.userDetails.company}
-            </Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
+              <Text style={styles.vehicleCapacity}>
+                {params.userDetails.company}
+              </Text>
+            </View>
+
+            <View>
+              <TouchableOpacity onPress={() => toggleModal()}>
+                <Image
+                  style={styles.packagePhoto}
+                  source={require('../../image/PackagePhoto.png')}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -140,9 +162,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
-              <Text style={styles.vehicleName}>
-                €{params.selectedVehiclePrice.toFixed(0)}
-              </Text>
+              <Text style={styles.vehicleName}>€ {finalPrice}</Text>
               <View style={{flexDirection: 'row'}}>
                 <Text
                   style={[
@@ -162,9 +182,6 @@ const PickupOrderPreview = ({route, navigation}) => {
                   {params.distanceTime.time.toFixed(0)} minutes
                 </Text>
               </View>
-            </View>
-            <View>
-              <Image source={require('../../image/euro.png')} />
             </View>
           </View>
         </View>
@@ -187,6 +204,11 @@ const PickupOrderPreview = ({route, navigation}) => {
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
       </View>
+      {/* Modal =========  */}
+      <DeliveryboyPackagePreviewModal
+        isImageModalVisible={isImageModalVisible}
+        setImageModalVisible={setImageModalVisible}
+      />
     </ScrollView>
   );
 };
@@ -246,7 +268,7 @@ const styles = StyleSheet.create({
   pickupDetails: {
     marginBottom: 10,
     color: colors.text,
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
   },
   pickupManDetails: {
@@ -343,6 +365,20 @@ const styles = StyleSheet.create({
   vehicleImage: {
     height: 62,
     resizeMode: 'center',
+  },
+  packageBasicInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headingOTP: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  packagePhoto: {
+    width: 48,
+    height: 48,
+    borderRadius: 5,
   },
 });
 

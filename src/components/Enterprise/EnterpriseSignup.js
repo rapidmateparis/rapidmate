@@ -12,7 +12,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dropdown} from 'react-native-element-dropdown';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../colors';
@@ -87,9 +87,14 @@ const EnterpriseSignup = ({navigation}) => {
   ];
 
   const industryList = [
-    {label: 'Restaurants', value: 1},
-    {label: 'Hospitals', value: 2},
-    {label: 'Logistics', value: 3},
+    {label: 'Restaurant and takeaway', value: 1},
+    {label: 'Grocery and speciality', value: 2},
+    {label: 'Gift delivery', value: 3},
+    {label: 'Health and beauty', value: 4},
+    {label: 'Tech and electronics', value: 5},
+    {label: 'Retail and shopping', value: 6},
+    {label: 'Professional services', value: 7},
+    {label: 'Other', value: 8},
   ];
 
   useEffect(() => {
@@ -449,7 +454,7 @@ const EnterpriseSignup = ({navigation}) => {
             <Dropdown
               data={industryList}
               search
-              maxHeight={300}
+              maxHeight={500}
               itemTextStyle={{color: colors.text}}
               selectedTextStyle={{color: colors.text}}
               labelField="label"
@@ -617,7 +622,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
           </View>
           <View style={styles.textInputDiv}>
-            <Ionicons name="location-outline" size={18} color="#131314" />
+            <MaterialIcons name="villa" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Siret"

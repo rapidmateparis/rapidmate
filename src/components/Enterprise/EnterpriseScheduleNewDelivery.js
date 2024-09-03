@@ -29,7 +29,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation')} style={styles.franchiseCard}>
+          <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation',{delivery_type_id:1})} style={styles.franchiseCard}>
             <Image style={{width: 50, height: 30,}} source={require('../../image/ExpressPackage.png')} />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>One time delivery</Text>
@@ -42,7 +42,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('EnterpiseSelectDeliveryTypes')} style={styles.franchiseCard}>
+          <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation',{delivery_type_id:2})} style={styles.franchiseCard}>
             <Image style={{width: 30, height: 30, marginLeft: 20,}} source={require('../../image/Big-Calender.png')} />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>Multiple deliveries</Text>

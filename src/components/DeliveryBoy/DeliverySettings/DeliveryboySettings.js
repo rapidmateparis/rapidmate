@@ -65,7 +65,6 @@ const DeliveryboySettings = ({navigation}) => {
             }
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
-            <Text style={styles.titleStatus}>3 addresses</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>

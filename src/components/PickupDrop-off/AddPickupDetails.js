@@ -128,7 +128,6 @@ const AddPickupdetails = ({route, navigation}) => {
     if (
       !name ||
       !lastname ||
-      !company ||
       !email ||
       !number ||
       !dropdownValue ||

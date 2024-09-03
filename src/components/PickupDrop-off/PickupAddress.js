@@ -13,6 +13,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import VehicleDimensionsModal from '../commonComponent/VehicleDimensions';
+import DateAndTimePickerModal from '../commonComponent/DateAndTimePicker';
 import MapAddress from '../commonComponent/MapAddress';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
@@ -28,9 +29,11 @@ import {
   getDistancePriceList,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import moment from 'moment';
 
 const PickupAddress = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isScheduleModalVisible, setScheduleModalVisible] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedVehicleDetails, setSelectedVehicleDetails] = useState(null);
   const [selectedVehiclePrice, setSelectedVehiclePrice] = useState(null);
@@ -43,10 +46,15 @@ const PickupAddress = ({route, navigation}) => {
   const [destinationLocationId, setDestinationLocationId] = useState();
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const [distancePriceList, setDistancePriceList] = useState([]);
+  const [pickupDateTime, setPickupDateTime] = useState({});
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
+  };
+
+  const toggleScheduleModal = () => {
+    setScheduleModalVisible(!isScheduleModalVisible);
   };
 
   useEffect(() => {
@@ -137,10 +145,12 @@ const PickupAddress = ({route, navigation}) => {
 
   const getPriceUsingVechicelType = vehicleTypeId => {
     //€
+    let finalPrice = 0;
     let result = distancePriceList.filter(
       priceList => priceList.vehicle_type_id == vehicleTypeId,
     );
-    return result[0]?.total_price;
+    finalPrice = result[0]?.total_price;
+    return finalPrice;
   };
 
   const onDestinationLocation = location => {
@@ -209,6 +219,13 @@ const PickupAddress = ({route, navigation}) => {
       sourceLocationId &&
       destinationLocationId
     ) {
+      if (route?.params?.pickupService?.id == 2) {
+        var scheduleParam = {
+          schedule_date_time: `${pickupDateTime.pickupDate} ${moment(
+            pickupDateTime.time,
+          ).format('hh:mm')}`,
+        };
+      }
       navigation.push('AddPickupdetails', {
         selectedVehicle: selectedVehicle,
         selectedVehicleDetails: selectedVehicleDetails,
@@ -219,6 +236,7 @@ const PickupAddress = ({route, navigation}) => {
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
         serviceTypeId: route?.params?.pickupService?.id || 1,
+        ...scheduleParam,
       });
     } else {
       Alert.alert(
@@ -250,6 +268,11 @@ const PickupAddress = ({route, navigation}) => {
     }
   };
 
+  const getDateAndTime = dateAndTime => {
+    console.log('dateAndTime', dateAndTime);
+    setPickupDateTime(dateAndTime);
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
       <View style={{height: 500, position: 'relative'}}>
@@ -258,20 +281,48 @@ const PickupAddress = ({route, navigation}) => {
           onSourceLocation={onSourceLocation}
           onDestinationLocation={onDestinationLocation}
         />
-        <View style={styles.dateCard}>
-          <EvilIcons name="calendar" size={25} color="#000" />
-          <Text style={styles.dateCardText}>When do you need it?</Text>
-          <TouchableOpacity>
-            <Text
-              style={{
-                color: colors.secondary,
-                fontSize: 14,
-                fontFamily: 'Montserrat-SemiBold',
-              }}>
-              Now
+        {route?.params?.pickupService?.id == 2 && (
+          <View style={styles.dateCard}>
+            <EvilIcons name="calendar" size={25} color="#000" />
+            <Text style={styles.dateCardText}>
+              When do you need it?
+              <Text>
+                {pickupDateTime.pickupDate && (
+                  <Text
+                    style={{
+                      fontFamily: 'Montserrat-Medium',
+                      color: colors.secondary,
+                    }}>
+                    {'\n'}Date: {pickupDateTime.pickupDate}
+                  </Text>
+                )}
+                {pickupDateTime.pickupTime && (
+                  <Text
+                    style={{
+                      fontFamily: 'Montserrat-Medium',
+                      color: colors.secondary,
+                    }}>
+                    {' '}
+                    {'\n'}Time: {pickupDateTime.pickupTime}
+                  </Text>
+                )}
+              </Text>
             </Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={() => {
+                toggleScheduleModal();
+              }}>
+              <Text
+                style={{
+                  color: colors.secondary,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat-SemiBold',
+                }}>
+                Now
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <ScrollView
         contentContainerStyle={{
@@ -288,7 +339,7 @@ const PickupAddress = ({route, navigation}) => {
               }}>
               <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
               <Text style={styles.selectedVehiclePrice}>
-                €{getPriceUsingVechicelType(selectedVehicleDetails?.id)}
+                € {getPriceUsingVechicelType(selectedVehicleDetails?.id)}
               </Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -353,6 +404,12 @@ const PickupAddress = ({route, navigation}) => {
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
         vehicleDetails={vehicleDetails}
+      />
+
+      <DateAndTimePickerModal
+        isScheduleModalVisible={isScheduleModalVisible}
+        setScheduleModalVisible={setScheduleModalVisible}
+        getDateAndTime={getDateAndTime}
       />
     </View>
   );

@@ -38,8 +38,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [orderid, setOrderid] = useState('');
   const [number, setNumber] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
+  const [selectedRepeatMonth1, setSelectedRepeatMonth1] = useState('First');
   const [selectedRepeatEvery, setSelectedRepeatEvery] = useState('1');
-  const [selectedRepeatType, setSelectedRepeatType] = useState(null);
+  const [selectedRepeatType, setSelectedRepeatType] = useState('Day');
   const [isFocusRepeatEvery, setIsFocusRepeatEvery] = useState(false);
   const [isFocusRepeatType, setIsFocusRepeatType] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
@@ -89,8 +90,54 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   const repeatType = [
-    {label: 'Day', value: 'Day'}
-    // {label: 'Week', value: 'Week'},
+    {label: 'Week', value: 'Week'},
+  ];
+
+  const weeklyDay = [
+    {label: 'Day', value: 'Day'},
+  ];
+
+
+  const monthValue1 = [
+    {label: 'First', value: 'First'},
+    {label: 'Second', value: 'Second'},
+    {label: 'Third', value: 'Third'},
+    {label: 'Fourth', value: 'Fourth'},
+    {label: 'Fifth', value: 'Fifth'},
+  ];
+
+  const monthDays = [
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
+    {label: '6', value: '6'},
+    {label: '7', value: '7'},
+    {label: '8', value: '8'},
+    {label: '9', value: '9'},
+    {label: '10', value: '10'},
+    {label: '11', value: '11'},
+    {label: '12', value: '12'},
+    {label: '13', value: '13'},
+    {label: '14', value: '14'},
+    {label: '15', value: '15'},
+    {label: '16', value: '16'},
+    {label: '17', value: '17'},
+    {label: '18', value: '18'},
+    {label: '19', value: '19'},
+    {label: '20', value: '20'},
+    {label: '21', value: '21'},
+    {label: '22', value: '22'},
+    {label: '23', value: '23'},
+    {label: '24', value: '24'},
+    {label: '25', value: '25'},
+    {label: '26', value: '26'},
+    {label: '27', value: '27'},
+    {label: '28', value: '28'},
+    {label: '29', value: '29'},
+    {label: '30', value: '30'},
+    {label: '31', value: '31'},
   ];
 
   const days = [
@@ -315,7 +362,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             </TouchableOpacity>
 
             <View style={{flex: 1}}>
-              <Text style={styles.textlable}>Order ID</Text>
+              <Text style={styles.textlable}>Package ID</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
@@ -430,7 +477,10 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           {promoEmails && (
             <View style={styles.mainDateCard}>
               <TouchableOpacity
-                onPress={() => setRepeatOrder('Daily')}
+                onPress={() => {
+                  setRepeatOrder('Daily');
+                  setSelectedRepeatType('Day');
+                }}
                 style={styles.datesCards}>
                 <FontAwesome
                   name={
@@ -445,7 +495,10 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => setRepeatOrder('Weekly')}
+                onPress={() => {
+                  setSelectedRepeatType('Day')
+                  setRepeatOrder('Weekly')
+                } }
                 style={styles.datesCards}>
                 <FontAwesome
                   name={
@@ -500,27 +553,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       onChange={item => {
                         setSelectedRepeatEvery(item.value);
                         setIsFocusRepeatEvery(false);
-                      }}
-                    />
-                  </View>
-
-                  <View style={styles.containerCity}>
-                    <Dropdown
-                      style={styles.dateDropdown}
-                      data={repeatType}
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      itemTextStyle={{color: colors.text}}
-                      selectedTextStyle={{color: colors.text}}
-                      placeholder={!isFocusRepeatType ? 'Day' : 'Day'}
-                      searchPlaceholder="Search.."
-                      value={selectedRepeatType}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={item => {
-                        setSelectedRepeatType(item.value);
-                        setIsFocusRepeatType(false);
                       }}
                     />
                   </View>
@@ -605,7 +637,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <View style={styles.containerWeek}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={repeatType}
+                    data={weeklyDay}
+                    disable
                     itemTextStyle={{color: colors.text}}
                     selectedTextStyle={{color: colors.text}}
                     maxHeight={300}
@@ -797,7 +830,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <View style={styles.containerCity}>
                     <Dropdown
                       style={styles.dateDropdown}
-                      data={days}
+                      data={monthDays}
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
@@ -834,7 +867,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <View style={styles.containeruntil}>
                     <Dropdown
                       style={styles.dateDropdown}
-                      data={days}
+                      data={monthValue1}
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
@@ -842,11 +875,11 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       selectedTextStyle={{color: colors.text}}
                       placeholder={!isFocus ? '1' : '1'}
                       searchPlaceholder="Search.."
-                      value={selectedRepeatEvery}
+                      value={selectedRepeatMonth1}
                       onFocus={() => setIsFocusRepeatEvery(true)}
                       onBlur={() => setIsFocusRepeatEvery(false)}
                       onChange={item => {
-                        setSelectedRepeatEvery(item.value);
+                        setSelectedRepeatMonth1(item.value);
                         setIsFocusRepeatEvery(false);
                       }}
                     />
@@ -885,33 +918,41 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           <View>
             <TouchableOpacity
               onPress={() => {
-                let params = {
-                  ...route.params,
-                  delivery_type_id: 'One time delivery',
-                  distanceTime: distanceTime,
-                  pickup_location: sourceLocation,
-                  dropoff_location: destinationLocation,
-                  pickup_location_id: sourceLocationId,
-                  dropoff_location_id: destinationLocationId,
-                  mobile: number,
-                  company_name: company,
-                  package_note: pickupNotes,
-                  pickup_date: moment(date).format('YYYY-MM-DD'),
-                  pickup_time: moment(time).format('HH:MM'),
-                  is_repeat_mode: promoEmails ? 1 : 0,
-                  package_id: orderid,
-                  amount: Math.round(
-                    route.params.vehicle_type.base_price +
-                      route.params.vehicle_type.km_price *
-                        distanceTime.distance,
-                  ).toFixed(2),
-                  distance: distanceTime.distance.toFixed(2),
-                  time: distanceTime.time.toFixed(0),
-                  repeat_mode: repeatOrder,
-                  repeat_every: selectedRepeatEvery,
-                  repeat_until: moment(untilDate).format('YYYY-MM-DD'),
-                };
-                navigation.navigate('EnterprisePickupOrderPriview', params);
+                if (sourceLocationId && destinationLocationId) {
+                  let params = {
+                    ...route.params,
+                    delivery_type_id: 'One time delivery',
+                    distanceTime: distanceTime,
+                    pickup_location: sourceLocation,
+                    dropoff_location: destinationLocation,
+                    pickup_location_id: sourceLocationId,
+                    dropoff_location_id: destinationLocationId,
+                    mobile: number,
+                    company_name: company,
+                    package_note: pickupNotes,
+                    pickup_date: moment(date).format('YYYY-MM-DD'),
+                    pickup_time: moment(time).format('HH:MM'),
+                    is_repeat_mode: promoEmails ? 1 : 0,
+                    package_id: orderid,
+                    amount: Math.round(
+                      route.params.vehicle_type.base_price +
+                        route.params.vehicle_type.km_price *
+                          distanceTime.distance,
+                    ).toFixed(2),
+                    distance: distanceTime.distance.toFixed(2),
+                    time: distanceTime.time.toFixed(0),
+                    repeat_mode: repeatOrder,
+                    repeat_every: selectedRepeatEvery,
+                    repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                  };
+                  navigation.navigate('EnterprisePickupOrderPriview', params);
+                } else {
+                  Alert.alert(
+                    'Error Alert',
+                    'Please choose pickup and drop location',
+                    [{text: 'OK', onPress: () => {}}],
+                  );
+                }
               }}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
               <Text style={styles.buttonText}>Next</Text>
@@ -1419,7 +1460,7 @@ const styles = StyleSheet.create({
   untilDayOccurs: {
     fontSize: 12,
     color: colors.text,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat-SemiBold',
     marginTop: 15,
   },
   untilDateOccurs: {

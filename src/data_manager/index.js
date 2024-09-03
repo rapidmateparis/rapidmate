@@ -371,15 +371,15 @@ export const getLookupData = (params, successCallback, errorCallback) => {
   );
 };
 
-export const getProfileInformation = (
+export const getAllocatedDeliveryBoy = (
   params,
   successCallback,
   errorCallback,
 ) => {
   console.log(
-    'getProfileInformation',
+    'getAllocatedDeliveryBoy',
     params,
-    API.updateUserProfile + params.orderNumber,
+    API.getAllocatedDeliveryBoy + params.orderNumber,
   );
   axiosCall(
     API.getAllocatedDeliveryBoy + params.orderNumber,
@@ -573,6 +573,88 @@ export const getDistancePriceList = (param, successCallback, errorCallback) => {
     API.getDistancePriceListUrl + param,
     HTTPMethod.GET,
     {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getFaqsList = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.getFaqListUrl,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const updateAddressBookforConsumer = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookUpdateConsumerUrl,
+    HTTPMethod.PUT,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const deleteAddressBookforDeliveryBoy = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookUpDeleteDeliveryBoyUrl + param.id,
+    HTTPMethod.DELETE,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const deleteAddressBookforConsumer = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookUpDeleteConsumerUrl + param.id,
+    HTTPMethod.DELETE,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const createEnterpriseBranch = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterprisebranchCreate,
+    HTTPMethod.POST,
+    params,
     response => {
       successCallback(response);
     },
