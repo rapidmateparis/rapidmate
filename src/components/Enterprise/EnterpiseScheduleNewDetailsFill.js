@@ -90,8 +90,11 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   const repeatType = [
-    {label: 'Day', value: 'Day'},
     {label: 'Week', value: 'Week'},
+  ];
+
+  const weeklyDay = [
+    {label: 'Day', value: 'Day'},
   ];
 
 
@@ -359,7 +362,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             </TouchableOpacity>
 
             <View style={{flex: 1}}>
-              <Text style={styles.textlable}>Order ID</Text>
+              <Text style={styles.textlable}>Package ID</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
@@ -553,28 +556,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       }}
                     />
                   </View>
-
-                  <View style={styles.containerCity}>
-                    <Dropdown
-                      style={styles.dateDropdown}
-                      data={repeatType}
-                      disable
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      itemTextStyle={{color: colors.text}}
-                      selectedTextStyle={{color: colors.text}}
-                      placeholder={!isFocusRepeatType ? 'Day' : 'Day'}
-                      searchPlaceholder="Search.."
-                      value={selectedRepeatType}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={item => {
-                        setSelectedRepeatType(item.value);
-                        setIsFocusRepeatType(false);
-                      }}
-                    />
-                  </View>
                 </View>
 
                 <View style={styles.untilDateCard}>
@@ -656,7 +637,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <View style={styles.containerWeek}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={repeatType}
+                    data={weeklyDay}
                     disable
                     itemTextStyle={{color: colors.text}}
                     selectedTextStyle={{color: colors.text}}
@@ -1479,7 +1460,7 @@ const styles = StyleSheet.create({
   untilDayOccurs: {
     fontSize: 12,
     color: colors.text,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat-SemiBold',
     marginTop: 15,
   },
   untilDateOccurs: {

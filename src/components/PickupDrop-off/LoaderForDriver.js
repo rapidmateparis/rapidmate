@@ -48,7 +48,7 @@ const LoaderForDriver = ({navigation}) => {
               });
             },
             errorResponse => {
-              console.log('getProfile===>errorResponse', errorResponse);
+              navigation.navigate('DriverNotAvailable', errorResponse);
               Alert.alert('Error Alert', errorResponse[0]._errors.message, [
                 {text: 'OK', onPress: () => {}},
               ]);

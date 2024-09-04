@@ -25,11 +25,16 @@ import TruckImage from '../../image/Truck-Icon.png';
 import BigTruckImage from '../../image/Big-Package.png';
 import {useLoader} from '../../utils/loaderContext';
 import {createEnterpriseOrder} from '../../data_manager';
+import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 
 const EnterprisePickupOrderPriview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
+  const toggleModal = () => {
+    setImageModalVisible(!isImageModalVisible);
+  };
   const params = route.params;
 
   const getVechicleImage = vehicleTypeId => {
@@ -85,7 +90,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         repeat_until: params.repeat_until,
       };
       if (params.branches) {
-        requestParams.branches = params.branches
+        requestParams.branches = params.branches;
       }
       console.log('requestParams', requestParams);
       setLoading(true);
@@ -123,14 +128,14 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.dropoff_location.destinationDescription}
+              {params.pickup_location.sourceDescription}
             </Text>
           </View>
           <View style={styles.borderDummy}></View>
           <View style={styles.locationAddress}>
             <MaterialIcons name="my-location" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.pickup_location.sourceDescription}
+              {params.dropoff_location.destinationDescription}
             </Text>
           </View>
           <View style={styles.borderShowOff}></View>
@@ -143,12 +148,15 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
                 {params.vehicle_type.vehicle_type}
               </Text>
               <Text style={styles.vehicleCapacity}>
-                20000 liters max capacity
+                {params.vehicle_type.vehicle_type_desc
+                  ? params.vehicle_type.vehicle_type_desc
+                  : null}{' '}
+                max capacity
               </Text>
             </View>
             <View>
               <Image
-                style={{width: 130, height: 75}}
+                style={[styles.vehicleImage, {width: 100, height: 100}]}
                 source={getVechicleImage(params.vehicle_type.vehicle_type_id)}
               />
             </View>
@@ -157,13 +165,25 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
 
         <View style={styles.pickupCard}>
           <Text style={styles.pickupDetails}>Pickup details</Text>
-          <View>
-            <Text style={styles.vehicleName}>
-              {userDetails.userDetails[0].first_name +
-                ' ' +
-                userDetails.userDetails[0].last_name}
-            </Text>
-            <Text style={styles.vehicleCapacity}>{params.company_name}</Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>
+                {userDetails.userDetails[0].first_name +
+                  ' ' +
+                  userDetails.userDetails[0].last_name}
+              </Text>
+              <Text style={styles.vehicleCapacity}>{params.company_name}</Text>
+            </View>
+
+            <View>
+              <TouchableOpacity onPress={() => toggleModal()}>
+                <Image
+                  style={styles.packagePhoto}
+                  source={require('../../image/PackagePhoto.png')}
+                />
+              </TouchableOpacity>
+            </View>
+
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -219,9 +239,6 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
                 </Text>
               </View>
             </View>
-            <View>
-              <Image source={require('../../image/euro.png')} />
-            </View>
           </View>
         </View>
 
@@ -243,6 +260,11 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           <Text style={styles.buttonText}>Submit Order</Text>
         </TouchableOpacity>
       </View>
+
+      <DeliveryboyPackagePreviewModal
+        isImageModalVisible={isImageModalVisible}
+        setImageModalVisible={setImageModalVisible}
+      />
     </ScrollView>
   );
 };
@@ -385,6 +407,24 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     marginHorizontal: 9,
     marginVertical: 15,
+  },
+  vehicleImage: {
+    height: 62,
+    resizeMode: 'center',
+  },
+  packageBasicInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headingOTP: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  packagePhoto: {
+    width: 48,
+    height: 48,
+    borderRadius: 5,
   },
 });
 

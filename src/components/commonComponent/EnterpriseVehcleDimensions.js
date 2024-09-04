@@ -26,10 +26,6 @@ const EnterpriseVehcleDimensions = ({
   let vehicleImageStyle;
 
   switch (vehicleDetails?.vehicle_type_id) {
-    case 6:
-      vehicleImageSource = MiniTruckImage;
-      vehicleImageStyle = styles.miniTruckImage;
-      break;
     case 1:
       vehicleImageSource = BicycleImage;
       vehicleImageStyle = styles.bicycleImage;
@@ -38,7 +34,19 @@ const EnterpriseVehcleDimensions = ({
       vehicleImageSource = MotorbikeImage;
       vehicleImageStyle = styles.motorbikeImage;
       break;
+    case 3:
+      vehicleImageSource = CarImage;
+      vehicleImageStyle = styles.carImage;
+      break;
+    case 4:
+      vehicleImageSource = PartnerImage;
+      vehicleImageStyle = styles.partnerImage;
+      break;
     case 5:
+      vehicleImageSource = VanImage;
+      vehicleImageStyle = styles.vanImage;
+      break;
+    case 6:
       vehicleImageSource = MiniVanImage;
       vehicleImageStyle = styles.miniVanImage;
       break;
@@ -47,8 +55,8 @@ const EnterpriseVehcleDimensions = ({
       vehicleImageStyle = styles.semiTruckImage;
       break;
     default: // Handle the case where vehicleDetails.name is not matched
-      vehicleImageSource = MiniVanImage;
-      vehicleImageStyle = styles.miniVanImage;
+      vehicleImageSource = OtherImage;
+      vehicleImageStyle = styles.otherImage;
       break;
   }
 
