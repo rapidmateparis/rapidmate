@@ -105,6 +105,10 @@ const MapAddress = props => {
                 description: {color: colors.black},
                 color: colors.black,
               }}
+              textInputProps={{
+                placeholderTextColor: colors.lightGrey,
+                returnKeyType: 'search',
+              }}
               onPress={(data, details = null) => {
                 const originCoordinates = {
                   latitude: details.geometry.location.lat,
@@ -142,6 +146,10 @@ const MapAddress = props => {
                 },
                 description: {color: colors.black},
                 color: colors.black,
+              }}
+              textInputProps={{
+                placeholderTextColor: colors.lightGrey,
+                returnKeyType: 'search',
               }}
               onPress={(data, details = null) => {
                 const destinationCoordinates = {

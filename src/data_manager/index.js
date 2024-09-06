@@ -650,11 +650,48 @@ export const deleteAddressBookforConsumer = (
   );
 };
 
-export const createEnterpriseBranch = (params, successCallback, errorCallback) => {
+export const createEnterpriseBranch = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
   axiosCall(
     API.enterprisebranchCreate,
     HTTPMethod.POST,
     params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const cancelOrderConsumer = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.orderPickupUrl + '/' + params,
+    HTTPMethod.DELETE,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const downloadInvoiceOrder = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('print_data==>', API.orderPickupUrl + '/invoice/' + params);
+  axiosCall(
+    API.orderPickupUrl + '/invoice/' + params,
+    HTTPMethod.GET,
+    {},
     response => {
       successCallback(response);
     },
