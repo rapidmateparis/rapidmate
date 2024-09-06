@@ -663,3 +663,19 @@ export const createEnterpriseBranch = (params, successCallback, errorCallback) =
     },
   );
 };
+
+export const cancelOrderConsumer = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.orderPickupUrl+'/'+params,
+    HTTPMethod.DELETE,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+

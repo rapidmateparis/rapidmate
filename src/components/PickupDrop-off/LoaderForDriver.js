@@ -18,12 +18,18 @@ import {
   usePlacedOrderDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
-import {getAllocatedDeliveryBoy, getLocations} from '../../data_manager';
+import {
+  cancelOrderConsumer,
+  getAllocatedDeliveryBoy,
+  getLocations,
+} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -69,6 +75,22 @@ const LoaderForDriver = ({navigation}) => {
   useEffect(() => {
     getLocationsData();
   }, []);
+
+  const submitCancelOrder = () => {
+    setLoading(true);
+    cancelOrderConsumer(
+      placedOrderDetails[0]?.order_number,
+      successResponse => {
+        setLoading(false);
+        console.log('order_cancel===>successResponse', '' + JSON.stringify(successResponse));
+        navigation.navigate('PickupOrderCancelled');
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('order_cancel===>errorResponse', '' + errorResponse);
+      },
+    );
+  };
 
   return (
     <ScrollView
@@ -118,6 +140,7 @@ const LoaderForDriver = ({navigation}) => {
       <CancellationModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
+        submitCancelOrder={submitCancelOrder}
       />
     </ScrollView>
   );

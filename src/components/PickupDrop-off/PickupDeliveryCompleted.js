@@ -26,6 +26,10 @@ const PickupDeliveryCompleted = ({navigation}) => {
     setOverallExperienceRating(rating);
   };
 
+  const downloadInvoiceFile = () => {
+    
+  }
+
   return (
     <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <View>
@@ -227,7 +231,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
             </View>
 
             <View>
-              <TouchableOpacity style={styles.invoiceDownload}>
+              <TouchableOpacity style={styles.invoiceDownload} onPress={downloadInvoiceFile}>
                 <AntDesign name="download" size={15} color={colors.text} />
                 <Text style={[styles.trackText, {marginLeft: 5}]}>
                   Download invoice
