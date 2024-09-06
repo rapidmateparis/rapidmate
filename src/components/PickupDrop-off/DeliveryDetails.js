@@ -16,6 +16,7 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {
   cancelOrderConsumer,
+  downloadInvoiceOrder,
   getAVehicleByTypeId,
   getLocationById,
   getViewOrderDetail,
@@ -133,6 +134,28 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
+  const downloadInvoiceFile = () => {
+    setLoading(true);
+    downloadInvoiceOrder(
+      orderNumber,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'downloadInvoiceFile==>successResponse',
+          JSON.stringify(successResponse),
+        );
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log(
+          'downloadInvoiceFile==>errorResponse',
+          JSON.stringify(errorResponse),
+        );
+        Alert.alert('Error', JSON.stringify(errorResponse));
+      },
+    );
+  };
+
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
@@ -243,10 +266,11 @@ const DeliveryDetails = ({route, navigation}) => {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.packageInvoiceCard}>
+        <TouchableOpacity
+          style={styles.packageInvoiceCard}
+          onPress={downloadInvoiceFile}>
           <View style={styles.invoiceCard}>
             <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-
             <Text style={styles.downloadInvoiceText}>Download invoice</Text>
           </View>
           <View>
