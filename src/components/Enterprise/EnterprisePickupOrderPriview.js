@@ -255,9 +255,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={placeEnterpriseOrder}
+          onPress={() => navigation.navigate('EnterpriseOrderPayment',{...params})}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Submit Order</Text>
+          <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
       </View>
 

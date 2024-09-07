@@ -22,9 +22,9 @@ const EnterpriseLookingForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
+  
 
   const toggleModal = vehicleDetails => {
-    clearTimeout(timeOutId);
     setModalVisible(!isModalVisible);
   };
 

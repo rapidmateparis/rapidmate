@@ -134,7 +134,7 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
         data={enterpriseBranches}
         renderItem={deliveryType == 1 ? renderItem : renderItemSelectable}
       />
-      {deliveryType == 2 ? (
+      {deliveryType != 1 ? (
         <TouchableOpacity
           onPress={() => {
             var selectedBranches = enterpriseBranches.filter(

@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
-  Alert
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -23,8 +23,8 @@ import MiniVanImage from '../../image/Pickup-Right1x.png';
 import SemiTruckImage from '../../image/Truck-Right1x.png';
 import PackageImage from '../../image/Big-Package.png';
 import EnterpriseVehcleDimensions from '../commonComponent/EnterpriseVehcleDimensions';
-import { useLoader } from '../../utils/loaderContext';
-import { getAllVehicleTypes } from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {getAllVehicleTypes} from '../../data_manager';
 
 const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   const [selectedOption, setSelectedOption] = useState('');
@@ -35,7 +35,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     setSelectedOption(option);
     setSelectedVehicle(vehicle);
     if (id) {
-      setServiceTypeId(id)
+      setServiceTypeId(id);
     }
   };
 
@@ -78,11 +78,14 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           <TouchableOpacity
             style={[
               styles.selectDeliveryboyTypeCard,
-              selectedOption === 'Delivery boy with scooter' && {
-              },
+              selectedOption === 'Delivery boy with scooter' && {},
             ]}
             onPress={() =>
-              handleOptionSelect('Delivery boy with scooter', vehicleTypeList.filter(val => val.vehicle_type == 'Scooter')[0],1)
+              handleOptionSelect(
+                'Delivery boy with scooter',
+                vehicleTypeList.filter(val => val.vehicle_type == 'Scooter')[0],
+                1,
+              )
             }>
             {selectedOption === 'Delivery boy with scooter' ? (
               <FontAwesome
@@ -110,7 +113,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
               selectedOption === 'Delivery boy without scooter',
             ]}
             onPress={() =>
-              handleOptionSelect('Delivery boy without scooter', '',2)
+              handleOptionSelect('Delivery boy without scooter', '', 2)
             }>
             {selectedOption === 'Delivery boy without scooter' ? (
               <FontAwesome
@@ -203,7 +206,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
             }}
             style={[
               styles.addressCard,
-              vehicle.vehicle_type === selectedVehicle.vehicle_type ? styles.selectedCard : null,
+              vehicle.vehicle_type === selectedVehicle.vehicle_type
+                ? styles.selectedCard
+                : null,
             ]}>
             <TouchableOpacity
               onPress={() => toggleModal(vehicle)}
@@ -224,13 +229,29 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                     : colors.text
                 }
               />
-              <Text style={styles.paymentPlateform}>{vehicle.vehicle_type}</Text>
+              <Text style={styles.paymentPlateform}>
+                {vehicle.vehicle_type}
+              </Text>
             </View>
             <Image style={vehicle.style} source={vehicle.image} />
           </TouchableOpacity>
         ))}
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpiseScheduleNewDetailsFill',{...route.params,vehicle_type:selectedVehicle, service_type_id:serviceTypeId})}
+          onPress={() => {
+            if (route.params.delivery_type_id == 3) {
+              navigation.navigate('EnterpriseShiftDeliverySchedule', {
+                ...route.params,
+                vehicle_type: selectedVehicle,
+                service_type_id: serviceTypeId,
+              });
+            } else {
+              navigation.navigate('EnterpiseScheduleNewDetailsFill', {
+                ...route.params,
+                vehicle_type: selectedVehicle,
+                service_type_id: serviceTypeId,
+              });
+            }
+          }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>

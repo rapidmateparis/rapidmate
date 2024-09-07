@@ -12,106 +12,44 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 
-const DeliveryScheduleDetails = ({navigation}) => {
+const DeliveryScheduleDetails = ({route, navigation}) => {
+  const params = route.params;
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View>
         <View style={styles.dateCard}>
           <View style={{width: '48%'}}>
             <Text style={styles.dateText}>Start date</Text>
-            <Text style={styles.startDate}>20/02/2024</Text>
+            <Text style={styles.startDate}>{params.startDate}</Text>
           </View>
 
           <View style={{width: '48%'}}>
             <Text style={styles.dateText}>End date</Text>
-            <Text style={styles.startDate}>10/03/2024</Text>
+            <Text style={styles.startDate}>{params.endDate}</Text>
           </View>
         </View>
 
         <View style={{paddingHorizontal: 15}}>
-          <View style={styles.dateTimeCard}>
-            <Text style={styles.siftDate}>
-              Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
-            </Text>
-
-            <View style={styles.startTimeCard}>
-              <Text style={styles.startTime}>10:00 AM</Text>
-              <View style={styles.borderShowoff} />
-              <Text style={styles.startTime}>02:00 PM</Text>
-            </View>
-          </View>
-
-          <View style={styles.dateTimeCard}>
-            <Text style={styles.siftDate}>
-              Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
-            </Text>
-
-            <View style={styles.startTimeCard}>
-              <Text style={styles.startTime}>10:00 AM</Text>
-              <View style={styles.borderShowoff} />
-              <Text style={styles.startTime}>02:00 PM</Text>
-            </View>
-          </View>
-
-          <View style={styles.dateTimeCard}>
-            <Text style={styles.siftDate}>
-              Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
-            </Text>
-
-            <View style={styles.startTimeCard}>
-              <Text style={styles.startTime}>10:00 AM</Text>
-              <View style={styles.borderShowoff} />
-              <Text style={styles.startTime}>02:00 PM</Text>
-            </View>
-          </View>
-
-          <View style={styles.dateTimeCard}>
-            <Text style={styles.siftDate}>
-              Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
-            </Text>
-
-            <View style={styles.startTimeCard}>
-              <Text style={styles.startTime}>10:00 AM</Text>
-              <View style={styles.borderShowoff} />
-              <Text style={styles.startTime}>02:00 PM</Text>
-            </View>
-          </View>
-
-          <View style={styles.dateTimeCard}>
-            <Text style={styles.siftDate}>
-              Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
-            </Text>
-
-            <View style={styles.startTimeCard}>
-              <Text style={styles.startTime}>10:00 AM</Text>
-              <View style={styles.borderShowoff} />
-              <Text style={styles.startTime}>02:00 PM</Text>
-            </View>
-          </View>
-
-          <View style={styles.dateTimeCard}>
-            <Text style={styles.siftDate}>
-              Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
-            </Text>
-
-            <View style={styles.startTimeCard}>
-              <Text style={styles.startTime}>10:00 AM</Text>
-              <View style={styles.borderShowoff} />
-              <Text style={styles.startTime}>02:00 PM</Text>
-            </View>
-          </View>
-
-          <View style={styles.dateTimeCard}>
-            <Text style={styles.siftDate}>
-              Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
-            </Text>
-
-            <View style={styles.startTimeCard}>
-              <Text style={styles.startTime}>10:00 AM</Text>
-              <View style={styles.borderShowoff} />
-              <Text style={styles.startTime}>02:00 PM</Text>
-            </View>
-          </View>
+          {params.days.map((item, index) => {
+            return (
+              <View key={index} style={styles.dateTimeCard}>
+                <Text style={styles.siftDate}>
+                  {item.day}{' '}
+                  <Text style={styles.dateTimeSift}>{item.date}</Text>{', '}
+                  {item.year}
+                </Text>
+                {item.timeslots.map((timeSlot, timeSlotIndex) => {
+                  return (
+                    <View key={timeSlotIndex} style={styles.startTimeCard}>
+                      <Text style={styles.startTime}>{timeSlot.fromTimeText}</Text>
+                      <View style={styles.borderShowoff} />
+                      <Text style={styles.startTime}>{timeSlot.toTimeText}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            );
+          })}
         </View>
       </View>
       <View style={styles.buttonCard}>
@@ -119,7 +57,9 @@ const DeliveryScheduleDetails = ({navigation}) => {
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpriseScheduleRequestSubmitted')}
+          onPress={() =>
+            navigation.navigate('EnterpriseScheduleRequestSubmitted')
+          }
           style={styles.saveBTn}>
           <Text style={styles.okButton}>Save</Text>
         </TouchableOpacity>
@@ -292,6 +232,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginVertical:5
   },
   startTime: {
     fontSize: 12,
