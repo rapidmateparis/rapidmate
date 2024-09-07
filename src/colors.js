@@ -10,4 +10,5 @@ export const colors = {
   Pending: '#F39C12',
   Completed: '#27AE60',
   black: '#000000',
+  lightGrey: '#D3D3D3',
 };

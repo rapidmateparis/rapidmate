@@ -20,6 +20,8 @@ import {
 } from '../../utils/common';
 import {RadioButton, RadioGroup} from 'react-native-radio-buttons-group';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import {uploadDocumentsApi} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
 const AddPickupdetails = ({route, navigation}) => {
   const [name, setName] = useState('');
@@ -36,6 +38,9 @@ const AddPickupdetails = ({route, navigation}) => {
   const [photoFileName, setPhotoFileName] = useState('');
   const [selectedId, setSelectedId] = useState();
   const {userDetails} = useUserDetails();
+  const [packageImage, setPackageImage] = useState(null);
+  const [packageImageId, setPackageImageId] = useState(null);
+  const {setLoading} = useLoader();
 
   const radioButtons = useMemo(
     () => [
@@ -65,12 +70,47 @@ const AddPickupdetails = ({route, navigation}) => {
     {label: '+33', value: '+33'},
   ];
 
+  const uploadImage = async (packageImage) => {
+    var photo = {
+      uri: packageImage?.data?.uri,
+      type: packageImage?.data?.type,
+      name: packageImage?.data?.fileName,
+    };
+    const formdata = new FormData();
+    formdata.append('file', photo);
+    setLoading(true);
+    uploadDocumentsApi(
+      formdata,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'print_data==>successResponseuploadDocumentsApi',
+          '' + JSON.parse(successResponse).id,
+        );
+        setPackageImageId(JSON.parse(successResponse).id)
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>errorResponseuploadDocumentsApi',
+          '' + errorResponse,
+        );
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   const handleCameraLaunch = async () => {
     setModalVisibleCamera(!isModalVisibleCamera);
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status === 'success') {
+        console.log('print_data===>', '' + JSON.stringify(cameraData.data.uri));
         setPhotoFileName(getFileName(cameraData.data.uri));
+        setPackageImage(cameraData);
+        uploadImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -82,7 +122,10 @@ const AddPickupdetails = ({route, navigation}) => {
     try {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status === 'success') {
+        console.log('print_data===>', imageData);
         setPhotoFileName(getFileName(imageData.data.uri));
+        setPackageImage(imageData);
+        uploadImage();
       }
     } catch (error) {
       // Handle errors here
@@ -148,9 +191,12 @@ const AddPickupdetails = ({route, navigation}) => {
         email: email,
         number: number,
         company: company,
-        pickupNotes: pickupNotes, 
+        pickupNotes: pickupNotes,
       };
-      route.params.userDetails = userDetails; 
+      if (packageImageId) {
+        userDetails.package_photo = packageImageId;
+      }
+      route.params.userDetails = userDetails;
       navigation.navigate('PickupOrderPreview', {props: route.params});
     }
   };
@@ -183,7 +229,7 @@ const AddPickupdetails = ({route, navigation}) => {
             </View>
 
             <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>Last name</Text>
+              <Text style={styles.textlable}>Last name*</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
@@ -202,7 +248,7 @@ const AddPickupdetails = ({route, navigation}) => {
             />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Email</Text>
+            <Text style={styles.textlable}>Email*</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -211,7 +257,7 @@ const AddPickupdetails = ({route, navigation}) => {
             />
           </View>
           <View>
-            <Text style={styles.textlable}>Phone number</Text>
+            <Text style={styles.textlable}>Phone number*</Text>
             <View style={styles.mobileNumberInput}>
               <View style={{width: 95}}>
                 <View style={styles.containerDropdown}>
@@ -265,12 +311,19 @@ const AddPickupdetails = ({route, navigation}) => {
               <Text style={styles.packagePhoto}>Package photo</Text>
               <View style={styles.packagePhotoPath}>
                 <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                <MaterialCommunityIcons name="close" color="#000" size={13} />
+                <MaterialCommunityIcons
+                  onPress={() => {
+                    setPhotoFileName(null);
+                  }}
+                  name="close"
+                  color="#000"
+                  size={13}
+                />
               </View>
             </View>
           </TouchableOpacity>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Package ID</Text>
+            <Text style={styles.textlable}>Package ID*</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -279,7 +332,7 @@ const AddPickupdetails = ({route, navigation}) => {
             />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Pickup notes</Text>
+            <Text style={styles.textlable}>Pickup notes*</Text>
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}

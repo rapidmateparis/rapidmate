@@ -11,6 +11,7 @@ import {
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {downloadInvoiceOrder} from '../../data_manager'
 
 const PickupDeliveryCompleted = ({navigation}) => {
   const [deliveryBoyRating, setDeliveryBoyRating] = useState(0);
@@ -25,6 +26,10 @@ const PickupDeliveryCompleted = ({navigation}) => {
   const handleOverallExperienceRating = rating => {
     setOverallExperienceRating(rating);
   };
+
+  const downloadInvoiceFile = () => {
+
+  }
 
   return (
     <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
@@ -227,7 +232,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
             </View>
 
             <View>
-              <TouchableOpacity style={styles.invoiceDownload}>
+              <TouchableOpacity style={styles.invoiceDownload} onPress={downloadInvoiceFile}>
                 <AntDesign name="download" size={15} color={colors.text} />
                 <Text style={[styles.trackText, {marginLeft: 5}]}>
                   Download invoice

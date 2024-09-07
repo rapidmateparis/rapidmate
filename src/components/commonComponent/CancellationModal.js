@@ -1,13 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
 import {colors} from '../../colors';
 
-function CancellationModal({setModalVisible, isModalVisible}) {
+function CancellationModal({
+  setModalVisible,
+  isModalVisible,
+  submitCancelOrder,
+}) {
   const [selectedReason, setSelectedReason] = useState(null);
-  const navigation = useNavigation(); // Initialize navigation using useNavigation hook
+  const navigation = useNavigation();
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -53,7 +57,10 @@ function CancellationModal({setModalVisible, isModalVisible}) {
             ].map(reason => renderReason(reason))}
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('PickupOrderCancelled')}
+            onPress={() => {
+              setSelectedReason(null);
+              submitCancelOrder();
+            }}
             style={styles.buttonCard}>
             <Text style={styles.okButton}>Submit</Text>
           </TouchableOpacity>
