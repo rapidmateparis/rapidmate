@@ -57,12 +57,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           serOrder(successResponse[0]._response);
-          getPickUpLocation(
-            successResponse[0]._response.order.pickup_location_id,
-          );
-          getDropOffLocation(
-            successResponse[0]._response.order.dropoff_location_id,
-          );
+          getPickUpLocation(successResponse[0]._response.order.pickup_location_id);
+          getDropOffLocation(successResponse[0]._response.order.dropoff_location_id);
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
@@ -216,10 +212,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
 
             <View>
               <Text style={styles.headingOTP}>Pickup notes</Text>
-              <Text style={styles.dropInfo}>
-                Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-                sed.
-              </Text>
+              <Text style={styles.dropInfo}>{order.order ? order.order.pickup_notes : ''}</Text>
             </View>
           </View>
         </View>
@@ -270,10 +263,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.detailsId}>
-              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-              sed.
-            </Text>
+            <Text style={styles.dropInfo}>{order.order ? order.order.pickup_notes : ''}</Text>
           </Text>
           <Text style={styles.orderdetails}>
             Vehicle:
