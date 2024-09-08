@@ -132,9 +132,9 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
       }}>
       <FlatList
         data={enterpriseBranches}
-        renderItem={deliveryType == 1 ? renderItem : renderItemSelectable}
+        renderItem={deliveryType == 1 || deliveryType == 3 ? renderItem : renderItemSelectable}
       />
-      {deliveryType != 1 ? (
+      {deliveryType == 2 ? (
         <TouchableOpacity
           onPress={() => {
             var selectedBranches = enterpriseBranches.filter(

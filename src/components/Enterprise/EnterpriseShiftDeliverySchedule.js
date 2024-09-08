@@ -16,16 +16,8 @@ import CheckBox from '@react-native-community/checkbox';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
-const EnterpriseShiftDeliverySchedule = ({navigation}) => {
-  const [fromtime, setFromtime] = useState('');
-  const [totime, setTotime] = useState('');
-  const [pushNotifications, setPushNotifications] = useState(true);
+const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
   const [promoEmails, setPromoEmails] = useState(false);
-  const [toggleCheckBox20, setToggleCheckBox20] = useState(false);
-  const [toggleCheckBox21, setToggleCheckBox21] = useState(false);
-  const [timeSlots20, setTimeSlots20] = useState([]);
-  const [timeSlots21, setTimeSlots21] = useState([]);
-  const [week, setWeek] = useState(1);
 
   const [startDate, setStartDate] = useState(new Date());
   const [startDateOpen, setStartDateOpen] = useState(false);
@@ -37,9 +29,7 @@ const EnterpriseShiftDeliverySchedule = ({navigation}) => {
 
   const [days, setDays] = useState([]);
 
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
-  };
+  const params = route.params
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
@@ -423,7 +413,8 @@ const EnterpriseShiftDeliverySchedule = ({navigation}) => {
                 param.days.push(element)
               }
             }
-            navigation.navigate('EnterpriseSchedulePreview', {...param});
+            params.schedule = param
+            navigation.navigate('EnterpriseSchedulePreview', {...params});
           }}
           style={styles.saveBTn}>
           <Text style={styles.okButton}>Preview</Text>

@@ -8,42 +8,98 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {createEnterpriseOrder} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import moment from 'moment';
 
 const DeliveryScheduleDetails = ({route, navigation}) => {
   const params = route.params;
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
+
+  const placeEnterpriseOrder = async () => {
+    var slots = [];
+    for (let index = 0; index < params.schedule.days.length; index++) {
+      const day = params.schedule.days[index];
+      for (let dayIndex = 0; dayIndex < day.timeslots.length; dayIndex++) {
+        const element = day.timeslots[dayIndex];
+        slots.push({
+          day: day.day,
+          from_time: moment(element.fromTimeText, 'hh:mm A').format('HH:MM'),
+          to_time: moment(element.toTimeText, 'hh:mm A').format('HH:MM'),
+        });
+      }
+    }
+    let requestParams = {
+      enterprise_ext_id: userDetails.userDetails[0].ext_id,
+      branch_id: params.branch_id,
+      delivery_type_id: params.delivery_type_id,
+      service_type_id: params.service_type_id,
+      vehicle_type_id: params.vehicle_type.vehicle_type_id,
+      shift_from_date: params.schedule.startDate,
+      shift_tp_date: params.schedule.endDate,
+      is_same_slot_all_days: 0,
+      slots: slots
+    };
+    setLoading(true);
+    createEnterpriseOrder(
+      requestParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          navigation.navigate('EnterpriseScheduleRequestSubmitted');
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('createEnterpriseOrder==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View>
         <View style={styles.dateCard}>
           <View style={{width: '48%'}}>
             <Text style={styles.dateText}>Start date</Text>
-            <Text style={styles.startDate}>{params.startDate}</Text>
+            <Text style={styles.startDate}>{params.schedule.startDate}</Text>
           </View>
 
           <View style={{width: '48%'}}>
             <Text style={styles.dateText}>End date</Text>
-            <Text style={styles.startDate}>{params.endDate}</Text>
+            <Text style={styles.startDate}>{params.schedule.endDate}</Text>
           </View>
         </View>
 
         <View style={{paddingHorizontal: 15}}>
-          {params.days.map((item, index) => {
+          {params.schedule.days.map((item, index) => {
             return (
               <View key={index} style={styles.dateTimeCard}>
                 <Text style={styles.siftDate}>
                   {item.day}{' '}
-                  <Text style={styles.dateTimeSift}>{item.date}</Text>{', '}
+                  <Text style={styles.dateTimeSift}>{item.date}</Text>
+                  {', '}
                   {item.year}
                 </Text>
                 {item.timeslots.map((timeSlot, timeSlotIndex) => {
                   return (
                     <View key={timeSlotIndex} style={styles.startTimeCard}>
-                      <Text style={styles.startTime}>{timeSlot.fromTimeText}</Text>
+                      <Text style={styles.startTime}>
+                        {timeSlot.fromTimeText}
+                      </Text>
                       <View style={styles.borderShowoff} />
-                      <Text style={styles.startTime}>{timeSlot.toTimeText}</Text>
+                      <Text style={styles.startTime}>
+                        {timeSlot.toTimeText}
+                      </Text>
                     </View>
                   );
                 })}
@@ -57,9 +113,9 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('EnterpriseScheduleRequestSubmitted')
-          }
+          onPress={() => {
+            placeEnterpriseOrder();
+          }}
           style={styles.saveBTn}>
           <Text style={styles.okButton}>Save</Text>
         </TouchableOpacity>
@@ -232,7 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical:5
+    marginVertical: 5,
   },
   startTime: {
     fontSize: 12,
