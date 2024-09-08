@@ -47,7 +47,6 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
                 element.isSelected = false;
                 branches.push(element);
               }
-              console.log('branches', branches);
               setEnterpriseBranches(branches);
             }
           }
@@ -132,7 +131,7 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
       }}>
       <FlatList
         data={enterpriseBranches}
-        renderItem={deliveryType == 1 ? renderItem : renderItemSelectable}
+        renderItem={deliveryType == 1 || deliveryType == 3 ? renderItem : renderItemSelectable}
       />
       {deliveryType == 2 ? (
         <TouchableOpacity
