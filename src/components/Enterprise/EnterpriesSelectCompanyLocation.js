@@ -47,7 +47,6 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
                 element.isSelected = false;
                 branches.push(element);
               }
-              console.log('branches', branches);
               setEnterpriseBranches(branches);
             }
           }
