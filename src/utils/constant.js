@@ -77,4 +77,6 @@ export const API = {
   getDistancePriceListUrl: BASE_URL + 'vehicletypes/price/list?d=',
   getFaqListUrl: BASE_URL + 'faq',
   enterprisebranchCreate: BASE_URL + 'enterprisebranch',
+  cancelOrderUrl: BASE_URL + 'order/cancel',
+  deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
 };

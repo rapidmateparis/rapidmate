@@ -9,6 +9,8 @@ import {
   Image,
   Alert,
   Button,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
@@ -23,10 +25,15 @@ import {
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import CancellationModal from '../commonComponent/CancellationModal';
+import RNFS from 'react-native-fs';
+import {Buffer} from 'buffer';
+import {
+  requestMultiple,
+  PERMISSIONS,
+  openSettings,
+} from 'react-native-permissions';
 
 const DeliveryDetails = ({route, navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
   const {setLoading} = useLoader();
   const orderNumber = route.params.order_number;
   const [order, serOrder] = useState({});
@@ -34,20 +41,34 @@ const DeliveryDetails = ({route, navigation}) => {
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
-  };
-
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-  };
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     orderDetail();
+    const requestCameraPermission = async () => {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      ]);
+
+      console.log('granted', granted);
+      return granted;
+    };
+
+    const permissionStatus = await requestCameraPermission();
+    console.log('permissionStatus', permissionStatus);
+
+    if (permissionStatus[PermissionsAndroid.PERMISSIONS.CAMERA] === 'granted') {
+      // Code to access the camera
+    } else if (
+      permissionStatus[PermissionsAndroid.PERMISSIONS.CAMERA] ===
+      'never_ask_again'
+    ) {
+      Linking.openSettings();
+    }
   }, []);
 
   const orderDetail = async () => {
@@ -114,13 +135,17 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  const submitCancelOrder = () => {
+  const submitCancelOrder = selectedReason => {
     setLoading(true);
+    let params = {
+      order_number: orderNumber,
+      cancel_reason_id: selectedReason.id,
+      cancel_reason: selectedReason.reason,
+    };
     cancelOrderConsumer(
-      orderNumber,
+      params,
       successResponse => {
         setLoading(false);
-        setModalVisible(false);
         console.log(
           'order_cancel===>successResponse',
           '' + JSON.stringify(successResponse),
@@ -134,26 +159,39 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  const downloadInvoiceFile = () => {
+  const downloadInvoiceFile = async () => {
     setLoading(true);
-    downloadInvoiceOrder(
-      orderNumber,
-      successResponse => {
-        setLoading(false);
-        console.log(
-          'downloadInvoiceFile==>successResponse',
-          JSON.stringify(successResponse),
-        );
-      },
-      errorResponse => {
-        setLoading(false);
-        console.log(
-          'downloadInvoiceFile==>errorResponse',
-          JSON.stringify(errorResponse),
-        );
-        Alert.alert('Error', JSON.stringify(errorResponse));
-      },
-    );
+    try {
+      const successResponse = await new Promise((resolve, reject) => {
+        downloadInvoiceOrder(orderNumber, resolve, reject);
+      });
+
+      const invoiceData = successResponse;
+      const filePath =
+        Platform.OS === 'android'
+          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
+          : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
+
+      // Convert binary data to base64
+      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+
+      // Write the file to the document directory
+      await RNFS.writeFile(filePath, base64Data, 'base64');
+
+      // Verify the file exists
+      const fileExists = await RNFS.exists(filePath);
+      if (fileExists) {
+        Alert.alert('Success', 'Invoice saved successfully.');
+        console.log('Invoice saved to: ', filePath);
+      } else {
+        Alert.alert('Error', 'Failed to save invoice file.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save invoice file.');
+      console.error('File saving error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
