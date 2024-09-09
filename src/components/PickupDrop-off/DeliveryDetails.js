@@ -135,13 +135,17 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  const submitCancelOrder = () => {
+  const submitCancelOrder = selectedReason => {
     setLoading(true);
+    let params = {
+      order_number: orderNumber,
+      cancel_reason_id: selectedReason.id,
+      cancel_reason: selectedReason.reason,
+    };
     cancelOrderConsumer(
-      orderNumber,
+      params,
       successResponse => {
         setLoading(false);
-        setModalVisible(false);
         console.log(
           'order_cancel===>successResponse',
           '' + JSON.stringify(successResponse),

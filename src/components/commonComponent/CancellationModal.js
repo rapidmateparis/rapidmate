@@ -21,18 +21,18 @@ function CancellationModal({
     setSelectedReason(reason);
   };
 
-  const renderReason = reason => {
-    const isSelected = selectedReason === reason;
+  const renderReason = cancelItem => {
+    const isSelected = selectedReason?.id === cancelItem.id;
     return (
       <TouchableOpacity
-        key={reason}
+        key={cancelItem.id}
         style={[styles.reasonItem, isSelected && styles.selectedReason]}
-        onPress={() => handleReasonSelect(reason)}>
+        onPress={() => handleReasonSelect(cancelItem)}>
         {!isSelected && <View style={styles.circle} />}
         {isSelected && (
           <AntDesign name="checkcircle" size={20} color={colors.primary} />
         )}
-        <Text style={styles.CancellationReasonText}>{reason}</Text>
+        <Text style={styles.CancellationReasonText}>{cancelItem.reason}</Text>
       </TouchableOpacity>
     );
   };
@@ -49,17 +49,17 @@ function CancellationModal({
           </View>
           <View style={styles.CancellationReasonCard}>
             {[
-              'Change of plans',
-              'I want to change delivery time',
-              'Incorrect address or information',
-              'Found another person',
-              'It is taking too long',
+              {id: 1, reason: 'Change of plans'},
+              {id: 2, reason: 'I want to change delivery time'},
+              {id: 3, reason: 'Incorrect address or information'},
+              {id: 4, reason: 'Found another person'},
+              {id: 5, reason: 'It is taking too long'},
             ].map(reason => renderReason(reason))}
           </View>
           <TouchableOpacity
             onPress={() => {
+              submitCancelOrder(selectedReason);
               setSelectedReason(null);
-              submitCancelOrder();
             }}
             style={styles.buttonCard}>
             <Text style={styles.okButton}>Submit</Text>

@@ -76,13 +76,21 @@ const LoaderForDriver = ({navigation}) => {
     getLocationsData();
   }, []);
 
-  const submitCancelOrder = () => {
+  const submitCancelOrder = selectedReason => {
     setLoading(true);
+    let params = {
+      order_number: placedOrderDetails[0]?.order_number,
+      cancel_reason_id: selectedReason.id,
+      cancel_reason: selectedReason.reason,
+    };
     cancelOrderConsumer(
-      placedOrderDetails[0]?.order_number,
+      params,
       successResponse => {
         setLoading(false);
-        console.log('order_cancel===>successResponse', '' + JSON.stringify(successResponse));
+        console.log(
+          'order_cancel===>successResponse',
+          '' + JSON.stringify(successResponse),
+        );
         navigation.navigate('PickupOrderCancelled');
       },
       errorResponse => {
