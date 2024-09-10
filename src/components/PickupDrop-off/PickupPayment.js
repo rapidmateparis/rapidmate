@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   totalAmount: {
     fontSize: 12,

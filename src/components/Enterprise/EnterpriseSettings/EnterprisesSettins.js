@@ -77,6 +77,15 @@ const EnterprisesSettins = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
+            onPress={() => navigation.navigate('EnterpriseManageAds')}
+            style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Manage Ads</Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity
             onPress={() => navigation.navigate('AddPaymentMethod')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Payment methods</Text>

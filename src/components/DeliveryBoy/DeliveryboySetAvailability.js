@@ -815,6 +815,7 @@ const styles = StyleSheet.create({
   loginput: {
     fontSize: 14,
     paddingHorizontal: 10,
+    color: colors.text,
     width: '90%',
     fontFamily: 'Montserrat-Regular',
   },

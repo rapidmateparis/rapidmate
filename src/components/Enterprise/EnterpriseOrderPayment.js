@@ -208,7 +208,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           <View style={styles.semiTruckDetails}>
             <View style={{marginRight: 15}}>
               <Image
-                style={{width: 90, height: 70}}
+                style={[styles.vehicleImage, {width: 100, height: 100}]}
                 source={getVechicleImage(params.vehicle_type.vehicle_type_id)}
               />
             </View>
@@ -388,7 +388,6 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   totalAmount: {
     fontSize: 12,
@@ -465,6 +464,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
+  },
+  vehicleImage: {
+    height: 62,
+    resizeMode: 'center',
   },
 });
 

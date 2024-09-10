@@ -32,6 +32,7 @@ import {
   PERMISSIONS,
   openSettings,
 } from 'react-native-permissions';
+import { API } from '../../utils/constant';
 
 const DeliveryDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();

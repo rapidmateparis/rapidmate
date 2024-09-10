@@ -134,6 +134,11 @@ export default function EnterpriseAddNewLocationsMap() {
                     color: colors.black,
                   },
                   description: {color: colors.black},
+                  color: colors.black,
+                }}
+                textInputProps={{
+                  placeholderTextColor: colors.lightGrey,
+                  returnKeyType: 'search',
                 }}
                 fetchDetails={true}
                 placeholder="Set location address"
