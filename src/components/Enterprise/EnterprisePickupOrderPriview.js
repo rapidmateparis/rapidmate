@@ -58,69 +58,6 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
     }
   };
 
-  const placeEnterpriseOrder = async () => {
-    if (params.distance) {
-      let requestParams = {
-        enterprise_ext_id: userDetails.userDetails[0].ext_id,
-        branch_id: params.branch_id,
-        delivery_type_id: 1,
-        service_type_id: 2,
-        vehicle_type_id: params.vehicle_type.vehicle_type_id,
-        pickup_date: params.pickup_date,
-        pickup_time: params.pickup_time,
-        pickup_location_id: params.pickup_location_id,
-        dropoff_location_id: params.dropoff_location_id,
-        is_repeat_mode: params.is_repeat_mode,
-        repeat_day: '',
-        is_my_self: 1,
-        first_name: userDetails.userDetails[0].first_name,
-        last_name: userDetails.userDetails[0].last_name,
-        company_name: params.company_name,
-        email: userDetails.userDetails[0].email,
-        mobile: params.mobile,
-        package_id: params.package_id,
-        package_note: params.package_note,
-        is_same_dropoff_location: 0,
-        repeat_dropoff_location_id: '',
-        distance: parseFloat(params.distance).toFixed(1),
-        total_amount: parseFloat(params.amount),
-        package_photo: 'https://example.com/package.jpg',
-        repeat_mode: params.repeat_mode,
-        repeat_every: params.repeat_every,
-        repeat_until: params.repeat_until,
-      };
-      if (params.branches) {
-        requestParams.branches = params.branches;
-      }
-      console.log('requestParams', requestParams);
-      setLoading(true);
-      createEnterpriseOrder(
-        requestParams,
-        successResponse => {
-          if (successResponse[0]._success) {
-            console.log('createEnterpriseOrder', successResponse[0]._response);
-            setLoading(false);
-            navigation.navigate('EnterpriseScheduleApproved');
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          console.log(
-            'createEnterpriseOrder==>errorResponse',
-            errorResponse[0],
-          );
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
-    } else {
-      Alert.alert('Error Alert', 'Please choose pickup and drop location', [
-        {text: 'OK', onPress: () => {}},
-      ]);
-    }
-  };
-
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -255,9 +192,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={placeEnterpriseOrder}
+          onPress={() => navigation.navigate('EnterpriseOrderPayment',{...params})}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Submit Order</Text>
+          <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
       </View>
 

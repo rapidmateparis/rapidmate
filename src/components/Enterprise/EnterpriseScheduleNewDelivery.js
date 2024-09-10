@@ -55,7 +55,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('EnterpiseSelectShiftDelivery')} style={styles.franchiseCard}>
+          <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation',{delivery_type_id:3})} style={styles.franchiseCard}>
             <Image style={{width: 30, height: 30,marginLeft: 20,}} source={require('../../image/clanderSchdule.png')} />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>Create shift</Text>

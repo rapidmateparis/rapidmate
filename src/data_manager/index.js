@@ -670,9 +670,9 @@ export const createEnterpriseBranch = (
 
 export const cancelOrderConsumer = (params, successCallback, errorCallback) => {
   axiosCall(
-    API.orderPickupUrl + '/' + params,
-    HTTPMethod.DELETE,
-    {},
+    API.cancelOrderUrl,
+    HTTPMethod.POST,
+    params,
     response => {
       successCallback(response);
     },
@@ -692,6 +692,25 @@ export const downloadInvoiceOrder = (
     API.orderPickupUrl + '/invoice/' + params,
     HTTPMethod.GET,
     {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyListUsingDate = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('print_data==>', API.deliveryBoyPlanningSetupDateList, params);
+  axiosCall(
+    API.deliveryBoyPlanningSetupDateList,
+    HTTPMethod.POST,
+    params,
     response => {
       successCallback(response);
     },

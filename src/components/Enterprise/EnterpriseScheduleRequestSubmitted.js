@@ -39,7 +39,9 @@ const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('EnterpriseDeliveryboyAssigned')}
+        onPress={() => {
+          navigation.navigate('EnterpriseBottomNav');
+        }}
         style={[styles.logbutton, {backgroundColor: colors.primary}]}>
         <Text style={styles.buttonText}>Ok</Text>
       </TouchableOpacity>
