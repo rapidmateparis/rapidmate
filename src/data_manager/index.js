@@ -719,3 +719,17 @@ export const getDeliveryBoyListUsingDate = (
     },
   );
 };
+
+export const checkPromoCode = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.checkPromoCodeUrl,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

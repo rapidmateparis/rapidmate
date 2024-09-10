@@ -15,17 +15,23 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {colors} from '../../colors';
 import PlaningFilterModal from '../commonComponent/PlaningFilterModal';
-import {getDeliveryBoyListUsingDate} from '../../data_manager';
+import {getDeliveryBoyListUsingDate, getLocations} from '../../data_manager';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
+import moment from 'moment';
 
 const Planning = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
+  const {lookupData} = useLookupData();
   const [orderList, setOrderList] = useState([]);
+  const [locationList, setLocationList] = useState([]);
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  console.log('lookupData', lookupData);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -37,16 +43,43 @@ const Planning = ({navigation}) => {
   const [selected, setSelected] = useState(getCurrentDate());
 
   useEffect(() => {
+    getLocationsData();
+  }, []);
+
+  const getLocationsData = () => {
+    setLocationList([]);
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+      },
+      errorResponse => {
+        if (errorResponse[0]._errors.message) {
+          setLocationList([]);
+        }
+      },
+    );
+  };
+
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
+  const getDeliveryBoyPlannningList = selectedDate => {
+    setOrderList([]);
     let params = {
       delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
       page: 1,
       size: 10,
-      planning_date: selected,
+      planning_date: selectedDate,
     };
     getDeliveryBoyListUsingDate(
       params,
       succesResponse => {
-        console.log('print_data==>', JSON.stringify(succesResponse));
         let tempOrderList = succesResponse[0]._response;
         setOrderList(tempOrderList);
       },
@@ -54,41 +87,53 @@ const Planning = ({navigation}) => {
         console.log('print_data==>', JSON.stringify(errorResponse));
       },
     );
-  }, [selected]);
+  };
 
   const renderPlanningList = planningItem => (
     <View style={styles.packageDetailCard}>
-      {console.log('planningItem', planningItem)}
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
         <Text style={styles.deliveryTime}>
-          Delivered on Apr 19, 2024 at 11:30 AM
+          Delivered on{' '}
+          {moment(new Date(planningItem.item.delivery_date)).format(
+            'DD MMMM YYYY hh:mm a',
+          )}
         </Text>
       </View>
 
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From <Text style={styles.Location}>North Street, ABC</Text>
+          From{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(planningItem.item.pickup_location_id)}
+          </Text>
         </Text>
       </View>
 
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
+          To{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(planningItem.item.dropoff_location_id)}
+          </Text>
         </Text>
       </View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: 98237469</Text>
-        <Text style={styles.valueMoney}>For National Inc.</Text>
+        <Text style={styles.orderId}>
+          Order ID: {planningItem.item.order_number}
+        </Text>
+        <Text style={styles.valueMoney}>
+          For {planningItem.item.company_name}
+        </Text>
       </View>
     </View>
   );
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+    <View style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{backgroundColor: '#fff'}}>
         <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
           <View style={styles.header}>
@@ -112,6 +157,7 @@ const Planning = ({navigation}) => {
         <Calendar
           onDayPress={day => {
             setSelected(day.dateString);
+            getDeliveryBoyPlannningList(day.dateString);
           }}
           markedDates={{
             [selected]: {
@@ -122,7 +168,6 @@ const Planning = ({navigation}) => {
             [getCurrentDate()]: {
               selected: true,
               selectedColor: colors.secondary,
-              disableTouchEvent: true,
             },
           }}
           theme={{
@@ -177,7 +222,7 @@ const Planning = ({navigation}) => {
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
       />
-    </ScrollView>
+    </View>
   );
 };
 
