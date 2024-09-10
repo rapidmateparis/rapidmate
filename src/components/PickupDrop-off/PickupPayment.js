@@ -15,7 +15,11 @@ import {colors} from '../../colors';
 import {useStripe} from '@stripe/stripe-react-native';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
-import {addPayment, createPickupOrder} from '../../data_manager';
+import {
+  addPayment,
+  checkPromoCode,
+  createPickupOrder,
+} from '../../data_manager';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import CarImage from '../../image/Car-Img.png';
@@ -25,6 +29,7 @@ import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
+import {debounce} from 'lodash';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -33,13 +38,15 @@ const PickupPayment = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const {savePlacedOrderDetails} = usePlacedOrderDetails();
   const [orderResponse, setOrderResponse] = useState();
+  const [promoCode, setPromoCode] = useState('');
   const params = route.params.props;
-  var paymentAmount;
-  if (typeof params.selectedVehiclePrice === 'number') {
-    paymentAmount = params.selectedVehiclePrice.toFixed(2);
-  } else {
-    paymentAmount = params.selectedVehiclePrice;
-  }
+  const [totalAmount, setTotalAmount] = useState(
+    typeof params.selectedVehiclePrice === 'number'
+      ? params.selectedVehiclePrice.toFixed(2)
+      : params.selectedVehiclePrice,
+  );
+  const [paymentAmount, setPaymentAmount] = useState(totalAmount);
+  const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
 
   const onPayment = async () => {
@@ -174,6 +181,33 @@ const PickupPayment = ({route, navigation}) => {
     );
   };
 
+  const applyPromoCode = () => {
+    let params = {
+      promoCode: promoCode,
+      orderAmount: paymentAmount,
+    };
+    checkPromoCode(
+      params,
+      successResponse => {
+        console.log(
+          'applyPromoCode==>successResponse',
+          JSON.stringify(successResponse),
+        );
+        if (successResponse[0]._success) {
+          const promoResponse = successResponse[0]._response[0];
+          setPromoCodeResponse(promoResponse);
+          setPaymentAmount(successResponse[0]._response[0].totalAmount);
+        }
+      },
+      errorResponse => {
+        console.log(
+          'applyPromoCode==>errorResponse',
+          JSON.stringify(errorResponse),
+        );
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -233,7 +267,7 @@ const PickupPayment = ({route, navigation}) => {
 
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
-            <Text style={styles.totalAmount}>€ {paymentAmount}</Text>
+            <Text style={styles.totalAmount}>€ {totalAmount}</Text>
           </View>
         </View>
 
@@ -243,6 +277,7 @@ const PickupPayment = ({route, navigation}) => {
             style={styles.input}
             placeholder="Promo code"
             placeholderTextColor="#999"
+            onChangeText={text => setPromoCode(text)}
           />
           <TouchableOpacity
             style={{
@@ -251,10 +286,20 @@ const PickupPayment = ({route, navigation}) => {
               paddingVertical: 13,
               borderTopRightRadius: 10,
               borderBottomEndRadius: 10,
-            }}>
+            }}
+            onPress={applyPromoCode}>
             <AntDesign name="check" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
+        {promoCodeResponse && (
+          <Text
+            style={[
+              styles.discountInfo,
+              {fontSize: 16, alignSelf: 'flex-end'},
+            ]}>
+            Discount: € {promoCodeResponse.discount}
+          </Text>
+        )}
 
         <View>
           <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
@@ -269,9 +314,10 @@ const PickupPayment = ({route, navigation}) => {
             20% off on city bank credit card!
           </Text>
         </View>
+
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>
-          <TouchableOpacity onPress={onPayment}>
+          <TouchableOpacity onPress={debounce(onPayment, 500)}>
             <Text style={styles.PayText}>Proceed to pay</Text>
           </TouchableOpacity>
         </View>

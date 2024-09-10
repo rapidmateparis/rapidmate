@@ -3,8 +3,13 @@ import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {API} from '../../utils/constant';
 
-function DeliveryboyPackagePreviewModal({setImageModalVisible, isImageModalVisible}) {
+function DeliveryboyPackagePreviewModal({
+  setImageModalVisible,
+  isImageModalVisible,
+  previewImage,
+}) {
   const toggleModal = () => {
     setImageModalVisible(!isImageModalVisible);
   };
@@ -21,7 +26,7 @@ function DeliveryboyPackagePreviewModal({setImageModalVisible, isImageModalVisib
           </View>
           <View style={styles.imageContainer}>
             <Image
-              source={require('../../image/PackagePhoto.png')}
+              source={{uri: API.viewImageUrl + previewImage}}
               style={styles.image}
               resizeMode="cover"
             />

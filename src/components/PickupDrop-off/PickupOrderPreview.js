@@ -26,6 +26,8 @@ import {createPickupOrder} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
+import {API} from '../../utils/constant';
+import {debounce} from 'lodash';
 
 const PickupOrderPreview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -119,14 +121,18 @@ const PickupOrderPreview = ({route, navigation}) => {
               </Text>
             </View>
 
-            <View>
-              <TouchableOpacity onPress={() => toggleModal()}>
-                <Image
-                  style={styles.packagePhoto}
-                  source={require('../../image/PackagePhoto.png')}
-                />
-              </TouchableOpacity>
-            </View>
+            {params.userDetails.package_photo && (
+              <View>
+                <TouchableOpacity onPress={() => toggleModal()}>
+                  <Image
+                    style={styles.packagePhoto}
+                    source={{
+                      uri: API.viewImageUrl + params.userDetails.package_photo,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -200,7 +206,7 @@ const PickupOrderPreview = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={pickupOrderRequest}
+          onPress={debounce(pickupOrderRequest, 500)}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
@@ -209,6 +215,11 @@ const PickupOrderPreview = ({route, navigation}) => {
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
         setImageModalVisible={setImageModalVisible}
+        previewImage={
+          params.userDetails.package_photo
+            ? params.userDetails.package_photo
+            : null
+        }
       />
     </ScrollView>
   );
