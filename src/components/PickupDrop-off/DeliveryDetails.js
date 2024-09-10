@@ -37,6 +37,7 @@ const DeliveryDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const orderNumber = route.params.order_number;
   const [order, serOrder] = useState({});
+  const [deliveryboy, setDeliveryboy] = useState({});
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
@@ -79,6 +80,7 @@ const DeliveryDetails = ({route, navigation}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           serOrder(successResponse[0]._response.order);
+          setDeliveryboy(successResponse[0]._response.deliveryBoy);
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location_id,
           );
@@ -204,10 +206,12 @@ const DeliveryDetails = ({route, navigation}) => {
         <View style={styles.driverCard}>
           <Image
             style={styles.driverImga}
-            source={require('../../image/driver.jpeg')}
+            source={{
+              uri: API.viewImageUrl + deliveryboy.profile_pic,
+            }}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>{order.first_name}</Text>
+            <Text style={styles.driverName}>{deliveryboy.first_name}</Text>
             <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
           </View>
         </View>
@@ -292,11 +296,7 @@ const DeliveryDetails = ({route, navigation}) => {
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.detailsId}>
-              {' '}
-              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-              sed.
-            </Text>
+            <Text style={styles.detailsId}>{order.pickup_notes}</Text>
           </Text>
           <Text style={styles.orderdetails}>
             Vehicle:

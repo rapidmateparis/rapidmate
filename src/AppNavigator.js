@@ -114,6 +114,7 @@ import {useUserDetails} from './components/commonComponent/StoreContext';
 import messaging from '@react-native-firebase/messaging';
 import DriverNotAvailable from './components/PickupDrop-off/DriverNotAvailable';
 import Supports from './components/DeliveryBoy/DeliverySettings/Supports';
+import DeliveryboyHistory from './components/DeliveryBoy/DeliverboyHistory';
 
 const Stack = createStackNavigator();
 
@@ -850,6 +851,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: '',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="DeliveryboyHistory"
+                component={DeliveryboyHistory}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Delivery Details',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

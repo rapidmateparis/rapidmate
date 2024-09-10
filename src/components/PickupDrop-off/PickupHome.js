@@ -67,9 +67,9 @@ const PickupHome = ({navigation}) => {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Supports')}>
+            onPress={() => navigation.navigate('Notifications')}>
             <EvilIcons name="bell" size={40} color="#000" />
-          </TouchableOpacity>
+          </TouchableOpacity> 
         </View>
 
         <TouchableOpacity

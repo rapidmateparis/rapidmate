@@ -269,7 +269,7 @@ export const addPayment = (params, successCallback, errorCallback) => {
 
 export const uploadDocumentsApi = (params, successCallback, errorCallback) => {
   const myHeaders = new Headers();
-  myHeaders.append('upload_type', 'ORDER_DOC');
+  // myHeaders.append('upload_type', 'ORDER_DOC');
 
   const requestOptions = {
     method: 'POST',

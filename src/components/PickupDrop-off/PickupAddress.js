@@ -318,7 +318,7 @@ const PickupAddress = ({route, navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Montserrat-SemiBold',
                 }}>
-                Now
+                Schedule
               </Text>
             </TouchableOpacity>
           </View>

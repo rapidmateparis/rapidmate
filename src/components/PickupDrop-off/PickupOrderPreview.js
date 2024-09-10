@@ -36,6 +36,7 @@ const PickupOrderPreview = ({route, navigation}) => {
     setImageModalVisible(!isImageModalVisible);
   };
   const params = route.params.props;
+  
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
   var finalPrice;
