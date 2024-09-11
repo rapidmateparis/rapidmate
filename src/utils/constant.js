@@ -80,5 +80,5 @@ export const API = {
   cancelOrderUrl: BASE_URL + 'order/cancel',
   deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
   checkPromoCodeUrl: BASE_URL + 'promocode/check',
-  orderRequestActionUrl: BASE_URL + '/order/request',
+  orderRequestActionUrl: BASE_URL + 'order/request',
 };
