@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Image,
   Alert,
-  Button,
   Platform,
   PermissionsAndroid,
   Linking,
@@ -28,13 +27,9 @@ import {useLoader} from '../../utils/loaderContext';
 import CancellationModal from '../commonComponent/CancellationModal';
 import RNFS from 'react-native-fs';
 import {Buffer} from 'buffer';
-import {
-  requestMultiple,
-  PERMISSIONS,
-  openSettings,
-} from 'react-native-permissions';
 import {API} from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
+import messaging from '@react-native-firebase/messaging';
 
 const DeliveryDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();

@@ -27,7 +27,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const [delivered, setDelivered] = useState(false);
   const {setLoading} = useLoader();
   const orderNumber = route.params.order_number;
-  const [order, serOrder] = useState({});
+  const [order, setOrder] = useState({});
   const [pickUpLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
   const [vehicleType, setVehicleType] = useState({});
@@ -56,7 +56,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response);
+          setOrder(successResponse[0]._response);
           getPickUpLocation(successResponse[0]._response.order.pickup_location_id);
           getDropOffLocation(successResponse[0]._response.order.dropoff_location_id);
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
