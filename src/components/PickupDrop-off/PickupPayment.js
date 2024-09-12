@@ -108,6 +108,15 @@ const PickupPayment = ({route, navigation}) => {
     console.log('érror', error);
     if (!error) {
       createPayment();
+    } else {
+      Alert.alert('Error Alert', error.message, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Go Home', onPress: () => navigation.navigate('PickupBottomNav')},
+      ]);
     }
   };
 

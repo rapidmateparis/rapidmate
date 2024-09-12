@@ -23,7 +23,7 @@ import RNExitApp from 'react-native-exit-app';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-import {updateUserProfile} from '../../data_manager';
+import {getViewOrderDetail, updateUserProfile} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
 import {set} from 'react-native-reanimated';
@@ -70,7 +70,21 @@ const PickupBottomNav = ({navigation}) => {
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
       setDeliveryBoyAcceptRejectModalModalVisible(true);
-      setDeliveryBoyAcceptRejectMessage(remoteMessage);
+      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      getViewOrderDetail(
+        remoteMessage.data?.orderNumber,
+        successResponse => {
+          if (successResponse[0]._success) {
+            setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+          }
+        },
+        errorResponse => {
+          console.log('orderDetail==>errorResponse', errorResponse[0]);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
     });
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Background Msg!!!!', JSON.stringify(remoteMessage));
