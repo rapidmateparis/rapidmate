@@ -748,3 +748,18 @@ export const orderRequestAction = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const paymentCancelRequest = (params, successCallback, errorCallback) => {
+  console.log('paymentCancelRequest==>', API.paymentCancelRequestUrl, params);
+  axiosCall(
+    API.paymentCancelRequestUrl,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
