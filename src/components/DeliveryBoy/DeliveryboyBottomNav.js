@@ -50,7 +50,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
       setDeliveryBoyAcceptRejectModalModalVisible(true);
       console.log('remoteMessage', JSON.stringify(remoteMessage));
       getViewOrderDetail(
-        remoteMessage.notification.title,
+        remoteMessage.data?.orderNumber,
         successResponse => {
           setLoading(false);
           if (successResponse[0]._success) {

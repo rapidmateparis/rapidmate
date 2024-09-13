@@ -81,4 +81,5 @@ export const API = {
   deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
   checkPromoCodeUrl: BASE_URL + 'promocode/check',
   orderRequestActionUrl: BASE_URL + 'order/request',
+  paymentCancelRequestUrl: BASE_URL + 'payment/update',
 };
