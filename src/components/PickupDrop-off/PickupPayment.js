@@ -131,6 +131,13 @@ const PickupPayment = ({route, navigation}) => {
         total_amount: parseFloat(paymentAmount),
         ...scheduleParam,
       };
+
+      if (promoCodeResponse) {
+        requestParams.promo_code = promoCodeResponse.promoCode;
+        requestParams.promo_value = promoCodeResponse.discount;
+        requestParams.order_amount = parseFloat(totalAmount);
+      }
+
       setLoading(true);
       createPickupOrder(
         requestParams,
@@ -297,7 +304,7 @@ const PickupPayment = ({route, navigation}) => {
               styles.discountInfo,
               {fontSize: 16, alignSelf: 'flex-end'},
             ]}>
-            Discount: € {promoCodeResponse.discount}
+            Discount: {promoCodeResponse.discount}
           </Text>
         )}
 

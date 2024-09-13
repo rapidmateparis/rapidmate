@@ -46,13 +46,6 @@ const LogInScreen = ({navigation}) => {
       if (fcmToken) {
         setFcmToken(fcmToken);
       }
-
-      messaging().onMessage(async remoteMessage => {
-        Alert.alert(
-          'A new FCM message arrived!',
-          JSON.stringify(remoteMessage),
-        );
-      });
     }
   }, []);
 

@@ -8,9 +8,9 @@ import {
   StyleSheet,
   Image,
   Alert,
-  Button,
   Platform,
   PermissionsAndroid,
+  Linking,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
@@ -27,12 +27,9 @@ import {useLoader} from '../../utils/loaderContext';
 import CancellationModal from '../commonComponent/CancellationModal';
 import RNFS from 'react-native-fs';
 import {Buffer} from 'buffer';
-import {
-  requestMultiple,
-  PERMISSIONS,
-  openSettings,
-} from 'react-native-permissions';
-import { API } from '../../utils/constant';
+import {API} from '../../utils/constant';
+import FileViewer from 'react-native-file-viewer';
+import messaging from '@react-native-firebase/messaging';
 
 const DeliveryDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
@@ -162,6 +159,20 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
+  const openPDFWithNativeViewer = async filePath => {
+    const fileExists = await RNFS.exists(filePath);
+
+    if (fileExists) {
+      FileViewer.open(filePath)
+        .then(() => {})
+        .catch(error => {
+          Alert.alert('Error', 'Unable to open file: ' + error);
+        });
+    } else {
+      Alert.alert('Error', 'File not found');
+    }
+  };
+
   const downloadInvoiceFile = async () => {
     setLoading(true);
     try {
@@ -184,7 +195,14 @@ const DeliveryDetails = ({route, navigation}) => {
       // Verify the file exists
       const fileExists = await RNFS.exists(filePath);
       if (fileExists) {
-        Alert.alert('Success', 'Invoice saved successfully.');
+        Alert.alert('Success', 'Invoice saved successfully.', [
+          {
+            text: 'Open Invoice',
+            onPress: () => {
+              openPDFWithNativeViewer(filePath);
+            },
+          },
+        ]);
         console.log('Invoice saved to: ', filePath);
       } else {
         Alert.alert('Error', 'Failed to save invoice file.');
@@ -208,11 +226,11 @@ const DeliveryDetails = ({route, navigation}) => {
           <Image
             style={styles.driverImga}
             source={{
-              uri: API.viewImageUrl + deliveryboy.profile_pic,
+              uri: API.viewImageUrl + deliveryboy?.profile_pic,
             }}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>{deliveryboy.first_name}</Text>
+            <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
             <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
           </View>
         </View>

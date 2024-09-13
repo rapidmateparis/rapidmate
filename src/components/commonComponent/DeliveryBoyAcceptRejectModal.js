@@ -1,15 +1,7 @@
-import React, {useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../colors';
 import {
   GestureHandlerRootView,
@@ -21,6 +13,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import {useLocationData} from './StoreContext';
+import {orderRequestAction} from '../../data_manager';
 
 function DeliveryBoyAcceptRejectModal({
   isDeliveryBoyAcceptRejectModalModalVisible,
@@ -29,6 +23,7 @@ function DeliveryBoyAcceptRejectModal({
 }) {
   const translateXAccept = useSharedValue(0);
   const translateXReject = useSharedValue(0);
+  const {locationData} = useLocationData();
 
   const toggleModal = () => {
     setDeliveryBoyAcceptRejectModalModalVisible(
@@ -42,8 +37,7 @@ function DeliveryBoyAcceptRejectModal({
     },
     onEnd: () => {
       if (translateXAccept.value > 100) {
-        // Lowered threshold
-        console.log('Accept action triggered');
+        console.log('Accept action triggered', translateXAccept);
       }
       translateXAccept.value = withSpring(0);
     },
@@ -54,9 +48,8 @@ function DeliveryBoyAcceptRejectModal({
       translateXReject.value = event.translationX;
     },
     onEnd: () => {
-      if (translateXReject.value < -100) {
-        // Detect left swipe for reject
-        console.log('Reject action triggered');
+      if (translateXReject.value > 100) {
+        console.log('Reject action triggered', translateXReject);
       }
       translateXReject.value = withSpring(0); // Reset animation
     },
@@ -74,12 +67,37 @@ function DeliveryBoyAcceptRejectModal({
     };
   });
 
+  const getLocationAddress = locationId => {
+    let result = locationData.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
+  const handleOrderRequest = value => {
+    let params = {
+      delivery_boy_ext_id: deliveryBoyAcceptRejectMessage?.deliveryBoy?.ext_id,
+      order_number: deliveryBoyAcceptRejectMessage?.order?.order_number,
+      status: value ? 'Accepted' : 'Rejected',
+    };
+    orderRequestAction(
+      params,
+      successResponse => {
+        console.log('successResponse==>', JSON.stringify(successResponse));
+      },
+      errorResponse => {
+        console.log('errorResponse==>', JSON.stringify(errorResponse));
+      },
+    );
+  };
+
   return (
     <Modal isVisible={isDeliveryBoyAcceptRejectModalModalVisible}>
+      {console.log(
+        'deliveryBoyAcceptRejectMessage===>',
+        deliveryBoyAcceptRejectMessage?.order?.order_number,
+      )}
       <GestureHandlerRootView>
         <View style={styles.modalContent}>
           <View style={styles.imageContainer}>
-            {/* <Text>{JSON.stringify(deliveryBoyAcceptRejectMessage)}</Text> */}
             <View style={styles.container}>
               <Image
                 style={styles.loaderMap}
@@ -88,7 +106,8 @@ function DeliveryBoyAcceptRejectModal({
               <Text style={styles.maintext}>New delivery request!</Text>
               <Text style={styles.subText}>
                 There is a new delivery request on your route, you can accept
-                they request also
+                they request also{' '}
+                {`\n\n ${deliveryBoyAcceptRejectMessage?.order?.order_number}`}
               </Text>
             </View>
             <View style={styles.addressCard}>
@@ -97,7 +116,10 @@ function DeliveryBoyAcceptRejectModal({
                   <View style={{padding: 15}}>
                     <Text style={styles.DeliveringText}>Pickup from</Text>
                     <Text style={styles.subAddress}>
-                      1901 Thornridge Cir. Shiloh, California
+                      {getLocationAddress(
+                        deliveryBoyAcceptRejectMessage?.order
+                          ?.pickup_location_id,
+                      )}
                     </Text>
                     <Text style={styles.distance}>0.3 km away</Text>
                   </View>
@@ -116,7 +138,10 @@ function DeliveryBoyAcceptRejectModal({
                   <View style={{padding: 15}}>
                     <Text style={styles.DeliveringText}>Drop on</Text>
                     <Text style={styles.subAddress}>
-                      1901 Thornridge Cir. Shiloh, California
+                      {getLocationAddress(
+                        deliveryBoyAcceptRejectMessage?.order
+                          ?.dropoff_location_id,
+                      )}
                     </Text>
                     <Text style={styles.distance}>0.3 km away</Text>
                   </View>
@@ -131,7 +156,12 @@ function DeliveryBoyAcceptRejectModal({
             </View>
           </View>
           <View style={styles.swipeAcceptContainer}>
-            <PanGestureHandler onGestureEvent={gestureHandlerAccept}>
+            <PanGestureHandler
+              onEnded={() => {
+                handleOrderRequest(true);
+                toggleModal();
+              }}
+              onGestureEvent={gestureHandlerAccept}>
               <Animated.View
                 style={[styles.swipeableAccept, animatedStyleAccept]}>
                 <AntDesign name="check" size={24} color="#fff" />
@@ -145,7 +175,12 @@ function DeliveryBoyAcceptRejectModal({
             />
           </View>
           <View style={styles.swipeRejectContainer}>
-            <PanGestureHandler onGestureEvent={gestureHandlerReject}>
+            <PanGestureHandler
+              onEnded={() => {
+                handleOrderRequest(false);
+                toggleModal();
+              }}
+              onGestureEvent={gestureHandlerReject}>
               <Animated.View
                 style={[styles.swipeableReject, animatedStyleReject]}>
                 <AntDesign name="close" size={24} color="#fff" />

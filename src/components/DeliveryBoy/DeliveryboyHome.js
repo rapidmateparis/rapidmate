@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,38 +6,44 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  FlatList
+  FlatList,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../../colors';
+import {colors} from '../../colors';
 import {
   getDeliveryBoyViewOrdersList,
   getLocations,
   getLookupData,
   getCompanyList,
 } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
-import { useLookupData, useUserDetails } from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
+import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 
-const DeliveryboyHome = ({ navigation }) => {
-  const { setLoading } = useLoader();
+const DeliveryboyHome = ({navigation}) => {
+  const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
   const [recentOrderList, setRecentOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
-  const { userDetails } = useUserDetails();
-  const { saveLookupData } = useLookupData();
+  const {userDetails} = useUserDetails();
+  const {saveLookupData} = useLookupData();
 
   useEffect(() => {
     const fetchData = async () => {
-      await getLocationsData();
-      await getOrderList(0);
-      await getOrderList(1);
-      await getLookup();
-      await getCompanyConnectionList();
+      try {
+        await Promise.all([
+          getLocationsData(),
+          getOrderList(0), 
+          getOrderList(1),
+          getLookup(),
+          getCompanyConnectionList(),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
     fetchData();
@@ -52,7 +58,10 @@ const DeliveryboyHome = ({ navigation }) => {
         }
       },
       errorResponse => {
-        console.log('getCompanyConnectionList==>errorResponse', '' + errorResponse[0]);
+        console.log(
+          'getCompanyConnectionList==>errorResponse',
+          '' + errorResponse[0],
+        );
       },
     );
   };
@@ -71,7 +80,6 @@ const DeliveryboyHome = ({ navigation }) => {
 
   const getLocationsData = () => {
     setLoading(true);
-    setLocationList([]);
     getLocations(
       null,
       successResponse => {
@@ -82,24 +90,21 @@ const DeliveryboyHome = ({ navigation }) => {
       },
       errorResponse => {
         setLoading(false);
-        if (errorResponse[0]._errors.message) {
-          setLocationList([]);
-        }
+        console.log('getLocationsData==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
 
   const getLocationAddress = locationId => {
-    let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    let result = locationList.filter(location => location.id === locationId);
+    return result[0]?.address || 'Unknown Address';
   };
 
   const getOrderList = status => {
     setLoading(true);
-    setOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
-      status: status == 0 ? 'upcoming' : 'past',
+      status: status === 0 ? 'upcoming' : 'past',
     };
     getDeliveryBoyViewOrdersList(
       postParams,
@@ -107,21 +112,21 @@ const DeliveryboyHome = ({ navigation }) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          status == 0
-            ? setOrderList(successResponse[0]._response)
-            : setRecentOrderList(successResponse[0]._response);
+          if (status === 0) {
+            setOrderList(successResponse[0]._response); // Set upcoming orders
+          } else {
+            setRecentOrderList(successResponse[0]._response); // Set past orders
+          }
         }
       },
       errorResponse => {
         setLoading(false);
-        if (errorResponse[0]._errors.message) {
-          setOrderList([]);
-        }
+        console.log('getOrderList==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({item}) => (
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
@@ -132,7 +137,9 @@ const DeliveryboyHome = ({ navigation }) => {
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
           From{' '}
-          <Text style={styles.Location}>{getLocationAddress(item.pickup_location_id)}</Text>
+          <Text style={styles.Location}>
+            {getLocationAddress(item.pickup_location_id)}
+          </Text>
         </Text>
       </View>
 
@@ -140,7 +147,9 @@ const DeliveryboyHome = ({ navigation }) => {
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
           To{' '}
-          <Text style={styles.Location}>{getLocationAddress(item.dropoff_location_id)}</Text>
+          <Text style={styles.Location}>
+            {getLocationAddress(item.dropoff_location_id)}
+          </Text>
         </Text>
       </View>
 
@@ -150,7 +159,7 @@ const DeliveryboyHome = ({ navigation }) => {
     </View>
   );
 
-  const renderDeliveryItem = ({ item }) => (
+  const renderDeliveryItem = ({item}) => (
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
@@ -161,7 +170,9 @@ const DeliveryboyHome = ({ navigation }) => {
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
           From{' '}
-          <Text style={styles.Location}>{getLocationAddress(item.pickup_location_id)}</Text>
+          <Text style={styles.Location}>
+            {getLocationAddress(item.pickup_location_id)}
+          </Text>
         </Text>
       </View>
 
@@ -169,7 +180,9 @@ const DeliveryboyHome = ({ navigation }) => {
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
           To{' '}
-          <Text style={styles.Location}>{getLocationAddress(item.dropoff_location_id)}</Text>
+          <Text style={styles.Location}>
+            {getLocationAddress(item.dropoff_location_id)}
+          </Text>
         </Text>
       </View>
 
@@ -179,7 +192,7 @@ const DeliveryboyHome = ({ navigation }) => {
     </View>
   );
 
-  const renderCompanyItem = ({ item }) => (
+  const renderCompanyItem = ({item}) => (
     <View style={styles.companyInfo}>
       <Image
         style={styles.companyLogosImage}
@@ -190,8 +203,8 @@ const DeliveryboyHome = ({ navigation }) => {
   );
 
   return (
-    <ScrollView style={{ width: '100%', backgroundColor: '#FBFAF5' }}>
-      <View style={{ paddingHorizontal: 15, paddingTop: 8 }}>
+    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+      <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
@@ -202,9 +215,12 @@ const DeliveryboyHome = ({ navigation }) => {
                   userDetails.userDetails[0].last_name}
               </Text>
             </Text>
-            <Text style={styles.aboutPage}>This is your Rapidmate dashboard!</Text>
+            <Text style={styles.aboutPage}>
+              This is your Rapidmate dashboard!
+            </Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Notifications')}>
             <EvilIcons name="bell" size={40} color="#000" />
           </TouchableOpacity>
         </View>
@@ -213,37 +229,44 @@ const DeliveryboyHome = ({ navigation }) => {
           <Text style={styles.deliveryRecently}>Upcoming deliveries</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyHistory')}
-            style={styles.allinfoSee}
-          >
+            style={styles.allinfoSee}>
             <Text style={styles.seAllText}>See All</Text>
             <AntDesign name="right" size={15} color="#000" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.allDeleveryCard}>
-          <View style={{ paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5' }}>
+          <View
+            style={{
+              paddingHorizontal: 15,
+              paddingTop: 5,
+              backgroundColor: '#FBFAF5',
+            }}>
             {orderList.length === 0 ? (
               <Text style={styles.userName}>No orders to show</Text>
             ) : (
-              <FlatList
-                horizontal
-                data={orderList}
-                renderItem={renderItem}
-                keyExtractor={item => item.id.toString()}
-              />
+              <FlatList horizontal data={orderList} renderItem={renderItem} />
             )}
           </View>
         </View>
 
         <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Recently delivered</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('DeliveryboyHistory')} style={styles.allinfoSee}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryboyHistory')}
+            style={styles.allinfoSee}>
             <Text style={styles.seAllText}>See All</Text>
             <AntDesign name="right" size={15} color="#000" />
           </TouchableOpacity>
         </View>
 
-        <View style={{ flex: 1, paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#FBFAF5' }}>
+        <View
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            paddingTop: 5,
+            backgroundColor: '#FBFAF5',
+          }}>
           {recentOrderList.length === 0 ? (
             <Text style={styles.userName}>No orders to show</Text>
           ) : (
