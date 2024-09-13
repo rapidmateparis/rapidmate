@@ -33,7 +33,12 @@ function DeliveryboyTransactions() {
 
   return (
     <ScrollView style={{flex: 1}}>
-      <View style={{backgroundColor: '#fff', paddingHorizontal: 15, marginBottom: 10,}}>
+      <View
+        style={{
+          backgroundColor: '#fff',
+          paddingHorizontal: 15,
+          marginBottom: 10,
+        }}>
         <View style={styles.searchContainer}>
           <AntDesign
             name="search1"
@@ -43,6 +48,7 @@ function DeliveryboyTransactions() {
           />
           <TextInput
             style={styles.searchinput}
+            placeholderTextColor="#999"
             placeholder="Search your transactions"
             value={searchText}
             onChangeText={setSearchText}
@@ -50,7 +56,9 @@ function DeliveryboyTransactions() {
         </View>
 
         <View>
-          <Text style={styles.rupeesMain}>$<Text style={styles.rupeesBold}>73</Text>.85</Text>
+          <Text style={styles.rupeesMain}>
+            $<Text style={styles.rupeesBold}>73</Text>.85
+          </Text>
           <Text style={styles.earningTodays}>Today’s earning</Text>
         </View>
 
@@ -89,6 +97,10 @@ function DeliveryboyTransactions() {
               data={data}
               search
               maxHeight={300}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Sort by' : '...'}
@@ -403,18 +415,34 @@ const styles = StyleSheet.create({
   },
   rupeesMain: {
     fontSize: 40,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
     color: colors.text,
   },
   rupeesBold: {
     fontSize: 40,
-    fontFamily: 'Montserrat-Bold', 
+    fontFamily: 'Montserrat-Bold',
     color: colors.text,
   },
   earningTodays: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Medium', 
+    fontFamily: 'Montserrat-Medium',
     color: colors.text,
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

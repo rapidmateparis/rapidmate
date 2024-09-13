@@ -48,6 +48,7 @@ function AddNewAddressModal({isModalVisible, setModalVisible, saveAddress}) {
               <Text style={styles.textlable}>Address</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={address}
                 onChangeText={text => setAddress(text)}
@@ -58,6 +59,7 @@ function AddNewAddressModal({isModalVisible, setModalVisible, saveAddress}) {
                 <Text style={styles.textlable}>First name*</Text>
                 <TextInput
                   style={styles.inputTextStyle}
+                  placeholderTextColor="#999"
                   placeholder="Type here"
                   value={name}
                   onChangeText={text => setName(text)}

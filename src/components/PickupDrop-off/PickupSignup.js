@@ -286,8 +286,10 @@ const PickupSignup = ({navigation}) => {
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
-                  itemTextStyle={{color: colors.black}}
-                  selectedTextStyle={{color: colors.black}}
+                  itemTextStyle={styles.itemtextStyle}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
                   style={{color: colors.black}}
                   placeholder={!isFocus ? '+33' : '...'}
                   searchPlaceholder="+.."
@@ -329,8 +331,10 @@ const PickupSignup = ({navigation}) => {
               maxHeight={300}
               labelField="label"
               valueField="value"
-              itemTextStyle={{color: colors.black}}
-              selectedTextStyle={{color: colors.black}}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               placeholder={!isFocus ? 'Country' : '...'}
               searchPlaceholder="Search.."
               value={dropdownCountryValue}
@@ -571,6 +575,22 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderBlockColor: colors.black,
     borderWidth: 1,
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

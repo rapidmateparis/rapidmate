@@ -357,6 +357,7 @@ function History({navigation}) {
           />
           <TextInput
             style={styles.searchinput}
+            placeholderTextColor="#999"
             placeholder="Search your deliveries"
             value={searchText}
             onChangeText={setSearchText}

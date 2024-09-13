@@ -185,6 +185,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
             value={toggleCheckBox}
             onValueChange={newValue => setToggleCheckBox(newValue)}
             style={{alignSelf: 'center'}}
+            tintColors={{true: '#FFC72B', false: '#999'}}
           />
           <Text style={styles.checkboxText}>
             Save these addresses for later

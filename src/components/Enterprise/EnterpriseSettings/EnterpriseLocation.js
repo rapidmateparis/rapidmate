@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5, // for Android
-    marginBottom: 7,
+    marginVertical: 10,
   },
   cardTitle: {
     fontSize: 14,

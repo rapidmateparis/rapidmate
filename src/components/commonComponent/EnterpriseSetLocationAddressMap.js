@@ -47,6 +47,17 @@ const EnterpriseSetLocationAddressMap = () => {
             <GooglePlacesAutocomplete
               fetchDetails={true}
               placeholder="Set location"
+              styles={{
+                textInput: {
+                  color: colors.black,
+                },
+                description: {color: colors.black},
+                color: colors.black,
+              }}
+              textInputProps={{
+                placeholderTextColor: colors.lightGrey,
+                returnKeyType: 'search',
+              }}
               onPress={(data, details = null) => {
                 console.log(JSON.stringify(details?.geometry?.location));
                 setSelectedLocation({
@@ -102,7 +113,7 @@ const EnterpriseSetLocationAddressMap = () => {
         //   savePickupAddress(selectedLocation);
         //   navigation.goBack();
         // }}
-        onPress={() => navigation.navigate('EnterpriseManageAds')}
+        // onPress={() => navigation.navigate('EnterpriseManageAds')}
         style={styles.trackOrderBtn}>
         <Text style={styles.trackText}>Save location address</Text>
       </TouchableOpacity>

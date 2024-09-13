@@ -75,6 +75,7 @@ function AddOrEditAddressModal({
               <Text style={styles.textlable}>Address</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={address}
                 onChangeText={text => setAddress(text)}
@@ -85,6 +86,7 @@ function AddOrEditAddressModal({
                 <Text style={styles.textlable}>First name*</Text>
                 <TextInput
                   style={styles.inputTextStyle}
+                  placeholderTextColor="#999"
                   placeholder="Type here"
                   value={name}
                   onChangeText={text => setName(text)}
@@ -95,6 +97,7 @@ function AddOrEditAddressModal({
                 <Text style={styles.textlable}>Last name</Text>
                 <TextInput
                   style={styles.inputTextStyle}
+                  placeholderTextColor="#999"
                   placeholder="Type here"
                   value={lastname}
                   onChangeText={text => setLastname(text)}
@@ -105,6 +108,7 @@ function AddOrEditAddressModal({
               <Text style={styles.textlable}>Company</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={company}
                 onChangeText={text => setCompany(text)}
@@ -119,6 +123,10 @@ function AddOrEditAddressModal({
                       data={data}
                       search
                       maxHeight={300}
+                      itemTextStyle={styles.itemtextStyle}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
                       labelField="label"
                       valueField="value"
                       placeholder={!isFocus ? '+33' : '...'}
@@ -157,6 +165,7 @@ function AddOrEditAddressModal({
               <Text style={styles.textlable}>Email</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={email}
                 onChangeText={text => setEmail(text)}
@@ -167,7 +176,8 @@ function AddOrEditAddressModal({
               <TextInput
                 style={styles.inputTextStyle}
                 multiline={true}
-                numberOfLines={4} // Set the number of lines you want to display initially
+                placeholderTextColor="#999"
+                numberOfLines={4} 
                 placeholder="Type here"
                 textAlignVertical="top"
                 value={comments}
@@ -405,6 +415,7 @@ const styles = StyleSheet.create({
   inputTextStyle: {
     borderWidth: 1,
     borderColor: '#ccc',
+    color: colors.text,
     borderRadius: 5,
     padding: 10,
     fontSize: 12,
@@ -420,6 +431,22 @@ const styles = StyleSheet.create({
     borderColor: '#ccc', // Color of the dots
     borderStyle: 'dashed',
     width: '100%', // Full width of the border
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

@@ -89,14 +89,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const repeatType = [
-    {label: 'Week', value: 'Week'},
-  ];
+  const repeatType = [{label: 'Week', value: 'Week'}];
 
-  const weeklyDay = [
-    {label: 'Day', value: 'Day'},
-  ];
-
+  const weeklyDay = [{label: 'Day', value: 'Day'}];
 
   const monthValue1 = [
     {label: 'First', value: 'First'},
@@ -289,6 +284,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               <Text style={styles.textlable}>Company</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={company}
                 onChangeText={text => setCompany(text)}
@@ -303,6 +299,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     <Dropdown
                       data={numberData}
                       search
+                      itemTextStyle={styles.itemtextStyle}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
                       inputSearchStyle={styles.inputSearchStyle}
@@ -365,6 +362,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               <Text style={styles.textlable}>Package ID</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={orderid}
                 onChangeText={text => setOrderid(text)}
@@ -375,6 +373,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               <TextInput
                 style={styles.inputTextStyle}
                 multiline={true}
+                placeholderTextColor="#999"
                 numberOfLines={4} // Set the number of lines you want to display initially
                 placeholder="Type here"
                 textAlignVertical="top"
@@ -496,9 +495,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  setSelectedRepeatType('Day')
-                  setRepeatOrder('Weekly')
-                } }
+                  setSelectedRepeatType('Day');
+                  setRepeatOrder('Weekly');
+                }}
                 style={styles.datesCards}>
                 <FontAwesome
                   name={
@@ -1551,21 +1550,6 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     paddingHorizontal: 2,
   },
-  placeholderStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  selectedTextStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  inputSearchStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
   input: {
     flex: 1,
     fontSize: 15,
@@ -1607,6 +1591,22 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     paddingRight: 5,
     borderColor: '#2C30331A',
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 
