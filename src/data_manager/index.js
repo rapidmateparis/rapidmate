@@ -733,3 +733,32 @@ export const checkPromoCode = (params, successCallback, errorCallback) => {
     },
   );
 };
+export const orderRequestAction = (params, successCallback, errorCallback) => {
+  console.log('orderRequestAction==>', API.orderRequestActionUrl, params);
+  axiosCall(
+    API.orderRequestActionUrl,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const paymentCancelRequest = (params, successCallback, errorCallback) => {
+  console.log('paymentCancelRequest==>', API.paymentCancelRequestUrl, params);
+  axiosCall(
+    API.paymentCancelRequestUrl,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

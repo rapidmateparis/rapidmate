@@ -108,6 +108,15 @@ const PickupPayment = ({route, navigation}) => {
     console.log('érror', error);
     if (!error) {
       createPayment();
+    } else {
+      Alert.alert('Error Alert', error.message, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Go Home', onPress: () => navigation.navigate('PickupBottomNav')},
+      ]);
     }
   };
 
@@ -131,6 +140,13 @@ const PickupPayment = ({route, navigation}) => {
         total_amount: parseFloat(paymentAmount),
         ...scheduleParam,
       };
+
+      if (promoCodeResponse) {
+        requestParams.promo_code = promoCodeResponse.promoCode;
+        requestParams.promo_value = promoCodeResponse.discount;
+        requestParams.order_amount = parseFloat(totalAmount);
+      }
+
       setLoading(true);
       createPickupOrder(
         requestParams,
