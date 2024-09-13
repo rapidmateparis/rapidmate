@@ -313,7 +313,7 @@ const PickupPayment = ({route, navigation}) => {
               styles.discountInfo,
               {fontSize: 16, alignSelf: 'flex-end'},
             ]}>
-            Discount: {promoCodeResponse.discount}
+            Discount: € {promoCodeResponse.discount}
           </Text>
         )}
 
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   totalAmount: {
     fontSize: 12,

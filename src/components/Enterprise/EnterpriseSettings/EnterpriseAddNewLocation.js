@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     borderRadius: 5,
     marginBottom: 20,
+    color: colors.text,
     borderWidth: 1,
     borderColor: '#2C303336',
   },

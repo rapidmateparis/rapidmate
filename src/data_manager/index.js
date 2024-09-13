@@ -733,7 +733,6 @@ export const checkPromoCode = (params, successCallback, errorCallback) => {
     },
   );
 };
-
 export const orderRequestAction = (params, successCallback, errorCallback) => {
   console.log('orderRequestAction==>', API.orderRequestActionUrl, params);
   axiosCall(

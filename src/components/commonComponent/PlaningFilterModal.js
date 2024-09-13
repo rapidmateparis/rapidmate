@@ -5,12 +5,21 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import {TextInput} from 'react-native-gesture-handler';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
 function PlaningFilterModal({setModalVisible, isModalVisible}) {
+  const [fromDate, setFromDate] = useState(new Date());
+  const [fromDateOpen, setFromDateOpen] = useState(false);
+  const [fromPickupDate, setFromPickupDate] = useState('');
+  const [toDate, setToDate] = useState(new Date());
+  const [toDateOpen, setToDateOpen] = useState(false);
+  const [toPickupDate, setToPickupDate] = useState('');
+  const [formdate, setFormdate] = useState('');
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-  const [formdate, setFormdate] = useState('');
 
   return (
     <View style={{flex: 1}}>
@@ -25,16 +34,30 @@ function PlaningFilterModal({setModalVisible, isModalVisible}) {
           <View style={styles.modalCard}>
             <Text style={styles.textlable}>From date</Text>
             <View style={styles.textInputDiv}>
+              <DatePicker
+                modal
+                open={fromDateOpen}
+                date={fromDate}
+                mode="date"
+                onConfirm={date => {
+                  setFromDateOpen(false);
+                  setFromDate(date);
+                  setFromPickupDate(moment(date).format('DD/MM/YYYY'));
+                }}
+                onCancel={() => {
+                  setFromDateOpen(false);
+                }}
+              />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Select"
+                placeholder="DD/MM/YYYY"
                 placeholderTextColor="#999"
-                value={formdate}
-                onChangeText={text => setFormdate(text)}
+                editable={false}
+                value={fromPickupDate}
               />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setFromDateOpen(true)}>
                 <Feather
-                  name="calendar" // Change the icon based on passwordVisible state
+                  name="calendar"
                   size={20}
                   color="#FFC72B"
                   style={{marginTop: 15}}
@@ -44,16 +67,30 @@ function PlaningFilterModal({setModalVisible, isModalVisible}) {
 
             <Text style={styles.textlable}>To date</Text>
             <View style={styles.textInputDiv}>
+              <DatePicker
+                modal
+                open={toDateOpen}
+                date={toDate}
+                mode="date"
+                onConfirm={date => {
+                  setToDateOpen(false);
+                  setToDate(date);
+                  setToPickupDate(moment(date).format('DD/MM/YYYY'));
+                }}
+                onCancel={() => {
+                  setToDateOpen(false);
+                }}
+              />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Select"
+                placeholder="DD/MM/YYYY"
                 placeholderTextColor="#999"
-                value={formdate}
-                onChangeText={text => setFormdate(text)}
+                editable={false}
+                value={toPickupDate}
               />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setToDateOpen(true)}>
                 <Feather
-                  name="calendar" // Change the icon based on passwordVisible state
+                  name="calendar"
                   size={20}
                   color="#FFC72B"
                   style={{marginTop: 15}}
@@ -222,6 +259,7 @@ const styles = StyleSheet.create({
   },
   loginput: {
     fontSize: 14,
+    color: colors.text,
     paddingHorizontal: 10,
     width: '90%',
   },
@@ -284,14 +322,14 @@ const styles = StyleSheet.create({
   companyInfo: {
     width: 80,
   },
-  companyLogosImage:{
+  companyLogosImage: {
     flexDirection: 'row',
     alignSelf: 'center',
   },
   companyNames: {
     fontSize: 12,
     textAlign: 'center',
-    fontFamily: 'Montserrat-Medium',  
+    fontFamily: 'Montserrat-Medium',
     color: colors.text,
     paddingVertical: 5,
   },
