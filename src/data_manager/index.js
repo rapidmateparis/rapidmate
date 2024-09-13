@@ -395,6 +395,7 @@ export const getAllocatedDeliveryBoy = (
 };
 
 export const getViewOrderDetail = (param, successCallback, errorCallback) => {
+  console.log("print_view===>", API.viewOrderDetail + param)
   axiosCall(
     API.viewOrderDetail + param,
     HTTPMethod.GET,

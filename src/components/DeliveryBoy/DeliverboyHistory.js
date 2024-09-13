@@ -90,11 +90,12 @@ const TodayList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() =>
+          onPress={() => {
             navigation.navigate('DeliveryboyDeliveryDetails', {
               order_number: item.item.order_number,
-            })
-          }
+              package_photo: item.item.package_photo
+            });
+          }}
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
