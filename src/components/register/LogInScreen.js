@@ -7,7 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
-  Platform
+  Platform,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,7 +19,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-
 
 const LogInScreen = ({navigation}) => {
   const {saveUserDetails} = useUserDetails();
@@ -47,28 +46,8 @@ const LogInScreen = ({navigation}) => {
       if (fcmToken) {
         setFcmToken(fcmToken);
       }
-
-      messaging().onMessage(async remoteMessage => {
-        Alert.alert(
-          'A new FCM message arrived!',
-          JSON.stringify(remoteMessage),
-        );
-      });
     }
-    onSignIn();
   }, []);
-
-  async function onSignIn() {
-    crashlytics().log('User signed in.');
-    await Promise.all([
-      crashlytics().setUserId(userDetails.userDetails[0].ext_id.toString()),
-      crashlytics().setAttributes({
-        role: userDetails.userDetails[0].role,
-        email: userDetails.userDetails[0].email,
-        extId: userDetails.userDetails[0].ext_id,
-      }),
-    ]);
-  }
 
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -134,7 +113,7 @@ const LogInScreen = ({navigation}) => {
                 ]);
               } else {
                 saveUserDetails({
-                  userInfo: successResponse[0]._response.user.idToken.payload,
+                  userInfo: successResponse[0]._response.user?.idToken?.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
                 console.log('userDetials===>', successResponse[0]._response);
@@ -161,6 +140,11 @@ const LogInScreen = ({navigation}) => {
                 });
               }
             }
+          } else {
+            setLoading(false);
+            Alert.alert('Error Alert', "Invalid credentials", [
+              {text: 'OK', onPress: () => {}},
+            ]);
           }
         },
         errorResponse => {

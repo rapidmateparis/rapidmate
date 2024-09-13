@@ -9,45 +9,55 @@ import {
   Image,
   ImageBackground,
   Alert,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
-import {
-  usePlacedOrderDetails,
-  useUserDetails,
-} from '../commonComponent/StoreContext';
-import {getProfileInformation} from '../../data_manager';
+import {API} from '../../utils/constant';
 
-const OrderConfirm = ({navigation}) => {
-  const [driverDetails, setDriverDetails] = useState(null); // Initialize with null
-  const {userDetails} = useUserDetails();
-  const {placedOrderDetails} = usePlacedOrderDetails();
+const OrderConfirm = ({route, navigation}) => {
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
   const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
-
+  const [driverDetails, setDriverDetails] = useState(
+    route.params.driverDetails,
+  );
+  const [locationList, setLocationList] = useState(route.params.locationList);
+  const [orderDetails, setOrderDetails] = useState(
+    route.params.placedOrderDetails,
+  );
 
   useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
     };
   }, []);
 
   function handleBackButtonClick() {
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'PickupBottomNav'}],
-    });
+    if (userDetails?.userDetails[0]?.role == 'CONSUMER') {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'PickupBottomNav'}],
+      });
+    } else if (userDetails?.userDetails[0]?.role == 'ENTERPRISE') {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'EnterpriseBottomNav'}],
+      });
+    }
+
     return true;
   }
 
   const handleCopyOrderId = () => {
-    Clipboard.setString(placedOrderDetails[0]?.order_number || '');
+    Clipboard.setString('');
     setShowCopiedOrderIdMessage(true);
     setTimeout(() => {
       setShowCopiedOrderIdMessage(false);
@@ -55,32 +65,12 @@ const OrderConfirm = ({navigation}) => {
   };
 
   const handleCopyOtp = () => {
-    Clipboard.setString(placedOrderDetails[0]?.otp || '');
+    Clipboard.setString();
     setShowCopiedOtpMessage(true);
     setTimeout(() => {
       setShowCopiedOtpMessage(false);
     }, 2000);
   };
-
-  useEffect(() => {
-    const params = {
-      userRole: userDetails?.userDetails[0]?.ext_id,
-      orderNumber: placedOrderDetails[0]?.order_number,
-    };
-    getProfileInformation(
-      params,
-      successResponse => {
-        console.log('getProfileInformation', successResponse[0]._response);
-        setDriverDetails(successResponse[0]._response);
-      },
-      errorResponse => {
-        console.log('getProfile===>errorResponse', errorResponse);
-        Alert.alert('Error Alert', errorResponse[0]._response.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-    );
-  }, [userDetails, placedOrderDetails]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -106,6 +96,11 @@ const OrderConfirm = ({navigation}) => {
     )}`;
   };
 
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
       <View>
@@ -114,9 +109,7 @@ const OrderConfirm = ({navigation}) => {
           <View style={styles.textContainer}>
             <Text style={styles.oderIdText}>Order ID: </Text>
             <TouchableOpacity onPress={handleCopyOrderId}>
-              <Text style={styles.text}>
-                {placedOrderDetails[0]?.order_number}
-              </Text>
+              <Text style={styles.text}>{orderDetails.order_number}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCopyOrderId}>
               <AntDesign
@@ -133,7 +126,7 @@ const OrderConfirm = ({navigation}) => {
           <View style={styles.textContainer}>
             <Text style={styles.oderIdText}>OTP: </Text>
             <TouchableOpacity onPress={handleCopyOtp}>
-              <Text style={styles.text}>{placedOrderDetails[0]?.otp}</Text>
+              <Text style={styles.text}>{orderDetails.otp}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCopyOtp}>
               <AntDesign
@@ -163,7 +156,7 @@ const OrderConfirm = ({navigation}) => {
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Delivering to</Text>
                 <Text style={styles.subAddress}>
-                  {placedOrderDetails[0]?.address}
+                  {getLocationAddress(orderDetails?.pickup_location_id)}
                 </Text>
               </View>
               <View>
@@ -173,10 +166,21 @@ const OrderConfirm = ({navigation}) => {
 
             <View style={styles.driverCard}>
               <View style={{position: 'relative'}}>
-                <Image
-                  style={{width: 60, height: 60, borderRadius: 30}}
-                  source={require('../../image/driver.jpeg')}
-                />
+                {driverDetails?.deliveryBoy?.profile_pic ? (
+                  <Image
+                    style={{width: 60, height: 60, borderRadius: 30}}
+                    source={{
+                      uri:
+                        API.viewImageUrl +
+                        driverDetails.deliveryBoy.profile_pic,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={{width: 60, height: 60, borderRadius: 30}}
+                    source={require('../../image/driver.jpeg')}
+                  />
+                )}
                 <Image
                   style={{
                     position: 'absolute',
@@ -191,12 +195,11 @@ const OrderConfirm = ({navigation}) => {
               </View>
               <View style={{width: '40%'}}>
                 <Text style={styles.driverName}>
-                  {driverDetails?.deliveryBoy?.first_name || ''}{' '}
-                  {driverDetails?.deliveryBoy?.last_name || ''}
+                  {driverDetails?.deliveryBoy?.first_name +
+                    ' ' +
+                    driverDetails?.deliveryBoy?.last_name}
                 </Text>
-                <Text style={styles.truckName}>
-                  {driverDetails?.vehicle?.plat_no || ''}
-                </Text>
+                <Text style={styles.truckName}>{'TEST'}</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity style={{marginRight: 10}}>
@@ -210,7 +213,13 @@ const OrderConfirm = ({navigation}) => {
             </View>
 
             <TouchableOpacity
-              onPress={() => navigation.navigate('TrackDeiver')}
+              onPress={() =>
+                navigation.navigate('TrackDeiver', {
+                  driverDetails: route.params.driverDetails,
+                  locationList: route.params.locationList,
+                  orderDetails: route.params.placedOrderDetails,
+                })
+              }
               style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>Track order</Text>
             </TouchableOpacity>

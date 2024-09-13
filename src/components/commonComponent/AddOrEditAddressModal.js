@@ -18,6 +18,7 @@ function AddOrEditAddressModal({
   addressId,
   toggleModal,
   addressData,
+  deleteAddress,
 }) {
   const [address, setAddress] = useState('');
   const [name, setName] = useState('');
@@ -28,6 +29,7 @@ function AddOrEditAddressModal({
   const [number, setNumber] = useState();
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [isFocus, setIsFocus] = useState(false);
+  const [id, setID] = useState();
 
   useEffect(() => {
     setName(addressData?.item.first_name);
@@ -37,6 +39,7 @@ function AddOrEditAddressModal({
     setEmail(addressData?.item.email);
     setComments(addressData?.item.comments);
     setNumber(addressData?.item.phone);
+    setID(addressData?.item.id);
   }, [addressData]);
 
   const data = [
@@ -174,7 +177,21 @@ function AddOrEditAddressModal({
           </View>
           <View style={styles.buttonCard}>
             {addressId == 1 && (
-              <TouchableOpacity style={styles.logbutton}>
+              <TouchableOpacity
+                onPress={() => {
+                  deleteAddress({
+                    first_name: name,
+                    last_name: lastname,
+                    address: address,
+                    email: email,
+                    phone: number,
+                    company_name: company,
+                    comments: comments,
+                    id: id,
+                  });
+                  clearAddressData();
+                }}
+                style={styles.logbutton}>
                 <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
             )}
@@ -189,6 +206,7 @@ function AddOrEditAddressModal({
                   phone: number,
                   company_name: company,
                   comments: comments,
+                  id: id,
                 });
                 clearAddressData();
               }}>

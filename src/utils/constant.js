@@ -21,7 +21,13 @@ export const HTTPMethod = {
   DELETE: 'delete',
 };
 
-export const BASE_URL = 'http://16.171.224.246:3000/api/';
+export const PORT = {
+  qa: '3009',
+  uat: '3000',
+  prod: '3008',
+};
+
+export const BASE_URL = `http://16.171.224.246:${PORT.qa}/api/`;
 
 export const apiHost = {
   // baseURL: 'http://10.0.2.2:3005/api/',
@@ -54,11 +60,26 @@ export const API = {
   updateUserProfile: BASE_URL,
   viewImageUrl: BASE_URL + 'documents/view/',
   lookupDataUrl: BASE_URL + 'lookup',
-  getAllocatedDeliveryBoy: BASE_URL + '/order/allocated/details?o=',
+  getAllocatedDeliveryBoy: BASE_URL + 'order/allocated/details?o=',
   viewOrderDetail: BASE_URL + 'order/view/',
+  enterprisebranch: BASE_URL + 'enterprisebranch/get/',
+  enterpriseOrder: BASE_URL + 'enterprise/order/',
   getNotificationUrl: BASE_URL + 'notification/list/',
   createDeliveryBoyAddressUrl: BASE_URL + 'daddressbook/create',
   getDeliveryBoyAddressListUrl: BASE_URL + 'daddressbook/list/',
+  addressBookUpdateDeliveryBoyUrl: BASE_URL + 'daddressbook/update',
+  addressBookUpDeleteDeliveryBoyUrl: BASE_URL + 'daddressbook/delete/',
   createConsumerAddressUrl: BASE_URL + 'caddressbook/create',
   getConsumerAddressListUrl: BASE_URL + 'caddressbook/list/',
+  addressBookUpdateConsumerUrl: BASE_URL + 'caddressbook/update',
+  addressBookUpDeleteConsumerUrl: BASE_URL + 'caddressbook/delete/',
+  getCompanyListUrl: BASE_URL + 'deliveryboy/connections/',
+  getDistancePriceListUrl: BASE_URL + 'vehicletypes/price/list?d=',
+  getFaqListUrl: BASE_URL + 'faq',
+  enterprisebranchCreate: BASE_URL + 'enterprisebranch',
+  cancelOrderUrl: BASE_URL + 'order/cancel',
+  deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
+  checkPromoCodeUrl: BASE_URL + 'promocode/check',
+  orderRequestActionUrl: BASE_URL + 'order/request',
+  paymentCancelRequestUrl: BASE_URL + 'payment/update',
 };

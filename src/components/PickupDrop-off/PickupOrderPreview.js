@@ -16,21 +16,38 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../colors';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Img.png';
+import PartnerImage from '../../image/Partner.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
+import OtherImage from '../../image/Big-Package.png';
 import {createPickupOrder} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
+import {API} from '../../utils/constant';
+import {debounce} from 'lodash';
 
 const PickupOrderPreview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
+  const toggleModal = () => {
+    setImageModalVisible(!isImageModalVisible);
+  };
   const params = route.params.props;
+  
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  var finalPrice;
+  if (typeof params.selectedVehiclePrice === 'number') {
+    finalPrice = params.selectedVehiclePrice.toFixed(2);
+  } else {
+    finalPrice = params.selectedVehiclePrice;
+  }
 
   const pickupOrderRequest = () => {
-    navigation.navigate('PickupPayment',{props:params})
+    navigation.navigate('PickupPayment', {props: params});
   };
 
   return (
@@ -40,8 +57,8 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.destinationLocation.destinationDescription
-                ? params.destinationLocation.destinationDescription
+              {params.sourceLocation.sourceDescription
+                ? params.sourceLocation.sourceDescription
                 : null}
             </Text>
           </View>
@@ -49,8 +66,8 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.locationAddress}>
             <MaterialIcons name="my-location" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.sourceLocation.sourceDescription
-                ? params.sourceLocation.sourceDescription
+              {params.destinationLocation.destinationDescription
+                ? params.destinationLocation.destinationDescription
                 : null}
             </Text>
           </View>
@@ -62,29 +79,32 @@ const PickupOrderPreview = ({route, navigation}) => {
             <View>
               <Text style={styles.vehicleName}>{params.selectedVehicle}</Text>
               <Text style={styles.vehicleCapacity}>
-                {params.selectedVehicleDetails.capacity
-                  ? params.selectedVehicleDetails.capacity
+                {params.selectedVehicleDetails.vehicle_type_desc
+                  ? params.selectedVehicleDetails.vehicle_type_desc
                   : null}{' '}
                 max capacity
               </Text>
             </View>
             <View>
-            {console.log("params.selectedVehicle", params.selectedVehicle)}
+              {console.log('params.selectedVehicle', params.selectedVehicle)}
               <Image
-                style={{width: 130, height: 75}}
-                
+                style={[styles.vehicleImage, {width: 100, height: 100}]}
                 source={
                   params.selectedVehicle == 'Cycle'
                     ? BicycleImage
                     : params.selectedVehicle == 'Scooter'
                     ? MotorbikeImage
+                    : params.selectedVehicle == 'Car'
+                    ? CarImage
+                    : params.selectedVehicle == 'Partner'
+                    ? PartnerImage
                     : params.selectedVehicle == 'Pickup'
                     ? MiniTruckImage
                     : params.selectedVehicle == 'Van'
-                    ? MiniTruckImage
-                    : params.selectedVehicle == 'Car'
+                    ? MiniVanImage
+                    : params.selectedVehicle == 'Truck'
                     ? SemiTruckImage
-                    : SemiTruckImage
+                    : OtherImage
                 }
               />
             </View>
@@ -93,9 +113,26 @@ const PickupOrderPreview = ({route, navigation}) => {
 
         <View style={styles.pickupCard}>
           <Text style={styles.pickupDetails}>Pickup details</Text>
-          <View>
-            <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
-            <Text style={styles.vehicleCapacity}></Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
+              <Text style={styles.vehicleCapacity}>
+                {params.userDetails.company}
+              </Text>
+            </View>
+
+            {params.userDetails.package_photo && (
+              <View>
+                <TouchableOpacity onPress={() => toggleModal()}>
+                  <Image
+                    style={styles.packagePhoto}
+                    source={{
+                      uri: API.viewImageUrl + params.userDetails.package_photo,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -122,7 +159,9 @@ const PickupOrderPreview = ({route, navigation}) => {
           </View>
 
           <View>
-            <Text style={styles.pickupNotes}></Text>
+            <Text style={styles.pickupNotes}>
+              {params.userDetails.pickupNotes}
+            </Text>
           </View>
         </View>
 
@@ -130,11 +169,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
-              <Text style={styles.vehicleName}>
-                €
-                {(params.selectedVehicleDetails.base_price + (params.selectedVehicleDetails.km_price * 
-                params.distanceTime.distance)).toFixed(0)}
-              </Text>
+              <Text style={styles.vehicleName}>€ {finalPrice}</Text>
               <View style={{flexDirection: 'row'}}>
                 <Text
                   style={[
@@ -155,9 +190,6 @@ const PickupOrderPreview = ({route, navigation}) => {
                 </Text>
               </View>
             </View>
-            <View>
-              <Image source={require('../../image/euro.png')} />
-            </View>
           </View>
         </View>
 
@@ -174,11 +206,21 @@ const PickupOrderPreview = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={pickupOrderRequest}
+          onPress={debounce(pickupOrderRequest, 500)}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
       </View>
+      {/* Modal =========  */}
+      <DeliveryboyPackagePreviewModal
+        isImageModalVisible={isImageModalVisible}
+        setImageModalVisible={setImageModalVisible}
+        previewImage={
+          params.userDetails.package_photo
+            ? params.userDetails.package_photo
+            : null
+        }
+      />
     </ScrollView>
   );
 };
@@ -238,7 +280,7 @@ const styles = StyleSheet.create({
   pickupDetails: {
     marginBottom: 10,
     color: colors.text,
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
   },
   pickupManDetails: {
@@ -332,6 +374,24 @@ const styles = StyleSheet.create({
   //   top: 50,
   //   left: 11,
   // },
+  vehicleImage: {
+    height: 62,
+    resizeMode: 'center',
+  },
+  packageBasicInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headingOTP: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  packagePhoto: {
+    width: 48,
+    height: 48,
+    borderRadius: 5,
+  },
 });
 
 export default PickupOrderPreview;

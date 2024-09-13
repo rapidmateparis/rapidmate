@@ -48,13 +48,6 @@ const MapAddress = props => {
     getLiveLocation();
   }, []);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     getLiveLocation();
-  //   }, 6000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const getLiveLocation = async () => {
     try {
       const locationPermissionDenied = await locationPermission();
@@ -95,75 +88,88 @@ const MapAddress = props => {
       {/* GooglePlacesAutocomplete */}
       <View style={{zIndex: 1, paddingTop: 10}}>
         <View style={styles.locationCard}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MapPickupAddress')}>
-            <View style={styles.locationAddress}>
-              <Ionicons style={{marginTop:15}} name="location-outline" size={18} color="#000000" />
-              <GooglePlacesAutocomplete
-                fetchDetails
-                placeholder="Enter pickup address"
-                styles={{
-                  textInput: {
-                    color: colors.text,
-                  },
-                  description : {color : colors.text}
-                }}
-                onPress={(data, details = null) => {
-                  const originCoordinates = {
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                  };
-                  setOrigin(originCoordinates);
-                  moveToLocation(originCoordinates);
-                  props.onSourceLocation({
-                    originCoordinates: originCoordinates,
-                    sourceDescription: data.description,
-                  });
-                }}
-                query={{
-                  key: MAPS_API_KEY,
-                  language: 'en',
-                }}
-                onFail={() => console.error('Error')}
-              />
-              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.locationAddress}>
+            <Ionicons
+              style={{marginTop: 15}}
+              name="location-outline"
+              size={18}
+              color="#000000"
+            />
+            <GooglePlacesAutocomplete
+              fetchDetails
+              placeholder="Enter pickup address"
+              styles={{
+                textInput: {
+                  color: colors.black,
+                },
+                description: {color: colors.black},
+                color: colors.black,
+              }}
+              textInputProps={{
+                placeholderTextColor: colors.lightGrey,
+                returnKeyType: 'search',
+              }}
+              onPress={(data, details = null) => {
+                const originCoordinates = {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                };
+                setOrigin(originCoordinates);
+                moveToLocation(originCoordinates);
+                props.onSourceLocation({
+                  originCoordinates: originCoordinates,
+                  sourceDescription: data.description,
+                });
+              }}
+              query={{
+                key: MAPS_API_KEY,
+                language: 'en',
+              }}
+              onFail={() => console.error('Error')}
+            />
+          </View>
+
           <View style={styles.borderDummy}></View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MapDropAddress')}>
-            <View style={styles.locationAddress}>
-              <MaterialIcons style={{marginTop:15}} name="my-location" size={18} color="#000000" />
-              <GooglePlacesAutocomplete
-                fetchDetails
-                placeholder="Enter drop address"
-                styles={{
-                  textInput: {
-                    color: colors.text,
-                  },
-                  description : {color : colors.text},
-                }}
-                onPress={(data, details = null) => {
-                  const destinationCoordinates = {
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                  };
-                  setDestination(destinationCoordinates);
-                  moveToLocation(destinationCoordinates);
-                  props.onDestinationLocation({
-                    destinationCoordinates: destinationCoordinates,
-                    destinationDescription: data.description,
-                  });
-                }}
-                query={{
-                  key: MAPS_API_KEY,
-                  language: 'en',
-                }}
-                onFail={() => console.error('Error')}
-              />
-              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.locationAddress}>
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="my-location"
+              size={18}
+              color="#000000"
+            />
+            <GooglePlacesAutocomplete
+              fetchDetails
+              placeholder="Enter drop address"
+              styles={{
+                textInput: {
+                  color: colors.black,
+                },
+                description: {color: colors.black},
+                color: colors.black,
+              }}
+              textInputProps={{
+                placeholderTextColor: colors.lightGrey,
+                returnKeyType: 'search',
+              }}
+              onPress={(data, details = null) => {
+                const destinationCoordinates = {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                };
+                setDestination(destinationCoordinates);
+                moveToLocation(destinationCoordinates);
+                props.onDestinationLocation({
+                  destinationCoordinates: destinationCoordinates,
+                  destinationDescription: data.description,
+                });
+              }}
+              query={{
+                key: MAPS_API_KEY,
+                language: 'en',
+              }}
+              onFail={() => console.error('Error')}
+            />
+          </View>
           <View style={styles.borderShowOff}></View>
         </View>
       </View>

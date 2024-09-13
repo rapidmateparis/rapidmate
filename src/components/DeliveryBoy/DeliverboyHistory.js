@@ -42,7 +42,7 @@ const TodayList = ({navigation}) => {
         postParams,
         null,
         successResponse => {
-          console.log('ordr',successResponse[0]._response)
+          console.log('ordr', successResponse[0]._response);
           setCurrentOrderList(successResponse[0]._response);
           setLoading(false);
         },
@@ -90,7 +90,11 @@ const TodayList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyDeliveryDetails',{order_number:item.item.order_number})}
+          onPress={() =>
+            navigation.navigate('DeliveryboyDeliveryDetails', {
+              order_number: item.item.order_number,
+            })
+          }
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -135,7 +139,9 @@ const TodayList = ({navigation}) => {
 
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€{item.item.amount? item.item.amount : '34.00'}</Text>
+            <Text style={styles.valueMoney}>
+              €{item.item.amount ? item.item.amount : '34.00'}
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -618,8 +624,7 @@ const DeliveryboyHistory = ({navigation}) => {
         {/* Your Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}>
+          <TouchableOpacity>
             <AntDesign name="filter" size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
@@ -646,9 +651,9 @@ const DeliveryboyHistory = ({navigation}) => {
         screenOptions={{
           tabBarActiveTintColor: colors.secondary,
           tabBarInactiveTintColor: colors.subText,
-          tabBarLabelStyle: {fontSize: 14},
+          tabBarLabelStyle: {fontSize: 12, fontFamily: 'Montserrat-Regular'},
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
-          tabBarStyle: {backgroundColor: '#fff'},
+          tabBarStyle: [{display: 'flex', backgroundColor: '#fff'}],
         }}>
         <Tab.Screen name="Ongoing">
           {() => <TodayList navigation={navigation} />}

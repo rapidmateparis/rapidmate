@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,200 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import BicycleImage from '../../image/Cycle-Icon.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Icon.png';
+import PartnerImage from '../../image/Partner-icon.png';
+import VanImage from '../../image/Van-Icon.png';
+import PickupImage from '../../image/Pickup-Icon.png';
+import TruckImage from '../../image/Truck-Icon.png';
+import BigTruckImage from '../../image/Big-Package.png';
+import {useLoader} from '../../utils/loaderContext';
+import {
+  addPayment,
+  createEnterpriseOrder,
+  createPickupOrder,
+} from '../../data_manager';
+import {
+  usePlacedOrderDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
+import {useStripe} from '@stripe/stripe-react-native';
 
-const EnterpriseOrderPayment = ({navigation}) => {
+const EnterpriseOrderPayment = ({route, navigation}) => {
+  const params = route.params;
+  const {setLoading} = useLoader();
+  const [orderNumber, setOrderNumber] = useState(null);
+  const {savePlacedOrderDetails} = usePlacedOrderDetails();
+  const [orderResponse, setOrderResponse] = useState();
+  const [clientSecret, setClientSecret] = useState(null);
+  const {initPaymentSheet, presentPaymentSheet} = useStripe();
+  const {userDetails} = useUserDetails();
+
+  const getVechicleImage = vehicleTypeId => {
+    switch (vehicleTypeId) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return VanImage;
+      case 6:
+        return PickupImage;
+      case 7:
+        return TruckImage;
+      default:
+        return BigTruckImage;
+    }
+  };
+
+  useEffect(() => {
+    if (orderNumber) {
+      createPaymentIntent();
+    }
+  }, [orderNumber]);
+
+  const createPaymentIntent = async () => {
+    try {
+      const response = await fetch(
+        'https://api.stripe.com/v1/payment_intents',
+        {
+          method: 'POST',
+          headers: {
+            Authorization:
+              'Bearer sk_test_51PgiLhLF5J4TIxENpifRFYuB13xzQzszqugfYchc33Meu4vh6zDM6tDCX0Fbv863qGGfM69PwF1CTHwkiSEm5XHv00wtIuDU2O', // Replace with your test secret key
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            amount: params.amount * 100, // Amount in cents
+            currency: 'EUR',
+            //payment_method_types: ['card', 'google_pay']
+          }).toString(),
+        },
+      );
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+      setClientSecret(data.client_secret);
+      setup(data.client_secret);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const setup = async client_secret => {
+    console.log('setup called ' + client_secret);
+    const {error} = await initPaymentSheet({
+      merchantDisplayName: 'RapidMate LLC',
+      paymentIntentClientSecret: client_secret, // retrieve this from your server
+    });
+    console.log('érror', error);
+    if (!error) {
+      checkout();
+    } else {
+      Alert.alert('Payment Error', error.message);
+    }
+  };
+
+  const checkout = async () => {
+    const {error} = await presentPaymentSheet();
+    if (!error) {
+      createPayment();
+    }
+  };
+
+  const createPayment = async () => {
+    let requestParams = {
+      order_number: orderNumber,
+      amount: params.amount,
+      order_type: 2,
+    };
+    console.log('requestParams', requestParams);
+    setLoading(true);
+    addPayment(
+      requestParams,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          navigation.navigate('EnterpriseLookingForDriver');
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const onPayment = async () => {
+    placeEnterpriseOrder();
+  };
+
+  const placeEnterpriseOrder = async () => {
+    let requestParams = {
+      enterprise_ext_id: userDetails.userDetails[0].ext_id,
+      branch_id: params.branch_id,
+      delivery_type_id: 1,
+      service_type_id: 2,
+      vehicle_type_id: params.vehicle_type.vehicle_type_id,
+      pickup_date: params.pickup_date,
+      pickup_time: params.pickup_time,
+      pickup_location_id: params.pickup_location_id,
+      dropoff_location_id: params.dropoff_location_id,
+      is_repeat_mode: params.is_repeat_mode,
+      repeat_day: '',
+      is_my_self: 1,
+      first_name: userDetails.userDetails[0].first_name,
+      last_name: userDetails.userDetails[0].last_name,
+      company_name: params.company_name,
+      email: userDetails.userDetails[0].email,
+      mobile: params.mobile,
+      package_id: params.package_id,
+      package_note: params.package_note,
+      is_same_dropoff_location: 0,
+      repeat_dropoff_location_id: '',
+      distance: parseFloat(params.distance).toFixed(1),
+      total_amount: parseFloat(params.amount),
+      package_photo: 'https://example.com/package.jpg',
+      repeat_mode: params.repeat_mode,
+      repeat_every: params.repeat_every,
+      repeat_until: params.repeat_until,
+    };
+    console.log('requestParams', requestParams);
+    setLoading(true);
+    createEnterpriseOrder(
+      requestParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          console.log('createEnterpriseOrder', successResponse[0]._response);
+          savePlacedOrderDetails(successResponse[0]._response);
+          setOrderResponse(successResponse[0]._response);
+          setLoading(false);
+          setOrderNumber(successResponse[0]._response[0].order_number);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('createEnterpriseOrder==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -21,31 +209,33 @@ const EnterpriseOrderPayment = ({navigation}) => {
             <View style={{marginRight: 15}}>
               <Image
                 style={{width: 90, height: 70}}
-                source={require('../../image/semi-truck-small.png')}
+                source={getVechicleImage(params.vehicle_type.vehicle_type_id)}
               />
             </View>
             <View>
               <Text style={styles.vehicleName}>Order Summary</Text>
-              <Text style={styles.vehicleCapacity}>Semi truck 20000 liter</Text>
+              <Text style={styles.vehicleCapacity}>
+                {params.vehicle_type.vehicle_type}
+              </Text>
               <View style={styles.distanceTime}>
                 <Text style={[styles.vehicleCapacity, {marginRight: 10}]}>
-                  2.6 Km
+                  {params.distance} Km
                 </Text>
-                <Text style={styles.vehicleCapacity}>23 min</Text>
+                <Text style={styles.vehicleCapacity}>{params.time} min</Text>
               </View>
             </View>
           </View>
           <View style={[styles.distanceTime, {marginVertical: 15}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From North Street to South Street, California
+              From {params.pickup_location.sourceDescription}
             </Text>
           </View>
 
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
             <Text style={styles.totalAmount}>
-              <Text>€</Text> 34.00
+              <Text>€</Text> {params.amount}
             </Text>
           </View>
         </View>
@@ -84,10 +274,10 @@ const EnterpriseOrderPayment = ({navigation}) => {
         </View>
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
-            <Text>€</Text>34.00
+            <Text>€</Text>
+            {params.amount}
           </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseLookingForDriver')}>
+          <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>
           </TouchableOpacity>
         </View>

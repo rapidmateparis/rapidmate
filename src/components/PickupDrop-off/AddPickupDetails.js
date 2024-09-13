@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -7,21 +7,23 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert, // Import Alert for user feedback
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { Dropdown } from 'react-native-element-dropdown';
-import { colors } from '../../colors';
+import {Dropdown} from 'react-native-element-dropdown';
+import {colors} from '../../colors';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
-import { RadioButton, RadioGroup } from 'react-native-radio-buttons-group';
-import { useUserDetails } from '../commonComponent/StoreContext';
+import {RadioButton, RadioGroup} from 'react-native-radio-buttons-group';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {uploadDocumentsApi} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
-const AddPickupdetails = ({route, navigation }) => {
-
+const AddPickupdetails = ({route, navigation}) => {
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [company, setCompany] = useState('');
@@ -33,24 +35,28 @@ const AddPickupdetails = ({route, navigation }) => {
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [photoFileName, setPhotoFileName] = useState(''); // State for filename
+  const [photoFileName, setPhotoFileName] = useState('');
   const [selectedId, setSelectedId] = useState();
-  const { userDetails } = useUserDetails();
+  const {userDetails} = useUserDetails();
+  const [packageImage, setPackageImage] = useState(null);
+  const [packageImageId, setPackageImageId] = useState(null);
+  const {setLoading} = useLoader();
 
-  console.log("print_data===>AddPickupdetails", route.params)
-
-  const radioButtons = useMemo(() => ([
-    {
-      id: '1',
-      label: 'My Self',
-      value: 'self'
-    },
-    {
-      id: '2',
-      label: 'Others',
-      value: 'others'
-    }
-  ]), []);
+  const radioButtons = useMemo(
+    () => [
+      {
+        id: '1',
+        label: 'My Self',
+        value: 'self',
+      },
+      {
+        id: '2',
+        label: 'Others',
+        value: 'others',
+      },
+    ],
+    [],
+  );
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -60,16 +66,51 @@ const AddPickupdetails = ({route, navigation }) => {
   };
 
   const data = [
-    { label: '+91', value: '+91' },
-    { label: '+33', value: '+33' },
+    {label: '+91', value: '+91'},
+    {label: '+33', value: '+33'},
   ];
+
+  const uploadImage = async (packageImage) => {
+    var photo = {
+      uri: packageImage?.data?.uri,
+      type: packageImage?.data?.type,
+      name: packageImage?.data?.fileName,
+    };
+    const formdata = new FormData();
+    formdata.append('file', photo);
+    setLoading(true);
+    uploadDocumentsApi(
+      formdata,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'print_data==>successResponseuploadDocumentsApi',
+          '' + JSON.parse(successResponse).id,
+        );
+        setPackageImageId(JSON.parse(successResponse).id)
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>errorResponseuploadDocumentsApi',
+          '' + errorResponse,
+        );
+        setLoading(false);
+        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   const handleCameraLaunch = async () => {
     setModalVisibleCamera(!isModalVisibleCamera);
     try {
       let cameraData = await handleCameraLaunchFunction();
-      if (cameraData.status == 'success') {
+      if (cameraData.status === 'success') {
+        console.log('print_data===>', '' + JSON.stringify(cameraData.data.uri));
         setPhotoFileName(getFileName(cameraData.data.uri));
+        setPackageImage(cameraData);
+        uploadImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -80,8 +121,11 @@ const AddPickupdetails = ({route, navigation }) => {
     setModalVisibleCamera(!isModalVisibleCamera);
     try {
       let imageData = await handleImageLibraryLaunchFunction();
-      if (imageData.status == 'success') {
+      if (imageData.status === 'success') {
+        console.log('print_data===>', imageData);
         setPhotoFileName(getFileName(imageData.data.uri));
+        setPackageImage(imageData);
+        uploadImage();
       }
     } catch (error) {
       // Handle errors here
@@ -92,42 +136,89 @@ const AddPickupdetails = ({route, navigation }) => {
     if (!uri) return '';
     const startIndex = uri.lastIndexOf('/') + 1;
     let fileName = uri.substr(startIndex);
-    // Get last 20 characters or the whole string if shorter
     fileName = fileName.substr(-35);
     return fileName.length > 35 ? '...' + fileName : fileName;
   };
 
-
   useEffect(() => {
-    if (selectedId == 1) {
-      const updatedNumber = userDetails.userInfo.phone_number ? userDetails.userInfo.phone_number.startsWith('+91') ? userDetails.userInfo.phone_number.slice(3) : userDetails.userInfo.phone_number : null;
-      setName(userDetails.userDetails[0].first_name ? userDetails.userDetails[0].first_name : null)
-      setLastname(userDetails.userDetails[0].last_name ? userDetails.userDetails[0].last_name : null)
-      setEmail(userDetails.userInfo.email ? userDetails.userInfo.email : null)
-      setNumber(updatedNumber)
+    if (selectedId === '1') {
+      const updatedNumber = userDetails.userInfo.phone_number
+        ? userDetails.userInfo.phone_number.startsWith('+91')
+          ? userDetails.userInfo.phone_number.slice(3)
+          : userDetails.userInfo.phone_number
+        : null;
+      setName(
+        userDetails.userDetails[0].first_name
+          ? userDetails.userDetails[0].first_name
+          : '',
+      );
+      setLastname(
+        userDetails.userDetails[0].last_name
+          ? userDetails.userDetails[0].last_name
+          : '',
+      );
+      setEmail(userDetails.userInfo.email ? userDetails.userInfo.email : '');
+      setNumber(updatedNumber);
     } else {
-      setName(null)
-      setLastname(null)
-      setEmail(null)
-      setNumber(null)
+      setName('');
+      setLastname('');
+      setEmail('');
+      setNumber('');
     }
-  }, [selectedId])
+  }, [selectedId]);
+
+  const validateForm = () => {
+    if (
+      !name ||
+      !lastname ||
+      !email ||
+      !number ||
+      !dropdownValue ||
+      !orderid ||
+      !pickupNotes
+    ) {
+      Alert.alert('Validation Error', 'Please fill all the required fields.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleNextPress = () => {
+    if (validateForm()) {
+      let userDetails = {
+        name: name,
+        lastname: lastname,
+        email: email,
+        number: number,
+        company: company,
+        pickupNotes: pickupNotes,
+      };
+      if (packageImageId) {
+        userDetails.package_photo = packageImageId;
+      }
+      route.params.userDetails = userDetails;
+      navigation.navigate('PickupOrderPreview', {props: route.params});
+    }
+  };
 
   return (
-    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
-      <View style={{ paddingHorizontal: 15 }}>
+    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
+      <View style={{paddingHorizontal: 15}}>
         <View style={styles.logFormView}>
           <View>
             <RadioGroup
               radioButtons={radioButtons}
               onPress={setSelectedId}
               selectedId={selectedId}
-              labelStyle={{color:colors.text}}
-              containerStyle={{ flexDirection: 'row', justifyContent: 'space-between' }}
+              labelStyle={{color: colors.text}}
+              containerStyle={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
             />
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ flex: 1, marginRight: 10 }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, marginRight: 10}}>
               <Text style={styles.textlable}>First name*</Text>
               <TextInput
                 style={styles.inputTextStyle}
@@ -137,8 +228,8 @@ const AddPickupdetails = ({route, navigation }) => {
               />
             </View>
 
-            <View style={{ flex: 1, marginLeft: 10 }}>
-              <Text style={styles.textlable}>Last name</Text>
+            <View style={{flex: 1, marginLeft: 10}}>
+              <Text style={styles.textlable}>Last name*</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholder="Type here"
@@ -147,7 +238,7 @@ const AddPickupdetails = ({route, navigation }) => {
               />
             </View>
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={{flex: 1}}>
             <Text style={styles.textlable}>Company</Text>
             <TextInput
               style={styles.inputTextStyle}
@@ -156,8 +247,8 @@ const AddPickupdetails = ({route, navigation }) => {
               onChangeText={text => setCompany(text)}
             />
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.textlable}>Email</Text>
+          <View style={{flex: 1}}>
+            <Text style={styles.textlable}>Email*</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -166,9 +257,9 @@ const AddPickupdetails = ({route, navigation }) => {
             />
           </View>
           <View>
-            <Text style={styles.textlable}>Phone number</Text>
+            <Text style={styles.textlable}>Phone number*</Text>
             <View style={styles.mobileNumberInput}>
-              <View style={{ width: 95 }}>
+              <View style={{width: 95}}>
                 <View style={styles.containerDropdown}>
                   <Dropdown
                     data={data}
@@ -187,7 +278,7 @@ const AddPickupdetails = ({route, navigation }) => {
                     }}
                     renderLeftIcon={() => (
                       <Image
-                        style={{ marginRight: 10 }}
+                        style={{marginRight: 10}}
                         source={require('../../image/flagIcon.png')}
                       />
                     )}
@@ -197,7 +288,7 @@ const AddPickupdetails = ({route, navigation }) => {
               <TextInput
                 style={[
                   styles.input,
-                  { fontFamily: 'Montserrat-Regular', fontSize: 16 },
+                  {fontFamily: 'Montserrat-Regular', fontSize: 16},
                 ]}
                 placeholder="00 00 00 00 00)"
                 placeholderTextColor="#999"
@@ -208,24 +299,31 @@ const AddPickupdetails = ({route, navigation }) => {
               />
             </View>
           </View>
-          <TouchableOpacity onPress={toggleModal} style={{ flex: 1 }}>
+          <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
             <Text style={styles.textlable}>Package photo</Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
                 size={13}
                 color="#131314"
-                style={{ marginTop: 13 }}
+                style={{marginTop: 13}}
               />
               <Text style={styles.packagePhoto}>Package photo</Text>
               <View style={styles.packagePhotoPath}>
                 <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                <MaterialCommunityIcons name="close" color="#000" size={13} />
+                <MaterialCommunityIcons
+                  onPress={() => {
+                    setPhotoFileName(null);
+                  }}
+                  name="close"
+                  color="#000"
+                  size={13}
+                />
               </View>
             </View>
           </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.textlable}>Package ID</Text>
+          <View style={{flex: 1}}>
+            <Text style={styles.textlable}>Package ID*</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholder="Type here"
@@ -233,8 +331,8 @@ const AddPickupdetails = ({route, navigation }) => {
               onChangeText={text => setOrderid(text)}
             />
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.textlable}>Pickup notes</Text>
+          <View style={{flex: 1}}>
+            <Text style={styles.textlable}>Pickup notes*</Text>
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
@@ -247,11 +345,9 @@ const AddPickupdetails = ({route, navigation }) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              let userDetails = {name:name, lastname:lastname,email:email, number:number}
-              route.params.userDetails = userDetails
-              navigation.navigate('PickupOrderPreview',{props:route.params})
+              handleNextPress();
             }}
-            style={[styles.logbutton, { backgroundColor: colors.primary }]}>
+            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         </View>
@@ -403,7 +499,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 12,
-    color:colors.text,
+    color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   dottedLine: {

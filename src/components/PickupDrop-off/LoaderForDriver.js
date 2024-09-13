@@ -8,25 +8,97 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
+import {
+  usePlacedOrderDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
+import {
+  cancelOrderConsumer,
+  getAllocatedDeliveryBoy,
+  getLocations,
+} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
 
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const {placedOrderDetails} = usePlacedOrderDetails();
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+
   const toggleModal = vehicleDetails => {
-    clearTimeout(timeOutId);
     setModalVisible(!isModalVisible);
   };
-  var timeOutId = '';
+
+  const getLocationsData = () => {
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          const params = {
+            userRole: userDetails?.userDetails[0]?.role,
+            orderNumber: placedOrderDetails[0]?.order_number,
+          };
+          getAllocatedDeliveryBoy(
+            params,
+            successResponse => {
+              navigation.navigate('OrderPickup', {
+                driverDetails: successResponse[0]._response,
+                locationList: tempOrderList,
+              });
+            },
+            errorResponse => {
+              navigation.navigate('DriverNotAvailable', errorResponse);
+              Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            },
+          );
+        }
+      },
+      errorResponse => {
+        if (errorResponse[0]._errors.message) {
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        }
+      },
+    );
+  };
+
   useEffect(() => {
-    timeOutId = setTimeout(() => {
-      navigation.navigate('OrderConfirm');
-    }, 5000);
-    console.log('timeOutId', timeOutId);
+    getLocationsData();
   }, []);
+
+  const submitCancelOrder = selectedReason => {
+    setLoading(true);
+    let params = {
+      order_number: placedOrderDetails[0]?.order_number,
+      cancel_reason_id: selectedReason.id,
+      cancel_reason: selectedReason.reason,
+    };
+    cancelOrderConsumer(
+      params,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'order_cancel===>successResponse',
+          '' + JSON.stringify(successResponse),
+        );
+        navigation.navigate('PickupOrderCancelled');
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('order_cancel===>errorResponse', '' + errorResponse);
+      },
+    );
+  };
 
   return (
     <ScrollView
@@ -76,6 +148,7 @@ const LoaderForDriver = ({navigation}) => {
       <CancellationModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
+        submitCancelOrder={submitCancelOrder}
       />
     </ScrollView>
   );

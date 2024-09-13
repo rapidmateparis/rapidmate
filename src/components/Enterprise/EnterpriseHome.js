@@ -21,6 +21,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dimensions} from 'react-native';
+import { useUserDetails } from '../commonComponent/StoreContext';
 const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
@@ -29,6 +30,7 @@ const EnterpriseHome = ({navigation}) => {
   const [dropdownStreet, setDropdownStreet] = useState(null);
   const [dropdownWeek, setDropdownWeek] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const {saveUserDetails, userDetails} = useUserDetails();
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);

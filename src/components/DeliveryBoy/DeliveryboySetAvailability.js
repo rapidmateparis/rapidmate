@@ -63,7 +63,15 @@ const DeliveryboySetAvailability = ({navigation}) => {
         if (successResponse[0]._success) {
           console.log(
             'getCurrentPlanningSetup==>',
-            JSON.stringify(successResponse[0]),
+            successResponse[0],
+          );
+          setToggleApplySameForAll(
+            successResponse[0]._response.is_apply_for_all_days == 1
+              ? true
+              : false,
+          );
+          setToggleAvailable24(
+            successResponse[0]._response.is_24x7 == 1 ? true : false,
           );
           if (successResponse[0]._response.setup[0].slots) {
             const currentSlots = successResponse[0]._response.setup[0].slots;
@@ -77,14 +85,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
               }));
               selectedItem[day] = item.selected || false;
             });
-            setToggleApplySameForAll(
-              successResponse[0]._response.is_apply_for_all_days == 1
-                ? true
-                : false,
-            );
-            setToggleAvailable24(
-              successResponse[0]._response.is_24x7 == 1 ? true : false,
-            );
+
             setTimeSlots(resultData);
             setToggleCheckBoxes(selectedItem);
           } else {
@@ -94,12 +95,13 @@ const DeliveryboySetAvailability = ({navigation}) => {
             });
             setTimeSlots(defaultTimeSlots);
           }
+          
         }
       },
       errorResponse => {
         console.log(
           'getCurrentPlanningSetup==>errorResponse',
-          ""+errorResponse[0],
+          '' + errorResponse[0],
         );
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
@@ -107,8 +109,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
       },
     );
   };
-
-  
 
   useEffect(() => {
     const defaultTimeSlots = {};
@@ -129,7 +129,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
     }
     setToggleCheckBoxes(selectedItem);
     setTimeSlots(defaultTimeSlots);
-  }, [toggleApplySameForAll, toggleAvailable24]);
+  }, [toggleApplySameForAll, toggleAvailable24, currentWeek]);
 
   function getWeeksInMonth(year, month) {
     const weeks = [],

@@ -12,7 +12,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dropdown} from 'react-native-element-dropdown';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../colors';
@@ -73,15 +73,28 @@ const EnterpriseSignup = ({navigation}) => {
     }
   };
 
+  const toggleIndustrySelection = index => {
+    if (selectedIndustry === index) {
+      setSelectedIndustry(null); // Deselect if already selected
+    } else {
+      setSelectedIndustry(index); // Select the industry
+    }
+  };
+
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 
   const industryList = [
-    {label: 'Restaurants', value: 1},
-    {label: 'Hospitals', value: 2},
-    {label: 'Logistics', value: 3},
+    {label: 'Restaurant and takeaway', value: 1},
+    {label: 'Grocery and speciality', value: 2},
+    {label: 'Gift delivery', value: 3},
+    {label: 'Health and beauty', value: 4},
+    {label: 'Tech and electronics', value: 5},
+    {label: 'Retail and shopping', value: 6},
+    {label: 'Professional services', value: 7},
+    {label: 'Other', value: 8},
   ];
 
   useEffect(() => {
@@ -441,7 +454,7 @@ const EnterpriseSignup = ({navigation}) => {
             <Dropdown
               data={industryList}
               search
-              maxHeight={300}
+              maxHeight={500}
               itemTextStyle={{color: colors.text}}
               selectedTextStyle={{color: colors.text}}
               labelField="label"
@@ -609,7 +622,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
           </View>
           <View style={styles.textInputDiv}>
-            <Ionicons name="location-outline" size={18} color="#131314" />
+            <MaterialIcons name="villa" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Siret"
@@ -764,9 +777,10 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12,
     paddingHorizontal: 10,
     color: colors.text,
+    fontFamily: 'Montserrat-Regular', 
   },
   accountType: {
     fontFamily: 'Montserrat-Regular',
@@ -853,6 +867,73 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontFamily: 'Montserrat-Regular',
+  },
+  industryMainCard: {
+    borderWidth: 1,
+    borderColor: '#2C303336',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingTop: 15,
+    paddingBottom: 8,
+    marginBottom: 20,
+  },
+  selectIndustryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  industryLeftIcons: {
+    marginRight: 10,
+  },
+  industryText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+    flex: 1,
+  },
+  typesIndustryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+  industrySelectCircle: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: '#dbdbdb',
+    borderRadius: 50,
+  },
+  restaurantImage: {
+    width: 14,
+    height: 16,
+  },
+  GroceryImage: {
+    width: 13.5,
+    height: 15,
+  },
+  GiftImage: {
+    width: 14,
+    height: 16,
+  },
+  HealthImage: {
+    width: 14,
+    height: 14,
+  },
+  TechImage: {
+    width: 13,
+    height: 18,
+  },
+  ShoppingImage: {
+    width: 15,
+    height: 15,
+  },
+  ProfessionalImage: {
+    width: 14.8,
+    height: 14.8,
+  },
+  OtherImage: {
+    width: 14.8,
+    height: 14.8,
   },
 });
 

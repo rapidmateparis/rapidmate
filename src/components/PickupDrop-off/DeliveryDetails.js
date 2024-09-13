@@ -8,34 +8,67 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Platform,
+  PermissionsAndroid,
+  Linking,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
-import { getAVehicleByTypeId, getLocationById, getViewOrderDetail } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
+import {
+  cancelOrderConsumer,
+  downloadInvoiceOrder,
+  getAVehicleByTypeId,
+  getLocationById,
+  getViewOrderDetail,
+} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import CancellationModal from '../commonComponent/CancellationModal';
+import RNFS from 'react-native-fs';
+import {Buffer} from 'buffer';
+import {API} from '../../utils/constant';
+import FileViewer from 'react-native-file-viewer';
+import messaging from '@react-native-firebase/messaging';
 
 const DeliveryDetails = ({route, navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
   const {setLoading} = useLoader();
   const orderNumber = route.params.order_number;
-  const [order, serOrder] = useState({})
-  const [destinationAddress, setDestinationAddress] = useState({})
-  const [vehicleType, setVehicleType] = useState({})
+  const [order, serOrder] = useState({});
+  const [deliveryboy, setDeliveryboy] = useState({});
+  const [destinationAddress, setDestinationAddress] = useState({});
+  const [vehicleType, setVehicleType] = useState({});
+  const [isModalVisible, setModalVisible] = useState(false);
 
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
   };
 
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-  };
+  useEffect(async () => {
+    orderDetail();
+    const requestCameraPermission = async () => {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      ]);
 
-  useEffect(()=>{
-    orderDetail()
-  },[])
+      console.log('granted', granted);
+      return granted;
+    };
+
+    const permissionStatus = await requestCameraPermission();
+    console.log('permissionStatus', permissionStatus);
+
+    if (permissionStatus[PermissionsAndroid.PERMISSIONS.CAMERA] === 'granted') {
+      // Code to access the camera
+    } else if (
+      permissionStatus[PermissionsAndroid.PERMISSIONS.CAMERA] ===
+      'never_ask_again'
+    ) {
+      Linking.openSettings();
+    }
+  }, []);
 
   const orderDetail = async () => {
     setLoading(true);
@@ -44,9 +77,12 @@ const DeliveryDetails = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order)
-          getDestinationAddress(successResponse[0]._response.order.dropoff_location_id)
-          vehicleDetail(successResponse[0]._response.order.vehicle_type_id)
+          serOrder(successResponse[0]._response.order);
+          setDeliveryboy(successResponse[0]._response.deliveryBoy);
+          getDestinationAddress(
+            successResponse[0]._response.order.dropoff_location_id,
+          );
+          vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
       errorResponse => {
@@ -59,14 +95,14 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  const getDestinationAddress = async (locationId) => {
+  const getDestinationAddress = async locationId => {
     setLoading(true);
     getLocationById(
       locationId,
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          setDestinationAddress(successResponse[0]._response[0])
+          setDestinationAddress(successResponse[0]._response[0]);
         }
       },
       errorResponse => {
@@ -79,14 +115,14 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  const vehicleDetail = async (vehicleTypeId) => {
+  const vehicleDetail = async vehicleTypeId => {
     setLoading(true);
     getAVehicleByTypeId(
       vehicleTypeId,
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          setVehicleType(successResponse[0]._response[0])
+          setVehicleType(successResponse[0]._response[0]);
         }
       },
       errorResponse => {
@@ -99,10 +135,89 @@ const DeliveryDetails = ({route, navigation}) => {
     );
   };
 
-  
+  const submitCancelOrder = selectedReason => {
+    setLoading(true);
+    let params = {
+      order_number: orderNumber,
+      cancel_reason_id: selectedReason.id,
+      cancel_reason: selectedReason.reason,
+    };
+    cancelOrderConsumer(
+      params,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'order_cancel===>successResponse',
+          '' + JSON.stringify(successResponse),
+        );
+        navigation.navigate('PickupOrderCancelled');
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('order_cancel===>errorResponse', '' + errorResponse);
+      },
+    );
+  };
+
+  const openPDFWithNativeViewer = async filePath => {
+    const fileExists = await RNFS.exists(filePath);
+
+    if (fileExists) {
+      FileViewer.open(filePath)
+        .then(() => {})
+        .catch(error => {
+          Alert.alert('Error', 'Unable to open file: ' + error);
+        });
+    } else {
+      Alert.alert('Error', 'File not found');
+    }
+  };
+
+  const downloadInvoiceFile = async () => {
+    setLoading(true);
+    try {
+      const successResponse = await new Promise((resolve, reject) => {
+        downloadInvoiceOrder(orderNumber, resolve, reject);
+      });
+
+      const invoiceData = successResponse;
+      const filePath =
+        Platform.OS === 'android'
+          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
+          : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
+
+      // Convert binary data to base64
+      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+
+      // Write the file to the document directory
+      await RNFS.writeFile(filePath, base64Data, 'base64');
+
+      // Verify the file exists
+      const fileExists = await RNFS.exists(filePath);
+      if (fileExists) {
+        Alert.alert('Success', 'Invoice saved successfully.', [
+          {
+            text: 'Open Invoice',
+            onPress: () => {
+              openPDFWithNativeViewer(filePath);
+            },
+          },
+        ]);
+        console.log('Invoice saved to: ', filePath);
+      } else {
+        Alert.alert('Error', 'Failed to save invoice file.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save invoice file.');
+      console.error('File saving error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+    <ScrollView
+      style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
           <MapDeliveryDetails />
@@ -110,10 +225,12 @@ const DeliveryDetails = ({route, navigation}) => {
         <View style={styles.driverCard}>
           <Image
             style={styles.driverImga}
-            source={require('../../image/driver.jpeg')}
+            source={{
+              uri: API.viewImageUrl + deliveryboy?.profile_pic,
+            }}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>{order.first_name}</Text>
+            <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
             <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
           </View>
         </View>
@@ -125,9 +242,12 @@ const DeliveryDetails = ({route, navigation}) => {
           />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>{order.company_name ? order.company_name : ''}</Text>
+            <Text style={styles.companyInfo}>
+              {order.company_name ? order.company_name : ''}
+            </Text>
             <Text style={styles.dropInfo}>
-              {destinationAddress.address}, {destinationAddress.city}, {destinationAddress.state}
+              {destinationAddress.address}, {destinationAddress.city},{' '}
+              {destinationAddress.state}
             </Text>
           </View>
         </View>
@@ -139,29 +259,46 @@ const DeliveryDetails = ({route, navigation}) => {
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>Order fare</Text>
-              <Text style={styles.totalmoney}>€{order.amount}</Text>
+              <Text style={styles.totalmoney}>
+                €{order.amount ? order.amount.toFixed(2) : '0.00'}
+              </Text>
             </View>
 
-            <Text style={styles.travel}>Travelled {order.distance ? order.distance.toFixed(2): ''} km in 32 mins</Text>
+            <Text style={styles.travel}>
+              Travelled {order.distance ? order.distance.toFixed(2) : '0.00'} km
+              in 32 mins
+            </Text>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Order fare</Text>
-              <Text style={styles.value}>€{order.delivery_boy_amount}</Text>
+              <Text style={styles.value}>
+                €
+                {order.delivery_boy_amount
+                  ? order.delivery_boy_amount.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>€0</Text>
+              <Text style={styles.value}>€0.00</Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Platform fee</Text>
-              <Text style={styles.value}>€{order.commission_amount}</Text>
+              <Text style={styles.value}>
+                €
+                {order.commission_amount
+                  ? order.commission_amount.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Amount charged</Text>
-              <Text style={styles.value}>€{order.amount}</Text>
+              <Text style={styles.value}>
+                €{order.amount ? order.amount.toFixed(2) : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.masterCard}>
@@ -178,19 +315,19 @@ const DeliveryDetails = ({route, navigation}) => {
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.detailsId}> Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-              sed.
-            </Text>
+            <Text style={styles.detailsId}>{order.pickup_notes}</Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Vehicle:<Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
+            Vehicle:
+            <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.packageInvoiceCard}>
+        <TouchableOpacity
+          style={styles.packageInvoiceCard}
+          onPress={downloadInvoiceFile}>
           <View style={styles.invoiceCard}>
             <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-
             <Text style={styles.downloadInvoiceText}>Download invoice</Text>
           </View>
           <View>
@@ -203,6 +340,19 @@ const DeliveryDetails = ({route, navigation}) => {
           </View>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        onPress={() => toggleModal()}
+        style={styles.requestTouch}>
+        <Text style={styles.cancelRequest}>Cancel request</Text>
+      </TouchableOpacity>
+
+      {/* CancellationModal Modal  */}
+      <CancellationModal
+        isModalVisible={isModalVisible}
+        setModalVisible={setModalVisible}
+        submitCancelOrder={submitCancelOrder}
+      />
     </ScrollView>
   );
 };
@@ -391,6 +541,23 @@ const styles = StyleSheet.create({
   packageManager: {
     width: 30,
     height: 30,
+  },
+  cancelRequest: {
+    color: colors.white,
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    justifyContent: 'center',
+  },
+  requestTouch: {
+    borderWidth: 1,
+    borderColor: colors.secondary,
+    borderRadius: 5,
+    backgroundColor: colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '60%',
+    paddingVertical: 10,
+    alignSelf: 'center',
   },
 });
 

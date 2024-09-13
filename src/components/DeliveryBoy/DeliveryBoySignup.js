@@ -142,8 +142,8 @@ const DeliveryBoySignup = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
+        console.log('errorResponse', errorResponse[0]._errors.message);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);

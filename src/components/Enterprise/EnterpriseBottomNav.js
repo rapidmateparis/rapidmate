@@ -24,9 +24,12 @@ import RNExitApp from 'react-native-exit-app';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
+import { updateUserProfile } from '../../data_manager';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
 const Bottom = createBottomTabNavigator();
 const EnterpriseBottomNav = ({navigation}) => {
+  const {userDetails} = useUserDetails();
   useEffect(() => {
     const onBackPress = () => {
       Alert.alert(
@@ -77,6 +80,23 @@ const EnterpriseBottomNav = ({navigation}) => {
     }
     onSignIn();
   }, []);
+
+  const updateProfile = token => {
+    let profileParams = {
+      ext_id: userDetails.userDetails[0].ext_id,
+      token: token,
+    };
+    updateUserProfile(
+      userDetails.userDetails[0].role,
+      profileParams,
+      successResponse => {
+        console.log('updateUserProfile', '' + successResponse);
+      },
+      errorResponse => {
+        console.log('updateUserProfile', '' + errorResponse);
+      },
+    );
+  };
 
   async function onSignIn() {
     crashlytics().log('User signed in.');

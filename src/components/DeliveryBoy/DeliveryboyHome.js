@@ -6,7 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  Alert,
   FlatList,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -18,81 +17,94 @@ import {
   getDeliveryBoyViewOrdersList,
   getLocations,
   getLookupData,
+  getCompanyList,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 
 const DeliveryboyHome = ({navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
   const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
+  const [recentOrderList, setRecentOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
+  const [companyList, setCompanyList] = useState([]);
   const {userDetails} = useUserDetails();
   const {saveLookupData} = useLookupData();
 
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          getLocationsData(),
+          getOrderList(0), 
+          getOrderList(1),
+          getLookup(),
+          getCompanyConnectionList(),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-  };
-
-  useEffect(async () => {
-    const [locationResponse, orderListResponse, lookupResponse] =
-      await new Promise.all[
-        (getLocationsData(), getOrderList(), getLookup())
-      ]();
-    setLocationList(locationResponse);
-    setOrderList(orderListResponse);
-    saveLookupData(lookupResponse);
+    fetchData();
   }, []);
+
+  const getCompanyConnectionList = () => {
+    getCompanyList(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setCompanyList(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        console.log(
+          'getCompanyConnectionList==>errorResponse',
+          '' + errorResponse[0],
+        );
+      },
+    );
+  };
 
   const getLookup = () => {
     getLookupData(
       null,
       successResponse => {
-        return successResponse[0]._response;
+        saveLookupData(successResponse[0]._response);
       },
       errorResponse => {
-        console.log('getLookup==>errorResponse', errorResponse);
+        console.log('getLookup==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
 
   const getLocationsData = () => {
     setLoading(true);
-    setLocationList([]);
     getLocations(
       null,
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          let tempOrderList = successResponse[0]._response;
-          return tempOrderList;
+          setLocationList(successResponse[0]._response);
         }
       },
       errorResponse => {
         setLoading(false);
-        if (errorResponse[0]._errors.message) {
-          setLocationList([]);
-        }
+        console.log('getLocationsData==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
 
   const getLocationAddress = locationId => {
-    let result = locationList.filter(location => location.id == locationId);
-    return result[0].address;
+    let result = locationList.filter(location => location.id === locationId);
+    return result[0]?.address || 'Unknown Address';
   };
 
-  const getOrderList = () => {
+  const getOrderList = status => {
     setLoading(true);
-    setOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
-      status: 'current',
+      status: status === 0 ? 'upcoming' : 'past',
     };
     getDeliveryBoyViewOrdersList(
       postParams,
@@ -100,15 +112,16 @@ const DeliveryboyHome = ({navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          let tempOrderList = successResponse[0]._response;
-          return tempOrderList;
+          if (status === 0) {
+            setOrderList(successResponse[0]._response); // Set upcoming orders
+          } else {
+            setRecentOrderList(successResponse[0]._response); // Set past orders
+          }
         }
       },
       errorResponse => {
         setLoading(false);
-        if (errorResponse[0]._errors.message) {
-          setOrderList([]);
-        }
+        console.log('getOrderList==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
@@ -117,7 +130,7 @@ const DeliveryboyHome = ({navigation}) => {
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
-        <Text style={styles.deliveryTime}>Pickup in 00:23:19</Text>
+        <Text style={styles.deliveryTime}>Pickup in {item.delivery_date}</Text>
       </View>
 
       <View style={styles.packageMiddle}>
@@ -146,7 +159,7 @@ const DeliveryboyHome = ({navigation}) => {
     </View>
   );
 
-  const renderDeliveryItem = ({item}) => {
+  const renderDeliveryItem = ({item}) => (
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
@@ -176,8 +189,18 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.footerCard}>
         <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
       </View>
-    </View>;
-  };
+    </View>
+  );
+
+  const renderCompanyItem = ({item}) => (
+    <View style={styles.companyInfo}>
+      <Image
+        style={styles.companyLogosImage}
+        source={require('../../image/Subway-logo.png')}
+      />
+      <Text style={styles.companyNames}>{item.company_name}</Text>
+    </View>
+  );
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -204,16 +227,17 @@ const DeliveryboyHome = ({navigation}) => {
 
         <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Upcoming deliveries</Text>
-          <View style={styles.allinfoSee}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryboyHistory')}
+            style={styles.allinfoSee}>
             <Text style={styles.seAllText}>See All</Text>
             <AntDesign name="right" size={15} color="#000" />
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.allDeleveryCard}>
           <View
             style={{
-              flex: 1,
               paddingHorizontal: 15,
               paddingTop: 5,
               backgroundColor: '#FBFAF5',
@@ -221,23 +245,19 @@ const DeliveryboyHome = ({navigation}) => {
             {orderList.length === 0 ? (
               <Text style={styles.userName}>No orders to show</Text>
             ) : (
-              <FlatList data={orderList} renderItem={renderItem} />
+              <FlatList horizontal data={orderList} renderItem={renderItem} />
             )}
           </View>
-          <FlatList
-            horizontal
-            data={orderList}
-            renderItem={renderItem}
-            keyExtractor={item => item.id.toString()}
-          />
         </View>
 
         <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Recently delivered</Text>
-          <View style={styles.allinfoSee}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryboyHistory')}
+            style={styles.allinfoSee}>
             <Text style={styles.seAllText}>See All</Text>
             <AntDesign name="right" size={15} color="#000" />
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View
@@ -247,18 +267,17 @@ const DeliveryboyHome = ({navigation}) => {
             paddingTop: 5,
             backgroundColor: '#FBFAF5',
           }}>
-          {orderList.length === 0 ? (
+          {recentOrderList.length === 0 ? (
             <Text style={styles.userName}>No orders to show</Text>
           ) : (
-            <FlatList data={orderList} renderItem={renderItem} />
+            <FlatList
+              horizontal
+              data={recentOrderList}
+              renderItem={renderDeliveryItem}
+              keyExtractor={item => item.id.toString()}
+            />
           )}
         </View>
-        <FlatList
-          horizontal
-          data={orderList}
-          renderItem={renderDeliveryItem}
-          keyExtractor={item => item.id.toString()}
-        />
 
         <ScrollView horizontal={true}>
           <View style={styles.allDeleveryCard}></View>
@@ -269,38 +288,16 @@ const DeliveryboyHome = ({navigation}) => {
         </View>
 
         <View style={styles.companyLogoCard}>
-          <Text style={styles.userName}>No Company Details</Text>
-          {/* <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Subway-logo.png')}
+          {companyList.length === 0 ? (
+            <Text style={styles.userName}>No Company Details</Text>
+          ) : (
+            <FlatList
+              data={companyList}
+              horizontal
+              renderItem={renderCompanyItem}
+              keyExtractor={item => item.id.toString()} // Add keyExtractor if needed
             />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View>
-
-          <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Levis-logo.png')}
-            />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View>
-
-          <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Nike-logo.png')}
-            />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View>
-
-          <View style={styles.companyInfo}>
-            <Image
-              style={styles.companyLogosImage}
-              source={require('../../image/Spark-logo.png')}
-            />
-            <Text style={styles.companyNames}>Company Name</Text>
-          </View> */}
+          )}
         </View>
       </View>
     </ScrollView>

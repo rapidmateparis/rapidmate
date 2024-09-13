@@ -112,6 +112,9 @@ import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUserDetails} from './components/commonComponent/StoreContext';
 import messaging from '@react-native-firebase/messaging';
+import DriverNotAvailable from './components/PickupDrop-off/DriverNotAvailable';
+import Supports from './components/DeliveryBoy/DeliverySettings/Supports';
+import DeliveryboyHistory from './components/DeliveryBoy/DeliverboyHistory';
 
 const Stack = createStackNavigator();
 
@@ -538,6 +541,11 @@ const AppNavigator = () => {
                 options={{headerShown: false}}
               />
               <Stack.Screen
+                name="DriverNotAvailable"
+                component={DriverNotAvailable}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
                 name="OrderConfirm"
                 component={OrderConfirm}
                 options={({navigation}) => ({
@@ -686,7 +694,9 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                   headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('Supports')}
+                      style={{paddingRight: 10}}>
                       <Ionicons
                         name="settings-outline"
                         size={25}
@@ -854,6 +864,34 @@ const AppNavigator = () => {
                 })}
               />
               <Stack.Screen
+                name="DeliveryboyHistory"
+                component={DeliveryboyHistory}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Delivery Details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
                 name="AddVehicle"
                 component={AddVehicle}
                 options={({navigation}) => ({
@@ -908,7 +946,9 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                   headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('Supports')}
+                      style={{paddingRight: 10}}>
                       <Ionicons
                         name="settings-outline"
                         size={25}
@@ -916,6 +956,34 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
+                })}
+              />
+              <Stack.Screen
+                name="Supports"
+                component={Supports}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Support',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
                 })}
               />
               <Stack.Screen
@@ -945,7 +1013,9 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                   headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('Supports')}
+                      style={{paddingRight: 10}}>
                       <Ionicons
                         name="settings-outline"
                         size={25}
@@ -983,7 +1053,9 @@ const AppNavigator = () => {
                   },
                   headerRight: () => (
                     <View style={{flexDirection: 'row'}}>
-                      <TouchableOpacity style={{paddingRight: 10}}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate('Supports')}
+                        style={{paddingRight: 10}}>
                         <Ionicons
                           name="settings-outline"
                           size={25}
@@ -1029,7 +1101,9 @@ const AppNavigator = () => {
                   },
                   headerRight: () => (
                     <View style={{flexDirection: 'row'}}>
-                      <TouchableOpacity style={{paddingRight: 10}}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate('Supports')}
+                        style={{paddingRight: 10}}>
                         <Ionicons
                           name="settings-outline"
                           size={25}

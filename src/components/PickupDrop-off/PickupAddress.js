@@ -7,23 +7,33 @@ import {
   StyleSheet,
   Image,
   Alert,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import VehicleDimensionsModal from '../commonComponent/VehicleDimensions';
+import DateAndTimePickerModal from '../commonComponent/DateAndTimePicker';
 import MapAddress from '../commonComponent/MapAddress';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Img.png';
+import PartnerImage from '../../image/Partner.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
-import {getLocationId, getAllVehicleTypes} from '../../data_manager';
+import OtherImage from '../../image/Big-Package.png';
+import {
+  getLocationId,
+  getAllVehicleTypes,
+  getDistancePriceList,
+} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import moment from 'moment';
 
 const PickupAddress = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isScheduleModalVisible, setScheduleModalVisible] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedVehicleDetails, setSelectedVehicleDetails] = useState(null);
   const [selectedVehiclePrice, setSelectedVehiclePrice] = useState(null);
@@ -35,16 +45,25 @@ const PickupAddress = ({route, navigation}) => {
   const [sourceLocationId, setSourceLocationId] = useState();
   const [destinationLocationId, setDestinationLocationId] = useState();
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
+  const [distancePriceList, setDistancePriceList] = useState([]);
+  const [pickupDateTime, setPickupDateTime] = useState({});
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
   };
 
+  const toggleScheduleModal = () => {
+    setScheduleModalVisible(!isScheduleModalVisible);
+  };
+
   useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
     };
   }, []);
 
@@ -55,6 +74,10 @@ const PickupAddress = ({route, navigation}) => {
 
   useEffect(() => {
     setLoading(true);
+    getAllVehiclesType();
+  }, []);
+
+  const getAllVehiclesType = () => {
     getAllVehicleTypes(
       null,
       successResponse => {
@@ -70,7 +93,7 @@ const PickupAddress = ({route, navigation}) => {
         ]);
       },
     );
-  }, []);
+  };
 
   const onSourceLocation = location => {
     setSourceLocation(location);
@@ -102,6 +125,32 @@ const PickupAddress = ({route, navigation}) => {
         ]);
       },
     );
+  };
+
+  useEffect(() => {
+    getDistancePrice();
+  }, [distanceTime]);
+
+  const getDistancePrice = () => {
+    getDistancePriceList(
+      distanceTime?.distance,
+      successResponse => {
+        setDistancePriceList(successResponse[0]._response);
+      },
+      errorResponse => {
+        console.log('errorResponse==>', '' + errorResponse[0]);
+      },
+    );
+  };
+
+  const getPriceUsingVechicelType = vehicleTypeId => {
+    //€
+    let finalPrice = 0;
+    let result = distancePriceList.filter(
+      priceList => priceList.vehicle_type_id == vehicleTypeId,
+    );
+    finalPrice = result[0]?.total_price;
+    return finalPrice;
   };
 
   const onDestinationLocation = location => {
@@ -141,9 +190,42 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
-    if (selectedVehicle && sourceLocation && destinationLocation && 
-      selectedVehiclePrice && distanceTime && selectedVehicleDetails &&
-      sourceLocationId && destinationLocationId) {
+    console.log(
+      'navigateToAddPickupAddress',
+      'selectedVehicle',
+      selectedVehicle,
+      'sourceLocation',
+      sourceLocation,
+      'destinationLocation',
+      destinationLocation,
+      'selectedVehiclePrice',
+      selectedVehiclePrice,
+      'distanceTime',
+      distanceTime,
+      'selectedVehicleDetails',
+      selectedVehicleDetails,
+      'sourceLocationId',
+      sourceLocationId,
+      'destinationLocationId',
+      destinationLocationId,
+    );
+    if (
+      selectedVehicle &&
+      sourceLocation &&
+      destinationLocation &&
+      selectedVehiclePrice &&
+      distanceTime &&
+      selectedVehicleDetails &&
+      sourceLocationId &&
+      destinationLocationId
+    ) {
+      if (route?.params?.pickupService?.id == 2) {
+        var scheduleParam = {
+          schedule_date_time: `${pickupDateTime.pickupDate} ${moment(
+            pickupDateTime.time,
+          ).format('hh:mm')}`,
+        };
+      }
       navigation.push('AddPickupdetails', {
         selectedVehicle: selectedVehicle,
         selectedVehicleDetails: selectedVehicleDetails,
@@ -153,12 +235,15 @@ const PickupAddress = ({route, navigation}) => {
         distanceTime: distanceTime,
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
-        serviceTypeId: route?.params?.pickupService?.id || 1
+        serviceTypeId: route?.params?.pickupService?.id || 1,
+        ...scheduleParam,
       });
     } else {
-      Alert.alert('Alert', 'Please choose location and vehicle / Vehicle price or location not available', [
-        {text: 'OK', onPress: () => {}},
-      ]);
+      Alert.alert(
+        'Alert',
+        'Please choose location and vehicle / Vehicle price or location not available',
+        [{text: 'OK', onPress: () => {}}],
+      );
     }
   };
 
@@ -168,15 +253,24 @@ const PickupAddress = ({route, navigation}) => {
         return BicycleImage;
       case 2:
         return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return MiniVanImage;
       case 6:
         return MiniTruckImage;
       case 7:
         return SemiTruckImage;
-      case 5:
-        return MiniVanImage;
       default:
-        return MiniVanImage;
+        return OtherImage;
     }
+  };
+
+  const getDateAndTime = dateAndTime => {
+    console.log('dateAndTime', dateAndTime);
+    setPickupDateTime(dateAndTime);
   };
 
   return (
@@ -187,22 +281,54 @@ const PickupAddress = ({route, navigation}) => {
           onSourceLocation={onSourceLocation}
           onDestinationLocation={onDestinationLocation}
         />
-        <View style={styles.dateCard}>
-          <EvilIcons name="calendar" size={25} color="#000" />
-          <Text style={styles.dateCardText}>When do you need it?</Text>
-          <TouchableOpacity>
-            <Text
-              style={{
-                color: colors.secondary,
-                fontSize: 14,
-                fontFamily: 'Montserrat-SemiBold',
-              }}>
-              Now
+        {route?.params?.pickupService?.id == 2 && (
+          <View style={styles.dateCard}>
+            <EvilIcons name="calendar" size={25} color="#000" />
+            <Text style={styles.dateCardText}>
+              When do you need it?
+              <Text>
+                {pickupDateTime.pickupDate && (
+                  <Text
+                    style={{
+                      fontFamily: 'Montserrat-Medium',
+                      color: colors.secondary,
+                    }}>
+                    {'\n'}Date: {pickupDateTime.pickupDate}
+                  </Text>
+                )}
+                {pickupDateTime.pickupTime && (
+                  <Text
+                    style={{
+                      fontFamily: 'Montserrat-Medium',
+                      color: colors.secondary,
+                    }}>
+                    {' '}
+                    {'\n'}Time: {pickupDateTime.pickupTime}
+                  </Text>
+                )}
+              </Text>
             </Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={() => {
+                toggleScheduleModal();
+              }}>
+              <Text
+                style={{
+                  color: colors.secondary,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat-SemiBold',
+                }}>
+                Schedule
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      <ScrollView contentContainerStyle={{paddingHorizontal: 15}}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 15,
+          backgroundColor: colors.white,
+        }}>
         <View>
           <View style={styles.chooseVehicleCard}>
             <View
@@ -212,11 +338,9 @@ const PickupAddress = ({route, navigation}) => {
                 paddingBottom: 10,
               }}>
               <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
-              {selectedVehiclePrice && (
-                <Text style={styles.selectedVehiclePrice}>
-                  €{selectedVehiclePrice}
-                </Text>
-              )}
+              <Text style={styles.selectedVehiclePrice}>
+                € {getPriceUsingVechicelType(selectedVehicleDetails?.id)}
+              </Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={{flexDirection: 'row'}}>
@@ -224,9 +348,18 @@ const PickupAddress = ({route, navigation}) => {
                   <TouchableOpacity
                     key={index}
                     onPress={() => {
-                      setSelectedVehicle(vehicle.vehicle_type);
-                      setSelectedVehicleDetails(vehicle);
-                      setSelectedVehiclePrice(vehicle.base_price != 0 && vehicle.base_price);
+                      if (sourceLocation && destinationLocation) {
+                        setSelectedVehicle(vehicle.vehicle_type);
+                        setSelectedVehicleDetails(vehicle);
+                        const price = getPriceUsingVechicelType(vehicle.id);
+                        setSelectedVehiclePrice(price);
+                      } else {
+                        Alert.alert(
+                          'Error Alert',
+                          'Please select source and distination',
+                          [{text: 'OK', onPress: () => {}}],
+                        );
+                      }
                     }}
                     style={styles.cardVehicle}>
                     <View
@@ -271,6 +404,12 @@ const PickupAddress = ({route, navigation}) => {
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
         vehicleDetails={vehicleDetails}
+      />
+
+      <DateAndTimePickerModal
+        isScheduleModalVisible={isScheduleModalVisible}
+        setScheduleModalVisible={setScheduleModalVisible}
+        getDateAndTime={getDateAndTime}
       />
     </View>
   );
@@ -328,7 +467,7 @@ const styles = StyleSheet.create({
   },
   vehicleImage: {
     height: 62,
-    resizeMode: 'contain',
+    resizeMode: 'center',
   },
   vehicleTypeName: {
     fontSize: 14,
@@ -341,6 +480,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
     marginBottom: 10,
+    width: 100,
   },
   selectedVehiclePrice: {
     fontSize: 16,

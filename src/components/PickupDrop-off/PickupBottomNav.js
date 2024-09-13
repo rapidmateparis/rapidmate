@@ -7,7 +7,7 @@ import {
   BackHandler,
   Platform,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -23,12 +23,20 @@ import RNExitApp from 'react-native-exit-app';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-import {updateUserProfile} from '../../data_manager';
+import {getViewOrderDetail, updateUserProfile} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
+import {set} from 'react-native-reanimated';
 
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
+  const [
+    isDeliveryBoyAcceptRejectModalModalVisible,
+    setDeliveryBoyAcceptRejectModalModalVisible,
+  ] = useState(false);
+  const [deliveryBoyAcceptRejectMessage, setDeliveryBoyAcceptRejectMessage] =
+    useState();
 
   useEffect(() => {
     const onBackPress = () => {
@@ -61,7 +69,22 @@ const PickupBottomNav = ({navigation}) => {
 
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      setDeliveryBoyAcceptRejectModalModalVisible(true);
+      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      getViewOrderDetail(
+        remoteMessage.data?.orderNumber,
+        successResponse => {
+          if (successResponse[0]._success) {
+            setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+          }
+        },
+        errorResponse => {
+          console.log('orderDetail==>errorResponse', errorResponse[0]);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
     });
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Background Msg!!!!', JSON.stringify(remoteMessage));
@@ -116,113 +139,125 @@ const PickupBottomNav = ({navigation}) => {
   };
 
   return (
-    <Bottom.Navigator
-      tabBarOptions={{
-        activeTintColor: '#FF0058',
-        inactiveTintColor: '#A1A1A1',
-        labelStyle: {
-          fontSize: 12,
-          fontFamily: 'Montserrat-Regular',
-        },
-      }}>
-      <Bottom.Screen
-        key="PickupHome"
-        name="Home"
-        component={PickupHome}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <AntDesign
-              name="home"
-              size={22}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-      <Bottom.Screen
-        key="Notifications"
-        name="Chat"
-        component={Notifications}
-        options={{
-          headerTitle: 'Notifications',
-          headerTitleStyle: {
-            fontFamily: 'Montserrat-SemiBold',
-            fontSize: 16,
+    <>
+      <Bottom.Navigator
+        tabBarOptions={{
+          activeTintColor: '#FF0058',
+          inactiveTintColor: '#A1A1A1',
+          labelStyle: {
+            fontSize: 12,
+            fontFamily: 'Montserrat-Regular',
           },
-          headerTintColor: colors.text,
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#FBFAF5',
-            borderBottomWidth: 0,
-            elevation: 0,
-          },
-          tabBarIcon: ({focused}) => (
-            <Ionicons
-              name="chatbox-ellipses-outline"
-              size={22}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
+        }}>
+        <Bottom.Screen
+          key="PickupHome"
+          name="Home"
+          component={PickupHome}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <AntDesign
+                name="home"
+                size={22}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+        <Bottom.Screen
+          key="Notifications"
+          name="Chat"
+          component={Notifications}
+          options={{
+            headerTitle: 'Notifications',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#FBFAF5',
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+            tabBarIcon: ({focused}) => (
+              <Ionicons
+                name="chatbox-ellipses-outline"
+                size={22}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+        <Bottom.Screen
+          key="PickupAddress"
+          name="Requst"
+          component={PickupAddress}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <Feather
+                name="package"
+                size={22}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+        <Bottom.Screen
+          key="History"
+          name="Orders"
+          component={History}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <Ionicons
+                name="timer-outline"
+                size={22}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+        <Bottom.Screen
+          key="Settings"
+          name="Account"
+          component={Settings}
+          options={{
+            headerTitle: 'Settings',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#FBFAF5',
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+            tabBarIcon: ({focused}) => (
+              <AntDesign
+                name="user"
+                size={20}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+      </Bottom.Navigator>
+
+      <DeliveryBoyAcceptRejectModal
+        isDeliveryBoyAcceptRejectModalModalVisible={
+          isDeliveryBoyAcceptRejectModalModalVisible
+        }
+        setDeliveryBoyAcceptRejectModalModalVisible={
+          setDeliveryBoyAcceptRejectModalModalVisible
+        }
+        deliveryBoyAcceptRejectMessage={deliveryBoyAcceptRejectMessage}
       />
-      <Bottom.Screen
-        key="PickupAddress"
-        name="Requst"
-        component={PickupAddress}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <Feather
-              name="package"
-              size={22}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-      <Bottom.Screen
-        key="History"
-        name="Orders"
-        component={History}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <Ionicons
-              name="timer-outline"
-              size={22}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-      <Bottom.Screen
-        key="Settings"
-        name="Account"
-        component={Settings}
-        options={{
-          headerTitle: 'Settings',
-          headerTitleStyle: {
-            fontFamily: 'Montserrat-SemiBold',
-            fontSize: 16,
-          },
-          headerTintColor: colors.text,
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#FBFAF5',
-            borderBottomWidth: 0,
-            elevation: 0,
-          },
-          tabBarIcon: ({focused}) => (
-            <AntDesign
-              name="user"
-              size={20}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-    </Bottom.Navigator>
+    </>
   );
 };
 
