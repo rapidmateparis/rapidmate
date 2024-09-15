@@ -336,7 +336,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Promo</Text>
               <Text style={styles.value}>
-                € {order.promo_value ? order.promo_value.toFixed(2) : '0.00'}
+                {order.promo_value ? order.promo_value : '0'}
               </Text>
             </View>
 
