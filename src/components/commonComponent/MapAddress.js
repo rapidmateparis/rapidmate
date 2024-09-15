@@ -50,12 +50,12 @@ const MapAddress = props => {
 
   const getLiveLocation = async () => {
     try {
-      const locationPermissionDenied = await locationPermission();
-      if (locationPermissionDenied) {
-        const {latitude, longitude} = await getCurrentLocation();
-        setOrigin({latitude, longitude});
-        moveToLocation({latitude, longitude});
-      }
+      // const locationPermissionDenied = await locationPermission();
+      // if (locationPermissionDenied) {
+      //   const {latitude, longitude} = await getCurrentLocation();
+      //   setOrigin({latitude, longitude});
+      //   moveToLocation({latitude, longitude});
+      // }
       // Example code (without actual location logic)
       const latitude = 48.85754309772872;
       const longitude = 2.3513877855537912;
