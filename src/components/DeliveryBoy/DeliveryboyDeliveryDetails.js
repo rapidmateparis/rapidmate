@@ -57,8 +57,12 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           setOrder(successResponse[0]._response);
-          getPickUpLocation(successResponse[0]._response.order.pickup_location_id);
-          getDropOffLocation(successResponse[0]._response.order.dropoff_location_id);
+          getPickUpLocation(
+            successResponse[0]._response.order.pickup_location_id,
+          );
+          getDropOffLocation(
+            successResponse[0]._response.order.dropoff_location_id,
+          );
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
@@ -201,10 +205,18 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>Package photo</Text>
               <TouchableOpacity onPress={() => toggleModal()}>
-                <Image
-                  style={styles.packagePhoto}
-                  source={require('../../image/PackagePhoto.png')}
-                />
+                {route.params.package_photo && (
+                  <View>
+                    <TouchableOpacity onPress={() => toggleModal()}>
+                      <Image
+                        style={styles.packagePhoto}
+                        source={{
+                          uri: API.viewImageUrl + route.params.package_photo,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
               </TouchableOpacity>
             </View>
 
@@ -212,7 +224,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
 
             <View>
               <Text style={styles.headingOTP}>Pickup notes</Text>
-              <Text style={styles.dropInfo}>{order.order ? order.order.pickup_notes : ''}</Text>
+              <Text style={styles.dropInfo}>
+                {order.order ? order.order.pickup_notes : ''}
+              </Text>
             </View>
           </View>
         </View>
@@ -234,7 +248,11 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
-                <Text style={styles.companyInfo}>Company Name</Text>
+                <Text style={styles.companyInfo}>
+                  {dropOffLocation.company_name
+                    ? dropOffLocation.company_name
+                    : 'Company Name'}
+                </Text>
                 <Text style={styles.dropInfo}>
                   {dropOffLocation.address}, {dropOffLocation.city},{' '}
                   {dropOffLocation.state}
@@ -263,7 +281,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.dropInfo}>{order.order ? order.order.pickup_notes : ''}</Text>
+            <Text style={styles.dropInfo}>
+              {order.order ? order.order.pickup_notes : ''}
+            </Text>
           </Text>
           <Text style={styles.orderdetails}>
             Vehicle:
