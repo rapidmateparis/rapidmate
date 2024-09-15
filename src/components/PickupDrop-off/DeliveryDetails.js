@@ -11,6 +11,7 @@ import {
   Platform,
   PermissionsAndroid,
   Linking,
+  Button,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
@@ -19,6 +20,7 @@ import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {
   cancelOrderConsumer,
   downloadInvoiceOrder,
+  getAllocatedDeliveryBoy,
   getAVehicleByTypeId,
   getLocationById,
   getViewOrderDetail,
@@ -29,6 +31,7 @@ import RNFS from 'react-native-fs';
 import {Buffer} from 'buffer';
 import {API} from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
@@ -38,6 +41,7 @@ const DeliveryDetails = ({navigation, route}) => {
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
+  const {userDetails} = useUserDetails();
 
   console.log('route.params?.orderItem', route.params?.orderItem);
 
@@ -219,6 +223,36 @@ const DeliveryDetails = ({navigation, route}) => {
     }
   };
 
+  const getDeliveryBoyAllocation = () => {
+    const params = {
+      userRole: userDetails?.userDetails[0]?.role,
+      orderNumber: orderNumber,
+    };
+    getAllocatedDeliveryBoy(
+      params,
+      successResponse => {
+        Alert.alert('Success', successResponse[0]._response.message, [
+          {
+            text: 'Okay',
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ]);
+      },
+      errorResponse => {
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {
+            text: 'Okay',
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
@@ -226,19 +260,31 @@ const DeliveryDetails = ({navigation, route}) => {
         <View style={{width: '100%', height: 250}}>
           <MapDeliveryDetails />
         </View>
-        <View style={styles.driverCard}>
-          <Image
-            style={styles.driverImga}
-            source={{
-              uri: API.viewImageUrl + deliveryboy?.profile_pic,
-            }}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
-            <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
-          </View>
-        </View>
 
+        <View style={styles.driverCard}>
+          {route.params?.orderItem.is_delivery_boy_allocated == 1 ? (
+            <View>
+              <Image
+                style={styles.driverImga}
+                source={{
+                  uri: API.viewImageUrl + deliveryboy?.profile_pic,
+                }}
+              />
+              <View style={{marginLeft: 10}}>
+                <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
+                <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
+              </View>
+            </View>
+          ) : (
+            <View style={{alignContent: 'flex-end'}}>
+              <Button
+                title="Allocate Driver"
+                color={colors.primary}
+                onPress={getDeliveryBoyAllocation}
+              />
+            </View>
+          )}
+        </View>
         <View style={styles.packageCard}>
           <Image
             style={styles.packageManager}
@@ -560,6 +606,16 @@ const styles = StyleSheet.create({
     width: '60%',
     paddingVertical: 10,
     alignSelf: 'center',
+  },
+  okButtonText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.white,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    width: 200,
+    textAlign: 'center',
   },
 });
 
