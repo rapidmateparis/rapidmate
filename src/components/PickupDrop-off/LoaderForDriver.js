@@ -35,6 +35,14 @@ const LoaderForDriver = ({navigation}) => {
     setModalVisible(!isModalVisible);
   };
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getLocationsData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const getLocationsData = () => {
     getLocations(
       null,
@@ -55,9 +63,6 @@ const LoaderForDriver = ({navigation}) => {
             },
             errorResponse => {
               navigation.navigate('DriverNotAvailable', errorResponse);
-              Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-                {text: 'OK', onPress: () => {}},
-              ]);
             },
           );
         }
@@ -71,10 +76,6 @@ const LoaderForDriver = ({navigation}) => {
       },
     );
   };
-
-  useEffect(() => {
-    getLocationsData();
-  }, []);
 
   const submitCancelOrder = selectedReason => {
     setLoading(true);
