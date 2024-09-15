@@ -262,10 +262,10 @@ const DeliveryDetails = ({navigation, route}) => {
         </View>
 
         <View style={styles.driverCard}>
-          {route.params?.orderItem.is_delivery_boy_allocated == 1 ? (
+          {route.params?.orderItem?.is_delivery_boy_allocated == 1 ? (
             <View>
               <Image
-                style={styles.driverImga}
+                style={styles.driverImage}
                 source={{
                   uri: API.viewImageUrl + deliveryboy?.profile_pic,
                 }}
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 7,
   },
-  driverImga: {
+  driverImage: {
     width: 40,
     height: 40,
     borderRadius: 30,
