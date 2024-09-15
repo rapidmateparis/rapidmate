@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,7 @@ import {useLoader} from '../../utils/loaderContext';
 import {getLocationId} from '../../data_manager';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import MultpleMapAddress from '../commonComponent/MultipleMapAddress';
 
 const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [pickupAddress, setPickupAddress] = useState('');
@@ -68,6 +69,13 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [selectedWeekDay, setSelectedWeekDay] = useState(null);
+
+  const [destinationBranches, setDestinationBranches] = useState([]);
+
+  const [mapViewHeight, setMapViewHeight] = useState(200);
+
+  const routeParams = route.params;
+  const deliveryType = route.params.delivery_type_id;
 
   const handleDayPress = day => {
     let updatedSelectedDays;
@@ -203,6 +211,77 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     setDistanceTime(value);
   };
 
+  useEffect(() => {
+    if (deliveryType == 2) {
+      onBranchSourceLocation(routeParams.sourceBranch);
+    }
+  }, []);
+
+  const onBranchSourceLocation = location => {
+    let locationParams = {
+      location_name: location.branch_name ? location.branch_name : '',
+      address: location.address ? location.address : '',
+      city: location.city ? location.city : '',
+      state: location.state ? location.state : '',
+      country: location.country ? location.country : '',
+      postal_code: location.postal_code ? location.postal_code : '',
+      latitude: location.latitude,
+      longitude: location.longitude,
+    };
+    location.sourceDescription =
+      locationParams.address +
+      ', ' +
+      locationParams.city +
+      ', ' +
+      locationParams.country;
+    setSourceLocation(location);
+    setLoading(true);
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setSourceLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const onMultpleDestinationLocation = locations => {
+    var branches = [];
+    locations.forEach(element => {
+      if (element.hasOwnProperty('locationId')) {
+        var currentElement = {};
+        currentElement.distance = element.distance;
+        currentElement.total_hours = element.duration;
+        currentElement.to_latitude = element.destinationCoordinates.latitude;
+        currentElement.to_longitude = element.destinationCoordinates.longitude;
+        currentElement.amount = Math.round(
+          route.params.vehicle_type.base_price +
+            route.params.vehicle_type.km_price * element.distance,
+        ).toFixed(2);
+        currentElement.delivery_date = moment(new Date()).format('YYYY-MM-DD');
+
+        branches.push(currentElement);
+      }
+    });
+    if (branches.length > 0) {
+      setDestinationBranches(branches);
+      onFetchDistanceAndTime({
+        distance: branches[0].distance,
+        time: branches[0].total_hours,
+      });
+      setDestinationLocation(locations[0])
+      setDestinationLocationId(locations[0].locationId)
+    }
+  };
+
   const onSourceLocation = location => {
     setSourceLocation(location);
 
@@ -268,16 +347,29 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{height: 200, position: 'relative'}}>
-        <MapAddress
-          onFetchDistanceAndTime={onFetchDistanceAndTime}
-          onSourceLocation={onSourceLocation}
-          onDestinationLocation={onDestinationLocation}
-        />
-      </View>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled={true}
+      style={{flex: 1}}>
+      {deliveryType == 2 ? (
+        <View style={{height: 400, position: 'relative'}}>
+          <MultpleMapAddress
+            sourceLocation={routeParams.sourceBranch}
+            onFetchDistanceAndTime={onFetchDistanceAndTime}
+            onDestinationLocation={onMultpleDestinationLocation}
+          />
+        </View>
+      ) : (
+        <View style={{height: 200, position: 'relative'}}>
+          <MapAddress
+            onFetchDistanceAndTime={onFetchDistanceAndTime}
+            onSourceLocation={onSourceLocation}
+            onDestinationLocation={onDestinationLocation}
+          />
+        </View>
+      )}
 
-      <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+      <View style={{width: '100%', backgroundColor: '#FBFAF5'}}>
         <View style={{paddingHorizontal: 15, paddingTop: 8}}>
           <View>
             <View style={{flex: 1}}>
@@ -917,40 +1009,79 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           <View>
             <TouchableOpacity
               onPress={() => {
-                if (sourceLocationId && destinationLocationId) {
-                  let params = {
-                    ...route.params,
-                    delivery_type_id: 'One time delivery',
-                    distanceTime: distanceTime,
-                    pickup_location: sourceLocation,
-                    dropoff_location: destinationLocation,
-                    pickup_location_id: sourceLocationId,
-                    dropoff_location_id: destinationLocationId,
-                    mobile: number,
-                    company_name: company,
-                    package_note: pickupNotes,
-                    pickup_date: moment(date).format('YYYY-MM-DD'),
-                    pickup_time: moment(time).format('HH:MM'),
-                    is_repeat_mode: promoEmails ? 1 : 0,
-                    package_id: orderid,
-                    amount: Math.round(
-                      route.params.vehicle_type.base_price +
-                        route.params.vehicle_type.km_price *
-                          distanceTime.distance,
-                    ).toFixed(2),
-                    distance: distanceTime.distance.toFixed(2),
-                    time: distanceTime.time.toFixed(0),
-                    repeat_mode: repeatOrder,
-                    repeat_every: selectedRepeatEvery,
-                    repeat_until: moment(untilDate).format('YYYY-MM-DD'),
-                  };
-                  navigation.navigate('EnterprisePickupOrderPriview', params);
+                if (deliveryType == 2) {
+                  if (sourceLocationId && destinationBranches.length > 0) {
+                    let params = {
+                      ...route.params,
+                      delivery_type_id: deliveryType,
+                      distanceTime: distanceTime,
+                      pickup_location: sourceLocation,
+                      dropoff_location: destinationLocation,
+                      pickup_location_id: sourceLocationId,
+                      dropoff_location_id: destinationLocationId,
+                      mobile: number,
+                      company_name: company,
+                      package_note: pickupNotes,
+                      pickup_date: moment(date).format('YYYY-MM-DD'),
+                      pickup_time: moment(time).format('HH:MM'),
+                      is_repeat_mode: promoEmails ? 1 : 0,
+                      package_id: orderid,
+                      amount: Math.round(
+                        route.params.vehicle_type.base_price +
+                          route.params.vehicle_type.km_price *
+                            distanceTime.distance,
+                      ).toFixed(2),
+                      branches: destinationBranches,
+                      distance: distanceTime.distance,
+                      time: distanceTime.time,
+                      repeat_mode: repeatOrder,
+                      repeat_every: selectedRepeatEvery,
+                      repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                    };
+                    navigation.navigate('EnterprisePickupOrderPriview', params);
+                  } else {
+                    Alert.alert(
+                      'Error Alert',
+                      'Please choose pickup and drop location',
+                      [{text: 'OK', onPress: () => {}}],
+                    );
+                  }
                 } else {
-                  Alert.alert(
-                    'Error Alert',
-                    'Please choose pickup and drop location',
-                    [{text: 'OK', onPress: () => {}}],
-                  );
+                  if (sourceLocationId && destinationLocationId) {
+                    let params = {
+                      ...route.params,
+                      delivery_type_id: deliveryType,
+                      distanceTime: distanceTime,
+                      pickup_location: sourceLocation,
+                      dropoff_location: destinationLocation,
+                      pickup_location_id: sourceLocationId,
+                      dropoff_location_id: destinationLocationId,
+                      mobile: number,
+                      company_name: company,
+                      package_note: pickupNotes,
+                      pickup_date: moment(date).format('YYYY-MM-DD'),
+                      pickup_time: moment(time).format('HH:MM'),
+                      is_repeat_mode: promoEmails ? 1 : 0,
+                      package_id: orderid,
+                      amount: Math.round(
+                        route.params.vehicle_type.base_price +
+                          route.params.vehicle_type.km_price *
+                            distanceTime.distance,
+                      ).toFixed(2),
+                      distance: distanceTime.distance.toFixed(2),
+                      time: distanceTime.time.toFixed(0),
+                      repeat_mode: repeatOrder,
+                      repeat_every: selectedRepeatEvery,
+                      repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                    };
+                    navigation.navigate('EnterprisePickupOrderPriview', params);
+                  } else {
+                    Alert.alert(
+                      'Error Alert',
+                      'Please choose pickup and drop location',
+                      [{text: 'OK', onPress: () => {}}],
+                    );
+                  }
                 }
               }}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
@@ -966,8 +1097,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           handleImageLibraryLaunch={handleImageLibraryLaunch}
         />
         {/* -------------- Modal --------------------- */}
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
