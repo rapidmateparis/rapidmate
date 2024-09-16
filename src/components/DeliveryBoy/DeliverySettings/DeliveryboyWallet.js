@@ -16,24 +16,30 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../../../colors';
 import {getDeliveryBoyWallet} from '../../../data_manager';
 import {useUserDetails} from '../../commonComponent/StoreContext';
+import {useLoader} from '../../../utils/loaderContext';
 
 const DeliveryboyWallet = ({navigation}) => {
   const [walletAmount, setWalletAmount] = useState();
   const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
 
   useEffect(() => {
+    setLoading(true);
     getDeliveryBoyWallet(
       userDetails.userDetails[0].ext_id,
       successResponse => {
+        setLoading(false);
         setWalletAmount(successResponse[0]._response.balance);
       },
       errorResponse => {
+        setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },
     );
   }, []);
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>

@@ -824,3 +824,22 @@ export const getDeliveryBoyWallet = (
     },
   );
 };
+
+export const getDeliveryBoyTransactions = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.getDeliveryBoyTransactionUrl + param);
+  axiosCall(
+    API.getDeliveryBoyTransactionUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

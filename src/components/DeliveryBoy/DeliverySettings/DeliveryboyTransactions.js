@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -14,13 +14,20 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {Dropdown} from 'react-native-element-dropdown';
+import {getDeliveryBoyTransactions} from '../../../data_manager';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import {FlatList} from 'react-native-gesture-handler';
+import moment from 'moment';
+import { useLoader } from '../../../utils/loaderContext';
 
 function DeliveryboyTransactions() {
   const [searchText, setSearchText] = useState('');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-
+  const {userDetails} = useUserDetails();
+  const [transactionList, setTransactionList] = useState([]);
   const [activeOption, setActiveOption] = useState('Today');
+  const {setLoading} = useLoader();
 
   const handleOptionClick = option => {
     setActiveOption(option);
@@ -30,6 +37,49 @@ function DeliveryboyTransactions() {
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+
+  useEffect(() => {
+    setLoading(true);
+    getDeliveryBoyTransactions(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        setTransactionList(successResponse[0]._response);
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
+
+  const renderTransactionItem = transactionItem => (
+    <View style={styles.transactioneDetailCard}>
+      <Image source={require('../../../image/Wallet-Icon1x.png')} />
+      <View style={styles.transactioneMainCard}>
+        <View>
+          <Text style={styles.transactioneDate}>
+            {moment(transactionItem.item.order_date).format('YYYY-MM-DD')}
+          </Text>
+          <Text style={styles.transactioneFrom}>
+            Order Number{' '}
+            <Text style={styles.transactioneAddress}>
+              {transactionItem.item.order_number}
+            </Text>
+          </Text>
+          <Text style={styles.transactioneFrom}>
+            From{' '}
+            <Text style={styles.transactioneAddress}>North Street, ABC</Text>
+          </Text>
+        </View>
+        <View>
+          <Text style={styles.moneyEarn}>€{transactionItem.item.amount}</Text>
+        </View>
+      </View>
+    </View>
+  );
 
   return (
     <ScrollView style={{flex: 1}}>
@@ -117,149 +167,7 @@ function DeliveryboyTransactions() {
         </View>
       </View>
       <View style={{paddingHorizontal: 15}}>
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.transactioneDetailCard}>
-          <Image source={require('../../../image/Wallet-Icon1x.png')} />
-          <View style={styles.transactioneMainCard}>
-            <View>
-              <Text style={styles.transactioneDate}>12-09-24</Text>
-              <Text style={styles.transactioneFrom}>
-                From{' '}
-                <Text style={styles.transactioneAddress}>
-                  North Street, ABC
-                </Text>
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.moneyEarn}>€34.00</Text>
-            </View>
-          </View>
-        </View>
+        <FlatList data={transactionList} renderItem={renderTransactionItem} />
       </View>
     </ScrollView>
   );
