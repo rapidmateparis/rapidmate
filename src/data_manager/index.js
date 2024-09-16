@@ -211,14 +211,18 @@ export const getDeliveryBoyViewOrdersList = (
     API.viewDeliveryBoyOrderUrl +
       postParams.extentedId +
       '?status=' +
-      postParams.status,
+      postParams.status +
+      '&orderTyp=' +
+      postParams.orderType,
     postParams,
   );
   axiosCall(
     API.viewDeliveryBoyOrderUrl +
       postParams.extentedId +
       '?status=' +
-      postParams.status,
+      postParams.status +
+      '&orderType=' +
+      postParams.orderType,
     HTTPMethod.GET,
     params,
     response => {
@@ -395,7 +399,7 @@ export const getAllocatedDeliveryBoy = (
 };
 
 export const getViewOrderDetail = (param, successCallback, errorCallback) => {
-  console.log("print_view===>", API.viewOrderDetail + param)
+  console.log('print_view===>', API.viewOrderDetail + param);
   axiosCall(
     API.viewOrderDetail + param,
     HTTPMethod.GET,
@@ -749,7 +753,11 @@ export const orderRequestAction = (params, successCallback, errorCallback) => {
   );
 };
 
-export const paymentCancelRequest = (params, successCallback, errorCallback) => {
+export const paymentCancelRequest = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
   console.log('paymentCancelRequest==>', API.paymentCancelRequestUrl, params);
   axiosCall(
     API.paymentCancelRequestUrl,
@@ -765,7 +773,7 @@ export const paymentCancelRequest = (params, successCallback, errorCallback) => 
 };
 
 export const getEnterpriseOrders = (param, successCallback, errorCallback) => {
-  var url = API.enterpriseOrdersUrl + param
+  var url = API.enterpriseOrdersUrl + param;
   axiosCall(
     url,
     HTTPMethod.GET,
@@ -779,10 +787,33 @@ export const getEnterpriseOrders = (param, successCallback, errorCallback) => {
   );
 };
 
-export const getViewEnterpriseOrderDetail = (param, successCallback, errorCallback) => {
-  console.log('url', API.viewEnterpriseOrderDetail + param)
+export const getViewEnterpriseOrderDetail = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.viewEnterpriseOrderDetail + param);
   axiosCall(
     API.viewEnterpriseOrderDetail + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyWallet = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.getDeliveryBoyWalletUrl + param);
+  axiosCall(
+    API.getDeliveryBoyWalletUrl + param,
     HTTPMethod.GET,
     {},
     response => {
