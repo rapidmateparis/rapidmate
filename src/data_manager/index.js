@@ -763,3 +763,33 @@ export const paymentCancelRequest = (params, successCallback, errorCallback) => 
     },
   );
 };
+
+export const getEnterpriseOrders = (param, successCallback, errorCallback) => {
+  var url = API.enterpriseOrdersUrl + param
+  axiosCall(
+    url,
+    HTTPMethod.GET,
+    null,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getViewEnterpriseOrderDetail = (param, successCallback, errorCallback) => {
+  console.log('url', API.viewEnterpriseOrderDetail + param)
+  axiosCall(
+    API.viewEnterpriseOrderDetail + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
