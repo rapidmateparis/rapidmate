@@ -82,4 +82,6 @@ export const API = {
   checkPromoCodeUrl: BASE_URL + 'promocode/check',
   orderRequestActionUrl: BASE_URL + 'order/request',
   paymentCancelRequestUrl: BASE_URL + 'payment/update',
+  enterpriseOrdersUrl: BASE_URL + 'enterprise/order/getbyext/',
+  viewEnterpriseOrderDetail: BASE_URL + 'enterprise/order/view/',
 };

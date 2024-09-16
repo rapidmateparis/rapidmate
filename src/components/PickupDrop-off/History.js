@@ -93,6 +93,7 @@ const TodayList = ({navigation}) => {
       onPress={() => {
         navigation.navigate('DeliveryDetails', {
           orderItem: currentOrderItem.item,
+          componentType: 'CONSUMER'
         });
       }}
       style={styles.packageDetailCard}>
@@ -250,6 +251,7 @@ const PastList = ({navigation}) => {
       onPress={() => {
         navigation.navigate('DeliveryDetails', {
           orderItem: pastOrderItem.item,
+          componentType: 'CONSUMER'
         });
       }}
       style={styles.packageDetailCard}>
