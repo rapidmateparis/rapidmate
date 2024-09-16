@@ -152,7 +152,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
     let requestParams = {
       enterprise_ext_id: userDetails.userDetails[0].ext_id,
       branch_id: params.branch_id,
-      delivery_type_id: 1,
+      delivery_type_id: params.delivery_type_id,
       service_type_id: 2,
       vehicle_type_id: params.vehicle_type.vehicle_type_id,
       pickup_date: params.pickup_date,

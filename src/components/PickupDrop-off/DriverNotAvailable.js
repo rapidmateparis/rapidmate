@@ -11,7 +11,6 @@ import {
 import {colors} from '../../colors';
 
 const DriverNotAvailable = ({navigation}) => {
-
   return (
     <ImageBackground
       style={styles.background}
@@ -30,7 +29,11 @@ const DriverNotAvailable = ({navigation}) => {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.requestTouch}>
+        <TouchableOpacity
+          style={styles.requestTouch}
+          onPress={() => {
+            navigation.navigate('LoaderForDriver');
+          }}>
           <Text style={styles.cancelRequest}>Try Again</Text>
         </TouchableOpacity>
       </ScrollView>

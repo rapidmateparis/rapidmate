@@ -24,7 +24,7 @@ import moment from 'moment';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = navigation => {
+const TodayList = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   const {setLoading} = useLoader();
@@ -78,7 +78,6 @@ const TodayList = navigation => {
       successResponse => {
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
-          console.log('tempOrderList', tempOrderList);
           setOrderList(tempOrderList);
         }
         setLoading(false);
@@ -89,11 +88,11 @@ const TodayList = navigation => {
     );
   };
 
-  const renderItem = ({item}) => (
+  const renderCurrentOrderItem = currentOrderItem => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigation.navigate('DeliveryDetails', {
-          order_number: item.order_number,
+        navigation.navigate('DeliveryDetails', {
+          orderItem: currentOrderItem.item,
         });
       }}
       style={styles.packageDetailCard}>
@@ -103,8 +102,9 @@ const TodayList = navigation => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at{' '}
-          {moment(item.delivery_date).format('hh:mm A')}
+          Delivered on{' '}
+          {moment(currentOrderItem.item.delivery_date).format('MMM DD, YYYY')}{' '}
+          at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')}
         </Text>
       </View>
 
@@ -113,7 +113,7 @@ const TodayList = navigation => {
         <Text style={styles.fromLocation}>
           From{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.pickup_location_id)}
+            {getLocationAddress(currentOrderItem.item.pickup_location_id)}
           </Text>
         </Text>
       </View>
@@ -123,7 +123,7 @@ const TodayList = navigation => {
         <Text style={styles.fromLocation}>
           To{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.dropoff_location_id)}
+            {getLocationAddress(currentOrderItem.item.dropoff_location_id)}
           </Text>
         </Text>
       </View>
@@ -131,12 +131,14 @@ const TodayList = navigation => {
       <View style={styles.borderShow}></View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>
+          Order ID: {currentOrderItem.item.order_number}
+        </Text>
         <Text style={styles.valueMoney}>
           {`€ ${
-            typeof item.amount === 'number'
-              ? item.amount.toFixed(2)
-              : item.amount
+            typeof currentOrderItem.item.amount === 'number'
+              ? currentOrderItem.item.amount.toFixed(2)
+              : currentOrderItem.item.amount
           }`}
         </Text>
       </View>
@@ -174,7 +176,7 @@ const TodayList = navigation => {
             </View>
           </View>
         ) : (
-          <FlatList data={orderList} renderItem={renderItem} />
+          <FlatList data={orderList} renderItem={renderCurrentOrderItem} />
         )}
       </View>
     </View>
@@ -233,7 +235,6 @@ const PastList = ({navigation}) => {
       successResponse => {
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
-          console.log('tempOrderList', tempOrderList);
           setPastOrderList(tempOrderList);
         }
         setLoading(false);
@@ -244,9 +245,13 @@ const PastList = ({navigation}) => {
     );
   };
 
-  const renderItem = ({item}) => (
+  const renderPastOrderItem = pastOrderItem => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('DeliveryDetails')}
+      onPress={() => {
+        navigation.navigate('DeliveryDetails', {
+          orderItem: pastOrderItem.item,
+        });
+      }}
       style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image
@@ -254,8 +259,9 @@ const PastList = ({navigation}) => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at{' '}
-          {moment(item.delivery_date).format('hh:mm A')}
+          Delivered on{' '}
+          {moment(pastOrderItem.item.delivery_date).format('MMM DD, YYYY')} at{' '}
+          {moment(pastOrderItem.item.delivery_date).format('hh:mm A')}
         </Text>
       </View>
 
@@ -264,7 +270,7 @@ const PastList = ({navigation}) => {
         <Text style={styles.fromLocation}>
           From{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.pickup_location_id)}{' '}
+            {getLocationAddress(pastOrderItem.item.pickup_location_id)}{' '}
           </Text>
         </Text>
       </View>
@@ -274,7 +280,7 @@ const PastList = ({navigation}) => {
         <Text style={styles.fromLocation}>
           To{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.dropoff_location_id)}
+            {getLocationAddress(pastOrderItem.item.dropoff_location_id)}
           </Text>
         </Text>
       </View>
@@ -282,13 +288,15 @@ const PastList = ({navigation}) => {
       <View style={styles.borderShow}></View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
-        <Text style={styles.valueMoney}>€{item.amount}</Text>
+        <Text style={styles.orderId}>
+          Order ID: {pastOrderItem.item.order_number}
+        </Text>
+        <Text style={styles.valueMoney}>€{pastOrderItem.item.amount}</Text>
       </View>
     </TouchableOpacity>
   );
   return pastOrderList.length != 0 ? (
-    <FlatList data={pastOrderList} renderItem={renderItem} />
+    <FlatList data={pastOrderList} renderItem={renderPastOrderItem} />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View
@@ -309,22 +317,6 @@ const PastList = ({navigation}) => {
           </Text>
         </View>
       </View>
-    </View>
-  );
-};
-
-const Ongoing = navigation => {
-  return (
-    <View style={{flex: 1}}>
-      <TodayList navigation={navigation} />
-    </View>
-  );
-};
-
-const Past = () => {
-  return (
-    <View style={{flex: 1}}>
-      <PastList />
     </View>
   );
 };

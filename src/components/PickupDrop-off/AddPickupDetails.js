@@ -125,7 +125,7 @@ const AddPickupdetails = ({route, navigation}) => {
         console.log('print_data===>', imageData);
         setPhotoFileName(getFileName(imageData.data.uri));
         setPackageImage(imageData);
-        uploadImage();
+        uploadImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
