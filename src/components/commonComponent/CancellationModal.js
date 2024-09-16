@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
-import {colors} from '../../colors';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { colors } from '../../colors';
 
 function CancellationModal({
   setModalVisible,
@@ -37,8 +37,19 @@ function CancellationModal({
     );
   };
 
+  const handleSubmit = () => {
+    if (selectedReason) {
+      submitCancelOrder(selectedReason);
+      setSelectedReason(null);
+      toggleModal(); // Optionally close the modal
+      navigation.navigate('PickupOrderCancelled'); // Navigate to the PickupOrderCancelled screen
+    } else {
+      Alert.alert('Selection Required', 'Please select a cancellation reason.');
+    }
+  };
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
@@ -49,18 +60,15 @@ function CancellationModal({
           </View>
           <View style={styles.CancellationReasonCard}>
             {[
-              {id: 1, reason: 'Change of plans'},
-              {id: 2, reason: 'I want to change delivery time'},
-              {id: 3, reason: 'Incorrect address or information'},
-              {id: 4, reason: 'Found another person'},
-              {id: 5, reason: 'It is taking too long'},
+              { id: 1, reason: 'Change of plans' },
+              { id: 2, reason: 'I want to change delivery time' },
+              { id: 3, reason: 'Incorrect address or information' },
+              { id: 4, reason: 'Found another person' },
+              { id: 5, reason: 'It is taking too long' },
             ].map(reason => renderReason(reason))}
           </View>
           <TouchableOpacity
-            onPress={() => {
-              submitCancelOrder(selectedReason);
-              setSelectedReason(null);
-            }}
+            onPress={handleSubmit}
             style={styles.buttonCard}>
             <Text style={styles.okButton}>Submit</Text>
           </TouchableOpacity>
@@ -128,6 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingVertical: 12,
     textAlign: 'center',
+    color: colors.white, // Ensure text is visible on button
   },
   CancellationReasonCard: {
     padding: 20,

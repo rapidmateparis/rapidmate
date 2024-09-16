@@ -350,7 +350,6 @@ const styles = StyleSheet.create({
   },
   locationAddress: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   TextAddress: {
     fontSize: 14,
