@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -15,16 +15,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../../../colors';
 
 const Wallet = ({navigation}) => {
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [promoEmails, setPromoEmails] = useState(false);
-
-  const togglePushNotifications = () => {
-    setPushNotifications(!pushNotifications);
-  };
-
-  const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -42,7 +32,7 @@ const Wallet = ({navigation}) => {
             </View>
             <View>
               <Text style={styles.dollerSymbol}>
-                $
+                €
                 <Text style={styles.amount}>
                   250<Text style={styles.moneyDot}>.85</Text>
                 </Text>
@@ -73,7 +63,7 @@ const Wallet = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <Image source={require('../../../image/paypal-icon.png')} />
-          <View style={{marginLeft: 5, flex: 1,}}>
+          <View style={{marginLeft: 5, flex: 1}}>
             <Text style={styles.paymentPlateform}>PayPal</Text>
             <Text style={styles.mailId}>username@email.com</Text>
           </View>
@@ -84,7 +74,7 @@ const Wallet = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <Image source={require('../../../image/logos_mastercard.png')} />
-          <View style={{marginLeft: 5, flex: 1,}}>
+          <View style={{marginLeft: 5, flex: 1}}>
             <Text style={styles.paymentPlateform}>Axis Bank</Text>
             <Text style={styles.mailId}>**** **** **** 1234</Text>
           </View>
@@ -94,8 +84,10 @@ const Wallet = ({navigation}) => {
         </View>
 
         <View style={styles.securePayment}>
-        <FontAwesome name="shield" size={15} color="#1D1617" />
-        <Text style={styles.paymentInfo}>Your payment information is secure</Text>
+          <FontAwesome name="shield" size={15} color="#1D1617" />
+          <Text style={styles.paymentInfo}>
+            Your payment information is secure
+          </Text>
         </View>
       </View>
     </ScrollView>
@@ -210,7 +202,7 @@ const styles = StyleSheet.create({
   mailId: {
     color: '#131314',
     fontSize: 10,
-    fontFamily: 'Montserrat-Regular',  
+    fontFamily: 'Montserrat-Regular',
   },
   securePayment: {
     flexDirection: 'row',
@@ -219,10 +211,10 @@ const styles = StyleSheet.create({
     marginTop: '55%',
   },
   paymentInfo: {
-     color: '#1D1617',
-     fontSize: 12,
-     fontFamily: 'Montserrat-Medium', 
-     marginLeft: 5,
+    color: '#1D1617',
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    marginLeft: 5,
   },
 });
 

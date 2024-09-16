@@ -84,4 +84,5 @@ export const API = {
   paymentCancelRequestUrl: BASE_URL + 'payment/update',
   enterpriseOrdersUrl: BASE_URL + 'enterprise/order/getbyext/',
   viewEnterpriseOrderDetail: BASE_URL + 'enterprise/order/view/',
+  getDeliveryBoyWalletUrl: BASE_URL + 'deliveryboy/wallet/balance/',
 };
