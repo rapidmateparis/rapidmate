@@ -86,4 +86,5 @@ export const API = {
   viewEnterpriseOrderDetail: BASE_URL + 'enterprise/order/view/',
   getDeliveryBoyWalletUrl: BASE_URL + 'deliveryboy/wallet/balance/',
   getDeliveryBoyTransactionUrl: BASE_URL + 'deliveryboy/wallet/transaction/',
+  orderStatusUpdateUrl: BASE_URL + 'order/update/status',
 };

@@ -37,7 +37,11 @@ export async function axiosCall(
 
   axiosInstance.interceptors.response.use(
     function (response) {
-      if (response.status == 200 || response.status == 201) {
+      if (
+        response.status == 200 ||
+        response.status == 201 ||
+        response.status == 202
+      ) {
         return callbackResponse(response.data);
       } else if (response.status == 401) {
         return callbackErrorResponse(response.data);
@@ -47,7 +51,7 @@ export async function axiosCall(
     },
     function (error) {
       let parseError = JSON.stringify(error.response.data);
-      let errorResponse = JSON.parse(parseError)
+      let errorResponse = JSON.parse(parseError);
       return callbackErrorResponse(errorResponse);
     },
   );

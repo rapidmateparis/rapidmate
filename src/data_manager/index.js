@@ -806,11 +806,7 @@ export const getViewEnterpriseOrderDetail = (
   );
 };
 
-export const getDeliveryBoyWallet = (
-  param,
-  successCallback,
-  errorCallback,
-) => {
+export const getDeliveryBoyWallet = (param, successCallback, errorCallback) => {
   console.log('url', API.getDeliveryBoyWalletUrl + param);
   axiosCall(
     API.getDeliveryBoyWalletUrl + param,
@@ -843,3 +839,20 @@ export const getDeliveryBoyTransactions = (
     },
   );
 };
+
+export const orderStatusUpdate = (param, successCallback, errorCallback) => {
+  console.log('url', API.orderStatusUpdateUrl, param);
+  axiosCall(
+    API.orderStatusUpdateUrl,
+    HTTPMethod.PUT,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+('order/update/status');

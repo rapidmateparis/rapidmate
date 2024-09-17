@@ -101,6 +101,7 @@ const TodayList = ({navigation, filterCriteria}) => {
             navigation.navigate('DeliveryboyDeliveryDetails', {
               order_number: item.item.order_number,
               package_photo: item.item.package_photo,
+              orderItem: item.item,
             });
           }}
           style={styles.packageDetailCard}>
@@ -249,7 +250,11 @@ const PastList = ({navigation, filterCriteria}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyMainDeliveryDetails')}
+          onPress={() =>
+            navigation.navigate('DeliveryboyMainDeliveryDetails', {
+              orderItem: item.item,
+            })
+          }
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -294,7 +299,7 @@ const PastList = ({navigation, filterCriteria}) => {
 
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
+            <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
           </View>
         </TouchableOpacity>
 

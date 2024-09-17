@@ -1062,13 +1062,6 @@ const AppNavigator = () => {
                           color={colors.text}
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity style={{paddingRight: 10}}>
-                        <Feather
-                          name="download"
-                          size={25}
-                          color={colors.text}
-                        />
-                      </TouchableOpacity>
                     </View>
                   ),
                 })}
