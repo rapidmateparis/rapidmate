@@ -869,3 +869,22 @@ export const getConsumerWallet = (param, successCallback, errorCallback) => {
     },
   );
 };
+
+export const addConsumerPaymentMethod = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.consumerPaymentMethodUrl, param);
+  axiosCall(
+    API.consumerPaymentMethodUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
