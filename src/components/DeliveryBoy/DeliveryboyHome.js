@@ -21,6 +21,7 @@ import {
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
+import moment from 'moment';
 
 const DeliveryboyHome = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -130,7 +131,7 @@ const DeliveryboyHome = ({navigation}) => {
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
-        <Text style={styles.deliveryTime}>Pickup in {item.delivery_date}</Text>
+        <Text style={styles.deliveryTime}>Pickup in {moment(item.delivery_date).format('YYYY-MM-DD')}</Text>
       </View>
 
       <View style={styles.packageMiddle}>

@@ -55,7 +55,7 @@ const DeliveryboyWallet = ({navigation}) => {
               />
             </View>
             <View>
-              <Text style={styles.dollerSymbol}>{`€ ${walletAmount}`}</Text>
+              <Text style={styles.dollerSymbol}>{`€ ${walletAmount ? walletAmount : ''}`}</Text>
               <Text style={styles.walletBalance}>Wallet balance</Text>
             </View>
             <View style={styles.actionCard}>

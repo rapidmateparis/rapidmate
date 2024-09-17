@@ -18,7 +18,7 @@ import {getDeliveryBoyTransactions} from '../../../data_manager';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
 import moment from 'moment';
-import { useLoader } from '../../../utils/loaderContext';
+import {useLoader} from '../../../utils/loaderContext';
 
 function DeliveryboyTransactions() {
   const [searchText, setSearchText] = useState('');
@@ -26,6 +26,7 @@ function DeliveryboyTransactions() {
   const [isFocus, setIsFocus] = useState(false);
   const {userDetails} = useUserDetails();
   const [transactionList, setTransactionList] = useState([]);
+  const [walletBalance, setWalletBalance] = useState();
   const [activeOption, setActiveOption] = useState('Today');
   const {setLoading} = useLoader();
 
@@ -44,7 +45,8 @@ function DeliveryboyTransactions() {
       userDetails.userDetails[0].ext_id,
       successResponse => {
         setLoading(false);
-        setTransactionList(successResponse[0]._response);
+        setTransactionList(successResponse[0]._response.transactions);
+        setWalletBalance(successResponse[0]._response.balance);
       },
       errorResponse => {
         setLoading(false);
@@ -107,7 +109,7 @@ function DeliveryboyTransactions() {
 
         <View>
           <Text style={styles.rupeesMain}>
-            $<Text style={styles.rupeesBold}>73</Text>.85
+            € {walletBalance ? walletBalance : ''}
           </Text>
           <Text style={styles.earningTodays}>Today’s earning</Text>
         </View>

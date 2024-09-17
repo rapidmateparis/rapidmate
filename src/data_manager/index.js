@@ -855,4 +855,17 @@ export const orderStatusUpdate = (param, successCallback, errorCallback) => {
   );
 };
 
-('order/update/status');
+export const getConsumerWallet = (param, successCallback, errorCallback) => {
+  console.log('url', API.consumerWalletUrl + param);
+  axiosCall(
+    API.consumerWalletUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

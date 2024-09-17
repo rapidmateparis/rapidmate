@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,38 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../../../colors';
+import {getConsumerWallet} from '../../../data_manager';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import {useLoader} from '../../../utils/loaderContext';
 
 const Wallet = ({navigation}) => {
+  const [walletAmount, setWalletAmount] = useState();
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+
+  useEffect(() => {
+    setLoading(true);
+    getConsumerWallet(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        console.log('successResponse==>', JSON.stringify(successResponse));
+        setWalletAmount(successResponse[0]._response.balance);
+      },
+      errorResonse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -32,10 +57,7 @@ const Wallet = ({navigation}) => {
             </View>
             <View>
               <Text style={styles.dollerSymbol}>
-                €
-                <Text style={styles.amount}>
-                  250<Text style={styles.moneyDot}>.85</Text>
-                </Text>
+                € {walletAmount ? walletAmount : ''}
               </Text>
               <Text style={styles.walletBalance}>Wallet balance</Text>
             </View>
