@@ -274,7 +274,6 @@ const DeliveryboyHome = ({navigation}) => {
               horizontal
               data={recentOrderList}
               renderItem={renderDeliveryItem}
-              keyExtractor={item => item.id.toString()}
             />
           )}
         </View>
