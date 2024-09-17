@@ -34,6 +34,7 @@ import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
 import BigTruckImage from '../../image/Big-Package.png';
+import {API} from '../../utils/constant';
 
 const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const [delivered, setDelivered] = useState(false);
@@ -61,7 +62,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        console.log("message===>", JSON.stringify(errorResponse))
+        console.log('message===>', JSON.stringify(errorResponse));
         // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
         //   {text: 'OK', onPress: () => {}},
         // ]);
@@ -404,6 +405,11 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
         setImageModalVisible={setImageModalVisible}
+        previewImage={
+          route.params.orderItem.package_photo
+            ? route.params.orderItem.package_photo
+            : null
+        }
       />
       <DeliveryboySubmitOTPModal
         isOTPModalVisible={isOTPModalVisible}
