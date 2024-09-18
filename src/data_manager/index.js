@@ -398,6 +398,29 @@ export const getAllocatedDeliveryBoy = (
   );
 };
 
+export const getAllocatedEnterprise = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'getAllocatedEnterprise',
+    params,
+    API.getAllocatedEnterprise + params.orderNumber,
+  );
+  axiosCall(
+    API.getAllocatedEnterprise + params.orderNumber,
+    HTTPMethod.GET,
+    null,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const getViewOrderDetail = (param, successCallback, errorCallback) => {
   console.log('print_view===>', API.viewOrderDetail + param);
   axiosCall(
@@ -826,9 +849,18 @@ export const getDeliveryBoyTransactions = (
   successCallback,
   errorCallback,
 ) => {
-  console.log('url', API.getDeliveryBoyTransactionUrl + param);
+  console.log(
+    'url',
+    API.getDeliveryBoyTransactionUrl +
+      param.extId +
+      '?durationType=' +
+      param.durationType,
+  );
   axiosCall(
-    API.getDeliveryBoyTransactionUrl + param,
+    API.getDeliveryBoyTransactionUrl +
+      param.extId +
+      '?durationType=' +
+      param.durationType,
     HTTPMethod.GET,
     {},
     response => {
@@ -878,6 +910,25 @@ export const addConsumerPaymentMethod = (
   console.log('url', API.consumerPaymentMethodUrl, param);
   axiosCall(
     API.consumerPaymentMethodUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const addConsumerBillingDetails = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.consumerBillingDetailsUrl, param);
+  axiosCall(
+    API.consumerBillingDetailsUrl,
     HTTPMethod.POST,
     param,
     response => {

@@ -60,7 +60,8 @@ export const API = {
   updateUserProfile: BASE_URL,
   viewImageUrl: BASE_URL + 'documents/view/',
   lookupDataUrl: BASE_URL + 'lookup',
-  getAllocatedDeliveryBoy: BASE_URL + 'enterprise/order/allocated/details?o=',
+  getAllocatedDeliveryBoy: BASE_URL + 'order/allocated/details?o=',
+  getAllocatedEnterprise: BASE_URL + 'enterprise/order/allocated/details?o=',
   viewOrderDetail: BASE_URL + 'order/view/',
   enterprisebranch: BASE_URL + 'enterprisebranch/get/',
   enterpriseOrder: BASE_URL + 'enterprise/order/',
@@ -88,5 +89,6 @@ export const API = {
   getDeliveryBoyTransactionUrl: BASE_URL + 'deliveryboy/wallet/transaction/',
   orderStatusUpdateUrl: BASE_URL + 'order/update/status',
   consumerWalletUrl: BASE_URL + 'consumer/wallet/balance/',
-  consumerPaymentMethodUrl: BASE_URL + '/consumer/paymentmethod',
+  consumerPaymentMethodUrl: BASE_URL + 'consumer/paymentmethod',
+  consumerBillingDetailsUrl: BASE_URL + 'consumer/billing/address/update',
 };
