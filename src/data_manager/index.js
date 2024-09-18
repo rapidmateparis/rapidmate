@@ -398,6 +398,29 @@ export const getAllocatedDeliveryBoy = (
   );
 };
 
+export const getAllocatedEnterprise = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'getAllocatedEnterprise',
+    params,
+    API.getAllocatedEnterprise + params.orderNumber,
+  );
+  axiosCall(
+    API.getAllocatedEnterprise + params.orderNumber,
+    HTTPMethod.GET,
+    null,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const getViewOrderDetail = (param, successCallback, errorCallback) => {
   console.log('print_view===>', API.viewOrderDetail + param);
   axiosCall(

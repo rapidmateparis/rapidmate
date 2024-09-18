@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
-  Alert
+  Alert,
 } from 'react-native';
 import {colors} from '../../colors';
 import EnterpriseOrderCancellationModal from '../commonComponent/EnterpriseOrderCancellationModal';
@@ -16,13 +16,12 @@ import {
   usePlacedOrderDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
-import {getAllocatedDeliveryBoy, getLocations} from '../../data_manager';
+import {getAllocatedEnterprise, getLocations} from '../../data_manager';
 
 const EnterpriseLookingForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
-  
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -38,7 +37,7 @@ const EnterpriseLookingForDriver = ({navigation}) => {
             userRole: userDetails?.userDetails[0]?.role,
             orderNumber: placedOrderDetails[0]?.order_number,
           };
-          getAllocatedDeliveryBoy(
+          getAllocatedEnterprise(
             params,
             successResponse => {
               navigation.navigate('OrderPickup', {
@@ -57,7 +56,6 @@ const EnterpriseLookingForDriver = ({navigation}) => {
                   {text: 'OK', onPress: () => {}},
                 ]);
               }
-
             },
           );
         }
