@@ -826,9 +826,18 @@ export const getDeliveryBoyTransactions = (
   successCallback,
   errorCallback,
 ) => {
-  console.log('url', API.getDeliveryBoyTransactionUrl + param);
+  console.log(
+    'url',
+    API.getDeliveryBoyTransactionUrl +
+      param.extId +
+      '?durationType=' +
+      param.durationType,
+  );
   axiosCall(
-    API.getDeliveryBoyTransactionUrl + param,
+    API.getDeliveryBoyTransactionUrl +
+      param.extId +
+      '?durationType=' +
+      param.durationType,
     HTTPMethod.GET,
     {},
     response => {

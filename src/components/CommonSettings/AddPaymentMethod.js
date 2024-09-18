@@ -6,13 +6,16 @@ import {
   StyleSheet,
   Image,
   TextInput,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {addConsumerPaymentMethod} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
 
 const AddPaymentMethod = ({navigation}) => {
+  const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [nameOnCard, setNameOnCard] = useState('');
@@ -25,6 +28,7 @@ const AddPaymentMethod = ({navigation}) => {
   };
 
   const consumerPaymentMethod = () => {
+    setLoading(true);
     let params = {
       consumer_ext_id: userDetails.userDetails[0].ext_id,
       card_number: cardNumber,
@@ -36,13 +40,52 @@ const AddPaymentMethod = ({navigation}) => {
     addConsumerPaymentMethod(
       params,
       successResponse => {
-        console.log('successResponse', JSON.stringify(successResponse));
+        setLoading(false);
+        Alert.alert('Success', successResponse[0]._response.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       },
       errorResponse => {
-        console.log('errorResponse', JSON.stringify(errorResponse));
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       },
     );
   };
+
+  function formatExpiryDate(value) {
+    let formattedValue = value.replace(/\D/g, '');
+
+    if (formattedValue.length > 4) {
+      formattedValue = formattedValue.slice(0, 4);
+    }
+
+    if (formattedValue.length >= 2) {
+      let month = formattedValue.slice(0, 2);
+      const year = formattedValue.slice(2);
+
+      if (parseInt(month, 10) > 12) {
+        month = '12';
+      } else if (parseInt(month, 10) === 0) {
+        month = '01';
+      }
+
+      return `${month}${year.length ? '/' : ''}${year}`;
+    }
+
+    return formattedValue;
+  }
+
+  function formatCardNumber(value) {
+    let formattedValue = value.replace(/\D/g, '');
+
+    if (formattedValue.length > 16) {
+      formattedValue = formattedValue.slice(0, 16);
+    }
+
+    return formattedValue.replace(/(.{4})/g, '$1 ');
+  }
 
   return (
     <View style={{backgroundColor: '#FBFAF5', flex: 1}}>
@@ -79,7 +122,7 @@ const AddPaymentMethod = ({navigation}) => {
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
                 placeholder="Type here"
-                value={cardNumber}
+                value={formatCardNumber(cardNumber)}
                 onChangeText={text => setCardNumber(text)}
               />
             </View>
@@ -90,7 +133,7 @@ const AddPaymentMethod = ({navigation}) => {
                   style={styles.inputTextStyle}
                   placeholderTextColor="#999"
                   placeholder="Type here"
-                  value={expiryYear}
+                  value={formatExpiryDate(expiryDate)}
                   onChangeText={text => setExpiryDate(text)}
                 />
               </View>

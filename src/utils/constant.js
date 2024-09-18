@@ -88,5 +88,5 @@ export const API = {
   getDeliveryBoyTransactionUrl: BASE_URL + 'deliveryboy/wallet/transaction/',
   orderStatusUpdateUrl: BASE_URL + 'order/update/status',
   consumerWalletUrl: BASE_URL + 'consumer/wallet/balance/',
-  consumerPaymentMethodUrl: BASE_URL + '/consumer/paymentmethod',
+  consumerPaymentMethodUrl: BASE_URL + 'consumer/paymentmethod',
 };

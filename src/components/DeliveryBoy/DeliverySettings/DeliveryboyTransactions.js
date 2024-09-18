@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -41,8 +42,12 @@ function DeliveryboyTransactions() {
 
   useEffect(() => {
     setLoading(true);
+    let params = {
+      extId: userDetails.userDetails[0].ext_id,
+      durationType: activeOption.toLowerCase().replace('this', '').trim(),
+    };
     getDeliveryBoyTransactions(
-      userDetails.userDetails[0].ext_id,
+      params,
       successResponse => {
         setLoading(false);
         setTransactionList(successResponse[0]._response.transactions);
@@ -55,7 +60,7 @@ function DeliveryboyTransactions() {
         ]);
       },
     );
-  }, []);
+  }, [activeOption]);
 
   const renderTransactionItem = transactionItem => (
     <View style={styles.transactioneDetailCard}>

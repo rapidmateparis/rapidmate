@@ -28,14 +28,22 @@ const DriverNotAvailable = ({navigation}) => {
             No drivers available in your area for now, please try again later
           </Text>
         </View>
-
-        <TouchableOpacity
-          style={styles.requestTouch}
-          onPress={() => {
-            navigation.navigate('LoaderForDriver');
-          }}>
-          <Text style={styles.cancelRequest}>Try Again</Text>
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', paddingVertical: 10}}>
+          <TouchableOpacity
+            style={styles.requestTouch}
+            onPress={() => {
+              navigation.navigate('PickupBottomNav');
+            }}>
+            <Text style={styles.cancelRequest}>Go Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.requestTouch}
+            onPress={() => {
+              navigation.navigate('LoaderForDriver');
+            }}>
+            <Text style={styles.cancelRequest}>Try Again</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </ImageBackground>
   );
@@ -90,9 +98,10 @@ const styles = StyleSheet.create({
   requestTouch: {
     backgroundColor: colors.primary,
     borderRadius: 5,
-    paddingHorizontal: 90,
+    paddingHorizontal: 50,
     paddingVertical: 12,
-    marginTop: '20%',
+    marginLeft: 10,
+    marginTop: 10,
   },
 });
 
