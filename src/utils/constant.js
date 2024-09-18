@@ -90,4 +90,5 @@ export const API = {
   orderStatusUpdateUrl: BASE_URL + 'order/update/status',
   consumerWalletUrl: BASE_URL + 'consumer/wallet/balance/',
   consumerPaymentMethodUrl: BASE_URL + 'consumer/paymentmethod',
+  consumerBillingDetailsUrl: BASE_URL + 'consumer/billing/address/update',
 };

@@ -920,3 +920,22 @@ export const addConsumerPaymentMethod = (
     },
   );
 };
+
+export const addConsumerBillingDetails = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.consumerBillingDetailsUrl, param);
+  axiosCall(
+    API.consumerBillingDetailsUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
