@@ -8,20 +8,20 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import {colors} from '../../colors';
+import {colors} from '../../../colors';
 
-const DriverNotAvailable = ({navigation}) => {
+const EnterpriseDriverNotAvailable = ({navigation}) => {
   return (
     <ImageBackground
       style={styles.background}
-      source={require('../../image/Driver-Bg2.png')}>
+      source={require('../../../image/Driver-Bg2.png')}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.container}>
           <Image
             style={styles.loaderMap}
-            source={require('../../image/Driver-Not-Found.png')}
+            source={require('../../../image/Driver-Not-Found.png')}
           />
           <Text style={styles.text}>Couldn’t find driver</Text>
           <Text style={styles.subText}>
@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DriverNotAvailable;
+export default EnterpriseDriverNotAvailable;

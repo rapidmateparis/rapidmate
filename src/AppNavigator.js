@@ -115,9 +115,11 @@ import messaging from '@react-native-firebase/messaging';
 import DriverNotAvailable from './components/PickupDrop-off/DriverNotAvailable';
 import Supports from './components/DeliveryBoy/DeliverySettings/Supports';
 import DeliveryboyHistory from './components/DeliveryBoy/DeliverboyHistory';
+import PickupBillingDetails from './components/PickupDrop-off/Settings/PickupBillingDetails';
 import ConsumerManageProfile from './components/PickupDrop-off/Settings/ConsumerManageProfile';
 import EnterpriseManageProfile from './components/Enterprise/EnterpriseSettings/EnterpriseManageProfile';
 import DeliveryboyManageProfile from './components/DeliveryBoy/DeliverySettings/DeliveryboyManageProfile';
+import EnterpriseDriverNotAvailable from './components/Enterprise/EnterpriseSettings/EnterpriseDriverNotAvailable';
 
 const Stack = createStackNavigator();
 
@@ -790,34 +792,6 @@ const AppNavigator = () => {
                 })}
               />
               <Stack.Screen
-                name="ConsumerManageProfile"
-                component={ConsumerManageProfile}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
-                  headerTitle: 'Manage profile',
-                  headerTitleStyle: {
-                    fontFamily: 'Montserrat-SemiBold',
-                    fontSize: 16,
-                  },
-                  headerTintColor: colors.text,
-                  headerTitleAlign: 'center',
-                  headerStyle: {
-                    borderBottomWidth: 0,
-                    elevation: 0,
-                  },
-                })}
-              />
-              <Stack.Screen
                 name="AddPickupVehicle"
                 component={AddPickupVehicle}
                 options={({navigation}) => ({
@@ -882,34 +856,6 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: '',
-                  headerTitleStyle: {
-                    fontFamily: 'Montserrat-SemiBold',
-                    fontSize: 16,
-                  },
-                  headerTintColor: colors.text,
-                  headerTitleAlign: 'center',
-                  headerStyle: {
-                    borderBottomWidth: 0,
-                    elevation: 0,
-                  },
-                })}
-              />
-              <Stack.Screen
-                name="EnterpriseManageProfile"
-                component={EnterpriseManageProfile}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
-                  headerTitle: 'Manage profile',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1121,13 +1067,6 @@ const AppNavigator = () => {
                           color={colors.text}
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity style={{paddingRight: 10}}>
-                        <Feather
-                          name="download"
-                          size={25}
-                          color={colors.text}
-                        />
-                      </TouchableOpacity>
                     </View>
                   ),
                 })}
@@ -1320,34 +1259,6 @@ const AppNavigator = () => {
                 })}
               />
               <Stack.Screen
-                name="DeliveryboyManageProfile"
-                component={DeliveryboyManageProfile}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
-                  headerTitle: 'Manage Profile',
-                  headerTitleStyle: {
-                    fontFamily: 'Montserrat-SemiBold',
-                    fontSize: 16,
-                  },
-                  headerTintColor: colors.text,
-                  headerTitleAlign: 'center',
-                  headerStyle: {
-                    borderBottomWidth: 0,
-                    elevation: 0,
-                  },
-                })}
-              />
-              <Stack.Screen
                 name="TrackDelivery"
                 component={TrackDelivery}
                 options={({navigation}) => ({
@@ -1521,6 +1432,34 @@ const AppNavigator = () => {
                 options={{headerShown: false}}
               />
               <Stack.Screen
+                name="DeliveryboyManageProfile"
+                component={DeliveryboyManageProfile}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Manage Profile',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
                 name="DeliveryboySetAvailability"
                 component={DeliveryboySetAvailability}
                 options={({navigation}) => ({
@@ -1596,6 +1535,11 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                 })}
+              />
+              <Stack.Screen
+                name="EnterpriseDriverNotAvailable"
+                component={EnterpriseDriverNotAvailable}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="EnterpriseSignup"
@@ -1682,6 +1626,62 @@ const AppNavigator = () => {
                 })}
               />
               <Stack.Screen
+                name="ConsumerManageProfile"
+                component={ConsumerManageProfile}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Manage profile',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="PickupBillingDetails"
+                component={PickupBillingDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Billing Details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
                 name="EnterpriseLocation"
                 component={EnterpriseLocation}
                 options={({navigation}) => ({
@@ -1734,6 +1734,34 @@ const AppNavigator = () => {
                       </TouchableOpacity>
                     </View>
                   ),
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseManageProfile"
+                component={EnterpriseManageProfile}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Manage profile',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
                 })}
               />
               <Stack.Screen

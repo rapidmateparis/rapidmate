@@ -23,6 +23,7 @@ import {
   getAllocatedDeliveryBoy,
   getAVehicleByTypeId,
   getLocationById,
+  getViewEnterpriseOrderDetail,
   getViewOrderDetail,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
@@ -36,14 +37,13 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
   const orderNumber = route.params?.orderItem?.order_number;
+  const componentType = route.params?.componentType;
   const [order, serOrder] = useState({});
   const [deliveryboy, setDeliveryboy] = useState({});
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
-
-  console.log('route.params?.orderItem', route.params?.orderItem);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -75,8 +75,37 @@ const DeliveryDetails = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
-    orderDetail();
+    if (componentType == 'ENTERPRISE') {
+      enterpriseOrderDetail()
+    } else {
+      orderDetail();
+    }
   }, []);
+
+  const enterpriseOrderDetail = () => {
+    setLoading(true);
+    getViewEnterpriseOrderDetail(
+      orderNumber,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          serOrder(successResponse[0]._response.order);
+          setDeliveryboy(successResponse[0]._response.deliveryBoy);
+          getDestinationAddress(
+            successResponse[0]._response.order.dropoff_location,
+          );
+          vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('orderDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   const orderDetail = () => {
     setLoading(true);
@@ -256,14 +285,14 @@ const DeliveryDetails = ({navigation, route}) => {
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{paddingHorizontal: 15,}}>
         <View style={{width: '100%', height: 250}}>
           <MapDeliveryDetails />
         </View>
 
-        <View style={styles.driverCard}>
+        <View>
           {route.params?.orderItem?.is_delivery_boy_allocated == 1 ? (
-            <View>
+            <View style={styles.driverCard}>
               <Image
                 style={styles.driverImage}
                 source={{

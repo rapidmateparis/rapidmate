@@ -8,6 +8,12 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -22,7 +28,7 @@ import moment from 'moment';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = ({navigation}) => {
+const TodayList = ({navigation, filterCriteria}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   const [currentOrderList, setCurrentOrderList] = useState([]);
@@ -36,6 +42,7 @@ const TodayList = ({navigation}) => {
       let postParams = {
         extentedId: userDetails.userDetails[0].ext_id,
         status: 'current',
+        orderType: filterCriteria,
       };
       setLoading(true);
       getDeliveryBoyViewOrdersList(
@@ -55,7 +62,7 @@ const TodayList = ({navigation}) => {
       return () => {
         setCurrentOrderList([]);
       };
-    }, []),
+    }, [filterCriteria]),
   );
 
   const getLocationsData = () => {
@@ -93,7 +100,8 @@ const TodayList = ({navigation}) => {
           onPress={() => {
             navigation.navigate('DeliveryboyDeliveryDetails', {
               order_number: item.item.order_number,
-              package_photo: item.item.package_photo
+              package_photo: item.item.package_photo,
+              orderItem: item.item,
             });
           }}
           style={styles.packageDetailCard}>
@@ -176,7 +184,7 @@ const TodayList = ({navigation}) => {
   );
 };
 
-const PastList = ({navigation}) => {
+const PastList = ({navigation, filterCriteria}) => {
   const [pastOrderList, setPastOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
@@ -188,6 +196,7 @@ const PastList = ({navigation}) => {
       let postParams = {
         extentedId: userDetails.userDetails[0].ext_id,
         status: 'past',
+        orderType: filterCriteria,
       };
       setLoading(true);
       getDeliveryBoyViewOrdersList(
@@ -206,7 +215,7 @@ const PastList = ({navigation}) => {
       return () => {
         setPastOrderList([]);
       };
-    }, []),
+    }, [filterCriteria]),
   );
 
   const getLocationsData = () => {
@@ -241,7 +250,11 @@ const PastList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyMainDeliveryDetails')}
+          onPress={() =>
+            navigation.navigate('DeliveryboyMainDeliveryDetails', {
+              orderItem: item.item,
+            })
+          }
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -286,7 +299,7 @@ const PastList = ({navigation}) => {
 
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
+            <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
           </View>
         </TouchableOpacity>
 
@@ -383,6 +396,7 @@ const Past = () => {
 const DeliveryboyHistory = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const [filterCriteria, setFilterCriteria] = useState('N');
 
   return (
     <View style={{flex: 1}}>
@@ -391,9 +405,21 @@ const DeliveryboyHistory = ({navigation}) => {
         {/* Your Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
-          <TouchableOpacity>
-            <AntDesign name="filter" size={20} color={colors.secondary} />
-          </TouchableOpacity>
+          <Menu>
+            <MenuTrigger>
+              <AntDesign name="filter" size={20} color={colors.secondary} />
+            </MenuTrigger>
+            <MenuOptions>
+              <MenuOption
+                onSelect={() => setFilterCriteria('N')}
+                text="Normal"
+              />
+              <MenuOption
+                onSelect={() => setFilterCriteria('E')}
+                text="Enterprise"
+              />
+            </MenuOptions>
+          </Menu>
         </View>
         <View style={styles.searchContainer}>
           <AntDesign
@@ -424,10 +450,17 @@ const DeliveryboyHistory = ({navigation}) => {
           tabBarStyle: [{display: 'flex', backgroundColor: '#fff'}],
         }}>
         <Tab.Screen name="Ongoing">
-          {() => <TodayList navigation={navigation} />}
+          {() => (
+            <TodayList
+              navigation={navigation}
+              filterCriteria={filterCriteria}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="Past">
-          {() => <PastList navigation={navigation} />}
+          {() => (
+            <PastList navigation={navigation} filterCriteria={filterCriteria} />
+          )}
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}

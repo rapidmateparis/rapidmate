@@ -129,8 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.white,
     padding: 13,
-    borderBottomRightRadius: 8,
-    borderBottomLeftRadius: 8,
+    borderRadius: 8,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
       width: 0,
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
   },
   locationCard: {
     flexDirection: 'row',
-    alignItems: 'center',
+    marginTop: 5,
   },
   franchiseLocations: {
     fontSize: 14,
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   companyImga: {
-    width: 30,
+    width: 35,
     height: 30,
   },
 });

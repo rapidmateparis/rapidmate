@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Linking,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -19,9 +20,22 @@ import {
   getAVehicleByTypeId,
   getLocationById,
   getViewOrderDetail,
+  orderStatusUpdate,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
+import BicycleImage from '../../image/Cycle-Icon.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Icon.png';
+import PartnerImage from '../../image/Partner-icon.png';
+import VanImage from '../../image/Van-Icon.png';
+import PickupImage from '../../image/Pickup-Icon.png';
+import TruckImage from '../../image/Truck-Icon.png';
+import MiniTruckImage from '../../image/Mini-Truck.png';
+import MiniVanImage from '../../image/Mini-Van.png';
+import SemiTruckImage from '../../image/Semi-Truck.png';
+import BigTruckImage from '../../image/Big-Package.png';
+import {API} from '../../utils/constant';
 
 const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const [delivered, setDelivered] = useState(false);
@@ -33,7 +47,28 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const [vehicleType, setVehicleType] = useState({});
 
   const handleMarkAsDelivered = () => {
-    setDelivered(true);
+    setLoading(true);
+    let params = {
+      order_number: orderNumber,
+      status: 'COMPLETED',
+    };
+    orderStatusUpdate(
+      params,
+      successResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', successResponse[0]._response, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+        setDelivered(true);
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('message===>', JSON.stringify(errorResponse));
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
+      },
+    );
   };
 
   const [isImageModalVisible, setImageModalVisible] = useState(false);
@@ -136,6 +171,35 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     );
   };
 
+  const getVechicleImage = vehicleTypeId => {
+    switch (vehicleTypeId) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return VanImage;
+      case 6:
+        return PickupImage;
+      case 7:
+        return TruckImage;
+      default:
+        return BigTruckImage;
+    }
+  };
+
+  const handleCall = phoneNumber => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to make the call:', err);
+      Alert.alert('Error', 'Unable to make a call');
+    });
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -172,7 +236,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleCall(pickUpLocation.phone_number)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -262,7 +327,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleCall(pickUpLocation.phone_number)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -280,12 +346,6 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Comments:
-            <Text style={styles.dropInfo}>
-              {order.order ? order.order.pickup_notes : ''}
-            </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
             Vehicle:
             <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
@@ -298,8 +358,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
           </View>
           <View>
             <Image
-              style={{width: 55, height: 35}}
-              source={require('../../image/Delivery-PickupTruck-Icon.png')}
+              style={{width: 55, height: 35, resizeMode: 'contain'}}
+              source={getVechicleImage(route.params.orderItem.vehicle_type_id)}
             />
           </View>
         </View>
@@ -331,14 +391,16 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
           {delivered && (
             <Text style={styles.boyEarning}>
               This order is closed, you earned{' '}
-              <Text style={styles.earnedMoney}>€34</Text>
+              <Text style={styles.earnedMoney}>
+                € {route.params.orderItem.delivery_boy_amount}
+              </Text>
             </Text>
           )}
         </View>
         {!delivered && (
           <TouchableOpacity
-            // onPress={handleMarkAsDelivered}
-            onPress={() => toggleModalOTP()}
+            onPress={handleMarkAsDelivered}
+            // onPress={() => toggleModalOTP()}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Mark as Delivered</Text>
           </TouchableOpacity>
@@ -348,6 +410,11 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
         setImageModalVisible={setImageModalVisible}
+        previewImage={
+          route.params.orderItem.package_photo
+            ? route.params.orderItem.package_photo
+            : null
+        }
       />
       <DeliveryboySubmitOTPModal
         isOTPModalVisible={isOTPModalVisible}
