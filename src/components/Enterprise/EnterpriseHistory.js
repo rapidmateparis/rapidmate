@@ -16,7 +16,9 @@ import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useLoader} from '../../utils/loaderContext';
 import {
+  getAllVehicleTypes,
   getDeliveryBoyViewOrdersList,
+  getEnterpriseBranch,
   getEnterpriseOrders,
   getLocations,
 } from '../../data_manager';
@@ -39,6 +41,7 @@ const OneTimeList = ({orders, locations, navigation}) => {
       {orders.map((item, index) => {
         return (
           <View
+            key={index}
             style={{
               paddingHorizontal: 15,
               paddingTop: 5,
@@ -112,19 +115,46 @@ const OneTimeList = ({orders, locations, navigation}) => {
   );
 };
 
-const ShiftsList = ({orders, navigation}) => {
+const ShiftsList = ({orders, branches, vehicles, navigation}) => {
+
+  const getBranchName = branchId => {
+    let result = branches.filter(branch => branch.id == branchId);
+    return result[0]?.branch_name;
+  };
+
+  const getBranchAddress = branchId => {
+    let result = branches.filter(branch => branch.id == branchId);
+    return result[0]?.address;
+  };
+
+  const getVehicleType = vehicleId => {
+    let result = vehicles.filter(vehicle => vehicle.id == vehicleId);
+    return result[0]?.vehicle_type;
+  };
+
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
       {orders.map((item, index) => {
         return (
           <View
+            key={index}
             style={{
               paddingHorizontal: 15,
               paddingTop: 5,
               backgroundColor: '#FBFAF5',
             }}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('EnterpriseShiftDetails')}
+              onPress={() => {
+                let props = {
+                  branchName : getBranchName(item.branch_id),
+                  branchAddress: getBranchAddress(item.branch_id),
+                  fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format('hh A'),
+                  toTime : moment(item.slots[0].to_time, 'HH:mm:ss').format('hh A'),
+                  shiftItem: item,
+                  vehicleType : getVehicleType(item.vehicle_type_id)
+                }
+                navigation.navigate('EnterpriseShiftDetails',{...props});
+              }}
               style={styles.packageDetailCard}>
               <View style={styles.packageshiftHeader}>
                 <View style={styles.packageshiftHeader}>
@@ -132,22 +162,32 @@ const ShiftsList = ({orders, navigation}) => {
                     style={styles.imagesManage}
                     source={require('../../image/Big-Calender.png')}
                   />
-                  <Text style={styles.deliveryTime}>11 AM to 04 PM</Text>
+                  <Text style={styles.deliveryTime}>
+                    {moment(item.slots[0].from_time, 'HH:mm:ss').format('hh A')}
+                    {' to '}
+                    {moment(item.slots[0].to_time, 'HH:mm:ss').format('hh A')}
+                  </Text>
                 </View>
-                <Text style={styles.deliveryTime}>5 hours shift</Text>
+                <Text style={styles.deliveryTime}>
+                  {moment(item.slots[0].to_time, 'HH:mm:ss').diff(
+                    moment(item.slots[0].from_time, 'HH:mm:ss'),
+                  ) / 3600000}{' '}
+                  hours shift
+                </Text>
               </View>
 
               <View style={styles.packageMiddle}>
                 <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromshiftLocation}>North Franchise</Text>
+                <Text style={styles.fromshiftLocation}>
+                  {getBranchAddress(item.branch_id)}
+                </Text>
               </View>
-
-              <View style={styles.packageMiddle}>
+              {/* <View style={styles.packageMiddle}>
                 <MaterialIcons name="my-location" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
                   To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
                 </Text>
-              </View>
+              </View> */}
 
               <View style={styles.footerCard}>
                 <Text
@@ -155,9 +195,11 @@ const ShiftsList = ({orders, navigation}) => {
                     styles.orderActive,
                     {color: colors.Pending, backgroundColor: '#F39C1212'},
                   ]}>
-                  Pending approval
+                  {item.order_status.replace(/_/g, ' ')}
                 </Text>
-                <Text style={styles.orderId}>Motor Bike</Text>
+                <Text style={styles.orderId}>
+                  {getVehicleType(item.vehicle_type_id)}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -176,11 +218,70 @@ function EnterpriseHistory({navigation}) {
   const [shiftsList, setShiftsList] = useState([]);
   const [pastList, setpastList] = useState([]);
   const [locationList, setLocationList] = useState([]);
+  const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+  const [vehicleTypeList, setVehicleTypeList] = useState([]);
 
   useEffect(() => {
+    getVehicleTypes();
     getLocationsData();
+    getBranchesList();
     getEnterpriseOrderList();
   }, []);
+
+  const getVehicleTypes = () => {
+    getAllVehicleTypes(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setVehicleTypeList(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getBranchesList = () => {
+    getEnterpriseBranch(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              var branches = [];
+              for (
+                let index = 0;
+                index < successResponse[0]._response.length;
+                index++
+              ) {
+                const element = successResponse[0]._response[index];
+                element.isSelected = false;
+                branches.push(element);
+              }
+              setEnterpriseBranches(branches);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   const getEnterpriseOrderList = () => {
     setLoading(true);
@@ -199,7 +300,11 @@ function EnterpriseHistory({navigation}) {
             if (element.delivery_type_id == 2) {
               currentOnetimeList.push(element);
             }
-            if (element.delivery_type_id == 3) {
+            if (
+              element.delivery_type_id == 3 &&
+              element.slots &&
+              element.slots.length > 0
+            ) {
               currentShiftsList.push(element);
             }
           });
@@ -303,7 +408,14 @@ function EnterpriseHistory({navigation}) {
           )}
         </Tab.Screen>
         <Tab.Screen name="Shifts">
-          {() => <ShiftsList orders={shiftsList} navigation={navigation} />}
+          {() => (
+            <ShiftsList
+              orders={shiftsList}
+              branches={enterpriseBranches}
+              vehicles={vehicleTypeList}
+              navigation={navigation}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="Past">
           {() => (

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,9 +11,24 @@ import {
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import moment from 'moment';
 
-const EnterpriseShiftDetails = ({navigation}) => {
+const EnterpriseShiftDetails = ({route, navigation}) => {
+  const params = route.params;
+  const {userDetails} = useUserDetails();
+  const [totalHours, setTotalHours] = useState(0);
 
+  useEffect(() => {
+    var hours = 0;
+    params.shiftItem.slots.forEach(element => {
+      hours +=
+        moment(element.to_time, 'HH:mm:ss').diff(
+          moment(element.from_time, 'HH:mm:ss'),
+        ) / 3600000;
+    });
+    setTotalHours(hours);
+  }, []);
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
@@ -24,10 +39,12 @@ const EnterpriseShiftDetails = ({navigation}) => {
               source={require('../../image/home.png')}
             />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
+              <Text style={styles.franchiseStreet}>{params.branchName}</Text>
               <View style={styles.locationCard}>
                 <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {params.branchAddress}
+                </Text>
               </View>
             </View>
           </View>
@@ -38,9 +55,14 @@ const EnterpriseShiftDetails = ({navigation}) => {
               source={require('../../image/driver.jpeg')}
             />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>John Doe</Text>
+              <Text style={styles.franchiseStreet}>
+                {userDetails.userDetails[0].first_name}{' '}
+                {userDetails.userDetails[0].last_name}
+              </Text>
               <View style={styles.locationCard}>
-                <Text style={styles.franchiseSubTitle}>VOLVO FH16 2022</Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {params.vehicleType}
+                </Text>
               </View>
             </View>
           </View>
@@ -51,20 +73,26 @@ const EnterpriseShiftDetails = ({navigation}) => {
               source={require('../../image/Big-Calender.png')}
             />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>Started 11 AM to 04 PM</Text>
+              <Text style={styles.franchiseStreet}>
+                Started {params.fromTime} to {params.toTime}
+              </Text>
               <View>
                 <Text style={styles.franchiseSubTitle}>
-                  Total duration: <Text style={styles.boldTexts}>5 hours</Text>
+                  Total duration:{' '}
+                  <Text style={styles.boldTexts}>{totalHours} hours</Text>
                 </Text>
                 <Text style={styles.franchiseSubTitle}>
-                  Total deliveries: <Text style={styles.boldTexts}>12</Text>
+                  Total deliveries:{' '}
+                  <Text style={styles.boldTexts}>
+                    {params.shiftItem.slots.length}
+                  </Text>
                 </Text>
-                <Text style={styles.franchiseSubTitle}>Motor Bike</Text>
+                <Text style={styles.franchiseSubTitle}>{params.vehicleType}</Text>
               </View>
             </View>
           </View>
 
-          <View style={styles.invoiceCard}>
+          {/* <View style={styles.invoiceCard}>
             <View>
               <Image source={require('../../image/order-fare.png')} />
             </View>
@@ -101,7 +129,7 @@ const EnterpriseShiftDetails = ({navigation}) => {
                 <Text style={styles.paidWith}>Paid with mastercard</Text>
               </View>
             </View>
-          </View>
+          </View> */}
         </View>
       </View>
     </ScrollView>

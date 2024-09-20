@@ -36,13 +36,13 @@ const EnterpriseOrderCancelled = ({navigation}) => {
       </View>
       <View style={styles.actionBtnCard}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('')}
+          onPress={() => navigation.navigate('EnterpriseBottomNav')}
           style={styles.goHomeBtn}>
           <Text style={styles.buttonText}>Go home</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpriseOrderPickup')}
+          onPress={() => navigation.navigate('EnterpriseBottomNav')}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Order again</Text>
         </TouchableOpacity>
