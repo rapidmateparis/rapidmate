@@ -939,3 +939,21 @@ export const addConsumerBillingDetails = (
     },
   );
 };
+
+export const fetchEnterprisePlans = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.enterprisePlanSearch,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
