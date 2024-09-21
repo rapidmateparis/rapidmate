@@ -32,7 +32,7 @@ const PickupHome = ({navigation}) => {
     getServiceTypeApi(
       null,
       successResponse => {
-        console.log('getServiceTypeApi', successResponse[0]._response);
+        console.log('getServiceTypeApi===>', successResponse[0]._response);
         saveServiceTypeDetails(successResponse[0]._response);
       },
       errorResponse => {
@@ -69,14 +69,14 @@ const PickupHome = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('Notifications')}>
             <EvilIcons name="bell" size={40} color="#000" />
-          </TouchableOpacity> 
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
             });
           }}>
           <View style={styles.pickcard}>
@@ -97,7 +97,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
             });
           }}>
           <View>
@@ -118,7 +118,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
             });
           }}>
           <View style={styles.pickcard}>
@@ -139,7 +139,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickupPack}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
             });
           }}>
           <View style={styles.packingCardImgas}>

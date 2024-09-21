@@ -939,3 +939,22 @@ export const addConsumerBillingDetails = (
     },
   );
 };
+
+export const getConsumerBillingDetails = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.getconsumerBillingDetailsUrl + param);
+  axiosCall(
+    API.getconsumerBillingDetailsUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
