@@ -46,16 +46,7 @@ const EnterpriseLookingForDriver = ({navigation}) => {
               });
             },
             errorResponse => {
-              console.log('getProfile===>errorResponse', errorResponse);
-              if (errorResponse.length > 0) {
-                Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-                  {text: 'OK', onPress: () => {}},
-                ]);
-              } else {
-                Alert.alert('Error Alert', errorResponse.errors.msg, [
-                  {text: 'OK', onPress: () => {}},
-                ]);
-              }
+              navigation.navigate('EnterpriseDriverNotAvailable', errorResponse);
             },
           );
         }

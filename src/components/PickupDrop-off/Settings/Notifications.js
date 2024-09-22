@@ -112,7 +112,7 @@ const Notifications = ({navigation}) => {
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
-        <View>
+        <View style={{marginTop: 10,}}>
           <SectionList
             sections={notificationList}
             renderItem={renderItem}

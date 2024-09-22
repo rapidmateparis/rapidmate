@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Linking,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -191,6 +192,14 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     }
   };
 
+  const handleCall = phoneNumber => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to make the call:', err);
+      Alert.alert('Error', 'Unable to make a call');
+    });
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -227,7 +236,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleCall(pickUpLocation.phone_number)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -317,7 +327,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleCall(pickUpLocation.phone_number)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -332,12 +343,6 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <Text style={styles.detailsId}>
               {' '}
               {order.order ? order.order.order_number : '123456'}
-            </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Comments:
-            <Text style={styles.dropInfo}>
-              {order.order ? order.order.pickup_notes : ''}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>

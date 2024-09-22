@@ -51,7 +51,7 @@ const Settings = ({navigation}) => {
                 userDetails.userDetails[0].last_name}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('PickupTakeSelfie')}
+              onPress={() => navigation.navigate('ConsumerManageProfile')}
               style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />

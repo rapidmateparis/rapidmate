@@ -291,11 +291,11 @@ const PickupPayment = ({route, navigation}) => {
           <View style={[styles.distanceTime, {marginVertical: 15}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From{' '}
+              From:{' '}
               {params.sourceLocation.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : ''}{' '}
-              to{' '}
+              To:{' '}
               {params.destinationLocation.destinationDescription
                 ? params.destinationLocation.destinationDescription
                 : ''}

@@ -8,7 +8,7 @@ import MotorbikeImage from '../../image/Motorbike-Modal.png';
 import CarImage from '../../image/Car-Modal.png';
 import PartnerImage from '../../image/Partner-Modal.png';
 import VanImage from '../../image/Van-Modal.png';
-import MiniVanImage from '../../image/Pickup-Modal.png';
+import PickupImage from '../../image/Pickup-Modal.png';
 import SemiTruckImage from '../../image/Truck-Modal.png';
 import OtherImage from '../../image/Other-Modal.png';
 
@@ -43,12 +43,12 @@ const EnterpriseVehcleDimensions = ({
       vehicleImageStyle = styles.partnerImage;
       break;
     case 5:
-      vehicleImageSource = VanImage;
-      vehicleImageStyle = styles.vanImage;
+      vehicleImageSource = PickupImage;
+      vehicleImageStyle = styles.pickupImage;
       break;
     case 6:
-      vehicleImageSource = MiniVanImage;
-      vehicleImageStyle = styles.miniVanImage;
+      vehicleImageSource = VanImage;
+      vehicleImageStyle = styles.vanImage;
       break;
     case 7:
       vehicleImageSource = SemiTruckImage;
@@ -86,7 +86,11 @@ const EnterpriseVehcleDimensions = ({
             </View>
             <Text style={styles.infoText}>
               Length{' '}
-              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.length ? vehicleDetails.length + ' feet': 'null'}</Text>
+              <Text style={styles.boldText}>
+                {vehicleDetails && vehicleDetails.length
+                  ? vehicleDetails.length + ' feet'
+                  : 'null'}
+              </Text>
             </Text>
           </View>
 
@@ -96,7 +100,11 @@ const EnterpriseVehcleDimensions = ({
             </View>
             <Text style={styles.infoText}>
               Height{' '}
-              <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.height ? vehicleDetails.height + ' feet': 'null'}</Text>
+              <Text style={styles.boldText}>
+                {vehicleDetails && vehicleDetails.height
+                  ? vehicleDetails.height + ' feet'
+                  : 'null'}
+              </Text>
             </Text>
           </View>
 
@@ -105,7 +113,12 @@ const EnterpriseVehcleDimensions = ({
               <Text style={styles.countText}>3</Text>
             </View>
             <Text style={styles.infoText}>
-              Width <Text style={styles.boldText}>{vehicleDetails && vehicleDetails.width ? vehicleDetails.width + ' feet': 'null'}</Text>
+              Width{' '}
+              <Text style={styles.boldText}>
+                {vehicleDetails && vehicleDetails.width
+                  ? vehicleDetails.width + ' feet'
+                  : 'null'}
+              </Text>
             </Text>
           </View>
         </View>
@@ -121,7 +134,6 @@ const EnterpriseVehcleDimensions = ({
 const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: colors.white,
-    height: 480,
     width: '100%',
     borderRadius: 15,
   },
@@ -143,7 +155,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 40,
+    marginTop: 10,
   },
   infoContainer: {
     marginBottom: 20,
@@ -178,6 +191,7 @@ const styles = StyleSheet.create({
   okButton: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginBottom: 20,
   },
   okButtonText: {
     fontSize: 14,
@@ -209,7 +223,7 @@ const styles = StyleSheet.create({
     width: 247,
     height: 156,
   },
-  miniVanImage: {
+  pickupImage: {
     width: 233,
     height: 184,
   },

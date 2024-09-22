@@ -285,14 +285,14 @@ const DeliveryDetails = ({navigation, route}) => {
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{paddingHorizontal: 15,}}>
         <View style={{width: '100%', height: 250}}>
           <MapDeliveryDetails />
         </View>
 
-        <View style={styles.driverCard}>
+        <View>
           {route.params?.orderItem?.is_delivery_boy_allocated == 1 ? (
-            <View>
+            <View style={styles.driverCard}>
               <Image
                 style={styles.driverImage}
                 source={{

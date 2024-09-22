@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   vehicleName: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
@@ -352,7 +352,6 @@ const styles = StyleSheet.create({
   },
   locationAddress: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   TextAddress: {
     fontSize: 14,

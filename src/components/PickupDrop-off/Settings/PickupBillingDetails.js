@@ -189,12 +189,13 @@ const PickupBillingDetails = ({navigation}) => {
 
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{paddingHorizontal: 15, marginVertical: 15,}}>
         <View>
           <Text style={styles.label}>Account</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={account}
+              itemTextStyle={styles.itemtextStyle}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -267,6 +268,7 @@ const PickupBillingDetails = ({navigation}) => {
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
+              itemTextStyle={styles.itemtextStyle}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -337,6 +339,7 @@ const PickupBillingDetails = ({navigation}) => {
           <View style={styles.containerCountry}>
             <Dropdown
               data={cityList}
+              itemTextStyle={styles.itemtextStyle}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -449,6 +452,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 15,
     width: '100%',
+    color: colors.black,
     fontFamily: 'Montserrat-Regular',
     borderWidth: 1,
     borderRadius: 5,
@@ -461,6 +465,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     width: '95%',
     fontFamily: 'Montserrat-Regular',
+    color: colors.black,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#2C303336',
@@ -469,21 +474,6 @@ const styles = StyleSheet.create({
   nameInputDiv: {
     width: '50%',
     marginBottom: 15,
-  },
-  inputSearchStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
-  },
-  placeholderStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
-  },
-  selectedTextStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
   },
   logbutton: {
     width: '100%',
@@ -497,6 +487,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
   },
   itemtextStyle: {
     color: colors.text,

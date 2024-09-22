@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
+  Linking,
   BackHandler,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -68,6 +70,14 @@ const OrderPickup = ({route, navigation}) => {
       2,
       '0',
     )}`;
+  };
+
+  const handleCall = phoneNumber => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to make the call:', err);
+      Alert.alert('Error', 'Unable to make a call');
+    });
   };
 
   return (
@@ -197,7 +207,7 @@ const OrderPickup = ({route, navigation}) => {
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => handleCall(driverDetails?.deliveryBoy?.phone_number)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>

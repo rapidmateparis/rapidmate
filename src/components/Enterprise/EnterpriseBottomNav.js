@@ -189,17 +189,6 @@ const EnterpriseBottomNav = ({navigation}) => {
         name="Account"
         component={EnterprisesSettins}
         options={{
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{paddingLeft: 10}}>
-              <MaterialIcons
-                name="keyboard-backspace"
-                size={30}
-                color={colors.text}
-              />
-            </TouchableOpacity>
-          ),
           headerTitle: 'Settings',
           headerTitleStyle: {
             fontFamily: 'Montserrat-SemiBold',
