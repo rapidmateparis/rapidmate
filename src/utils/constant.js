@@ -92,4 +92,5 @@ export const API = {
   consumerPaymentMethodUrl: BASE_URL + 'consumer/paymentmethod',
   consumerBillingDetailsUrl: BASE_URL + 'consumer/billing/address/update',
   getconsumerBillingDetailsUrl: BASE_URL + 'consumer/billing/address/get/',
+  enterprisePlanSearch: BASE_URL + 'enterprise/order/plan/search',
 };

@@ -940,12 +940,25 @@ export const addConsumerBillingDetails = (
   );
 };
 
+export const fetchEnterprisePlans = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterprisePlanSearch,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const getConsumerBillingDetails = (
   param,
   successCallback,
   errorCallback,
 ) => {
-  console.log('url', API.getconsumerBillingDetailsUrl + param);
   axiosCall(
     API.getconsumerBillingDetailsUrl + param,
     HTTPMethod.GET,
