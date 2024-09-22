@@ -46,6 +46,8 @@ const PickupOrderPreview = ({route, navigation}) => {
     finalPrice = params.selectedVehiclePrice;
   }
 
+  console.log("<===params===>", params)
+
   const pickupOrderRequest = () => {
     navigation.navigate('PickupPayment', {props: params});
   };

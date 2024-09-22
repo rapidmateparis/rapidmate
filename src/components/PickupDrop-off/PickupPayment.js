@@ -48,10 +48,26 @@ const PickupPayment = ({route, navigation}) => {
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
+  const [offerDiscount, setOfferDiscount] = useState(params.paymentDiscount);
 
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  function calculateFinalPrice(originalPrice, discountPercentage) {
+    console.log(originalPrice, discountPercentage)
+    const discount = (originalPrice * discountPercentage) / 100;
+    const finalPrice = originalPrice - discount;
+    console.log(finalPrice)
+    return finalPrice.toFixed(2);
+  }
+
+  useEffect(() => {
+    {
+      offerDiscount > 0 &&
+        setPaymentAmount(calculateFinalPrice(paymentAmount, offerDiscount));
+    }
+  }, []);
 
   useEffect(() => {
     if (orderNumber) {
@@ -115,10 +131,15 @@ const PickupPayment = ({route, navigation}) => {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: 'Go Home', onPress: () => navigation.navigate('PickupBottomNav')},
+        {
+          text: 'Go Home',
+          onPress: () => navigation.navigate('PickupBottomNav'),
+        },
       ]);
     }
   };
+
+  console.log('print_data===>', params);
 
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
@@ -330,6 +351,19 @@ const PickupPayment = ({route, navigation}) => {
             20% off on city bank credit card!
           </Text>
         </View>
+
+        {offerDiscount > 0 && (
+          <View style={styles.discountCard}>
+            <Image
+              style={{marginRight: 20}}
+              source={require('../../image/Group.png')}
+            />
+            <Text style={styles.discountInfo}>
+              {offerDiscount}% off on{' '}
+              {params.serviceTypeId == 1 ? 'Schedule Order' : 'Pickup&Drop Order'}
+            </Text>
+          </View>
+        )}
 
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>

@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
@@ -10,10 +9,10 @@ import {
   ImageBackground,
   Alert,
   Linking,
+  BackHandler,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 import {API} from '../../utils/constant';
@@ -30,7 +29,18 @@ const OrderPickup = ({route, navigation}) => {
   const [locationList, setLocationList] = useState(route.params.locationList);
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
-  
+
+  useEffect(() => {
+    const onBackPress = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+    return () => backHandler.remove();
+  }, []);
 
   const handleCopyOrderId = () => {
     Clipboard.setString(orderId);
@@ -151,7 +161,10 @@ const OrderPickup = ({route, navigation}) => {
 
             <View style={styles.driverCard}>
               <View style={{position: 'relative'}}>
-                {console.log("driverDetails.deliveryBoy===>route.params", route.params.driverDetails)}
+                {console.log(
+                  'driverDetails.deliveryBoy===>route.params',
+                  route.params.driverDetails,
+                )}
                 {driverDetails?.deliveryBoy?.profile_pic ? (
                   <Image
                     style={{width: 60, height: 60, borderRadius: 30}}
@@ -205,7 +218,7 @@ const OrderPickup = ({route, navigation}) => {
                 navigation.navigate('OrderConfirm', {
                   driverDetails: route.params.driverDetails,
                   locationList: route.params.locationList,
-                  placedOrderDetails: placedOrderDetails[0]
+                  placedOrderDetails: placedOrderDetails[0],
                 })
               }
               style={styles.trackOrderBtn}>

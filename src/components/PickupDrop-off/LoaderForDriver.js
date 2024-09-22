@@ -2,16 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
   ImageBackground,
   Alert,
+  BackHandler,
 } from 'react-native';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
 import {
@@ -34,6 +32,18 @@ const LoaderForDriver = ({navigation}) => {
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
   };
+
+  useEffect(() => {
+    const onBackPress = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+    return () => backHandler.remove();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {

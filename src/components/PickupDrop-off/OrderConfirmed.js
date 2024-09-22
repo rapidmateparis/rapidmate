@@ -13,9 +13,9 @@ import {
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 import {API} from '../../utils/constant';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const OrderConfirm = ({route, navigation}) => {
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
@@ -29,8 +29,9 @@ const OrderConfirm = ({route, navigation}) => {
   const [orderDetails, setOrderDetails] = useState(
     route.params.placedOrderDetails,
   );
+  const {userDetails} = useUserDetails();
 
-  console.log("route.params.driverDetails", route.params.driverDetails)
+  console.log('route.params.driverDetails', route.params.driverDetails);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
