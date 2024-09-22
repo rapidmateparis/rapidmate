@@ -144,7 +144,6 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const getPriceUsingVechicelType = vehicleTypeId => {
-    //€
     let finalPrice = 0;
     let result = distancePriceList.filter(
       priceList => priceList.vehicle_type_id == vehicleTypeId,
@@ -190,25 +189,6 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
-    console.log(
-      'navigateToAddPickupAddress',
-      'selectedVehicle',
-      selectedVehicle,
-      'sourceLocation',
-      sourceLocation,
-      'destinationLocation',
-      destinationLocation,
-      'selectedVehiclePrice',
-      selectedVehiclePrice,
-      'distanceTime',
-      distanceTime,
-      'selectedVehicleDetails',
-      selectedVehicleDetails,
-      'sourceLocationId',
-      sourceLocationId,
-      'destinationLocationId',
-      destinationLocationId,
-    );
     if (
       selectedVehicle &&
       sourceLocation &&
@@ -236,6 +216,7 @@ const PickupAddress = ({route, navigation}) => {
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
         serviceTypeId: route?.params?.pickupService?.id || 1,
+        paymentDiscount: route?.params?.pickupService?.discount,
         ...scheduleParam,
       });
     } else {

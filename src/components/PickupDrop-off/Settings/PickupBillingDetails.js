@@ -15,6 +15,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {
   addConsumerBillingDetails,
   getCityList,
+  getConsumerBillingDetails,
   getCountryList,
   getStateList,
 } from '../../../data_manager';
@@ -27,8 +28,6 @@ const PickupBillingDetails = ({navigation}) => {
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [address, setAddress] = useState(null);
-  const [city, setCity] = useState(null);
-  const [country, setCountry] = useState(null);
   const [postalcode, setPostalCode] = useState(null);
   const [dninumber, setDNINumber] = useState(null);
   const {setLoading} = useLoader();
@@ -127,7 +126,26 @@ const PickupBillingDetails = ({navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        console.log('errorResponse', errorResponse[0]._errors.message);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+
+    getConsumerBillingDetails(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        let resultResponse = successResponse[0]._response;
+        setFirstName(resultResponse.first_name);
+        setLastName(resultResponse.last_name);
+        setAddress(resultResponse.address);
+        setDropdownCountryValue(resultResponse.country_id);
+        setDropdownStateValue(resultResponse.state_id);
+        setDropdownCityValue(resultResponse.city_id);
+        setPostalCode(resultResponse.postal_code);
+        setDNINumber(resultResponse.dni_number);
+      },
+      errorResponse => {
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -137,7 +155,6 @@ const PickupBillingDetails = ({navigation}) => {
 
   const submitBillingDetails = () => {
     let params = {
-      id: 1,
       consumer_ext_id: userDetails.userDetails[0].ext_id,
       first_name: firstName,
       last_name: lastName,
@@ -152,7 +169,7 @@ const PickupBillingDetails = ({navigation}) => {
     addConsumerBillingDetails(
       params,
       successResponse => {
-        Alert.alert('Error Alert', successResponse[0]._response.message, [
+        Alert.alert('Success', successResponse[0]._response.message, [
           {
             text: 'OK',
             onPress: () => {
@@ -162,6 +179,7 @@ const PickupBillingDetails = ({navigation}) => {
         ]);
       },
       errorResponse => {
+        console.log('errorResponse', JSON.stringify(errorResponse))
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -258,7 +276,7 @@ const PickupBillingDetails = ({navigation}) => {
               valueField="value"
               placeholder={!isFocus ? 'Select' : '...'}
               searchPlaceholder="Search.."
-              value={country}
+              value={dropdownCountryValue}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={item => {
@@ -328,7 +346,7 @@ const PickupBillingDetails = ({navigation}) => {
               valueField="value"
               placeholder={!isFocus ? 'Select' : '...'}
               searchPlaceholder="Search.."
-              value={city}
+              value={dropdownCityValue}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={item => {

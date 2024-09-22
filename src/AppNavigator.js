@@ -450,18 +450,8 @@ const AppNavigator = () => {
               <Stack.Screen
                 name="OrderPickup"
                 component={OrderPickup}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
+                options={() => ({
+                  headerLeft: null,
                   headerTitle: 'Order Confirmed',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
