@@ -971,3 +971,18 @@ export const getConsumerBillingDetails = (
     },
   );
 };
+
+export const changeUserPassword = (param, successCallback, errorCallback) => {
+  console.log('url', API.changePasswordUrl, param);
+  axiosCall(
+    API.changePasswordUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

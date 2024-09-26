@@ -55,10 +55,10 @@ const PickupPayment = ({route, navigation}) => {
   };
 
   function calculateFinalPrice(originalPrice, discountPercentage) {
-    console.log(originalPrice, discountPercentage)
+    console.log(originalPrice, discountPercentage);
     const discount = (originalPrice * discountPercentage) / 100;
     const finalPrice = originalPrice - discount;
-    console.log(finalPrice)
+    console.log(finalPrice);
     return finalPrice.toFixed(2);
   }
 
@@ -308,7 +308,12 @@ const PickupPayment = ({route, navigation}) => {
           </View>
         </View>
 
-        <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.inputContainer,
+            {backgroundColor: promoCodeResponse && colors.lightGrey},
+          ]}
+          pointerEvents={promoCodeResponse ? 'none' : 'auto'}>
           <Image source={require('../../image/ticket-discount.png')} />
           <TextInput
             style={styles.input}
@@ -360,7 +365,9 @@ const PickupPayment = ({route, navigation}) => {
             />
             <Text style={styles.discountInfo}>
               {offerDiscount}% off on{' '}
-              {params.serviceTypeId == 1 ? 'Schedule Order' : 'Pickup&Drop Order'}
+              {params.serviceTypeId == 1
+                ? 'Schedule Order'
+                : 'Pickup&Drop Order'}
             </Text>
           </View>
         )}
