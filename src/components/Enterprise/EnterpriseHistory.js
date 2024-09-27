@@ -122,9 +122,13 @@ const ShiftsList = ({orders, branches, vehicles, navigation}) => {
     return result[0]?.branch_name;
   };
 
-  const getBranchAddress = branchId => {
+  const getBranchAddress = (branchId) => {
     let result = branches.filter(branch => branch.id == branchId);
-    return result[0]?.address;
+    if (result.length > 0) {
+      let branch = result[0];
+      return `${branch.address}, ${branch.city}, ${branch.state}`;
+    }
+    return null;
   };
 
   const getVehicleType = vehicleId => {

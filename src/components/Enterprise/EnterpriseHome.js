@@ -21,7 +21,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dimensions} from 'react-native';
-import { useUserDetails } from '../commonComponent/StoreContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
 const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
@@ -143,6 +143,10 @@ const EnterpriseHome = ({navigation}) => {
               data={dropdownData1}
               search
               maxHeight={300}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'North Street Franchise' : '...'}
@@ -154,13 +158,16 @@ const EnterpriseHome = ({navigation}) => {
                 setDropdownStreet(item.value);
                 setIsFocus(false);
               }}
-              placeholderStyle={styles.placeholderStyle}
             />
           </View>
 
           <View style={styles.containerCountrySecond}>
             <Dropdown
               data={dropdownData2}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               search
               maxHeight={300}
               labelField="label"
@@ -174,7 +181,6 @@ const EnterpriseHome = ({navigation}) => {
                 setDropdownWeek(item.value);
                 setIsFocus(false);
               }}
-              placeholderStyle={styles.placeholderStyle}
             />
           </View>
         </View>
@@ -608,9 +614,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   placeholderStyle: {
+    color: '#999',
     fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
     color: colors.text,
-    fontFamily: 'Montserrat-Regular',
+    fontSize: 12,
   },
 });
 

@@ -40,7 +40,7 @@ const EnterpriseLookingForDriver = ({navigation}) => {
           getAllocatedEnterprise(
             params,
             successResponse => {
-              navigation.navigate('OrderPickup', {
+              navigation.navigate('EnterpriseOrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
