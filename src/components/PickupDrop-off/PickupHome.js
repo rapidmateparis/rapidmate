@@ -159,7 +159,11 @@ const PickupHome = ({navigation}) => {
                 size={15}
                 color="#FF0058"
               />
-              <Text style={styles.discountPercentage}>15% OFF</Text>
+              {serviceTypeDetails && (
+                <Text style={styles.discountPercentage}>
+                  {serviceTypeDetails[0]?.discount}% OFF
+                </Text>
+              )}
             </View>
           </View>
         </TouchableOpacity>
