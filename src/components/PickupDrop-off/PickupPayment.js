@@ -311,27 +311,48 @@ const PickupPayment = ({route, navigation}) => {
         <View
           style={[
             styles.inputContainer,
-            {backgroundColor: promoCodeResponse && colors.lightGrey},
-          ]}
-          pointerEvents={promoCodeResponse ? 'none' : 'auto'}>
+            {
+              backgroundColor: promoCodeResponse
+                ? colors.lightGrey
+                : colors.white,
+            },
+          ]}>
           <Image source={require('../../image/ticket-discount.png')} />
           <TextInput
             style={styles.input}
             placeholder="Promo code"
             placeholderTextColor="#999"
+            editable={promoCodeResponse ? false : true}
             onChangeText={text => setPromoCode(text)}
           />
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.secondary,
-              paddingHorizontal: 20,
-              paddingVertical: 13,
-              borderTopRightRadius: 10,
-              borderBottomEndRadius: 10,
-            }}
-            onPress={applyPromoCode}>
-            <AntDesign name="check" size={20} color="#fff" />
-          </TouchableOpacity>
+          {promoCodeResponse ? (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={() => {
+                setPromoCodeResponse(null);
+                setPaymentAmount(totalAmount)
+              }}>
+              <AntDesign name="close" size={20} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={applyPromoCode}>
+              <AntDesign name="check" size={20} color="#fff" />
+            </TouchableOpacity>
+          )}
         </View>
         {promoCodeResponse && (
           <Text
