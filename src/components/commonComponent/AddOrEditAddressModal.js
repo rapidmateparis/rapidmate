@@ -11,6 +11,7 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dropdown} from 'react-native-element-dropdown';
+import { ScrollView } from 'react-native-gesture-handler';
 
 function AddOrEditAddressModal({
   modalVisible,
@@ -60,7 +61,7 @@ function AddOrEditAddressModal({
   return (
     <View style={{flex: 1}}>
       <Modal isVisible={modalVisible}>
-        <View style={styles.modalContent}>
+        <ScrollView style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerTitle}>
               {addressId == 0 ? 'Add new address' : 'Edit address'}
@@ -223,7 +224,7 @@ function AddOrEditAddressModal({
               <Text style={styles.okButton}>Save</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     </View>
   );

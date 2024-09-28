@@ -15,8 +15,15 @@ import {colors} from '../../../colors';
 import MapDeliveryDetails from '../../commonComponent/MapDeliveryDetails';
 import EnterpriseAddNewLocationsMap from '../../commonComponent/EnterpriseAddNewLocationsMap';
 
-const EnterpriseAddNewLocation = ({navigation}) => {
+const EnterpriseAddNewLocation = ({route, navigation}) => {
   const [title, setTitle] = useState('');
+  const params = route.params ? route.params.location : null
+
+  useState(()=>{
+    if (params) {
+      setTitle(params.branch_name)
+    }
+  },[])
 
   return (
     <KeyboardAvoidingView>
@@ -51,7 +58,7 @@ const EnterpriseAddNewLocation = ({navigation}) => {
         </View>
       </View>
       <View style={{width: '100%', height: 400}}>
-        <EnterpriseAddNewLocationsMap title = {title} />
+        <EnterpriseAddNewLocationsMap title = {title} location = {params} />
       </View>
     </KeyboardAvoidingView>
   );

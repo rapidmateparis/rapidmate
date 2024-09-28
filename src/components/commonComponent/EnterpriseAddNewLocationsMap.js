@@ -28,7 +28,11 @@ import {
 import {useDropAddress} from '../commonComponent/StoreContext';
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {useLoader} from '../../utils/loaderContext';
-import {createEnterpriseBranch, getLocationId} from '../../data_manager';
+import {
+  createEnterpriseBranch,
+  getLocationId,
+  updateEnterpriseBranch,
+} from '../../data_manager';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Custom Marker Components
@@ -40,20 +44,6 @@ const MyCustomFlagMarker = () => (
   <Image source={require('../../image/destination-flag-icon.png')} />
 );
 
-const MyCustomCalloutView = () => (
-  <View>
-    <Text
-      style={{
-        textAlign: 'center',
-        color: colors.text,
-        fontFamily: 'Montserrat-SemiBold',
-        fontSize: 16,
-      }}>
-      Hello
-    </Text>
-  </View>
-);
-
 const EnterpriseAddNewLocationsMap = props => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const {savePickupAddress} = usePickupAddress();
@@ -63,21 +53,18 @@ const EnterpriseAddNewLocationsMap = props => {
   const navigation = useNavigation();
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
-  const markers = [
-    {
-      id: 1,
-      title: 'My Location',
-      description: 'I am here',
-      coordinate: {
-        latitude: 48.85754309772872,
-        longitude: 2.3513877855537912,
-      },
-    },
-    // Add more markers if needed
-  ];
+  const [location, setLocation] = useState(props.location);
+  var sourceLocationText = '';
+  if (location) {
+    sourceLocationText = location.address;
+    sourceLocationText += location.city ? ', ' + location.city : '';
+    sourceLocationText += location.state ? ', ' + location.state : '';
+    sourceLocationText += location.country ? ', ' + location.country : '';
+  }
 
-  const {pickupAddress, setPickupAddress} = usePickupAddress();
-  const {dropAddress, setDropAddress} = useDropAddress();
+  useEffect(() => {
+    setSelectedLocation(props.location);
+  }, []);
 
   // Function to move map view to a specific location
   const moveToLocation = location => {
@@ -97,6 +84,7 @@ const EnterpriseAddNewLocationsMap = props => {
         {text: 'OK', onPress: () => {}},
       ]);
     } else {
+      setLoading(true);
       let requestParams = {
         enterprise_ext_id: userDetails.userDetails[0].ext_id,
         branch_name: props.title,
@@ -108,22 +96,41 @@ const EnterpriseAddNewLocationsMap = props => {
         latitude: selectedLocation.latitude,
         longitude: selectedLocation.longitude,
       };
-      setLoading(true);
-      createEnterpriseBranch(
-        requestParams,
-        successResponse => {
-          if (successResponse[0]._success) {
+      if (props.location) {
+        requestParams.id = props.location.id;
+        requestParams.enterprise_id = props.location.enterprise_id;
+        updateEnterpriseBranch(
+          requestParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              setLoading(false);
+              navigation.goBack();
+            }
+          },
+          errorResponse => {
             setLoading(false);
-            navigation.goBack();
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      } else {
+        createEnterpriseBranch(
+          requestParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              setLoading(false);
+              navigation.goBack();
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      }
     }
   };
 
@@ -145,9 +152,19 @@ const EnterpriseAddNewLocationsMap = props => {
                   description: {color: colors.black},
                   color: colors.black,
                 }}
+                ref={ref => {
+                  if (location) {
+                    ref?.setAddressText(sourceLocationText);
+                  }
+                }}
                 textInputProps={{
                   placeholderTextColor: colors.lightGrey,
                   returnKeyType: 'search',
+                  onChangeText: text => {
+                    if (text) {
+                      setLocation(null);
+                    }
+                  },
                 }}
                 fetchDetails={true}
                 placeholder="Set location address"

@@ -96,4 +96,8 @@ export const API = {
   changePasswordUrl: BASE_URL + 'authuser/changepassword',
   enterpriseDashboardUrl: BASE_URL + 'enterprise/dashboard/',
   imageViewUrl: BASE_URL + 'documents/view/',
+  getEnterpriseAddressListUrl: BASE_URL + 'enterprise/address/list/',
+  createEnterpriseAddressUrl: BASE_URL + 'enterprise/address/create',
+  addressBookUpdateEnterpriseUrl: BASE_URL + 'enterprise/address/update',
+  addressBookDeleteEnterpriseUrl: BASE_URL + 'enterprise/address/delete/',
 };
