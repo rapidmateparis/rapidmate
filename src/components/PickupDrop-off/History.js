@@ -16,7 +16,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useLoader} from '../../utils/loaderContext';
-import {getConsumerViewOrdersList, getLocations} from '../../data_manager';
+import {
+  getConsumerViewOrdersList,
+  getConsumerViewOrdersListBySearch,
+  getLocations,
+} from '../../data_manager';
 import {RefreshControl} from 'react-native-gesture-handler';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
@@ -24,13 +28,13 @@ import moment from 'moment';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = ({navigation}) => {
-  const [searchText, setSearchText] = useState('');
+const TodayList = ({navigation, searchText}) => {
   const [index, setIndex] = useState(0);
   const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
+  const timeout = React.useRef(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -38,6 +42,41 @@ const TodayList = ({navigation}) => {
       getOrderList();
     }, []),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+      orderNumber: searchValue,
+    };
+    getConsumerViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLoading(true);
@@ -183,11 +222,12 @@ const TodayList = ({navigation}) => {
   );
 };
 
-const PastList = ({navigation}) => {
+const PastList = ({navigation, searchText}) => {
   const {setLoading} = useLoader();
   const [pastOrderList, setPastOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
+  const timeout = React.useRef(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -195,6 +235,41 @@ const PastList = ({navigation}) => {
       getOrderList();
     }, []),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setPastOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+      orderNumber: searchValue,
+    };
+    getConsumerViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setPastOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setPastOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLoading(true);
@@ -354,6 +429,15 @@ function History({navigation}) {
             value={searchText}
             onChangeText={setSearchText}
           />
+          {searchText && (
+            <AntDesign
+              name="close"
+              size={20}
+              color="#000"
+              style={styles.searchIcon}
+              onPress={() => setSearchText('')}
+            />
+          )}
         </View>
 
         {/* End of Search Bar */}
@@ -369,10 +453,10 @@ function History({navigation}) {
           tabBarStyle: {backgroundColor: '#fff'},
         }}>
         <Tab.Screen name="Ongoing">
-          {() => <TodayList navigation={navigation} />}
+          {() => <TodayList navigation={navigation} searchText={searchText} />}
         </Tab.Screen>
         <Tab.Screen name="Past">
-          {() => <PastList navigation={navigation} />}
+          {() => <PastList navigation={navigation} searchText={searchText} />}
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}

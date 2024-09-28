@@ -987,6 +987,54 @@ export const changeUserPassword = (param, successCallback, errorCallback) => {
   );
 };
 
+export const getConsumerViewOrdersListBySearch = (
+  postParams,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url',
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=N&o=${postParams.orderNumber}`,
+  );
+  axiosCall(
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=N&o=${postParams.orderNumber}`,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyViewOrdersListBySearch = (
+  postParams,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url',
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=${postParams.filterCriteria}&o=${postParams.orderNumber}`,
+  );
+  axiosCall(
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=${postParams.filterCriteria}&o=${postParams.orderNumber}`,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const getEnterpriseDashboardInfo = (
   param,
   successCallback,
