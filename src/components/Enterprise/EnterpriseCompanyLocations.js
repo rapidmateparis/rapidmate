@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,143 +10,92 @@ import {
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {colors} from '../../colors';
+import {getEnterpriseBranch} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const EnterpriseCompanyLocations = ({navigation}) => {
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
+  const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+
+  useEffect(() => {
+    getEnterpriseBranch(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setEnterpriseBranches(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
+        {enterpriseBranches.map((item, index) => {
+          return (
+            <View style={styles.franchiseCard}>
+              <View style={styles.franchiseCardHeader}>
+                <Image
+                  style={styles.companyImga}
+                  source={require('../../image/home.png')}
+                />
+                <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
+              </View>
 
-        <View style={styles.franchiseCard}>
-          <View style={styles.franchiseCardHeader}>
-            <Image
-              style={styles.companyImga}
-              source={require('../../image/home.png')}
-            />
-            <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-          </View>
+              <View style={styles.bookedCardInfo}>
+                <View>
+                  <Text style={styles.bookedInfo}>Hours booked</Text>
+                  <Text style={styles.bookedDetails}>05</Text>
+                </View>
 
-          <View style={styles.bookedCardInfo}>
-            <View>
-              <Text style={styles.bookedInfo}>Hours booked</Text>
-              <Text style={styles.bookedDetails}>05</Text>
+                <View>
+                  <Text style={styles.bookedInfo}>Hours spent</Text>
+                  <Text style={styles.bookedDetails}>03</Text>
+                </View>
+
+                <View>
+                  <Text style={styles.bookedInfo}>Bookings</Text>
+                  <Text style={styles.bookedDetails}>04</Text>
+                </View>
+              </View>
+
+              <View style={styles.companyLocation}>
+                <EvilIcons name="location" size={22} color="#000" />
+                <Text style={styles.locationAddress}>
+                  {item.address +
+                    ', ' +
+                    item.city +
+                    ', ' +
+                    item.state +
+                    ', ' +
+                    item.country}
+                </Text>
+              </View>
             </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Hours spent</Text>
-              <Text style={styles.bookedDetails}>03</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Bookings</Text>
-              <Text style={styles.bookedDetails}>04</Text>
-            </View>
-          </View>
-
-          <View style={styles.companyLocation}>
-            <EvilIcons name="location" size={22} color="#000" />
-            <Text style={styles.locationAddress}>North Street, ABC</Text>
-          </View>
-        </View>
-
-        <View style={styles.franchiseCard}>
-          <View style={styles.franchiseCardHeader}>
-            <Image
-              style={styles.companyImga}
-              source={require('../../image/home.png')}
-            />
-            <Text style={styles.franchiseStreet}>West Street Franchise</Text>
-          </View>
-
-          <View style={styles.bookedCardInfo}>
-            <View>
-              <Text style={styles.bookedInfo}>Hours booked</Text>
-              <Text style={styles.bookedDetails}>08</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Hours spent</Text>
-              <Text style={styles.bookedDetails}>02</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Bookings</Text>
-              <Text style={styles.bookedDetails}>05</Text>
-            </View>
-          </View>
-
-          <View style={styles.companyLocation}>
-            <EvilIcons name="location" size={22} color="#000" />
-            <Text style={styles.locationAddress}>West Street, ABC</Text>
-          </View>
-        </View>
-
-        <View style={styles.franchiseCard}>
-          <View style={styles.franchiseCardHeader}>
-            <Image
-              style={styles.companyImga}
-              source={require('../../image/home.png')}
-            />
-            <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-          </View>
-
-          <View style={styles.bookedCardInfo}>
-            <View>
-              <Text style={styles.bookedInfo}>Hours booked</Text>
-              <Text style={styles.bookedDetails}>05</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Hours spent</Text>
-              <Text style={styles.bookedDetails}>03</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Bookings</Text>
-              <Text style={styles.bookedDetails}>04</Text>
-            </View>
-          </View>
-
-          <View style={styles.companyLocation}>
-            <EvilIcons name="location" size={22} color="#000" />
-            <Text style={styles.locationAddress}>North Street, ABC</Text>
-          </View>
-        </View>
-
-        <View style={styles.franchiseCard}>
-          <View style={styles.franchiseCardHeader}>
-            <Image
-              style={styles.companyImga}
-              source={require('../../image/home.png')}
-            />
-            <Text style={styles.franchiseStreet}>West Street Franchise</Text>
-          </View>
-
-          <View style={styles.bookedCardInfo}>
-            <View>
-              <Text style={styles.bookedInfo}>Hours booked</Text>
-              <Text style={styles.bookedDetails}>08</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Hours spent</Text>
-              <Text style={styles.bookedDetails}>02</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Bookings</Text>
-              <Text style={styles.bookedDetails}>05</Text>
-            </View>
-          </View>
-
-          <View style={styles.companyLocation}>
-            <EvilIcons name="location" size={22} color="#000" />
-            <Text style={styles.locationAddress}>West Street, ABC</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity onPress={() => navigation.navigate('EnterpriseBottomNav')} style={styles.nextBt}>
-            <Text style={styles.btnText}>Go to Home</Text>
+          );
+        })}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('EnterpriseBottomNav')}
+          style={styles.nextBt}>
+          <Text style={styles.btnText}>Go to Home</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -455,7 +404,7 @@ const styles = StyleSheet.create({
   btnText: {
     color: colors.text,
     fontSize: 14,
-    fontFamily: 'Montserrat-Medium', 
+    fontFamily: 'Montserrat-Medium',
     textAlign: 'center',
   },
 });

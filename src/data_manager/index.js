@@ -986,3 +986,17 @@ export const changeUserPassword = (param, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getEnterpriseDashboardInfo = (param, successCallback, errorCallback) => {
+  axiosCall(
+    API.enterpriseDashboardUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

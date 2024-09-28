@@ -26,6 +26,7 @@ import BigTruckImage from '../../image/Big-Package.png';
 import {useLoader} from '../../utils/loaderContext';
 import {createEnterpriseOrder} from '../../data_manager';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
+import {API} from '../../utils/constant';
 
 const EnterprisePickupOrderPriview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -69,12 +70,26 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
             </Text>
           </View>
           <View style={styles.borderDummy}></View>
-          <View style={styles.locationAddress}>
-            <MaterialIcons name="my-location" size={18} color="#000000" />
-            <Text style={styles.TextAddress}>
-              {params.dropoff_location.destinationDescription}
-            </Text>
-          </View>
+          {params.delivery_type_id == 2 ? (
+            params.branches.map((item, index) => {
+              return (
+                <View style={[styles.locationAddress, {marginVertical: 7}]}>
+                  <MaterialIcons name="my-location" size={18} color="#000000" />
+                  <Text style={styles.TextAddress}>
+                    {item.destinationDescription}
+                  </Text>
+                </View>
+              );
+            })
+          ) : (
+            <View style={styles.locationAddress}>
+              <MaterialIcons name="my-location" size={18} color="#000000" />
+              <Text style={styles.TextAddress}>
+                {params.dropoff_location.destinationDescription}
+              </Text>
+            </View>
+          )}
+
           <View style={styles.borderShowOff}></View>
         </View>
         <View style={styles.pickupCard}>
@@ -111,16 +126,21 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
               </Text>
               <Text style={styles.vehicleCapacity}>{params.company_name}</Text>
             </View>
-
             <View>
               <TouchableOpacity onPress={() => toggleModal()}>
-                <Image
-                  style={styles.packagePhoto}
-                  source={require('../../image/PackagePhoto.png')}
-                />
+                {params.imageId ? (
+                  <Image
+                    style={styles.packagePhoto}
+                    source={{uri: API.imageViewUrl + params.imageId}}
+                  />
+                ) : (
+                  <Image
+                    style={styles.packagePhoto}
+                    source={require('../../image/PackagePhoto.png')}
+                  />
+                )}
               </TouchableOpacity>
             </View>
-
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -193,7 +213,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpriseOrderPayment',{...params})}
+          onPress={() =>
+            navigation.navigate('EnterpriseOrderPayment', {...params})
+          }
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>

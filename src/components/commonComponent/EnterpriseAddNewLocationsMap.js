@@ -21,11 +21,14 @@ import MapViewDirections from 'react-native-maps-directions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {usePickupAddress, useUserDetails} from '../commonComponent/StoreContext';
+import {
+  usePickupAddress,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
 import {useDropAddress} from '../commonComponent/StoreContext';
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
-import { useLoader } from '../../utils/loaderContext';
-import { createEnterpriseBranch, getLocationId } from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {createEnterpriseBranch, getLocationId} from '../../data_manager';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Custom Marker Components
@@ -51,9 +54,9 @@ const MyCustomCalloutView = () => (
   </View>
 );
 
-export default function EnterpriseAddNewLocationsMap() {
+const EnterpriseAddNewLocationsMap = props => {
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const { savePickupAddress } = usePickupAddress();
+  const {savePickupAddress} = usePickupAddress();
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
   const mapViewRef = useRef(null);
@@ -89,33 +92,39 @@ export default function EnterpriseAddNewLocationsMap() {
   };
 
   const saveLocation = () => {
-    let requestParams = {
-      enterprise_ext_id: userDetails.userDetails[0].ext_id,
-      branch_name: selectedLocation.location_name,
-      address:selectedLocation.address,
-      city: selectedLocation.city,
-      state: selectedLocation.state,
-      country: selectedLocation.country,
-      postal_code: selectedLocation.postal_code,
-      latitude: selectedLocation.latitude,
-      longitude: selectedLocation.longitude
-    }
-    setLoading(true);
-    createEnterpriseBranch(
-      requestParams,
-      successResponse => {
-        if (successResponse[0]._success) {
+    if (props.title == '') {
+      Alert.alert('Error Alert', 'Please enter a title', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    } else {
+      let requestParams = {
+        enterprise_ext_id: userDetails.userDetails[0].ext_id,
+        branch_name: props.title,
+        address: selectedLocation.address,
+        city: selectedLocation.city,
+        state: selectedLocation.state,
+        country: selectedLocation.country,
+        postal_code: selectedLocation.postal_code,
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+      };
+      setLoading(true);
+      createEnterpriseBranch(
+        requestParams,
+        successResponse => {
+          if (successResponse[0]._success) {
+            setLoading(false);
+            navigation.goBack();
+          }
+        },
+        errorResponse => {
           setLoading(false);
-          navigation.goBack();
-        }
-      },
-      errorResponse => {
-        setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-    );
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }
   };
 
   return (
@@ -207,14 +216,16 @@ export default function EnterpriseAddNewLocationsMap() {
       <TouchableOpacity
         onPress={() => {
           savePickupAddress(selectedLocation);
-          saveLocation()
+          saveLocation();
         }}
         style={styles.trackOrderBtn}>
         <Text style={styles.trackText}>Save location address</Text>
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default EnterpriseAddNewLocationsMap;
 
 const styles = StyleSheet.create({
   container: {

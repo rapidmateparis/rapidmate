@@ -94,4 +94,6 @@ export const API = {
   getconsumerBillingDetailsUrl: BASE_URL + 'consumer/billing/address/get/',
   enterprisePlanSearch: BASE_URL + 'enterprise/order/plan/search',
   changePasswordUrl: BASE_URL + 'authuser/changepassword',
+  enterpriseDashboardUrl: BASE_URL + 'enterprise/dashboard/',
+  imageViewUrl: BASE_URL + 'documents/view/',
 };
