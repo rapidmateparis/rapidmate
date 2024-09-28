@@ -23,7 +23,7 @@ import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 
 const SignUpVerify = ({route, navigation}) => {
-  const {saveUserDetails} = useUserDetails();
+  const {saveUserDetails, userDetails} = useUserDetails();
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
   const [code, setCode] = useState('');
   const {setLoading} = useLoader();
@@ -41,7 +41,7 @@ const SignUpVerify = ({route, navigation}) => {
         setFcmToken(fcmToken);
       }
     }
-    onSignIn();
+    // onSignIn();
   }, []);
 
   async function onSignIn() {

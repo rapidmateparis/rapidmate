@@ -65,10 +65,6 @@ const EnterpriseLocation = ({navigation}) => {
 
   const renderItem = ({item,index}) => (
     <View>
-      {/* <View pointerEvents="none" style={{width: '100%', height: 120}}>
-        <MapDeliveryDetails />
-      </View> */}
-
       <View style={styles.addressCard}>
         <Image
           style={styles.companyImga}
@@ -83,7 +79,9 @@ const EnterpriseLocation = ({navigation}) => {
           </View>
         </View>
         <TouchableOpacity>
-          <FontAwesome6 name="pencil" size={20} color="#000" />
+          <FontAwesome6 onPress={()=>{
+            navigation.navigate('EnterpriseAddNewLocation',{location:item})
+          }} name="pencil" size={20} color="#000" />
         </TouchableOpacity>
       </View>
     </View>
