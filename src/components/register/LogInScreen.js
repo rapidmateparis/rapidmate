@@ -126,23 +126,21 @@ const LogInScreen = ({navigation}) => {
                   successResponse[0]._response.user_profile[0].role ==
                   'DELIVERY_BOY'
                 ) {
-                  // if (
-                  //   successResponse[0]._response.user_profile[0].is_active == 0
-                  // ) {
-                  //   navigation.navigate('DeliveryboyThanksPage');
-                  // } else {
-                  //   navigation.navigate('DeliveryboyBottomNav');
-                  // }
-                  navigation.navigate('DeliveryboyBottomNav');
+                  if (
+                    successResponse[0]._response.user_profile[0].is_active == 0
+                  ) {
+                    navigation.navigate('DeliveryboyThanksPage');
+                  } else {
+                    navigation.navigate('DeliveryboyBottomNav');
+                  }
                 } else {
-                  // if (
-                  //   successResponse[0]._response.user_profile[0].is_active == 0
-                  // ) {
-                  //   navigation.navigate('EnterpriseThanksPage');
-                  // } else {
-                  //   navigation.navigate('EnterpriseBottomNav');
-                  // }
-                  navigation.navigate('EnterpriseBottomNav');
+                  if (
+                    successResponse[0]._response.user_profile[0].is_active == 0
+                  ) {
+                    navigation.navigate('EnterpriseThanksPage');
+                  } else {
+                    navigation.navigate('EnterpriseBottomNav');
+                  }
                 }
                 saveUserDetailsInAsync({
                   userInfo: successResponse[0]._response.user.idToken.payload,
