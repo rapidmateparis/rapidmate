@@ -51,7 +51,7 @@ const EnterpriseCompanyLocations = ({navigation}) => {
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         {enterpriseBranches.map((item, index) => {
           return (
-            <View style={styles.franchiseCard}>
+            <View key={index} style={styles.franchiseCard}>
               <View style={styles.franchiseCardHeader}>
                 <Image
                   style={styles.companyImga}
