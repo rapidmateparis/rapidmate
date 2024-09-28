@@ -20,7 +20,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useFocusEffect} from '@react-navigation/native';
-import {getDeliveryBoyViewOrdersList, getLocations} from '../../data_manager';
+import {
+  getDeliveryBoyViewOrdersList,
+  getDeliveryBoyViewOrdersListBySearch,
+  getLocations,
+} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
 import {useLoader} from '../../utils/loaderContext';
@@ -28,13 +32,13 @@ import moment from 'moment';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = ({navigation, filterCriteria}) => {
-  const [searchText, setSearchText] = useState('');
+const TodayList = ({navigation, filterCriteria, searchText}) => {
   const [index, setIndex] = useState(0);
   const [currentOrderList, setCurrentOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
+  const timeout = React.useRef(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -64,6 +68,42 @@ const TodayList = ({navigation, filterCriteria}) => {
       };
     }, [filterCriteria]),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setCurrentOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+      filterCriteria: filterCriteria,
+      orderNumber: searchValue,
+    };
+    getDeliveryBoyViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setCurrentOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setCurrentOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -184,11 +224,12 @@ const TodayList = ({navigation, filterCriteria}) => {
   );
 };
 
-const PastList = ({navigation, filterCriteria}) => {
+const PastList = ({navigation, filterCriteria, searchText}) => {
   const [pastOrderList, setPastOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
+  const timeout = React.useRef(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -217,6 +258,42 @@ const PastList = ({navigation, filterCriteria}) => {
       };
     }, [filterCriteria]),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setPastOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+      filterCriteria: filterCriteria,
+      orderNumber: searchValue,
+    };
+    getDeliveryBoyViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setPastOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setPastOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -435,6 +512,15 @@ const DeliveryboyHistory = ({navigation}) => {
             value={searchText}
             onChangeText={setSearchText}
           />
+          {searchText && (
+            <AntDesign
+              name="close"
+              size={20}
+              color="#000"
+              style={styles.searchIcon}
+              onPress={() => setSearchText('')}
+            />
+          )}
         </View>
 
         {/* End of Search Bar */}
@@ -454,12 +540,17 @@ const DeliveryboyHistory = ({navigation}) => {
             <TodayList
               navigation={navigation}
               filterCriteria={filterCriteria}
+              searchText={searchText}
             />
           )}
         </Tab.Screen>
         <Tab.Screen name="Past">
           {() => (
-            <PastList navigation={navigation} filterCriteria={filterCriteria} />
+            <PastList
+              navigation={navigation}
+              filterCriteria={filterCriteria}
+              searchText={searchText}
+            />
           )}
         </Tab.Screen>
       </Tab.Navigator>

@@ -126,14 +126,24 @@ const LogInScreen = ({navigation}) => {
                   successResponse[0]._response.user_profile[0].role ==
                   'DELIVERY_BOY'
                 ) {
+                  // if (
+                  //   successResponse[0]._response.user_profile[0].is_active == 0
+                  // ) {
+                  //   navigation.navigate('DeliveryboyThanksPage');
+                  // } else {
+                  //   navigation.navigate('DeliveryboyBottomNav');
+                  // }
                   navigation.navigate('DeliveryboyBottomNav');
                 } else {
+                  // if (
+                  //   successResponse[0]._response.user_profile[0].is_active == 0
+                  // ) {
+                  //   navigation.navigate('EnterpriseThanksPage');
+                  // } else {
+                  //   navigation.navigate('EnterpriseBottomNav');
+                  // }
                   navigation.navigate('EnterpriseBottomNav');
                 }
-                console.log(
-                  'successResponse[0]._response.user_profile',
-                  successResponse[0]._response.user_profile,
-                );
                 saveUserDetailsInAsync({
                   userInfo: successResponse[0]._response.user.idToken.payload,
                   userDetails: successResponse[0]._response.user_profile,
@@ -142,7 +152,7 @@ const LogInScreen = ({navigation}) => {
             }
           } else {
             setLoading(false);
-            Alert.alert('Error Alert', "Invalid credentials", [
+            Alert.alert('Error Alert', 'Invalid credentials', [
               {text: 'OK', onPress: () => {}},
             ]);
           }
