@@ -986,3 +986,160 @@ export const changeUserPassword = (param, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getConsumerViewOrdersListBySearch = (
+  postParams,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url',
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=N&o=${postParams.orderNumber}`,
+  );
+  axiosCall(
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=N&o=${postParams.orderNumber}`,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyViewOrdersListBySearch = (
+  postParams,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url',
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=${postParams.filterCriteria}&o=${postParams.orderNumber}`,
+  );
+  axiosCall(
+    API.viewConsumerOrderUrl +
+      `${postParams.extentedId}?status=${postParams.status}&orderType=${postParams.filterCriteria}&o=${postParams.orderNumber}`,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getEnterpriseDashboardInfo = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.enterpriseDashboardUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const updateEnterpriseBranch = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('url', API.enterprisebranchCreate + '/' + params.id);
+  axiosCall(
+    API.enterprisebranchCreate + '/' + params.id,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getEnterpriseAddressBookList = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.getEnterpriseAddressListUrl + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const createEnterpriseAddressBook = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.createEnterpriseAddressUrl,
+    HTTPMethod.POST,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const updateAddressBookforEnterprise = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookUpdateEnterpriseUrl,
+    HTTPMethod.PUT,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const deleteAddressBookforEnterprise = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.addressBookDeleteEnterpriseUrl + param.id,
+    HTTPMethod.DELETE,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

@@ -13,6 +13,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {changeUserPassword} from '../../../data_manager';
+import { useLoader } from '../../../utils/loaderContext';
 
 const PickupChangePassword = ({navigation}) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -22,6 +23,7 @@ const PickupChangePassword = ({navigation}) => {
   const [newPasswordVisible, setNewPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
 
   const togglePasswordVisibility = field => {
     if (field === 'currentPassword') {
@@ -34,33 +36,54 @@ const PickupChangePassword = ({navigation}) => {
   };
 
   const handleResetPassword = () => {
-    let params = {
-      info: {
-        userName: userDetails.userDetails[0].username,
-        oldPassword: currentPassword,
-        newPassword: newPassword,
-      },
-    };
-    changeUserPassword(
-      params,
-      successResponse => {
-        if (successResponse[0]._success) {
-          Alert.alert('Success', 'Password updated successfully', [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.goBack();
+    if (currentPassword == '' || newPassword == '') {
+      Alert.alert('Error', 'Password fill the required password fields.', [
+        {
+          text: 'OK',
+          onPress: () => {
+          },
+        },
+      ]);
+    } else if (newPassword != confirmNewPassword){
+      Alert.alert('Error', 'Passwords do not match.', [
+        {
+          text: 'OK',
+          onPress: () => {
+          },
+        },
+      ]);
+    } else {
+      let params = {
+        info: {
+          userName: userDetails.userDetails[0].username,
+          oldPassword: currentPassword,
+          newPassword: newPassword,
+        },
+      };
+      setLoading(true);
+      changeUserPassword(
+        params,
+        successResponse => {
+          if (successResponse[0]._success) {
+            setLoading(false);
+            Alert.alert('Success', 'Password updated successfully', [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.goBack();
+                },
               },
-            },
+            ]);
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
           ]);
-        }
-      },
-      errorResponse => {
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-    );
+        },
+      );
+    }
   };
 
   return (

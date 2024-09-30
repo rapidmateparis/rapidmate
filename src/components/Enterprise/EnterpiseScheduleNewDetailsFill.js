@@ -25,10 +25,11 @@ import {
 } from '../../utils/common';
 import MapAddress from '../commonComponent/MapAddress';
 import {useLoader} from '../../utils/loaderContext';
-import {getLocationId} from '../../data_manager';
+import {getLocationId, uploadDocumentsApi} from '../../data_manager';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import MultpleMapAddress from '../commonComponent/MultipleMapAddress';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [pickupAddress, setPickupAddress] = useState('');
@@ -71,11 +72,21 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [selectedWeekDay, setSelectedWeekDay] = useState(null);
 
   const [destinationBranches, setDestinationBranches] = useState([]);
+  const [multipleDestinationAmount, setMultipleDestinationAmount] = useState(0);
+  const [multipleDestinationDistance, setMultipleDestinationDistance] =
+    useState(0);
+  const [multipleDestinationHours, setMultipleDestinationHours] = useState(0);
 
   const [mapViewHeight, setMapViewHeight] = useState(200);
 
   const routeParams = route.params;
   const deliveryType = route.params.delivery_type_id;
+
+  const {userDetails} = useUserDetails();
+
+  const [image, setImage] = useState(null); // State for photo
+
+  const [imageViewId, setImageViewId] = useState(null);
 
   const handleDayPress = day => {
     let updatedSelectedDays;
@@ -179,6 +190,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
         setPhotoFileName(getFileName(cameraData.data.uri));
+        setImage(cameraData);
+        uploadImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -191,6 +204,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
+        setImage(imageData);
+        uploadImage(imageData);
       }
     } catch (error) {
       // Handle errors here
@@ -206,12 +221,48 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     return fileName.length > 35 ? '...' + fileName : fileName;
   };
 
+  const uploadImage = async image => {
+    if (image != null) {
+      var photo = {
+        uri: image.data.uri,
+        type: image.data.type,
+        name: image.data.fileName,
+      };
+      const formdata = new FormData();
+      formdata.append('file', photo);
+      setLoading(true);
+      uploadDocumentsApi(
+        formdata,
+        successResponse => {
+          setLoading(false);
+          setImageViewId(JSON.parse(successResponse).id);
+        },
+        errorResponse => {
+          console.log(
+            'print_data==>errorResponseuploadDocumentsApi',
+            '' + errorResponse,
+          );
+          setLoading(false);
+          Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      Alert.alert('Error Alert', 'Please choose a picture', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
+  };
+
   const onFetchDistanceAndTime = value => {
     console.log('onFetchDistanceAndTime', value);
     setDistanceTime(value);
   };
 
   useEffect(() => {
+    setNumber(userDetails.userDetails[0].phone.substring(3));
+    setCompany(userDetails.userDetails[0].company_name);
     if (deliveryType == 2) {
       onBranchSourceLocation(routeParams.sourceBranch);
     }
@@ -255,30 +306,46 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
   const onMultpleDestinationLocation = locations => {
     var branches = [];
+    var totalAmount = 0;
+    var totalDistance = 0;
+    var totalHours = 0;
     locations.forEach(element => {
       if (element.hasOwnProperty('locationId')) {
         var currentElement = {};
-        currentElement.distance = element.distance;
-        currentElement.total_hours = element.duration;
+        currentElement.distance = element.distance.toFixed(2);
+        totalDistance = totalDistance + element.distance;
+        currentElement.total_hours = element.duration.toFixed(2);
+        totalHours = totalHours + element.duration;
         currentElement.to_latitude = element.destinationCoordinates.latitude;
         currentElement.to_longitude = element.destinationCoordinates.longitude;
         currentElement.amount = Math.round(
           route.params.vehicle_type.base_price +
             route.params.vehicle_type.km_price * element.distance,
         ).toFixed(2);
+        totalAmount =
+          totalAmount +
+          Math.round(
+            route.params.vehicle_type.base_price +
+              route.params.vehicle_type.km_price * element.distance,
+          );
         currentElement.delivery_date = moment(new Date()).format('YYYY-MM-DD');
-
+        currentElement.destinationDescription = element.destinationDescription;
         branches.push(currentElement);
       }
     });
+    console.log('distance', totalDistance);
+    console.log('hours', totalHours);
     if (branches.length > 0) {
       setDestinationBranches(branches);
       onFetchDistanceAndTime({
         distance: branches[0].distance,
         time: branches[0].total_hours,
       });
-      setDestinationLocation(locations[0])
-      setDestinationLocationId(locations[0].locationId)
+      setDestinationLocation(locations[0]);
+      setDestinationLocationId(locations[0].locationId);
+      setMultipleDestinationAmount(totalAmount);
+      setMultipleDestinationHours(totalHours);
+      setMultipleDestinationDistance(totalDistance);
     }
   };
 
@@ -445,7 +512,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <Text style={styles.packagePhoto}>Package photo</Text>
                 <View style={styles.packagePhotoPath}>
                   <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                  <MaterialCommunityIcons name="close" color="#000" size={13} />
                 </View>
               </View>
             </TouchableOpacity>
@@ -1009,6 +1075,19 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           <View>
             <TouchableOpacity
               onPress={() => {
+                if (
+                  company == '' ||
+                  number == '' ||
+                  pickupDate == '' ||
+                  pickupTime == ''
+                ) {
+                  Alert.alert(
+                    'Error Alert',
+                    'Please fill the required fields.',
+                    [{text: 'OK', onPress: () => {}}],
+                  );
+                  return;
+                }
                 if (deliveryType == 2) {
                   if (sourceLocationId && destinationBranches.length > 0) {
                     let params = {
@@ -1026,17 +1105,14 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       pickup_time: moment(time).format('HH:MM'),
                       is_repeat_mode: promoEmails ? 1 : 0,
                       package_id: orderid,
-                      amount: Math.round(
-                        route.params.vehicle_type.base_price +
-                          route.params.vehicle_type.km_price *
-                            distanceTime.distance,
-                      ).toFixed(2),
+                      amount: multipleDestinationAmount.toFixed(2),
                       branches: destinationBranches,
-                      distance: distanceTime.distance,
-                      time: distanceTime.time,
+                      distance: multipleDestinationDistance.toFixed(2),
+                      time: multipleDestinationHours.toFixed(2),
                       repeat_mode: repeatOrder,
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                      imageId: imageViewId,
                     };
                     navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
@@ -1073,7 +1149,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       repeat_mode: repeatOrder,
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                      imageId: imageViewId,
                     };
+                    console.log(imageViewId);
                     navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
                     Alert.alert(

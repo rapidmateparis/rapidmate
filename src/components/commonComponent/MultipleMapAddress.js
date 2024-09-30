@@ -284,11 +284,9 @@ const MultpleMapAddress = props => {
               );
             }}
             onReady={result => {
-              console.log(`Distance: ${result.distance} km`);
-              console.log(`Duration: ${result.duration} min`);
               var curentInstance = [...destinations];
-              curentInstance[currentDestination.itemIndex].distance = result.distance.toFixed(2);
-              curentInstance[currentDestination.itemIndex].duration = result.duration.toFixed(2);
+              curentInstance[currentDestination.itemIndex].distance = result.distance;
+              curentInstance[currentDestination.itemIndex].duration = result.duration;
               setDestinations(curentInstance)
               onDestinationLocation(
                 currentDestination,

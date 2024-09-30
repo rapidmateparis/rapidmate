@@ -32,14 +32,14 @@ const EnterpriseDriverNotAvailable = ({navigation}) => {
           <TouchableOpacity
             style={styles.requestTouch}
             onPress={() => {
-              navigation.navigate('PickupBottomNav');
+              navigation.navigate('EnterpriseBottomNav');
             }}>
             <Text style={styles.cancelRequest}>Go Home</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.requestTouch}
             onPress={() => {
-              navigation.navigate('LoaderForDriver');
+              navigation.navigate('EnterpriseLookingForDriver');
             }}>
             <Text style={styles.cancelRequest}>Try Again</Text>
           </TouchableOpacity>

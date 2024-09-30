@@ -123,8 +123,6 @@ const PickupTakeSelfie = ({route, navigation}) => {
     );
   };
 
-  console.log('userDetails', userDetails.userDetails[0].role);
-
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
       <View>

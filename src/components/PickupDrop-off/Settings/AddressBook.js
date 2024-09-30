@@ -22,6 +22,10 @@ import {
   updateAddressBookforDeliveryBoy,
   deleteAddressBookforConsumer,
   deleteAddressBookforDeliveryBoy,
+  getEnterpriseAddressBookList,
+  createEnterpriseAddressBook,
+  updateAddressBookforEnterprise,
+  deleteAddressBookforEnterprise,
 } from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 
@@ -32,6 +36,7 @@ const AddressBook = ({route, navigation}) => {
   );
   const [consumerAddressList, setConsumerAddressList] = useState();
   const [deliveryBoyAddressList, setDeliveryBoyAddressList] = useState();
+  const [enterpriseAddressList, setEnterpriseAddressList] = useState();
   const {setLoading} = useLoader();
   const [addressId, setAddressId] = useState(0);
   const [addressData, setAddressData] = useState();
@@ -48,8 +53,8 @@ const AddressBook = ({route, navigation}) => {
   }, [addressId, addressData]);
 
   const getAddressBookList = () => {
-    setLoading(true);
     if (userDetails.role === 'CONSUMER') {
+      setLoading(true);
       getConsumerAddressBookList(
         userDetails.ext_id,
         successResponse => {
@@ -62,11 +67,25 @@ const AddressBook = ({route, navigation}) => {
         },
       );
     } else if (userDetails.role === 'DELIVERY_BOY') {
+      setLoading(true);
       getDeliveryBoyAddressBookList(
         userDetails.ext_id,
         successResponse => {
           setDeliveryBoyAddressList(successResponse[0]._response);
           setLoading(false);
+        },
+        errorResponse => {
+          console.log('errorResponse', errorResponse);
+          setLoading(false);
+        },
+      );
+    } else {
+      setLoading(true);
+      getEnterpriseAddressBookList(
+        userDetails.ext_id,
+        successResponse => {
+          setLoading(false);
+          setEnterpriseAddressList(successResponse[0]._response);
         },
         errorResponse => {
           console.log('errorResponse', errorResponse);
@@ -117,6 +136,36 @@ const AddressBook = ({route, navigation}) => {
         };
         createDeliveryBoyAddressBook(
           deliveryBoyParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              Alert.alert('Success', 'Address added successfully', [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    setAddressData(null);
+                    getAddressBookList();
+                  },
+                },
+              ]);
+              toggleModal(0);
+              setLoading(false);
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            toggleModal(0);
+            Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      } else {
+        let enterpriseParams = {
+          enterprise_ext_id: userDetails.ext_id,
+          ...probs,
+        };
+        createEnterpriseAddressBook(
+          enterpriseParams,
           successResponse => {
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
@@ -203,6 +252,37 @@ const AddressBook = ({route, navigation}) => {
             ]);
           },
         );
+      } else {
+        let enterpriseParams = {
+          enterprise_ext_id: userDetails.ext_id,
+          ...probs,
+        };
+        console.log(enterpriseParams);
+        updateAddressBookforEnterprise(
+          enterpriseParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              Alert.alert('Success', 'Address updated successfully', [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    setAddressData(null);
+                    getAddressBookList();
+                  },
+                },
+              ]);
+              toggleModal(0);
+              setLoading(false);
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            toggleModal(0);
+            Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
       }
     }
   };
@@ -246,6 +326,35 @@ const AddressBook = ({route, navigation}) => {
       };
       deleteAddressBookforDeliveryBoy(
         deliveryBoyParams,
+        successResponse => {
+          if (successResponse[0]._success) {
+            Alert.alert('Success', successResponse[0]._response, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  setAddressData(null);
+                  getAddressBookList();
+                },
+              },
+            ]);
+            toggleModal(0);
+            setLoading(false);
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          toggleModal(0);
+          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      let enterpriseParams = {
+        ...probs,
+      };
+      deleteAddressBookforEnterprise(
+        enterpriseParams,
         successResponse => {
           if (successResponse[0]._success) {
             Alert.alert('Success', successResponse[0]._response, [
@@ -323,7 +432,8 @@ const AddressBook = ({route, navigation}) => {
       <FlatList
         data={
           (consumerAddressList && consumerAddressList) ||
-          (deliveryBoyAddressList && deliveryBoyAddressList)
+          (deliveryBoyAddressList && deliveryBoyAddressList) ||
+          enterpriseAddressList
         }
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
