@@ -38,6 +38,8 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
   };
   const params = route.params;
 
+  console.log('Image ID:', params.imageViewId);
+
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
       case 1:
@@ -49,9 +51,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
       case 4:
         return PartnerImage;
       case 5:
-        return VanImage;
-      case 6:
         return PickupImage;
+      case 6:
+        return VanImage;
       case 7:
         return TruckImage;
       default:
