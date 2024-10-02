@@ -392,7 +392,7 @@ const DeliveryDetails = ({navigation, route}) => {
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.detailsId}>{order.pickup_notes}</Text>
+            <Text style={styles.detailsId}> {order.pickup_notes}</Text>
           </Text>
           <Text style={styles.orderdetails}>
             Vehicle:
