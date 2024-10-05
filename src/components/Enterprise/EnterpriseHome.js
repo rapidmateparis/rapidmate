@@ -40,6 +40,7 @@ const EnterpriseHome = ({navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
   const {setLoading} = useLoader();
   const [dashboardData, setDashboardData] = useState(null);
+  const [bookingHour, setBookingHour] = useState(0);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -79,6 +80,39 @@ const EnterpriseHome = ({navigation}) => {
     borderRadius: 16,
   };
 
+  const displayChartData = branch => {
+    console.log('branch', branch);
+    let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    let hours = [0, 0, 0, 0, 0, 0, 0];
+    branch.chartData.forEach(element => {
+      if (element.day == 'Monday') {
+        hours[0] = element.booked_hours;
+      } else if (element.day == 'Tuesday') {
+        hours[1] = element.booked_hours;
+      } else if (element.day == 'Wednesday') {
+        hours[2] = element.booked_hours;
+      } else if (element.day == 'Thursday') {
+        hours[3] = element.booked_hours;
+      } else if (element.day == 'Friday') {
+        hours[4] = element.booked_hours;
+      } else if (element.day == 'Saturday') {
+        hours[5] = element.booked_hours;
+      } else if (element.day == 'Sunday') {
+        hours[6] = element.booked_hours;
+      }
+    });
+    const data = {
+      labels: days,
+      datasets: [
+        {
+          data: hours,
+        },
+      ],
+    };
+    setChartData(data);
+    setBookingHour(branch.bookinghr);
+  };
+
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
@@ -89,35 +123,21 @@ const EnterpriseHome = ({navigation}) => {
           if (successResponse[0]._response.length > 0) {
             setDashboardData(successResponse[0]._response[0].dashboard);
             setBranches(successResponse[0]._response[0].dashboard.branch);
-            var tempdropDownBraches = [];
+            var tempdropDownBranches = [];
             successResponse[0]._response[0].dashboard.branch.forEach(
               element => {
                 var item = {};
                 item.label = element.branch_name;
-                item.value = element.id;
-                tempdropDownBraches.push(item);
+                item.value = element.branch_id;
+                tempdropDownBranches.push(item);
               },
             );
-            setDropdownBranches(tempdropDownBraches);
-            setSelectedDropdownBranch(tempdropDownBraches[0]);
-            setDropdownWeek(dropdownData2[0])
-            let days = [];
-            let hours = [];
-            successResponse[0]._response[0].dashboard.chartdata.forEach(
-              element => {
-                days.push(element.day);
-                hours.push(element.booked_hours);
-              },
+            setDropdownBranches(tempdropDownBranches);
+            setSelectedDropdownBranch(tempdropDownBranches[0]);
+            setDropdownWeek(dropdownData2[0]);
+            displayChartData(
+              successResponse[0]._response[0].dashboard.branch[0],
             );
-            const data = {
-              labels: days,
-              datasets: [
-                {
-                  data: hours,
-                },
-              ],
-            };
-            setChartData(data);
           }
         },
         errorResponse => {
@@ -209,9 +229,7 @@ const EnterpriseHome = ({navigation}) => {
       <View style={styles.barChartCard}>
         <View style={styles.hoursInfoCard}>
           <Text style={styles.hoursBooked}>Hours booked</Text>
-          <Text style={styles.hoursNumberCount}>
-            {dashboardData && dashboardData.bookings.scheduled}
-          </Text>
+          <Text style={styles.hoursNumberCount}>{bookingHour}</Text>
         </View>
         <View style={styles.dropdownCard}>
           <View style={styles.containerCountryFirst}>
@@ -231,8 +249,11 @@ const EnterpriseHome = ({navigation}) => {
               onFocus={() => setIsBranchFocus(true)}
               onBlur={() => setIsBranchFocus(false)}
               onChange={item => {
-                setSelectedDropdownBranch(item.value);
+                setSelectedDropdownBranch(item);
                 setIsBranchFocus(false);
+                displayChartData(
+                  branches.filter(br => br.branch_id == item.value)[0],
+                );
               }}
             />
           </View>
@@ -274,7 +295,7 @@ const EnterpriseHome = ({navigation}) => {
         <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Company locations</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseCompanyLocations')}>
+            onPress={() => navigation.navigate('EnterpriseCompanyLocations',{branches:branches})}>
             <Text style={styles.seAllText}>See All</Text>
           </TouchableOpacity>
         </View>
@@ -292,17 +313,17 @@ const EnterpriseHome = ({navigation}) => {
               <View style={styles.bookedCardInfo}>
                 <View>
                   <Text style={styles.bookedInfo}>Hours booked</Text>
-                  <Text style={styles.bookedDetails}>05</Text>
+                  <Text style={styles.bookedDetails}>{item.bookinghr}</Text>
                 </View>
 
                 <View>
                   <Text style={styles.bookedInfo}>Hours spent</Text>
-                  <Text style={styles.bookedDetails}>03</Text>
+                  <Text style={styles.bookedDetails}>{item.spenthr}</Text>
                 </View>
 
                 <View>
                   <Text style={styles.bookedInfo}>Bookings</Text>
-                  <Text style={styles.bookedDetails}>04</Text>
+                  <Text style={styles.bookedDetails}>{item.bookings}</Text>
                 </View>
               </View>
 

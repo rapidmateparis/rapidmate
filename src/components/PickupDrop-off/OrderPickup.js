@@ -161,10 +161,6 @@ const OrderPickup = ({route, navigation}) => {
 
             <View style={styles.driverCard}>
               <View style={{position: 'relative'}}>
-                {console.log(
-                  'driverDetails.deliveryBoy===>route.params',
-                  route.params.driverDetails,
-                )}
                 {driverDetails?.deliveryBoy?.profile_pic ? (
                   <Image
                     style={{width: 60, height: 60, borderRadius: 30}}

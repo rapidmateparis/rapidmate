@@ -14,36 +14,38 @@ import {getEnterpriseBranch} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
 
-const EnterpriseCompanyLocations = ({navigation}) => {
+const EnterpriseCompanyLocations = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
-  const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+  const [enterpriseBranches, setEnterpriseBranches] = useState(
+    route.params.branches,
+  );
 
   useEffect(() => {
-    getEnterpriseBranch(
-      userDetails.userDetails[0].ext_id,
-      successResponse => {
-        setLoading(false);
-        if (successResponse[0]._success) {
-          if (successResponse[0]._response) {
-            if (successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else {
-              setEnterpriseBranches(successResponse[0]._response);
-            }
-          }
-        }
-      },
-      errorResponse => {
-        console.log('errorResponse', errorResponse[0]._errors.message);
-        setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-    );
+    // getEnterpriseBranch(
+    //   userDetails.userDetails[0].ext_id,
+    //   successResponse => {
+    //     setLoading(false);
+    //     if (successResponse[0]._success) {
+    //       if (successResponse[0]._response) {
+    //         if (successResponse[0]._response.name == 'NotAuthorizedException') {
+    //           Alert.alert('Error Alert', successResponse[0]._response.name, [
+    //             {text: 'OK', onPress: () => {}},
+    //           ]);
+    //         } else {
+    //           setEnterpriseBranches(successResponse[0]._response);
+    //         }
+    //       }
+    //     }
+    //   },
+    //   errorResponse => {
+    //     console.log('errorResponse', errorResponse[0]._errors.message);
+    //     setLoading(false);
+    //     Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+    //       {text: 'OK', onPress: () => {}},
+    //     ]);
+    //   },
+    // );
   }, []);
 
   return (
@@ -63,17 +65,17 @@ const EnterpriseCompanyLocations = ({navigation}) => {
               <View style={styles.bookedCardInfo}>
                 <View>
                   <Text style={styles.bookedInfo}>Hours booked</Text>
-                  <Text style={styles.bookedDetails}>05</Text>
+                  <Text style={styles.bookedDetails}>{item.bookinghr}</Text>
                 </View>
 
                 <View>
                   <Text style={styles.bookedInfo}>Hours spent</Text>
-                  <Text style={styles.bookedDetails}>03</Text>
+                  <Text style={styles.bookedDetails}>{item.spenthr}</Text>
                 </View>
 
                 <View>
                   <Text style={styles.bookedInfo}>Bookings</Text>
-                  <Text style={styles.bookedDetails}>04</Text>
+                  <Text style={styles.bookedDetails}>{item.bookings}</Text>
                 </View>
               </View>
 

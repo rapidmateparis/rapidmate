@@ -31,8 +31,6 @@ const OrderConfirm = ({route, navigation}) => {
   );
   const {userDetails} = useUserDetails();
 
-  console.log('route.params.driverDetails', route.params.driverDetails);
-
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {

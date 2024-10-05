@@ -100,4 +100,5 @@ export const API = {
   createEnterpriseAddressUrl: BASE_URL + 'enterprise/address/create',
   addressBookUpdateEnterpriseUrl: BASE_URL + 'enterprise/address/update',
   addressBookDeleteEnterpriseUrl: BASE_URL + 'enterprise/address/delete/',
+  enterprisePaymentMethod: BASE_URL + 'enterprise/paymentmethod/getpaymentcard/'
 };
