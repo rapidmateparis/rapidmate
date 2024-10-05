@@ -61,7 +61,6 @@ const EnterpriseHome = ({navigation}) => {
 
   const dropdownData2 = [
     {label: 'This week', value: 'This week'},
-    {label: 'This Month', value: 'This Month'},
   ];
 
   const chartConfig = {
