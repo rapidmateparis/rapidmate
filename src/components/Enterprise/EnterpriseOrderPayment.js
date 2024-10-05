@@ -25,12 +25,14 @@ import {
   addPayment,
   createEnterpriseOrder,
   createPickupOrder,
+  getEnterprisePaymentMethod,
 } from '../../data_manager';
 import {
   usePlacedOrderDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
 import {useStripe} from '@stripe/stripe-react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
@@ -41,6 +43,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const [clientSecret, setClientSecret] = useState(null);
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
   const {userDetails} = useUserDetails();
+  const [paymentMethod, setPaymentMethod] = useState([]);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
 
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
@@ -65,9 +69,37 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
 
   useEffect(() => {
     if (orderNumber) {
-      createPaymentIntent();
+      if (selectedOptionIndex != 99) {
+        createPaymentIntent();
+      } else {
+        navigation.navigate('EnterpriseLookingForDriver');
+      }
     }
   }, [orderNumber]);
+
+  useEffect(() => {
+    console.log(userDetails.userDetails[0]);
+    getPaymentMethod();
+  }, []);
+
+  const getPaymentMethod = () => {
+    setLoading(true);
+    getEnterprisePaymentMethod(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._response.length > 0) {
+          setPaymentMethod(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   const createPaymentIntent = async () => {
     try {
@@ -145,7 +177,13 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   };
 
   const onPayment = async () => {
-    placeEnterpriseOrder();
+    if (selectedOptionIndex == -1) {
+      Alert.alert('Error Alert', 'Please choose a payment method', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    } else {
+      placeEnterpriseOrder();
+    }
   };
 
   const placeEnterpriseOrder = async () => {
@@ -261,6 +299,76 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
 
         <View>
           <Text style={styles.selectPaymentMethod}>Credi & Debit Cards</Text>
+        </View>
+
+        <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
+          {paymentMethod.map((item, index) => {
+            return (
+              <TouchableOpacity key={index}
+                onPress={() => {
+                  setSelectedOptionIndex(index);
+                }}
+                style={{
+                  flexDirection: 'row',
+                  padding: 15,
+                  width: '100%',
+                  justifyContent: 'space-between',
+                }}>
+                <View style={{flexDirection: 'row'}}>
+                  <Image
+                    style={{marginRight: 20}}
+                    source={require('../../image/logos_mastercard.png')}
+                  />
+                  <Text style={[styles.selectPaymentMethod, {marginRight: 10}]}>
+                    {item.company_name}
+                  </Text>
+                  <Text style={styles.selectPaymentMethod}>
+                    {item.card_number}
+                  </Text>
+                </View>
+
+                {selectedOptionIndex == index ? (
+                  <FontAwesome
+                    name="dot-circle-o"
+                    size={25}
+                    color={colors.secondary}
+                  />
+                ) : (
+                  <FontAwesome
+                    name="circle-thin"
+                    size={25}
+                    color={colors.text}
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+          {userDetails.userDetails[0].is_pay_later == 1 ? (
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedOptionIndex(99);
+              }}
+              style={{
+                flexDirection: 'row',
+                padding: 15,
+                width: '100%',
+                justifyContent: 'space-between',
+              }}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.selectPaymentMethod}>Pay Later</Text>
+              </View>
+
+              {selectedOptionIndex == 99 ? (
+                <FontAwesome
+                  name="dot-circle-o"
+                  size={25}
+                  color={colors.secondary}
+                />
+              ) : (
+                <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              )}
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         <View style={styles.discountCard}>
@@ -432,7 +540,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 15,
+    marginVertical: 10,
   },
   discountInfo: {
     color: colors.secondary,
@@ -448,7 +556,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '50%',
+    marginTop: '20%',
   },
   PayText: {
     backgroundColor: '#FFFFFF',

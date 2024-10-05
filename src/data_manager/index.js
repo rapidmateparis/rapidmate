@@ -1143,3 +1143,21 @@ export const deleteAddressBookforEnterprise = (
     },
   );
 };
+
+export const getEnterprisePaymentMethod = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.enterprisePaymentMethod + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

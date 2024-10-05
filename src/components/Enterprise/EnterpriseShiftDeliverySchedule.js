@@ -29,10 +29,21 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
 
   const [days, setDays] = useState([]);
 
-  const params = route.params
+  const params = route.params;
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
+    var tempDays = days;
+    if (!promoEmails) {
+      tempDays.forEach(element => {
+        element.timeslots = tempDays[0].timeslots;
+      });
+    } else {
+      tempDays.forEach(element => {
+        element.timeslots = [];
+      });
+    }
+    setDays(tempDays);
   };
 
   const createSchedule = (startDateParam, endDateParam) => {
@@ -226,7 +237,11 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                       <DatePicker
                         modal
                         open={item.fromTimeOpen}
-                        date={item.fromTimeText ? moment(item.fromTimeText,'hh:mm A').toDate() : new Date()}
+                        date={
+                          item.fromTimeText
+                            ? moment(item.fromTimeText, 'hh:mm A').toDate()
+                            : new Date()
+                        }
                         mode="time"
                         onConfirm={date => {
                           var curentInstance = [...days];
@@ -269,7 +284,11 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                       <DatePicker
                         modal
                         open={item.toTimeOpen}
-                        date={item.toTimeText ? moment(item.toTimeText,'hh:mm A').toDate() : new Date()}
+                        date={
+                          item.toTimeText
+                            ? moment(item.toTimeText, 'hh:mm A').toDate()
+                            : new Date()
+                        }
                         mode="time"
                         onConfirm={date => {
                           var curentInstance = [...days];
@@ -398,22 +417,24 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
       </ScrollView>
 
       <View style={styles.buttonCard}>
-        <TouchableOpacity style={styles.logbutton}>
+        <TouchableOpacity onPress={() => {
+          navigation.goBack()
+        }} style={styles.logbutton}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            var param = {}
-            param.startDate = days[0].formattedDate
-            param.endDate = days[days.length - 1].formattedDate
-            param.days = []
+            var param = {};
+            param.startDate = days[0].formattedDate;
+            param.endDate = days[days.length - 1].formattedDate;
+            param.days = [];
             for (let index = 0; index < days.length; index++) {
               const element = days[index];
               if (element.isChecked && element.timeslots.length > 0) {
-                param.days.push(element)
+                param.days.push(element);
               }
             }
-            params.schedule = param
+            params.schedule = param;
             navigation.navigate('EnterpriseSchedulePreview', {...params});
           }}
           style={styles.saveBTn}>
