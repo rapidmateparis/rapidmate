@@ -160,6 +160,8 @@ const PickupPayment = ({route, navigation}) => {
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
         total_amount: parseFloat(paymentAmount),
         discount: offerDiscount,
+        pickup_notes: params.userDetails.pickupNotes,
+        company_name: params.userDetails.company,
         ...scheduleParam,
       };
 
@@ -337,7 +339,7 @@ const PickupPayment = ({route, navigation}) => {
               }}
               onPress={() => {
                 setPromoCodeResponse(null);
-                setPaymentAmount(totalAmount)
+                setPaymentAmount(totalAmount);
               }}>
               <AntDesign name="close" size={20} color="#fff" />
             </TouchableOpacity>

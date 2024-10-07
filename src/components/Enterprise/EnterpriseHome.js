@@ -236,6 +236,10 @@ const EnterpriseHome = ({navigation}) => {
               data={dropdownBranches}
               search
               maxHeight={300}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               labelField="label"
               valueField="value"
               placeholder={
@@ -243,8 +247,6 @@ const EnterpriseHome = ({navigation}) => {
               }
               searchPlaceholder="Search.."
               value={selectedDropdownBranch}
-              itemTextStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.placeholderStyle}
               onFocus={() => setIsBranchFocus(true)}
               onBlur={() => setIsBranchFocus(false)}
               onChange={item => {
@@ -260,6 +262,10 @@ const EnterpriseHome = ({navigation}) => {
           <View style={styles.containerCountrySecond}>
             <Dropdown
               data={dropdownData2}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               search
               maxHeight={300}
               labelField="label"
@@ -267,8 +273,6 @@ const EnterpriseHome = ({navigation}) => {
               placeholder={!isWeekFocus ? 'This Week' : '...'}
               searchPlaceholder="Search.."
               value={dropdownWeek}
-              itemTextStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.placeholderStyle}
               onFocus={() => setIsWeekFocus(true)}
               onBlur={() => setIsWeekFocus(false)}
               onChange={item => {
@@ -687,9 +691,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   placeholderStyle: {
+    color: '#999',
     fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
     color: colors.text,
-    fontFamily: 'Montserrat-Regular',
+    fontSize: 12,
   },
 });
 

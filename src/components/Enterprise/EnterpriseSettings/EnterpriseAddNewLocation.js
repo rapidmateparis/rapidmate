@@ -137,10 +137,10 @@ const styles = StyleSheet.create({
   },
   addAddress: {
     position: 'absolute',
-    bottom: -10,
-    left: 50,
-    height:30,
-    width:30
+    bottom: -3,
+    left: 35,
+    height:20,
+    width:20,
   },
   homeIconCard: {
     position: 'relative',

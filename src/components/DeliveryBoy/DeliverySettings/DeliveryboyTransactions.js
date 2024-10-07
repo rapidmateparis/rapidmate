@@ -35,11 +35,6 @@ function DeliveryboyTransactions() {
     setActiveOption(option);
   };
 
-  const data = [
-    {label: '+91', value: '+91'},
-    {label: '+33', value: '+33'},
-  ];
-
   useEffect(() => {
     setLoading(true);
     let params = {
@@ -130,6 +125,16 @@ function DeliveryboyTransactions() {
             </Text>
           </TouchableOpacity>
 
+          <TouchableOpacity onPress={() => handleOptionClick('This week')}>
+            <Text
+              style={[
+                styles.dayOption,
+                activeOption === 'This week' && styles.activeDay,
+              ]}>
+              This week
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity onPress={() => handleOptionClick('This month')}>
             <Text
               style={[
@@ -149,28 +154,6 @@ function DeliveryboyTransactions() {
               This year
             </Text>
           </TouchableOpacity>
-          <View style={styles.containerCity}>
-            <Dropdown
-              data={data}
-              search
-              maxHeight={300}
-              itemTextStyle={styles.itemtextStyle}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Sort by' : '...'}
-              searchPlaceholder="Search.."
-              value={dropdownCountryValue}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setDropdownCountryValue(item.value);
-                setIsFocus(false);
-              }}
-            />
-          </View>
         </View>
       </View>
       <View style={{paddingHorizontal: 15}}>

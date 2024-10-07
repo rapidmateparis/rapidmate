@@ -153,7 +153,7 @@ const TrackDelivery = ({route, navigation}) => {
                 <Image source={require('../../image/chat-icon.png')} />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.navigate('EnterpriseBottomNav')}>
+                onPress={() => navigation.navigate('PickupDeliveryCompleted')}>
                 <Image source={require('../../image/call-icon.png')} />
               </TouchableOpacity>
             </View>

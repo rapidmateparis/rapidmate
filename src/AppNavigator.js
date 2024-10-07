@@ -120,6 +120,9 @@ import ConsumerManageProfile from './components/PickupDrop-off/Settings/Consumer
 import EnterpriseManageProfile from './components/Enterprise/EnterpriseSettings/EnterpriseManageProfile';
 import DeliveryboyManageProfile from './components/DeliveryBoy/DeliverySettings/DeliveryboyManageProfile';
 import EnterpriseDriverNotAvailable from './components/Enterprise/EnterpriseSettings/EnterpriseDriverNotAvailable';
+import AddDropDetails from './components/PickupDrop-off/AddDropDetails';
+import WithdrawPayment from './components/PickupDrop-off/Settings/WithdrawPayment';
+import WithdrawAmountTransfered from './components/PickupDrop-off/Settings/WithdrawAmountTransfered';
 
 const Stack = createStackNavigator();
 
@@ -250,6 +253,39 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                 })}
+              />
+              <Stack.Screen
+                name="WithdrawPayment"
+                component={WithdrawPayment}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Withdraw',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="WithdrawAmountTransfered"
+                component={WithdrawAmountTransfered}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="LogInScreen"
@@ -411,6 +447,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: 'Add pickup details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="AddDropDetails"
+                component={AddDropDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Add drop details',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
