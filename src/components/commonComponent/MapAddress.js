@@ -13,6 +13,7 @@ import {
 } from '../commonComponent/StoreContext';
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
+import SavedAddressModal from './SavedAddressModal';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Constants
@@ -43,6 +44,12 @@ const MapAddress = props => {
   const [destination, setDestination] = useState(null);
   const [time, setTime] = useState(0);
   const [distance, setDistance] = useState(0);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = vehicleDetails => {
+    setModalVisible(!isModalVisible);
+  };
 
   useEffect(() => {
     getLiveLocation();
@@ -127,6 +134,13 @@ const MapAddress = props => {
               }}
               onFail={() => console.error('Error')}
             />
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="favorite-outline"
+              size={18}
+              color="#000000"
+              onPress={toggleModal}
+            />
           </View>
 
           <View style={styles.borderDummy}></View>
@@ -168,6 +182,13 @@ const MapAddress = props => {
                 language: 'en',
               }}
               onFail={() => console.error('Error')}
+            />
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="favorite-outline"
+              size={18}
+              color="#000000"
+              onPress={toggleModal}
             />
           </View>
           <View style={styles.borderShowOff}></View>
@@ -228,6 +249,10 @@ const MapAddress = props => {
           />
         )}
       </MapView>
+      <SavedAddressModal
+        isModalVisible={isModalVisible}
+        setModalVisible={setModalVisible}
+      />
     </View>
   );
 };

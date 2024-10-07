@@ -569,6 +569,7 @@ export const getConsumerAddressBookList = (
   successCallback,
   errorCallback,
 ) => {
+  console.log('print_data==>', API.getConsumerAddressListUrl, param);
   axiosCall(
     API.getConsumerAddressListUrl + param,
     HTTPMethod.GET,

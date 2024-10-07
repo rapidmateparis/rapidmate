@@ -141,9 +141,10 @@ const TodayList = ({navigation, searchText}) => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on{' '}
+          {/* Delivered on{' '}
           {moment(currentOrderItem.item.delivery_date).format('MMM DD, YYYY')}{' '}
-          at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')}
+          at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')} */}
+          {currentOrderItem.item.consumer_order_title}
         </Text>
       </View>
 
@@ -334,9 +335,11 @@ const PastList = ({navigation, searchText}) => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on{' '}
-          {moment(pastOrderItem.item.delivery_date).format('MMM DD, YYYY')} at{' '}
-          {moment(pastOrderItem.item.delivery_date).format('hh:mm A')}
+          {pastOrderItem.item.consumer_order_title}
+          {/* Delivered on{' '}
+          {moment(pastOrderItem.item.delivery_date).format(
+            'MMM DD, YYYY',
+          )} at {moment(pastOrderItem.item.delivery_date).format('hh:mm A')} */}
         </Text>
       </View>
 

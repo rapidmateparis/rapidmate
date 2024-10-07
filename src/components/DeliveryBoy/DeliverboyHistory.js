@@ -151,10 +151,11 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              Scheduled on{' '}
+              {item.item.delivery_boy_order_title}
+              {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
-              )}
+              )} */}
             </Text>
           </View>
 
@@ -339,10 +340,11 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              Scheduled on{' '}
+              {item.item.delivery_boy_order_title}
+              {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
-              )}
+              )} */}
             </Text>
           </View>
 

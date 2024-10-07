@@ -58,6 +58,7 @@ const AddressBook = ({route, navigation}) => {
       getConsumerAddressBookList(
         userDetails.ext_id,
         successResponse => {
+          console.log('successResponse CONSUMER', successResponse[0]._response);
           setConsumerAddressList(successResponse[0]._response);
           setLoading(false);
         },
@@ -71,6 +72,7 @@ const AddressBook = ({route, navigation}) => {
       getDeliveryBoyAddressBookList(
         userDetails.ext_id,
         successResponse => {
+          console.log('successResponse DELIVERY_BOY', successResponse[0]._response);
           setDeliveryBoyAddressList(successResponse[0]._response);
           setLoading(false);
         },
@@ -84,6 +86,7 @@ const AddressBook = ({route, navigation}) => {
       getEnterpriseAddressBookList(
         userDetails.ext_id,
         successResponse => {
+          console.log('successResponse getEnterpriseAddressBookList', successResponse[0]._response);
           setLoading(false);
           setEnterpriseAddressList(successResponse[0]._response);
         },
