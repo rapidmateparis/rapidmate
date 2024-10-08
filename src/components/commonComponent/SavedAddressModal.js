@@ -15,11 +15,7 @@ import {useUserDetails} from './StoreContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 
-function SavedAddressModal({
-  setModalVisible,
-  isModalVisible,
-  selectedAddress,
-}) {
+function SavedAddressModal({setModalVisible, isModalVisible, selectedAddress}) {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
   const [addressList, setAddressList] = useState([]);
@@ -78,15 +74,23 @@ function SavedAddressModal({
   };
 
   const renderItem = addressItem => (
-    <View style={styles.addressCard}>
-      <Ionicons name="location-outline" size={20} color="#000" />
-      <View style={{marginLeft: 10, flex: 1}}>
-        <Text style={styles.paymentPlateform}>
-          {addressItem.item.first_name + ' ' + addressItem.item.last_name}
-        </Text>
-        <Text style={styles.mailId}>{addressItem.item.address}</Text>
+    <TouchableOpacity
+      onPress={() => {
+        if (addressItem) {
+          selectedAddress(addressItem.item.address);
+          toggleModal();
+        }
+      }}>
+      <View style={styles.addressCard}>
+        <Ionicons name="location-outline" size={20} color="#000" />
+        <View style={{marginLeft: 10, flex: 1}}>
+          <Text style={styles.paymentPlateform}>
+            {addressItem.item.first_name + ' ' + addressItem.item.last_name}
+          </Text>
+          <Text style={styles.mailId}>{addressItem.item.address}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (

@@ -44,10 +44,14 @@ const MapAddress = props => {
   const [destination, setDestination] = useState(null);
   const [time, setTime] = useState(0);
   const [distance, setDistance] = useState(0);
-
+  const [selectedSourceAddress, setSelectedSourceAddress] = useState();
+  const [selectedDistinationAddress, setSelectedDistinationAddress] =
+    useState();
+  const [addressType, setAddressType] = useState();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const toggleModal = vehicleDetails => {
+  const toggleModal = addressType => {
+    setAddressType(addressType);
     setModalVisible(!isModalVisible);
   };
 
@@ -90,6 +94,17 @@ const MapAddress = props => {
     props.onFetchDistanceAndTime({distance: d, time: t});
   };
 
+  const onSelectedAddress = address => {
+    console.log('address', address, addressType);
+    if (address) {
+      if (addressType == 0) {
+        setSelectedSourceAddress(address);
+      } else {
+        setSelectedDistinationAddress(address);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* GooglePlacesAutocomplete */}
@@ -112,9 +127,19 @@ const MapAddress = props => {
                 description: {color: colors.black},
                 color: colors.black,
               }}
+              ref={ref => {
+                if (selectedSourceAddress) {
+                  ref?.setAddressText(selectedSourceAddress);
+                }
+              }}
               textInputProps={{
                 placeholderTextColor: colors.lightGrey,
                 returnKeyType: 'search',
+                onChangeText: text => {
+                  if (text) {
+                    setSelectedSourceAddress(null);
+                  }
+                },
               }}
               onPress={(data, details = null) => {
                 const originCoordinates = {
@@ -139,7 +164,7 @@ const MapAddress = props => {
               name="favorite-outline"
               size={18}
               color="#000000"
-              onPress={toggleModal}
+              onPress={() => toggleModal(0)}
             />
           </View>
 
@@ -161,9 +186,19 @@ const MapAddress = props => {
                 description: {color: colors.black},
                 color: colors.black,
               }}
+              ref={ref => {
+                if (selectedDistinationAddress) {
+                  ref?.setAddressText(selectedDistinationAddress);
+                }
+              }}
               textInputProps={{
                 placeholderTextColor: colors.lightGrey,
                 returnKeyType: 'search',
+                onChangeText: text => {
+                  if (text) {
+                    setSelectedDistinationAddress(null);
+                  }
+                },
               }}
               onPress={(data, details = null) => {
                 const destinationCoordinates = {
@@ -188,7 +223,7 @@ const MapAddress = props => {
               name="favorite-outline"
               size={18}
               color="#000000"
-              onPress={toggleModal}
+              onPress={() => toggleModal(1)}
             />
           </View>
           <View style={styles.borderShowOff}></View>
@@ -252,6 +287,7 @@ const MapAddress = props => {
       <SavedAddressModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
+        selectedAddress={onSelectedAddress}
       />
     </View>
   );
