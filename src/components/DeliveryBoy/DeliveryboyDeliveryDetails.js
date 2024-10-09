@@ -13,7 +13,6 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {colors} from '../../colors';
-import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 import DeliveryboySubmitOTPModal from '../commonComponent/DeliveryboySubmitOTPModal';
 import {
@@ -50,7 +49,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     setLoading(true);
     let params = {
       order_number: orderNumber,
-      status: 'COMPLETED',
+      status: 'Mark as delivered',
     };
     orderStatusUpdate(
       params,
@@ -64,9 +63,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       errorResponse => {
         setLoading(false);
         console.log('message===>', JSON.stringify(errorResponse));
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   };
