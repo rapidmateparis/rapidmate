@@ -64,9 +64,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       errorResponse => {
         setLoading(false);
         console.log('message===>', JSON.stringify(errorResponse));
-        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-        //   {text: 'OK', onPress: () => {}},
-        // ]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       },
     );
   };
