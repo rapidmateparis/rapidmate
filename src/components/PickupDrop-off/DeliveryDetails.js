@@ -40,6 +40,7 @@ const DeliveryDetails = ({navigation, route}) => {
   const componentType = route.params?.componentType;
   const [order, serOrder] = useState({});
   const [deliveryboy, setDeliveryboy] = useState({});
+  const [sourceAddress, setSourceAddress] = useState({});
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
@@ -76,7 +77,7 @@ const DeliveryDetails = ({navigation, route}) => {
 
   useEffect(() => {
     if (componentType == 'ENTERPRISE') {
-      enterpriseOrderDetail()
+      enterpriseOrderDetail();
     } else {
       orderDetail();
     }
@@ -119,6 +120,7 @@ const DeliveryDetails = ({navigation, route}) => {
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location_id,
           );
+          getSourceAddress(successResponse[0]._response.order.pickup_location_id);
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
@@ -140,6 +142,26 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           setDestinationAddress(successResponse[0]._response[0]);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('destination==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getSourceAddress = async locationId => {
+    setLoading(true);
+    getLocationById(
+      locationId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setSourceAddress(successResponse[0]._response[0]);
         }
       },
       errorResponse => {
@@ -285,9 +307,14 @@ const DeliveryDetails = ({navigation, route}) => {
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
-      <View style={{paddingHorizontal: 15,}}>
+      <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails />
+          <MapDeliveryDetails
+            addressData={{
+              sourceAddress: sourceAddress,
+              destinationAddress: destinationAddress,
+            }}
+          />
         </View>
 
         <View>

@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Image, Text, TouchableOpacity, TextInput} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import MapView, {
   PROVIDER_GOOGLE,
   Marker,
@@ -13,6 +20,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 
 const styles = StyleSheet.create({
   container: {
@@ -89,31 +97,69 @@ const MyCustomCalloutView = () => (
         fontFamily: 'Montserrat-SemiBold',
         fontSize: 16,
       }}>
-     Your Location
+      Your Location
     </Text>
   </View>
 );
 
-const polylineCoordinates = [
-  {latitude: 48.85754309772872, longitude: 2.3513877855537912},
-  {latitude: 48.857287428774825, longitude: 2.35238508352699},
-  {latitude: 48.85985981067358, longitude: 2.3543350375785965},
-  {latitude: 48.85956739763947, longitude: 2.3555714983279348},
-  {latitude: 48.860283170322155, longitude: 2.3563025498806116},
-];
-
-export default function MapDeliveryDetails() {
+export default function MapDeliveryDetails(probs = null) {
   const navigation = useNavigation();
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
+
+  useEffect(() => {
+    if (probs?.addressData) {
+      setOrigin({
+        latitude: probs.addressData.sourceAddress.latitude
+          ? parseFloat(probs.addressData.sourceAddress.latitude)
+          : 48.85754309772872,
+        longitude: probs.addressData.sourceAddress.longitude
+          ? parseFloat(probs.addressData.sourceAddress.longitude)
+          : 2.3513877855537912,
+      });
+
+      setDestination({
+        latitude: probs.addressData.destinationAddress.latitude
+          ? parseFloat(probs.addressData.destinationAddress.latitude)
+          : 48.86020382046169,
+        longitude: probs.addressData.destinationAddress.longitude
+          ? parseFloat(probs.addressData.destinationAddress.longitude)
+          : 2.3565536180821782,
+      });
+    }
+  }, [probs?.addressData]);
+
+  const polylineCoordinates = [
+    {
+      latitude: probs.addressData.sourceAddress.latitude
+        ? parseFloat(probs.addressData.sourceAddress.latitude)
+        : 48.85754309772872,
+      longitude: probs.addressData.sourceAddress.longitude
+        ? parseFloat(probs.addressData.sourceAddress.longitude)
+        : 2.3513877855537912,
+    },
+    {
+      latitude: probs.addressData.destinationAddress.latitude
+        ? parseFloat(probs.addressData.destinationAddress.latitude)
+        : 48.86020382046169,
+      longitude: probs.addressData.destinationAddress.longitude
+        ? parseFloat(probs.addressData.destinationAddress.longitude)
+        : 2.3565536180821782,
+    },
+  ];
+
   const markers = [
     {
       id: 1,
       title: 'My Location',
       description: 'I am here',
       coordinate: {
-        latitude: 48.85754309772872,
-        longitude: 2.3513877855537912,
+        latitude: probs.addressData.sourceAddress.latitude
+          ? parseFloat(probs.addressData.sourceAddress.latitude)
+          : 48.85754309772872,
+        longitude: probs.addressData.sourceAddress.longitude
+          ? parseFloat(probs.addressData.sourceAddress.longitude)
+          : 2.3513877855537912,
       },
     },
     // Add more markers if needed
@@ -121,14 +167,17 @@ export default function MapDeliveryDetails() {
 
   return (
     <View style={styles.container}>
-
       {/* MapView */}
       <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={{
-          latitude: 48.85754309772872,
-          longitude: 2.3513877855537912,
+          latitude: probs.addressData.sourceAddress.latitude
+            ? parseFloat(probs.addressData.sourceAddress.latitude)
+            : 48.85754309772872,
+          longitude: probs.addressData.sourceAddress.longitude
+            ? parseFloat(probs.addressData.sourceAddress.longitude)
+            : 2.3513877855537912,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}>
@@ -148,22 +197,24 @@ export default function MapDeliveryDetails() {
         {/* Flag Marker */}
         <Marker
           coordinate={{
-            latitude: 48.86020382046169,
-            longitude: 2.3565536180821782,
+            latitude: probs.addressData.destinationAddress.latitude
+              ? parseFloat(probs.addressData.destinationAddress.latitude)
+              : 48.86020382046169,
+            longitude: probs.addressData.destinationAddress.longitude
+              ? parseFloat(probs.addressData.destinationAddress.longitude)
+              : 2.3565536180821782,
           }}>
           <MyCustomFlagMarker />
         </Marker>
         {/* Polyline */}
-        <Polyline
-          coordinates={polylineCoordinates}
-          strokeWidth={2}
-          strokeColor={colors.secondary}
-        />
         {origin != undefined && destination != undefined ? (
           <MapViewDirections
             origin={origin}
             destination={destination}
-            apikey={GOOGLE_MAPS_APIKEY}
+            apikey={MAPS_API_KEY}
+            strokeWidth={3}
+            strokeColor={colors.secondary}
+            mode="DRIVING"
           />
         ) : null}
       </MapView>
