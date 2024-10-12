@@ -54,13 +54,15 @@ const EnterpriseManageProfile = ({navigation}) => {
               source={require('../../../image/settings-profile.jpeg')}
             />
           )}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('EnterprisesTakeSelfie')}>
+          <TouchableOpacity>
             <AntDesign
               style={styles.cameraIcon}
               name="camerao"
               size={25}
               color="#fff"
+              onPress={()=>{
+                navigation.navigate('EnterprisesTakeSelfie');
+              }}
             />
           </TouchableOpacity>
         </View>
@@ -151,7 +153,9 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View>
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Deliveries per month / Hours per month</Text>
+          <Text style={styles.textlable}>
+            Deliveries per month / Hours per month
+          </Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"

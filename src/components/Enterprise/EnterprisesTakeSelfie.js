@@ -17,14 +17,19 @@ import {
 } from '../../utils/common';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
-import {updateUserProfile, uploadDocumentsApi} from '../../data_manager';
+import {
+  updateUserProfile,
+  updateUserProfileEnterprise,
+  uploadDocumentsApi,
+} from '../../data_manager';
+import { API } from '../../utils/constant';
 
 const EnterprisesTakeSelfie = ({navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
-  const {userDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -74,7 +79,38 @@ const EnterprisesTakeSelfie = ({navigation}) => {
         formdata,
         successResponse => {
           setLoading(false);
-          navigation.navigate('EnterpriseThanksPage');
+          let params = {
+            ext_id: userDetails.userDetails[0].ext_id,
+            profile_pic: JSON.parse(successResponse).id,
+          };
+          saveUserDetails({
+            userInfo: userDetails.userInfo,
+            userDetails: [
+              {
+                ...userDetails.userDetails[0],
+                profile_pic: JSON.parse(successResponse).id,
+              },
+            ],
+          });
+          setLoading(true);
+          updateUserProfileEnterprise(
+            params,
+            successResponseProfile => {
+              console.log('successResponseProfile', successResponseProfile);
+              setLoading(false);
+              navigation.navigate('EnterpriseThanksPage');
+            },
+            errorResponseProfile => {
+              console.log(
+                'print_data==>errorResponseProfile',
+                '' + errorResponseProfile,
+              );
+              setLoading(false);
+              Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            },
+          );
         },
         errorResponse => {
           console.log(
@@ -107,14 +143,23 @@ const EnterprisesTakeSelfie = ({navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
       <View>
         <TouchableOpacity onPress={toggleModal} style={styles.profilePicCard}>
-          <Image
-            style={styles.profilePic}
-            source={
-              image
-                ? {uri: image.data.uri}
-                : require('../../image/dummy-Selfie.jpg')
-            }
-          />
+          {userDetails.userDetails[0].profile_pic && image == null ? (
+            <Image
+              style={styles.profilePic}
+              source={{
+                uri: API.viewImageUrl + userDetails.userDetails[0].profile_pic,
+              }}
+            />
+          ) : (
+            <Image
+              style={styles.profilePic}
+              source={
+                image
+                  ? {uri: image.data.uri}
+                  : require('../../image/dummy-Selfie.jpg')
+              }
+            />
+          )}
           <AntDesign
             style={styles.cameraIcon}
             name="camerao"

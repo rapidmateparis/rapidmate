@@ -1162,3 +1162,21 @@ export const getEnterprisePaymentMethod = (
     },
   );
 };
+
+export const updateUserProfileEnterprise = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.updateUserProfile + 'enterprise',
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
