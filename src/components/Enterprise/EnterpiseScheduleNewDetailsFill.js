@@ -84,8 +84,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
   const {userDetails} = useUserDetails();
 
-  const [image, setImage] = useState(null); // State for photo
-
   const [imageViewId, setImageViewId] = useState(null);
 
   const handleDayPress = day => {
@@ -190,7 +188,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
         setPhotoFileName(getFileName(cameraData.data.uri));
-        setImage(cameraData);
         uploadImage(cameraData);
       }
     } catch (error) {
@@ -204,7 +201,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
-        setImage(imageData);
         uploadImage(imageData);
       }
     } catch (error) {
@@ -243,7 +239,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             '' + errorResponse,
           );
           setLoading(false);
-          Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          Alert.alert('Error Alert', '' + errorResponse, [
             {text: 'OK', onPress: () => {}},
           ]);
         },
