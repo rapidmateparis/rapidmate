@@ -1180,3 +1180,31 @@ export const updateUserProfileEnterprise = (
     },
   );
 };
+
+export const orderOPTVerify = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.verifyOrderOTP,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const orderOPTVerifyForDelivery = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.verifyOrderDeliveryOTP,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

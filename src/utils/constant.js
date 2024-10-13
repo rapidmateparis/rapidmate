@@ -81,7 +81,7 @@ export const API = {
   cancelOrderUrl: BASE_URL + 'order/cancel',
   deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
   checkPromoCodeUrl: BASE_URL + 'promocode/check',
-  orderRequestActionUrl: BASE_URL + 'order/request',
+  orderRequestActionUrl: BASE_URL + 'order/deliveryboy/request/action',
   paymentCancelRequestUrl: BASE_URL + 'payment/update',
   enterpriseOrdersUrl: BASE_URL + 'enterprise/order/getbyext/',
   viewEnterpriseOrderDetail: BASE_URL + 'enterprise/order/view/',
@@ -100,5 +100,8 @@ export const API = {
   createEnterpriseAddressUrl: BASE_URL + 'enterprise/address/create',
   addressBookUpdateEnterpriseUrl: BASE_URL + 'enterprise/address/update',
   addressBookDeleteEnterpriseUrl: BASE_URL + 'enterprise/address/delete/',
-  enterprisePaymentMethod: BASE_URL + 'enterprise/paymentmethod/getpaymentcard/'
+  enterprisePaymentMethod:
+    BASE_URL + 'enterprise/paymentmethod/getpaymentcard/',
+  verifyOrderOTP: BASE_URL + 'order/otp/verify',
+  verifyOrderDeliveryOTP: BASE_URL + 'order/delivered/otp/verify',
 };
