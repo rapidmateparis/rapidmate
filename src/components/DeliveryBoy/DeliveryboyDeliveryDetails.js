@@ -525,7 +525,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
           <TouchableOpacity
             onPress={handleStatusUpdated}
             // onPress={() => toggleModalOTP()}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+            style={[styles.logbutton, {backgroundColor: colors.primary}]}
+            disabled={updateStatus == 'Completed' ? true : false}>
             <Text style={styles.buttonText}>{updateStatus}</Text>
           </TouchableOpacity>
         </View>
