@@ -320,7 +320,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
                     source={require('../../image/logos_mastercard.png')}
                   />
                   <Text style={[styles.selectPaymentMethod, {marginRight: 10}]}>
-                    {item.company_name}
+                    {item.card_holder_name}
                   </Text>
                   <Text style={styles.selectPaymentMethod}>
                     {item.card_number}

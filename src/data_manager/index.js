@@ -908,7 +908,6 @@ export const addConsumerPaymentMethod = (
   successCallback,
   errorCallback,
 ) => {
-  console.log('url', API.consumerPaymentMethodUrl, param);
   axiosCall(
     API.consumerPaymentMethodUrl,
     HTTPMethod.POST,
@@ -1200,6 +1199,24 @@ export const orderOPTVerifyForDelivery = (params, successCallback, errorCallback
     API.verifyOrderDeliveryOTP,
     HTTPMethod.PUT,
     params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const addEnterprisePaymentMethod = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.enterprisePaymentMethodUrl,
+    HTTPMethod.POST,
+    param,
     response => {
       successCallback(response);
     },
