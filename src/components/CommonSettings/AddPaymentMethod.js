@@ -10,9 +10,13 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import {addConsumerPaymentMethod} from '../../data_manager';
+import {
+  addConsumerPaymentMethod,
+  addEnterprisePaymentMethod,
+} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
+import moment from 'moment';
 
 const AddPaymentMethod = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -30,28 +34,59 @@ const AddPaymentMethod = ({navigation}) => {
   const consumerPaymentMethod = () => {
     setLoading(true);
     let params = {
-      consumer_ext_id: userDetails.userDetails[0].ext_id,
       card_number: cardNumber,
       card_holder_name: nameOnCard,
-      expiration_date: expiryDate,
       cvv: cvvNumber,
       payment_method_type_id: 1,
     };
-    addConsumerPaymentMethod(
-      params,
-      successResponse => {
-        setLoading(false);
-        Alert.alert('Success', successResponse[0]._response.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-      errorResponse => {
-        setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-    );
+
+    if (userDetails.userDetails[0].role == 'CONSUMER') {
+      params.consumer_ext_id = userDetails.userDetails[0].ext_id;
+      params.expiration_date = expiryDate;
+      addConsumerPaymentMethod(
+        params,
+        successResponse => {
+          setLoading(false);
+          Alert.alert('Success', successResponse[0]._response.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else if (userDetails.userDetails[0].role == 'ENTERPRISE') {
+      params.enterprise_ext = userDetails.userDetails[0].ext_id;
+      params.is_del = 0;
+      params.expiration_date = moment(expiryDate, 'MM/YY').format('YYYY-MM-DD');
+      console.log('params', params);
+      addEnterprisePaymentMethod(
+        params,
+        successResponse => {
+          setLoading(false);
+          Alert.alert('Success', successResponse[0]._response.message, [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.pop();
+              },
+            },
+          ]);
+        },
+        errorResponse => {
+          console.log('errorResponse', errorResponse);
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      setLoading(false);
+    }
   };
 
   function formatExpiryDate(value) {
