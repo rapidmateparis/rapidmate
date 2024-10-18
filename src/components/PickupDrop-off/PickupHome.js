@@ -70,7 +70,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
             });
           }}>
           <View style={styles.pickcard}>
@@ -91,7 +91,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
             });
           }}>
           <View>
@@ -133,7 +133,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickupPack}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
             });
           }}>
           <View style={styles.packingCardImgas}>
