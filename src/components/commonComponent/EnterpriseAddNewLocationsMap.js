@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from 'react-native';
 import MapView, {
   PROVIDER_GOOGLE,
@@ -20,9 +21,18 @@ import MapViewDirections from 'react-native-maps-directions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {usePickupAddress} from '../commonComponent/StoreContext';
+import {
+  usePickupAddress,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
 import {useDropAddress} from '../commonComponent/StoreContext';
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
+import {useLoader} from '../../utils/loaderContext';
+import {
+  createEnterpriseBranch,
+  getLocationId,
+  updateEnterpriseBranch,
+} from '../../data_manager';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Custom Marker Components
@@ -34,50 +44,27 @@ const MyCustomFlagMarker = () => (
   <Image source={require('../../image/destination-flag-icon.png')} />
 );
 
-const MyCustomCalloutView = () => (
-  <View>
-    <Text
-      style={{
-        textAlign: 'center',
-        color: colors.text,
-        fontFamily: 'Montserrat-SemiBold',
-        fontSize: 16,
-      }}>
-      Hello
-    </Text>
-  </View>
-);
-
-export default function EnterpriseAddNewLocationsMap() {
-  useEffect(() => {
-    getLiveLocation();
-  }, []);
-
-  const getLiveLocation = async () => {
-    const locationPermissionDenied = await locationPermission();
-    if (locationPermissionDenied) {
-      const {latitude, longitude} = await getCurrentLocation();
-    }
-  };
+const EnterpriseAddNewLocationsMap = props => {
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const {savePickupAddress} = usePickupAddress();
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
   const mapViewRef = useRef(null);
   const navigation = useNavigation();
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
-  const markers = [
-    {
-      id: 1,
-      title: 'My Location',
-      description: 'I am here',
-      coordinate: {
-        latitude: 48.85754309772872,
-        longitude: 2.3513877855537912,
-      },
-    },
-    // Add more markers if needed
-  ];
+  const [location, setLocation] = useState(props.location);
+  var sourceLocationText = '';
+  if (location) {
+    sourceLocationText = location.address;
+    sourceLocationText += location.city ? ', ' + location.city : '';
+    sourceLocationText += location.state ? ', ' + location.state : '';
+    sourceLocationText += location.country ? ', ' + location.country : '';
+  }
 
-  const {pickupAddress, setPickupAddress} = usePickupAddress();
-  const {dropAddress, setDropAddress} = useDropAddress();
+  useEffect(() => {
+    setSelectedLocation(props.location);
+  }, []);
 
   // Function to move map view to a specific location
   const moveToLocation = location => {
@@ -88,6 +75,62 @@ export default function EnterpriseAddNewLocationsMap() {
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       });
+    }
+  };
+
+  const saveLocation = () => {
+    if (props.title == '') {
+      Alert.alert('Error Alert', 'Please enter a title', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    } else {
+      setLoading(true);
+      let requestParams = {
+        enterprise_ext_id: userDetails.userDetails[0].ext_id,
+        branch_name: props.title,
+        address: selectedLocation.address,
+        city: selectedLocation.city,
+        state: selectedLocation.state,
+        country: selectedLocation.country,
+        postal_code: selectedLocation.postal_code,
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+      };
+      if (props.location) {
+        requestParams.id = props.location.id;
+        requestParams.enterprise_id = props.location.enterprise_id;
+        updateEnterpriseBranch(
+          requestParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              setLoading(false);
+              navigation.goBack();
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      } else {
+        createEnterpriseBranch(
+          requestParams,
+          successResponse => {
+            if (successResponse[0]._success) {
+              setLoading(false);
+              navigation.goBack();
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+      }
     }
   };
 
@@ -102,15 +145,48 @@ export default function EnterpriseAddNewLocationsMap() {
             }>
             <View style={styles.locationAddress}>
               <GooglePlacesAutocomplete
+                styles={{
+                  textInput: {
+                    color: colors.black,
+                  },
+                  description: {color: colors.black},
+                  color: colors.black,
+                }}
+                ref={ref => {
+                  if (location) {
+                    ref?.setAddressText(sourceLocationText);
+                  }
+                }}
+                textInputProps={{
+                  placeholderTextColor: colors.lightGrey,
+                  returnKeyType: 'search',
+                  onChangeText: text => {
+                    if (text) {
+                      setLocation(null);
+                    }
+                  },
+                }}
                 fetchDetails={true}
                 placeholder="Set location address"
                 onPress={(data, details = null) => {
-                  let originCodinates = {
+                  let originCoordinates = {
                     latitude: details?.geometry?.location.lat,
                     longitude: details?.geometry?.location.lng,
                   };
-                  setOrigin(originCodinates);
-                  moveToLocation(originCodinates);
+                  let locationDetails = data.description.split(',');
+                  let locationParams = {
+                    location_name: locationDetails[0] ? locationDetails[0] : '',
+                    address: locationDetails[0] ? locationDetails[0] : '',
+                    city: locationDetails[1] ? locationDetails[1] : '',
+                    state: locationDetails[2] ? locationDetails[2] : '',
+                    country: locationDetails[3] ? locationDetails[3] : '',
+                    postal_code: '23424',
+                    latitude: originCoordinates.latitude,
+                    longitude: originCoordinates.longitude,
+                  };
+                  setSelectedLocation(locationParams);
+                  setOrigin(originCoordinates);
+                  moveToLocation(originCoordinates);
                 }}
                 query={{
                   key: MAPS_API_KEY,
@@ -157,14 +233,16 @@ export default function EnterpriseAddNewLocationsMap() {
       <TouchableOpacity
         onPress={() => {
           savePickupAddress(selectedLocation);
-          navigation.goBack();
+          saveLocation();
         }}
         style={styles.trackOrderBtn}>
         <Text style={styles.trackText}>Save location address</Text>
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default EnterpriseAddNewLocationsMap;
 
 const styles = StyleSheet.create({
   container: {

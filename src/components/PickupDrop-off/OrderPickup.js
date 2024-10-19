@@ -2,25 +2,45 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
+  Linking,
+  BackHandler,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
+import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
+import {API} from '../../utils/constant';
 
-const OrderPickup = ({navigation}) => {
-  const orderId = '9AS68D7G698GH';
-  const otp = '123456';
+const OrderPickup = ({route, navigation}) => {
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
   const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
+  const {placedOrderDetails} = usePlacedOrderDetails();
+  const [driverDetails, setDriverDetails] = useState(
+    route.params.driverDetails,
+  );
+  const [locationList, setLocationList] = useState(route.params.locationList);
+  const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
+  const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+    return () => backHandler.remove();
+  }, []);
 
   const handleCopyOrderId = () => {
     Clipboard.setString(orderId);
@@ -38,20 +58,10 @@ const OrderPickup = ({navigation}) => {
     }, 2000);
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDeliveryTime(prevTime => {
-        if (prevTime > 0) {
-          return prevTime - 1;
-        } else {
-          clearInterval(timer); // Stop the timer when it reaches zero
-          return 0;
-        }
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
 
   const formatTime = timeInSeconds => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -62,8 +72,17 @@ const OrderPickup = ({navigation}) => {
     )}`;
   };
 
+  const handleCall = phoneNumber => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to make the call:', err);
+      Alert.alert('Error', 'Unable to make a call');
+    });
+  };
+
   return (
-    <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
+    <ScrollView
+      style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <View>
         <View>
           <Text style={styles.mainTitle}>
@@ -114,17 +133,25 @@ const OrderPickup = ({navigation}) => {
         <ImageBackground
           style={{width: '100%'}}
           source={require('../../image/DeliveryRequest-bg.png')}>
-            <View style={styles.boxCard}>
-                <Image source={require('../../image/Delivery-Box-Imga.png')}/>
-                <Image style={styles.cloud1} source={require('../../image/Cloud-Graphic.png')}/>
-                <Image style={styles.cloud2} source={require('../../image/Cloud-Graphic.png')}/>
-            </View>
+          <View style={styles.boxCard}>
+            <Image source={require('../../image/Delivery-Box-Imga.png')} />
+            <Image
+              style={styles.cloud1}
+              source={require('../../image/Cloud-Graphic.png')}
+            />
+            <Image
+              style={styles.cloud2}
+              source={require('../../image/Cloud-Graphic.png')}
+            />
+          </View>
           <View style={{paddingTop: '15%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Pickup from</Text>
                 <Text style={styles.subAddress}>
-                  1901 Thornridge Cir. Shiloh, California
+                  {getLocationAddress(
+                    placedOrderDetails[0]?.pickup_location_id,
+                  )}
                 </Text>
               </View>
               <View>
@@ -134,10 +161,21 @@ const OrderPickup = ({navigation}) => {
 
             <View style={styles.driverCard}>
               <View style={{position: 'relative'}}>
-                <Image
-                  style={{width: 60, height: 60, borderRadius: 30}}
-                  source={require('../../image/driver.jpeg')}
-                />
+                {driverDetails?.deliveryBoy?.profile_pic ? (
+                  <Image
+                    style={{width: 60, height: 60, borderRadius: 30}}
+                    source={{
+                      uri:
+                        API.viewImageUrl +
+                        driverDetails.deliveryBoy.profile_pic,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={{width: 60, height: 60, borderRadius: 30}}
+                    source={require('../../image/driver.jpeg')}
+                  />
+                )}
                 <Image
                   style={{
                     position: 'absolute',
@@ -151,21 +189,35 @@ const OrderPickup = ({navigation}) => {
                 />
               </View>
               <View style={{width: '40%'}}>
-                <Text style={styles.driverName}>John Doe</Text>
-                <Text style={styles.truckName}>VOLVO FH16 2022</Text>
+                <Text style={styles.driverName}>
+                  {driverDetails?.deliveryBoy?.first_name +
+                    ' ' +
+                    driverDetails?.deliveryBoy?.last_name}
+                </Text>
+                <Text style={styles.truckName}>
+                  {driverDetails?.vehicle?.plat_no}
+                </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => handleCall(driverDetails?.deliveryBoy?.phone_number)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
             </View>
 
-            <TouchableOpacity onPress={() => navigation.navigate('OrderConfirm')} style={styles.trackOrderBtn}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('OrderConfirm', {
+                  driverDetails: route.params.driverDetails,
+                  locationList: route.params.locationList,
+                  placedOrderDetails: placedOrderDetails[0],
+                })
+              }
+              style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>Track order</Text>
             </TouchableOpacity>
           </View>

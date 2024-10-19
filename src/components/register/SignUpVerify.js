@@ -23,7 +23,7 @@ import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 
 const SignUpVerify = ({route, navigation}) => {
-  const {saveUserDetails} = useUserDetails();
+  const {saveUserDetails, userDetails} = useUserDetails();
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
   const [code, setCode] = useState('');
   const {setLoading} = useLoader();
@@ -40,15 +40,8 @@ const SignUpVerify = ({route, navigation}) => {
       if (fcmToken) {
         setFcmToken(fcmToken);
       }
-
-      messaging().onMessage(async remoteMessage => {
-        Alert.alert(
-          'A new FCM message arrived!',
-          JSON.stringify(remoteMessage),
-        );
-      });
     }
-    onSignIn();
+    // onSignIn();
   }, []);
 
   async function onSignIn() {

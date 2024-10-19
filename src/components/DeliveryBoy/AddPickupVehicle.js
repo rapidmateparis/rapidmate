@@ -157,7 +157,7 @@ const AddPickupVehicle = ({route, navigation}) => {
                   {text: 'OK', onPress: () => {}},
                 ]);
               } else if (successResponse[0]._httpsStatusCode == 200) {
-                navigation.navigate('DeliveryboyThanksPage');
+                navigation.navigate('ChooseDeliveryType');
               }
             }
           }

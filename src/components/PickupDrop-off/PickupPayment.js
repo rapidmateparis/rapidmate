@@ -15,13 +15,21 @@ import {colors} from '../../colors';
 import {useStripe} from '@stripe/stripe-react-native';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
-import {addPayment, createPickupOrder} from '../../data_manager';
+import {
+  addPayment,
+  checkPromoCode,
+  createPickupOrder,
+} from '../../data_manager';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Img.png';
+import PartnerImage from '../../image/Partner.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
+import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
+import {debounce} from 'lodash';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -30,18 +38,36 @@ const PickupPayment = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const {savePlacedOrderDetails} = usePlacedOrderDetails();
   const [orderResponse, setOrderResponse] = useState();
+  const [promoCode, setPromoCode] = useState('');
   const params = route.params.props;
-  const paymentAmount = Math.round(
-    params.selectedVehicleDetails.base_price +
-      params.selectedVehicleDetails.km_price *
-        params.distanceTime.distance,
-  ).toFixed(2);
+  const [totalAmount, setTotalAmount] = useState(
+    typeof params.selectedVehiclePrice === 'number'
+      ? params.selectedVehiclePrice.toFixed(2)
+      : params.selectedVehiclePrice,
+  );
+  const [paymentAmount, setPaymentAmount] = useState(totalAmount);
+  const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
-  
+  const [offerDiscount, setOfferDiscount] = useState(params.paymentDiscount);
 
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  function calculateFinalPrice(originalPrice, discountPercentage) {
+    console.log(originalPrice, discountPercentage);
+    const discount = (originalPrice * discountPercentage) / 100;
+    const finalPrice = originalPrice - discount;
+    console.log(finalPrice);
+    return finalPrice.toFixed(2);
+  }
+
+  useEffect(() => {
+    {
+      offerDiscount > 0 &&
+        setPaymentAmount(calculateFinalPrice(paymentAmount, offerDiscount));
+    }
+  }, []);
 
   useEffect(() => {
     if (orderNumber) {
@@ -63,7 +89,7 @@ const PickupPayment = ({route, navigation}) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            amount: paymentAmount * 100, // Amount in cents
+            amount: parseInt(paymentAmount * 100), // Amount in cents
             currency: 'EUR',
             //payment_method_types: ['card', 'google_pay']
           }).toString(),
@@ -98,11 +124,29 @@ const PickupPayment = ({route, navigation}) => {
     console.log('érror', error);
     if (!error) {
       createPayment();
+    } else {
+      Alert.alert('Error Alert', error.message, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Go Home',
+          onPress: () => navigation.navigate('PickupBottomNav'),
+        },
+      ]);
     }
   };
 
+  console.log('print_data===>', params);
+
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
+      console.log('params.schedule_date_time', params.schedule_date_time);
+      if (params.serviceTypeId == 2) {
+        var scheduleParam = {schedule_date_time: params.schedule_date_time};
+      }
       let requestParams = {
         consumer_ext_id: userDetails.userDetails[0].ext_id,
         service_type_id: params.serviceTypeId,
@@ -114,15 +158,26 @@ const PickupPayment = ({route, navigation}) => {
           ? params.destinationLocationId
           : 2,
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
-        total_amount:parseFloat(paymentAmount)
+        total_amount: parseFloat(paymentAmount),
+        discount: offerDiscount,
+        pickup_notes: params.userDetails.pickupNotes,
+        company_name: params.userDetails.company,
+        ...scheduleParam,
       };
+
+      if (promoCodeResponse) {
+        requestParams.promo_code = promoCodeResponse.promoCode;
+        requestParams.promo_value = promoCodeResponse.discount;
+        requestParams.order_amount = parseFloat(totalAmount);
+      }
+
       setLoading(true);
       createPickupOrder(
         requestParams,
         successResponse => {
           if (successResponse[0]._success) {
             console.log('placePickUpOrder', successResponse[0]._response);
-            savePlacedOrderDetails(successResponse[0]._response)
+            savePlacedOrderDetails(successResponse[0]._response);
             setOrderResponse(successResponse[0]._response);
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
@@ -166,6 +221,33 @@ const PickupPayment = ({route, navigation}) => {
     );
   };
 
+  const applyPromoCode = () => {
+    let params = {
+      promoCode: promoCode,
+      orderAmount: paymentAmount,
+    };
+    checkPromoCode(
+      params,
+      successResponse => {
+        console.log(
+          'applyPromoCode==>successResponse',
+          JSON.stringify(successResponse),
+        );
+        if (successResponse[0]._success) {
+          const promoResponse = successResponse[0]._response[0];
+          setPromoCodeResponse(promoResponse);
+          setPaymentAmount(successResponse[0]._response[0].totalAmount);
+        }
+      },
+      errorResponse => {
+        console.log(
+          'applyPromoCode==>errorResponse',
+          JSON.stringify(errorResponse),
+        );
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -173,19 +255,23 @@ const PickupPayment = ({route, navigation}) => {
           <View style={styles.semiTruckDetails}>
             <View style={{marginRight: 15}}>
               <Image
-                style={{width: 90, height: 70}}
+                style={[styles.vehicleImage, {width: 100, height: 100}]}
                 source={
-                  params.selectedVehicle == 'Bicycle'
+                  params.selectedVehicle == 'Cycle'
                     ? BicycleImage
-                    : params.selectedVehicle == 'Motorbike'
+                    : params.selectedVehicle == 'Scooter'
                     ? MotorbikeImage
-                    : params.selectedVehicle == 'Mini Truck'
+                    : params.selectedVehicle == 'Car'
+                    ? CarImage
+                    : params.selectedVehicle == 'Partner'
+                    ? PartnerImage
+                    : params.selectedVehicle == 'Pickup'
                     ? MiniTruckImage
-                    : params.selectedVehicle == 'Mini Van'
-                    ? MiniTruckImage
-                    : params.selectedVehicle == 'Semi Truck'
+                    : params.selectedVehicle == 'Van'
+                    ? MiniVanImage
+                    : params.selectedVehicle == 'Truck'
                     ? SemiTruckImage
-                    : SemiTruckImage
+                    : OtherImage
                 }
               />
             </View>
@@ -208,11 +294,11 @@ const PickupPayment = ({route, navigation}) => {
           <View style={[styles.distanceTime, {marginVertical: 15}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From{' '}
+              From:{' '}
               {params.sourceLocation.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : ''}{' '}
-              to{' '}
+              To:{' '}
               {params.destinationLocation.destinationDescription
                 ? params.destinationLocation.destinationDescription
                 : ''}
@@ -221,28 +307,65 @@ const PickupPayment = ({route, navigation}) => {
 
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
-            <Text style={styles.totalAmount}>€ {paymentAmount}</Text>
+            <Text style={styles.totalAmount}>€ {totalAmount}</Text>
           </View>
         </View>
 
-        <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor: promoCodeResponse
+                ? colors.lightGrey
+                : colors.white,
+            },
+          ]}>
           <Image source={require('../../image/ticket-discount.png')} />
           <TextInput
             style={styles.input}
             placeholder="Promo code"
             placeholderTextColor="#999"
+            editable={promoCodeResponse ? false : true}
+            onChangeText={text => setPromoCode(text)}
           />
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.secondary,
-              paddingHorizontal: 20,
-              paddingVertical: 13,
-              borderTopRightRadius: 10,
-              borderBottomEndRadius: 10,
-            }}>
-            <AntDesign name="check" size={20} color="#fff" />
-          </TouchableOpacity>
+          {promoCodeResponse ? (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={() => {
+                setPromoCodeResponse(null);
+                setPaymentAmount(totalAmount);
+              }}>
+              <AntDesign name="close" size={20} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={applyPromoCode}>
+              <AntDesign name="check" size={20} color="#fff" />
+            </TouchableOpacity>
+          )}
         </View>
+        {promoCodeResponse && (
+          <Text
+            style={[
+              styles.discountInfo,
+              {fontSize: 16, alignSelf: 'flex-end'},
+            ]}>
+            Discount: € {promoCodeResponse.discount}
+          </Text>
+        )}
 
         <View>
           <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
@@ -257,9 +380,25 @@ const PickupPayment = ({route, navigation}) => {
             20% off on city bank credit card!
           </Text>
         </View>
+
+        {offerDiscount > 0 && (
+          <View style={styles.discountCard}>
+            <Image
+              style={{marginRight: 20}}
+              source={require('../../image/Group.png')}
+            />
+            <Text style={styles.discountInfo}>
+              {offerDiscount}% off on{' '}
+              {params.serviceTypeId == 1
+                ? 'Schedule Order'
+                : 'Pickup&Drop Order'}
+            </Text>
+          </View>
+        )}
+
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>
-          <TouchableOpacity onPress={onPayment}>
+          <TouchableOpacity onPress={debounce(onPayment, 500)}>
             <Text style={styles.PayText}>Proceed to pay</Text>
           </TouchableOpacity>
         </View>
@@ -370,7 +509,7 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   totalAmount: {
     fontSize: 12,
@@ -447,6 +586,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
+  },
+  vehicleImage: {
+    height: 62,
+    resizeMode: 'center',
   },
 });
 

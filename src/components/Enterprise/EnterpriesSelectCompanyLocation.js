@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,97 +7,101 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
+  FlatList,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import {getEnterpriseBranch} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const EnterpriesSelectCompanyLocation = ({navigation}) => {
-  return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15, paddingTop: 8}}>
-        <View>
-          <View style={styles.franchiseCard}>
-            <Image
-              style={{width: 30, height: 30}}
-              source={require('../../image/home.png')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-              <View style={styles.locationCard}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
-              </View>
-            </View>
+const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
+  const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+
+  useEffect(() => {
+    getEnterpriseBranch(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              var branches = [];
+              for (
+                let index = 0;
+                index < successResponse[0]._response.length;
+                index++
+              ) {
+                const element = successResponse[0]._response[index];
+                element.isSelected = false;
+                branches.push(element);
+              }
+              setEnterpriseBranches(branches);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
+
+  const renderItem = item => (
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('EnterpiseSelectDeliveryTypes', {
+          ...route.params,
+          branch_id: item.item.id,
+          sourceBranch: item.item
+        })
+      }>
+      <View style={styles.franchiseCard}>
+        <Image
+          style={{width: 30, height: 30}}
+          source={require('../../image/home.png')}
+        />
+        <View style={styles.franchiseCardHeader}>
+          <Text style={styles.franchiseStreet}>{item.item.address}</Text>
+          <View style={styles.locationCard}>
+            <EvilIcons name="location" size={22} color="#000" />
+            <Text style={styles.franchiseSubTitle}>
+              {item.item.city}, {item.item.state}, {item.item.country}
+            </Text>
           </View>
         </View>
-        
-        <View>
-          <View style={styles.franchiseCard}>
-            <Image
-              style={{width: 30, height: 30}}
-              source={require('../../image/home.png')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-              <View style={styles.locationCard}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View>
-          <View style={styles.franchiseCard}>
-            <Image
-              style={{width: 30, height: 30}}
-              source={require('../../image/home.png')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-              <View style={styles.locationCard}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <TouchableOpacity onPress={() => navigation.navigate('EnterpriseShiftDeliverySchedule')}>
-          <View style={styles.franchiseCard}>
-            <Image
-              style={{width: 30, height: 30}}
-              source={require('../../image/home.png')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-              <View style={styles.locationCard}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('EnterpiseSelectDeliveryTypes')}>
-          <View style={styles.franchiseCard}>
-            <Image
-              style={{width: 30, height: 30}}
-              source={require('../../image/home.png')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-              <View style={styles.locationCard}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-
       </View>
-    </ScrollView>
+    </TouchableOpacity>
+  );
+
+  return (
+    <View
+      style={{
+        width: '100%',
+        flex:1,
+        backgroundColor: '#FBFAF5',
+        paddingHorizontal: 15,
+        paddingTop: 8,
+      }}>
+      <FlatList
+        data={enterpriseBranches}
+        renderItem={renderItem}
+      />
+    </View>
   );
 };
 
@@ -118,6 +122,20 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 7,
     marginRight: 10,
+  },
+  logbutton: {
+    width: '100%',
+    marginTop: 30,
+    marginBottom: 20,
+    borderRadius: 5,
+    padding: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: 'Montserrat-Medium',
   },
   informatinCard: {
     flexDirection: 'row',

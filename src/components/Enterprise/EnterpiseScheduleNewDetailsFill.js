@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -22,8 +23,15 @@ import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
+import MapAddress from '../commonComponent/MapAddress';
+import {useLoader} from '../../utils/loaderContext';
+import {getLocationId, uploadDocumentsApi} from '../../data_manager';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
+import MultpleMapAddress from '../commonComponent/MultipleMapAddress';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
-const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
+const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [pickupAddress, setPickupAddress] = useState('');
   const [dropAddress, setDropAddress] = useState('');
   const [company, setCompany] = useState('');
@@ -31,17 +39,52 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
   const [pickupNotes, setPickupNotes] = useState('');
   const [orderid, setOrderid] = useState('');
   const [number, setNumber] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
-  const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
+  const [selectedRepeatMonth1, setSelectedRepeatMonth1] = useState('First');
+  const [selectedRepeatEvery, setSelectedRepeatEvery] = useState('1');
+  const [selectedRepeatType, setSelectedRepeatType] = useState('Day');
+  const [isFocusRepeatEvery, setIsFocusRepeatEvery] = useState(false);
+  const [isFocusRepeatType, setIsFocusRepeatType] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [repeatOrder, setRepeatOrder] = useState('Daily');
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
+  const [distanceTime, setDistanceTime] = useState();
+  const [sourceLocation, setSourceLocation] = useState();
+  const [destinationLocation, setDestinationLocation] = useState();
+  const {setLoading} = useLoader();
+  const [sourceLocationId, setSourceLocationId] = useState();
+  const [destinationLocationId, setDestinationLocationId] = useState();
+  const [date, setDate] = useState(new Date());
+  const [untilDate, setUntilDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
+  const [dateOpen, setDateOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
+  const [dateUntilOpen, setDateUntilOpen] = useState(false);
+  const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
+  const [pickupUntilDate, setPickupUntilDate] = useState('');
+
+  const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+  const [selectedWeekDay, setSelectedWeekDay] = useState(null);
+
+  const [destinationBranches, setDestinationBranches] = useState([]);
+  const [multipleDestinationAmount, setMultipleDestinationAmount] = useState(0);
+  const [multipleDestinationDistance, setMultipleDestinationDistance] =
+    useState(0);
+  const [multipleDestinationHours, setMultipleDestinationHours] = useState(0);
+
+  const [mapViewHeight, setMapViewHeight] = useState(200);
+
+  const routeParams = route.params;
+  const deliveryType = route.params.delivery_type_id;
+
+  const {userDetails} = useUserDetails();
+
+  const [imageViewId, setImageViewId] = useState(null);
 
   const handleDayPress = day => {
     let updatedSelectedDays;
@@ -63,9 +106,68 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const data = [
+  const repeatType = [{label: 'Week', value: 'Week'}];
+
+  const weeklyDay = [{label: 'Day', value: 'Day'}];
+
+  const monthValue1 = [
+    {label: 'First', value: 'First'},
+    {label: 'Second', value: 'Second'},
+    {label: 'Third', value: 'Third'},
+    {label: 'Fourth', value: 'Fourth'},
+    {label: 'Fifth', value: 'Fifth'},
+  ];
+
+  const monthDays = [
     {label: '1', value: '1'},
     {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
+    {label: '6', value: '6'},
+    {label: '7', value: '7'},
+    {label: '8', value: '8'},
+    {label: '9', value: '9'},
+    {label: '10', value: '10'},
+    {label: '11', value: '11'},
+    {label: '12', value: '12'},
+    {label: '13', value: '13'},
+    {label: '14', value: '14'},
+    {label: '15', value: '15'},
+    {label: '16', value: '16'},
+    {label: '17', value: '17'},
+    {label: '18', value: '18'},
+    {label: '19', value: '19'},
+    {label: '20', value: '20'},
+    {label: '21', value: '21'},
+    {label: '22', value: '22'},
+    {label: '23', value: '23'},
+    {label: '24', value: '24'},
+    {label: '25', value: '25'},
+    {label: '26', value: '26'},
+    {label: '27', value: '27'},
+    {label: '28', value: '28'},
+    {label: '29', value: '29'},
+    {label: '30', value: '30'},
+    {label: '31', value: '31'},
+  ];
+
+  const days = [
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
+  ];
+
+  const weekList = [
+    {label: 'Sunday', value: 'Sunday'},
+    {label: 'Monday', value: 'Monday'},
+    {label: 'Tuesday', value: 'Tusday'},
+    {label: 'Wednesday', value: 'Wednesday'},
+    {label: 'Thursday', value: 'Thursday'},
+    {label: 'Friday', value: 'Friday'},
+    {label: 'Saturday', value: 'Saturday'},
   ];
 
   const toggleModal = () => {
@@ -86,6 +188,7 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
         setPhotoFileName(getFileName(cameraData.data.uri));
+        uploadImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -98,6 +201,7 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
+        uploadImage(imageData);
       }
     } catch (error) {
       // Handle errors here
@@ -113,238 +217,549 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
     return fileName.length > 35 ? '...' + fileName : fileName;
   };
 
+  const uploadImage = async image => {
+    if (image != null) {
+      var photo = {
+        uri: image.data.uri,
+        type: image.data.type,
+        name: image.data.fileName,
+      };
+      const formdata = new FormData();
+      formdata.append('file', photo);
+      setLoading(true);
+      uploadDocumentsApi(
+        formdata,
+        successResponse => {
+          setLoading(false);
+          setImageViewId(JSON.parse(successResponse).id);
+        },
+        errorResponse => {
+          console.log(
+            'print_data==>errorResponseuploadDocumentsApi',
+            '' + errorResponse,
+          );
+          setLoading(false);
+          Alert.alert('Error Alert', '' + errorResponse, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      Alert.alert('Error Alert', 'Please choose a picture', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
+  };
+
+  const onFetchDistanceAndTime = value => {
+    console.log('onFetchDistanceAndTime', value);
+    setDistanceTime(value);
+  };
+
+  useEffect(() => {
+    setNumber(userDetails.userDetails[0].phone.substring(3));
+    setCompany(userDetails.userDetails[0].company_name);
+    if (deliveryType == 2) {
+      onBranchSourceLocation(routeParams.sourceBranch);
+    }
+  }, []);
+
+  const onBranchSourceLocation = location => {
+    let locationParams = {
+      location_name: location.branch_name ? location.branch_name : '',
+      address: location.address ? location.address : '',
+      city: location.city ? location.city : '',
+      state: location.state ? location.state : '',
+      country: location.country ? location.country : '',
+      postal_code: location.postal_code ? location.postal_code : '',
+      latitude: location.latitude,
+      longitude: location.longitude,
+    };
+    location.sourceDescription =
+      locationParams.address +
+      ', ' +
+      locationParams.city +
+      ', ' +
+      locationParams.country;
+    setSourceLocation(location);
+    setLoading(true);
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setSourceLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const onMultpleDestinationLocation = locations => {
+    var branches = [];
+    var totalAmount = 0;
+    var totalDistance = 0;
+    var totalHours = 0;
+    locations.forEach(element => {
+      if (element.hasOwnProperty('locationId')) {
+        var currentElement = {};
+        currentElement.distance = element.distance.toFixed(2);
+        totalDistance = totalDistance + element.distance;
+        currentElement.total_hours = element.duration.toFixed(2);
+        totalHours = totalHours + element.duration;
+        currentElement.to_latitude = element.destinationCoordinates.latitude;
+        currentElement.to_longitude = element.destinationCoordinates.longitude;
+        currentElement.amount = Math.round(
+          route.params.vehicle_type.base_price +
+            route.params.vehicle_type.km_price * element.distance,
+        ).toFixed(2);
+        totalAmount =
+          totalAmount +
+          Math.round(
+            route.params.vehicle_type.base_price +
+              route.params.vehicle_type.km_price * element.distance,
+          );
+        currentElement.delivery_date = moment(new Date()).format('YYYY-MM-DD');
+        currentElement.destinationDescription = element.destinationDescription;
+        branches.push(currentElement);
+      }
+    });
+    console.log('distance', totalDistance);
+    console.log('hours', totalHours);
+    if (branches.length > 0) {
+      setDestinationBranches(branches);
+      onFetchDistanceAndTime({
+        distance: branches[0].distance,
+        time: branches[0].total_hours,
+      });
+      setDestinationLocation(locations[0]);
+      setDestinationLocationId(locations[0].locationId);
+      setMultipleDestinationAmount(totalAmount);
+      setMultipleDestinationHours(totalHours);
+      setMultipleDestinationDistance(totalDistance);
+    }
+  };
+
+  const onSourceLocation = location => {
+    setSourceLocation(location);
+
+    let locationDetails = location.sourceDescription.split(',');
+    let locationParams = {
+      location_name: locationDetails[0] ? locationDetails[0] : '',
+      address: locationDetails[0] ? locationDetails[0] : '',
+      city: locationDetails[1] ? locationDetails[1] : '',
+      state: locationDetails[2] ? locationDetails[2] : '',
+      country: locationDetails[3] ? locationDetails[3] : '',
+      postal_code: '23424',
+      latitude: location.originCoordinates.latitude,
+      longitude: location.originCoordinates.longitude,
+    };
+    setLoading(true);
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setSourceLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const onDestinationLocation = location => {
+    setDestinationLocation(location);
+
+    let locationDetails = location.destinationDescription.split(',');
+    let locationParams = {
+      location_name: locationDetails[0] ? locationDetails[0] : '',
+      address: locationDetails[0] ? locationDetails[0] : '',
+      city: locationDetails[1] ? locationDetails[1] : '',
+      state: locationDetails[2] ? locationDetails[2] : '',
+      country: locationDetails[3] ? locationDetails[3] : '',
+      postal_code: '23425',
+      latitude: location.destinationCoordinates.latitude,
+      longitude: location.destinationCoordinates.longitude,
+    };
+    setLoading(true);
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setDestinationLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15, paddingTop: 8}}>
-        
-        <View>
-          <View style={styles.locationAddress}>
-            <View style={styles.locationCompanyCard}>
-              <Ionicons name="location-outline" size={18} color="#000000" />
-              <TextInput
-                style={styles.loginput}
-                placeholder="Enter pickup address"
-                placeholderTextColor="#999"
-                value={pickupAddress}
-                onChangeText={text => setPickupAddress(text)}
-              />
-              <TouchableOpacity  onPress={() => navigation.navigate('EnterpriseMapPickupAddress')}>
-                <AntDesign name="arrowright" size={18} color="#000000" />
-              </TouchableOpacity>
-            </View>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled={true}
+      style={{flex: 1}}>
+      {deliveryType == 2 ? (
+        <View style={{height: 400, position: 'relative'}}>
+          <MultpleMapAddress
+            sourceLocation={routeParams.sourceBranch}
+            onFetchDistanceAndTime={onFetchDistanceAndTime}
+            onDestinationLocation={onMultpleDestinationLocation}
+          />
+        </View>
+      ) : (
+        <View style={{height: 200, position: 'relative'}}>
+          <MapAddress
+            onFetchDistanceAndTime={onFetchDistanceAndTime}
+            onSourceLocation={onSourceLocation}
+            onDestinationLocation={onDestinationLocation}
+          />
+        </View>
+      )}
 
-            <View style={styles.borderDummy} />
-
-            <View style={styles.locationCompanyCard}>
-              <MaterialIcons name="my-location" size={18} color="#000000" />
-              <TextInput
-                style={styles.loginput}
-                placeholder="Enter drop-off address"
-                placeholderTextColor="#999"
-                value={dropAddress}
-                onChangeText={text => setDropAddress(text)}
-              />
-              <TouchableOpacity  onPress={() => navigation.navigate('EnterpriseMapDropAddress')}>
-                <AntDesign name="arrowright" size={18} color="#000000" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Company</Text>
-            <TextInput
-              style={styles.inputTextStyle}
-              placeholder="Type here"
-              value={company}
-              onChangeText={text => setCompany(text)}
-            />
-          </View>
-
+      <View style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+        <View style={{paddingHorizontal: 15, paddingTop: 8}}>
           <View>
-            <Text style={styles.textlable}>Phone number</Text>
-            <View style={styles.mobileNumberInput}>
-              <View style={{width: 95}}>
-                <View style={styles.containerDropdown}>
-                  <Dropdown
-                    data={numberData}
-                    search
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? '+33' : '...'}
-                    searchPlaceholder="+.."
-                    value={dropdownValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownValue(item.value);
-                      setIsFocus(false);
+            <View style={{flex: 1}}>
+              <Text style={styles.textlable}>Company</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                placeholderTextColor="#999"
+                placeholder="Type here"
+                value={company}
+                onChangeText={text => setCompany(text)}
+              />
+            </View>
+
+            <View>
+              <Text style={styles.textlable}>Phone number</Text>
+              <View style={styles.mobileNumberInput}>
+                <View style={{width: 95}}>
+                  <View style={styles.containerDropdown}>
+                    <Dropdown
+                      data={numberData}
+                      search
+                      itemTextStyle={styles.itemtextStyle}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? '+33' : '...'}
+                      searchPlaceholder="+.."
+                      value={dropdownValue}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setDropdownValue(item.value);
+                        setIsFocus(false);
+                      }}
+                      renderLeftIcon={() => (
+                        <Image
+                          style={{marginRight: 10}}
+                          source={require('../../image/flagIcon.png')}
+                        />
+                      )}
+                    />
+                  </View>
+                </View>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {fontFamily: 'Montserrat-Regular', fontSize: 16},
+                  ]}
+                  placeholder="00 00 00 00 00"
+                  placeholderTextColor="#999"
+                  keyboardType="numeric"
+                  maxLength={11}
+                  value={number}
+                  onChangeText={text => setNumber(text)}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity
+              onPress={toggleModal}
+              style={{flex: 1, backgroundColor: '#fff'}}>
+              <Text style={styles.textlable}>Package photo</Text>
+              <View style={styles.dottedLine}>
+                <Entypo
+                  name="attachment"
+                  size={13}
+                  color="#131314"
+                  style={{marginTop: 13}}
+                />
+                <Text style={styles.packagePhoto}>Package photo</Text>
+                <View style={styles.packagePhotoPath}>
+                  <Text style={styles.packagePhotoText}>{photoFileName}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+
+            <View style={{flex: 1}}>
+              <Text style={styles.textlable}>Package ID</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                placeholderTextColor="#999"
+                placeholder="Type here"
+                value={orderid}
+                onChangeText={text => setOrderid(text)}
+              />
+            </View>
+            <View style={{flex: 1}}>
+              <Text style={styles.textlable}>Pickup notes</Text>
+              <TextInput
+                style={styles.inputTextStyle}
+                multiline={true}
+                placeholderTextColor="#999"
+                numberOfLines={4} // Set the number of lines you want to display initially
+                placeholder="Type here"
+                textAlignVertical="top"
+                value={pickupNotes}
+                onChangeText={text => setPickupNotes(text)}
+              />
+            </View>
+
+            <View style={styles.datetimeCard}>
+              <View style={{width: '50%', marginRight: 8}}>
+                <Text style={styles.pickupDates}>Pickup date</Text>
+                <View style={styles.nameInputDiv}>
+                  <DatePicker
+                    modal
+                    open={dateOpen}
+                    date={date}
+                    mode="date"
+                    onConfirm={date => {
+                      setDateOpen(false);
+                      setDate(date);
+                      setPickupDate(moment(date).format('DD/MM/YYYY'));
                     }}
-                    renderLeftIcon={() => (
-                      <Image
-                        style={{marginRight: 10}}
-                        source={require('../../image/flagIcon.png')}
-                      />
-                    )}
+                    onCancel={() => {
+                      setDateOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="12/06/2024"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupDate}
+                  />
+                  <AntDesign
+                    name="calendar"
+                    size={20}
+                    onPress={() => setDateOpen(true)}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
                   />
                 </View>
               </View>
-              <TextInput
-                style={[
-                  styles.input,
-                  {fontFamily: 'Montserrat-Regular', fontSize: 16},
-                ]}
-                placeholder="00 00 00 00 00"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-                maxLength={11}
-                value={number}
-                onChangeText={text => setNumber(text)}
-              />
-            </View>
-          </View>
 
-          <TouchableOpacity
-            onPress={toggleModal}
-            style={{flex: 1, backgroundColor: '#fff'}}>
-            <Text style={styles.textlable}>Package photo</Text>
-            <View style={styles.dottedLine}>
-              <Entypo
-                name="attachment"
-                size={13}
-                color="#131314"
-                style={{marginTop: 13}}
-              />
-              <Text style={styles.packagePhoto}>Package photo</Text>
-              <View style={styles.packagePhotoPath}>
-                <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                <MaterialCommunityIcons name="close" color="#000" size={13} />
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Order ID</Text>
-            <TextInput
-              style={styles.inputTextStyle}
-              placeholder="Type here"
-              value={orderid}
-              onChangeText={text => setOrderid(text)}
-            />
-          </View>
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Pickup notes</Text>
-            <TextInput
-              style={styles.inputTextStyle}
-              multiline={true}
-              numberOfLines={4} // Set the number of lines you want to display initially
-              placeholder="Type here"
-              textAlignVertical="top"
-              value={pickupNotes}
-              onChangeText={text => setPickupNotes(text)}
-            />
-          </View>
-
-          <View style={styles.datetimeCard}>
-            <View style={{width: '50%', marginRight: 8}}>
-              <Text style={styles.pickupDates}>Pickup date</Text>
-              <View style={styles.nameInputDiv}>
-                <TextInput
-                  style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                  placeholder="12/06/2024"
-                  placeholderTextColor="#999"
-                  value={date}
-                  onChangeText={text => setDate(text)}
-                />
-                <AntDesign
-                  name="calendar"
-                  size={20}
-                  color={colors.secondary}
-                  style={{marginTop: 13}}
-                />
-              </View>
-            </View>
-
-            <View style={{width: '50%'}}>
-              <Text style={styles.pickupDates}>Pickup time</Text>
-              <View style={styles.nameInputDiv}>
-                <TextInput
-                  style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                  placeholder="10:30 AM"
-                  placeholderTextColor="#999"
-                  value={time}
-                  onChangeText={text => setTime(text)}
-                />
-                <Ionicons
-                  name="time-outline"
-                  size={20}
-                  color={colors.secondary}
-                  style={{marginTop: 13}}
-                />
+              <View style={{width: '50%'}}>
+                <Text style={styles.pickupDates}>Pickup time</Text>
+                <View style={styles.nameInputDiv}>
+                  <DatePicker
+                    modal
+                    open={timeOpen}
+                    date={time}
+                    mode="time"
+                    onConfirm={date => {
+                      setTimeOpen(false);
+                      setTime(date);
+                      setPickupTime(moment(date).format('hh:mm A'));
+                    }}
+                    onCancel={() => {
+                      setTimeOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="10:30 AM"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupTime}
+                  />
+                  <Ionicons
+                    name="time-outline"
+                    size={20}
+                    onPress={() => {
+                      setTimeOpen(true);
+                    }}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
+                  />
+                </View>
               </View>
             </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.addressCard}>
-        <View style={styles.bookAddress}>
-          <Text style={styles.cardTitle}>Repeat this order</Text>
-          <TouchableOpacity onPress={togglePromoEmails}>
-            <MaterialCommunityIcons
-              name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
-              size={55}
-              color={promoEmails ? '#FFC72B' : '#D3D3D3'}
-            />
-          </TouchableOpacity>
-        </View>
-        {promoEmails && (
-          <View style={styles.mainDateCard}>
-            <TouchableOpacity
-              onPress={() => setRepeatOrder('Daily')}
-              style={styles.datesCards}>
-              <FontAwesome
-                name={repeatOrder === 'Daily' ? 'dot-circle-o' : 'circle-thin'}
-                size={20}
-                color={repeatOrder === 'Daily' ? colors.secondary : colors.text}
+        <View style={styles.addressCard}>
+          <View style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Repeat this order</Text>
+            <TouchableOpacity onPress={togglePromoEmails}>
+              <MaterialCommunityIcons
+                name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
+                size={55}
+                color={promoEmails ? '#FFC72B' : '#D3D3D3'}
               />
-              <Text style={styles.deliveryDates}>Daily</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setRepeatOrder('Weekly')}
-              style={styles.datesCards}>
-              <FontAwesome
-                name={repeatOrder === 'Weekly' ? 'dot-circle-o' : 'circle-thin'}
-                size={20}
-                color={
-                  repeatOrder === 'Weekly' ? colors.secondary : colors.text
-                }
-              />
-              <Text style={styles.deliveryDates}>Weekly</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setRepeatOrder('Monthly')}
-              style={styles.datesCards}>
-              <FontAwesome
-                name={
-                  repeatOrder === 'Monthly' ? 'dot-circle-o' : 'circle-thin'
-                }
-                size={20}
-                color={
-                  repeatOrder === 'Monthly' ? colors.secondary : colors.text
-                }
-              />
-              <Text style={styles.deliveryDates}>Monthly</Text>
             </TouchableOpacity>
           </View>
-        )}
-        <View>
-          {promoEmails && repeatOrder === 'Daily' && (
+          {promoEmails && (
+            <View style={styles.mainDateCard}>
+              <TouchableOpacity
+                onPress={() => {
+                  setRepeatOrder('Daily');
+                  setSelectedRepeatType('Day');
+                }}
+                style={styles.datesCards}>
+                <FontAwesome
+                  name={
+                    repeatOrder === 'Daily' ? 'dot-circle-o' : 'circle-thin'
+                  }
+                  size={20}
+                  color={
+                    repeatOrder === 'Daily' ? colors.secondary : colors.text
+                  }
+                />
+                <Text style={styles.deliveryDates}>Daily</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedRepeatType('Day');
+                  setRepeatOrder('Weekly');
+                }}
+                style={styles.datesCards}>
+                <FontAwesome
+                  name={
+                    repeatOrder === 'Weekly' ? 'dot-circle-o' : 'circle-thin'
+                  }
+                  size={20}
+                  color={
+                    repeatOrder === 'Weekly' ? colors.secondary : colors.text
+                  }
+                />
+                <Text style={styles.deliveryDates}>Weekly</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setRepeatOrder('Monthly')}
+                style={styles.datesCards}>
+                <FontAwesome
+                  name={
+                    repeatOrder === 'Monthly' ? 'dot-circle-o' : 'circle-thin'
+                  }
+                  size={20}
+                  color={
+                    repeatOrder === 'Monthly' ? colors.secondary : colors.text
+                  }
+                />
+                <Text style={styles.deliveryDates}>Monthly</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          <View>
+            {promoEmails && repeatOrder === 'Daily' && (
+              <View>
+                <View style={styles.dailyCardMain}>
+                  <View style={styles.repeatdayCard}>
+                    <AntDesign name="retweet" size={20} color={colors.text} />
+                    <Text style={styles.repeatEvery}>Repeat every</Text>
+                  </View>
+                  <View style={styles.containerCity}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={days}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
+                      placeholder={!isFocusRepeatEvery ? '1' : '1'}
+                      searchPlaceholder="Search.."
+                      value={selectedRepeatEvery}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setSelectedRepeatEvery(item.value);
+                        setIsFocusRepeatEvery(false);
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.untilDateCard}>
+                  <Text style={styles.untilDateText}>until</Text>
+                  <View style={styles.dateUntilDiv}>
+                    <DatePicker
+                      modal
+                      open={dateUntilOpen}
+                      date={untilDate}
+                      mode="date"
+                      onConfirm={date => {
+                        setDateUntilOpen(false);
+                        setUntilDate(date);
+                        setPickupUntilDate(moment(date).format('DD/MM/YYYY'));
+                      }}
+                      onCancel={() => {
+                        setDateUntilOpen(false);
+                      }}
+                    />
+                    <TextInput
+                      style={[
+                        styles.loginput,
+                        {fontFamily: 'Montserrat-Regular'},
+                      ]}
+                      placeholder="12/06/2024"
+                      placeholderTextColor="#999"
+                      editable={false}
+                      value={pickupUntilDate}
+                    />
+                    <AntDesign
+                      name="calendar"
+                      size={20}
+                      onPress={() => setDateUntilOpen(true)}
+                      color={colors.secondary}
+                      style={{marginTop: 13}}
+                    />
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.untilDayOccurs}>
+                    Occurs every day until{' '}
+                    <Text style={styles.untilDateOccurs}>
+                      {moment(untilDate).format('MMMM DD, YYYY')}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+
+          {promoEmails && repeatOrder === 'Weekly' && (
             <View>
               <View style={styles.dailyCardMain}>
                 <View style={styles.repeatdayCard}>
@@ -354,39 +769,42 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
                 <View style={styles.containerCity}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={data}
-                    search
+                    data={days}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
                     placeholder={!isFocus ? '1' : '1'}
                     searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
+                    value={selectedRepeatEvery}
+                    onFocus={() => setIsFocusRepeatEvery(true)}
+                    onBlur={() => setIsFocusRepeatEvery(false)}
                     onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                      setSelectedRepeatEvery(item.value);
+                      setIsFocusRepeatEvery(false);
                     }}
                   />
                 </View>
 
-                <View style={styles.containerCity}>
+                <View style={styles.containerWeek}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={data}
-                    search
+                    data={weeklyDay}
+                    disable
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
-                    placeholder={!isFocus ? 'Day' : 'Day'}
+                    placeholder={!isFocus ? 'Week' : 'Week'}
                     searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
+                    value={selectedRepeatType}
+                    onFocus={() => setIsFocusRepeatType(true)}
+                    onBlur={() => setIsFocusRepeatType(false)}
                     onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                      setSelectedRepeatType(item.value);
+                      setIsFocusRepeatType(false);
                     }}
                   />
                 </View>
@@ -394,325 +812,366 @@ const EnterpiseScheduleNewDetailsFill = ({navigation}) => {
 
               <View style={styles.untilDateCard}>
                 <Text style={styles.untilDateText}>until</Text>
-                <View style={styles.containeruntil}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={data}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                <View style={styles.dateUntilDiv}>
+                  <DatePicker
+                    modal
+                    open={dateUntilOpen}
+                    date={untilDate}
+                    mode="date"
+                    onConfirm={date => {
+                      setDateUntilOpen(false);
+                      setUntilDate(date);
+                      setPickupUntilDate(moment(date).format('DD/MM/YYYY'));
                     }}
+                    onCancel={() => {
+                      setDateUntilOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="12/06/2024"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupUntilDate}
+                  />
+                  <AntDesign
+                    name="calendar"
+                    size={20}
+                    onPress={() => setDateUntilOpen(true)}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
                   />
                 </View>
               </View>
+              <View style={styles.weekDaysMainCard}>
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(
+                  (day, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.weekDaysCard,
+                        selectedDays.includes(day) && {
+                          backgroundColor: colors.secondary,
+                        },
+                      ]}
+                      onPress={() => handleDayPress(day)}>
+                      <Text
+                        style={[
+                          styles.dayOfWeek,
+                          selectedDays.includes(day) && styles.selectedText,
+                        ]}>
+                        {day}
+                      </Text>
+                    </TouchableOpacity>
+                  ),
+                )}
+              </View>
               <View>
                 <Text style={styles.untilDayOccurs}>
-                  Occurs every day from{' '}
+                  Occurs every <Text>Monday</Text> & <Text>Tuesday</Text> from{' '}
                   <Text style={styles.untilDateOccurs}>11 AM</Text> to{' '}
-                  <Text style={styles.untilDateOccurs}>4 PM</Text> until{' '}
+                  <Text style={styles.untilDateOccurs}>4 PM</Text> unti{' '}
                   <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
                 </Text>
               </View>
             </View>
           )}
-        </View>
 
-        {promoEmails && repeatOrder === 'Weekly' && (
-          <View>
-            <View style={styles.dailyCardMain}>
-              <View style={styles.repeatdayCard}>
-                <AntDesign name="retweet" size={20} color={colors.text} />
-                <Text style={styles.repeatEvery}>Repeat every</Text>
-              </View>
-              <View style={styles.containerCity}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '1' : '1'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-
-              <View style={styles.containerWeek}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? 'Week' : 'Week'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-
-            <View style={styles.untilDateCard}>
-              <Text style={styles.untilDateText}>until</Text>
-              <View style={styles.containeruntil}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-            <View style={styles.weekDaysMainCard}>
-              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.weekDaysCard,
-                    selectedDays.includes(day) && {
-                      backgroundColor: colors.secondary,
-                    },
-                  ]}
-                  onPress={() => handleDayPress(day)}>
-                  <Text
-                    style={[
-                      styles.dayOfWeek,
-                      selectedDays.includes(day) && styles.selectedText,
-                    ]}>
-                    {day}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+          {promoEmails && repeatOrder === 'Monthly' && (
             <View>
-              <Text style={styles.untilDayOccurs}>
-                Occurs every <Text>Monday</Text> & <Text>Tuesday</Text> from{' '}
-                <Text style={styles.untilDateOccurs}>11 AM</Text> to{' '}
-                <Text style={styles.untilDateOccurs}>4 PM</Text> unti{' '}
-                <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
-              </Text>
-            </View>
-          </View>
-        )}
-
-        {promoEmails && repeatOrder === 'Monthly' && (
-          <View>
-            <View style={styles.dailyCardMain}>
-              <View style={styles.repeatdayCard}>
-                <AntDesign name="retweet" size={20} color={colors.text} />
-                <Text style={styles.repeatEvery}>Repeat every</Text>
-              </View>
-              <View style={styles.containerCity}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '1' : '1'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-
-              <View style={styles.containerWeek}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? 'Week' : 'Week'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-            <View style={styles.untilDateCard}>
-              <Text style={styles.untilDateText}>until</Text>
-              <View style={styles.containeruntil}>
-                <Dropdown
-                  style={styles.dateDropdown}
-                  data={data}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? '8/23/2024' : '8/23/2024'}
-                  searchPlaceholder="Search.."
-                  value={dropdownCountryValue}
-                  onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
-                  onChange={item => {
-                    setDropdownCountryValue(item.value);
-                    setIsFocus(false);
-                  }}
-                />
-              </View>
-            </View>
-            <View>
-              <View style={styles.onDayCard}>
-                <TouchableOpacity
-                  style={[
-                    styles.datesCards,
-                    selectedCard === 1 && styles.selectedCard,
-                  ]}
-                  onPress={() => setSelectedCard(1)}>
-                  <FontAwesome
-                    name={selectedCard === 1 ? 'dot-circle-o' : 'circle-thin'}
-                    size={20}
-                    color={selectedCard === 1 ? '#ff6347' : '#000'}
-                  />
-                  <Text style={styles.deliveryDates}>On day</Text>
-                </TouchableOpacity>
+              <View style={styles.dailyCardMain}>
+                <View style={styles.repeatdayCard}>
+                  <AntDesign name="retweet" size={20} color={colors.text} />
+                  <Text style={styles.repeatEvery}>Repeat every</Text>
+                </View>
                 <View style={styles.containerCity}>
                   <Dropdown
                     style={styles.dateDropdown}
-                    data={data}
-                    search
+                    data={days}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
                     placeholder={!isFocus ? '1' : '1'}
                     searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
+                    value={selectedRepeatEvery}
+                    onFocus={() => setIsFocusRepeatEvery(true)}
+                    onBlur={() => setIsFocusRepeatEvery(false)}
                     onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
+                      setSelectedRepeatEvery(item.value);
+                      setIsFocusRepeatEvery(false);
+                    }}
+                  />
+                </View>
+
+                <View style={styles.containerWeek}>
+                  <Dropdown
+                    style={styles.dateDropdown}
+                    data={repeatType}
+                    itemTextStyle={{color: colors.text}}
+                    selectedTextStyle={{color: colors.text}}
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={!isFocus ? 'Week' : 'Week'}
+                    searchPlaceholder="Search.."
+                    value={selectedRepeatType}
+                    onFocus={() => setIsFocusRepeatType(true)}
+                    onBlur={() => setIsFocusRepeatType(false)}
+                    onChange={item => {
+                      setSelectedRepeatType(item.value);
+                      setIsFocusRepeatType(false);
                     }}
                   />
                 </View>
               </View>
-
-              {/* Second onDayCard */}
-              <View style={styles.onDayCard}>
-                <TouchableOpacity
-                  style={[
-                    styles.datesCards,
-                    selectedCard === 2 && styles.selectedCard,
-                  ]}
-                  onPress={() => setSelectedCard(2)}>
-                  <FontAwesome
-                    name={selectedCard === 2 ? 'dot-circle-o' : 'circle-thin'}
+              <View style={styles.untilDateCard}>
+                <Text style={styles.untilDateText}>until</Text>
+                <View style={styles.dateUntilDiv}>
+                  <DatePicker
+                    modal
+                    open={dateUntilOpen}
+                    date={untilDate}
+                    mode="date"
+                    onConfirm={date => {
+                      setDateUntilOpen(false);
+                      setUntilDate(date);
+                      setPickupUntilDate(moment(date).format('DD/MM/YYYY'));
+                    }}
+                    onCancel={() => {
+                      setDateUntilOpen(false);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.loginput,
+                      {fontFamily: 'Montserrat-Regular'},
+                    ]}
+                    placeholder="12/06/2024"
+                    placeholderTextColor="#999"
+                    editable={false}
+                    value={pickupUntilDate}
+                  />
+                  <AntDesign
+                    name="calendar"
                     size={20}
-                    color={selectedCard === 2 ? '#ff6347' : '#000'}
-                  />
-                  <Text style={styles.deliveryDates}>On the</Text>
-                </TouchableOpacity>
-                <View style={styles.containeruntil}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={data}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? 'Second' : 'Second'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
-                    }}
-                  />
-                </View>
-                <View style={styles.containeruntil}>
-                  <Dropdown
-                    style={styles.dateDropdown}
-                    data={data}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? 'Tuesday' : 'Tuesday'}
-                    searchPlaceholder="Search.."
-                    value={dropdownCountryValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownCountryValue(item.value);
-                      setIsFocus(false);
-                    }}
+                    onPress={() => setDateUntilOpen(true)}
+                    color={colors.secondary}
+                    style={{marginTop: 13}}
                   />
                 </View>
               </View>
-            </View>
-            <View>
-              <Text style={styles.untilDayOccurs}>
-                Occurs every day until{' '}
-                <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
-              </Text>
-            </View>
-          </View>
-        )}
+              <View>
+                <View style={styles.onDayCard}>
+                  <TouchableOpacity
+                    style={[
+                      styles.datesCards,
+                      selectedCard === 1 && styles.selectedCard,
+                    ]}
+                    onPress={() => setSelectedCard(1)}>
+                    <FontAwesome
+                      name={selectedCard === 1 ? 'dot-circle-o' : 'circle-thin'}
+                      size={20}
+                      color={selectedCard === 1 ? '#ff6347' : '#000'}
+                    />
+                    <Text style={styles.deliveryDates}>On day</Text>
+                  </TouchableOpacity>
+                  <View style={styles.containerCity}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={monthDays}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
+                      placeholder={!isFocus ? '1' : '1'}
+                      searchPlaceholder="Search.."
+                      value={selectedRepeatEvery}
+                      onFocus={() => setIsFocusRepeatEvery(true)}
+                      onBlur={() => setIsFocusRepeatEvery(false)}
+                      onChange={item => {
+                        setSelectedRepeatEvery(item.value);
+                        setIsFocusRepeatEvery(false);
+                      }}
+                    />
+                  </View>
+                </View>
 
-        <View>
-          <TouchableOpacity 
-            onPress={() => navigation.navigate('EnterprisePickupOrderPriview')}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
+                {/* Second onDayCard */}
+                <View style={styles.onDayCard}>
+                  <TouchableOpacity
+                    style={[
+                      styles.datesCards,
+                      selectedCard === 2 && styles.selectedCard,
+                    ]}
+                    onPress={() => setSelectedCard(2)}>
+                    <FontAwesome
+                      name={selectedCard === 2 ? 'dot-circle-o' : 'circle-thin'}
+                      size={20}
+                      color={selectedCard === 2 ? '#ff6347' : '#000'}
+                    />
+                    <Text style={styles.deliveryDates}>On the</Text>
+                  </TouchableOpacity>
+                  <View style={styles.containeruntil}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={monthValue1}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
+                      placeholder={!isFocus ? '1' : '1'}
+                      searchPlaceholder="Search.."
+                      value={selectedRepeatMonth1}
+                      onFocus={() => setIsFocusRepeatEvery(true)}
+                      onBlur={() => setIsFocusRepeatEvery(false)}
+                      onChange={item => {
+                        setSelectedRepeatMonth1(item.value);
+                        setIsFocusRepeatEvery(false);
+                      }}
+                    />
+                  </View>
+                  <View style={styles.containeruntil}>
+                    <Dropdown
+                      style={styles.dateDropdown}
+                      data={weekList}
+                      itemTextStyle={{color: colors.text}}
+                      selectedTextStyle={{color: colors.text}}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Tuesday' : 'Tuesday'}
+                      searchPlaceholder="Search.."
+                      value={selectedWeekDay}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setSelectedWeekDay(item.value);
+                        setIsFocus(false);
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+              <View>
+                <Text style={styles.untilDayOccurs}>
+                  Occurs every day until{' '}
+                  <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
+                </Text>
+              </View>
+            </View>
+          )}
+
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                if (
+                  company == '' ||
+                  number == '' ||
+                  pickupDate == '' ||
+                  pickupTime == ''
+                ) {
+                  Alert.alert(
+                    'Error Alert',
+                    'Please fill the required fields.',
+                    [{text: 'OK', onPress: () => {}}],
+                  );
+                  return;
+                }
+                if (deliveryType == 2) {
+                  if (sourceLocationId && destinationBranches.length > 0) {
+                    let params = {
+                      ...route.params,
+                      delivery_type_id: deliveryType,
+                      distanceTime: distanceTime,
+                      pickup_location: sourceLocation,
+                      dropoff_location: destinationLocation,
+                      pickup_location_id: sourceLocationId,
+                      dropoff_location_id: destinationLocationId,
+                      mobile: number,
+                      company_name: company,
+                      package_note: pickupNotes,
+                      pickup_date: moment(date).format('YYYY-MM-DD'),
+                      pickup_time: moment(time).format('HH:MM'),
+                      is_repeat_mode: promoEmails ? 1 : 0,
+                      package_id: orderid,
+                      amount: multipleDestinationAmount.toFixed(2),
+                      branches: destinationBranches,
+                      distance: multipleDestinationDistance.toFixed(2),
+                      time: multipleDestinationHours.toFixed(2),
+                      repeat_mode: repeatOrder,
+                      repeat_every: selectedRepeatEvery,
+                      repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                      imageId: imageViewId,
+                    };
+                    navigation.navigate('EnterprisePickupOrderPriview', params);
+                  } else {
+                    Alert.alert(
+                      'Error Alert',
+                      'Please choose pickup and drop location',
+                      [{text: 'OK', onPress: () => {}}],
+                    );
+                  }
+                } else {
+                  if (sourceLocationId && destinationLocationId) {
+                    let params = {
+                      ...route.params,
+                      delivery_type_id: deliveryType,
+                      distanceTime: distanceTime,
+                      pickup_location: sourceLocation,
+                      dropoff_location: destinationLocation,
+                      pickup_location_id: sourceLocationId,
+                      dropoff_location_id: destinationLocationId,
+                      mobile: number,
+                      company_name: company,
+                      package_note: pickupNotes,
+                      pickup_date: moment(date).format('YYYY-MM-DD'),
+                      pickup_time: moment(time).format('HH:MM'),
+                      is_repeat_mode: promoEmails ? 1 : 0,
+                      package_id: orderid,
+                      amount: Math.round(
+                        route.params.vehicle_type.base_price +
+                          route.params.vehicle_type.km_price *
+                            distanceTime.distance,
+                      ).toFixed(2),
+                      distance: distanceTime.distance.toFixed(2),
+                      time: distanceTime.time.toFixed(0),
+                      repeat_mode: repeatOrder,
+                      repeat_every: selectedRepeatEvery,
+                      repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                      imageId: imageViewId,
+                    };
+                    console.log(imageViewId);
+                    navigation.navigate('EnterprisePickupOrderPriview', params);
+                  } else {
+                    Alert.alert(
+                      'Error Alert',
+                      'Please choose pickup and drop location',
+                      [{text: 'OK', onPress: () => {}}],
+                    );
+                  }
+                }
+              }}
+              style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+              <Text style={styles.buttonText}>Next</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+        {/* -------------- Modal --------------------- */}
+        <ChoosePhotoByCameraGallaryModal
+          visible={isModalVisibleCamera}
+          handlePhotoOpenClose={handlePhotoOpenClose}
+          handleCameraLaunch={handleCameraLaunch}
+          handleImageLibraryLaunch={handleImageLibraryLaunch}
+        />
+        {/* -------------- Modal --------------------- */}
       </View>
-      {/* -------------- Modal --------------------- */}
-      <ChoosePhotoByCameraGallaryModal
-        visible={isModalVisibleCamera}
-        handlePhotoOpenClose={handlePhotoOpenClose}
-        handleCameraLaunch={handleCameraLaunch}
-        handleImageLibraryLaunch={handleImageLibraryLaunch}
-      />
-      {/* -------------- Modal --------------------- */}
     </ScrollView>
   );
 };
@@ -1103,6 +1562,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f1f1f1',
   },
+  dateUntilDiv: {
+    backgroundColor: colors.white,
+    width: '40%',
+    flexDirection: 'row',
+    borderRadius: 5,
+    paddingRight: 15,
+    borderWidth: 1,
+    borderColor: '#f1f1f1',
+  },
   pickupDates: {
     fontSize: 13,
     color: colors.text,
@@ -1152,7 +1620,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   containerCity: {
-    width: '20%',
+    width: '30%',
     borderWidth: 1,
     borderColor: '#ccc',
     paddingVertical: 3,
@@ -1196,7 +1664,7 @@ const styles = StyleSheet.create({
   untilDayOccurs: {
     fontSize: 12,
     color: colors.text,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat-SemiBold',
     marginTop: 15,
   },
   untilDateOccurs: {
@@ -1277,6 +1745,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
+    color: colors.text,
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     backgroundColor: colors.white,
@@ -1285,21 +1754,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: '#ccc',
     paddingHorizontal: 2,
-  },
-  placeholderStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  selectedTextStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  inputSearchStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
   },
   input: {
     flex: 1,
@@ -1342,6 +1796,22 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     paddingRight: 5,
     borderColor: '#2C30331A',
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

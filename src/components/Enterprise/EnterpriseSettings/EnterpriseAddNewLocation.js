@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,44 +15,52 @@ import {colors} from '../../../colors';
 import MapDeliveryDetails from '../../commonComponent/MapDeliveryDetails';
 import EnterpriseAddNewLocationsMap from '../../commonComponent/EnterpriseAddNewLocationsMap';
 
-const EnterpriseAddNewLocation = ({navigation}) => {
+const EnterpriseAddNewLocation = ({route, navigation}) => {
   const [title, setTitle] = useState('');
+  const params = route.params ? route.params.location : null
+
+  useState(()=>{
+    if (params) {
+      setTitle(params.branch_name)
+    }
+  },[])
 
   return (
-    <>
-      <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-        <View style={{paddingHorizontal: 15}}>
-          <View style={styles.mainCardAddress}>
-            <View style={styles.homeIconCard}>
-              <Image source={require('../../../image/home.png')} />
-              <Image
-                style={styles.addAddress}
-                source={require('../../../image/plus-vector.png')}
-              />
-            </View>
-          </View>
-          <View>
-            <Text style={styles.locationtitle}>Add new loaction</Text>
-            <Text style={styles.locationsubTitle}>
-              Set your company’s location and save it to your profile
-            </Text>
-          </View>
-          <View style={styles.nameInputDiv}>
-            <Text style={styles.searchLocation}>Location title</Text>
-            <TextInput
-              style={styles.loginput}
-              placeholder="Type here"
-              placeholderTextColor="#999"
-              value={title}
-              onChangeText={text => setTitle(text)}
+    <KeyboardAvoidingView>
+      <View style={{paddingHorizontal: 15}}>
+        <View style={styles.mainCardAddress}>
+          <View style={styles.homeIconCard}>
+            <Image
+              style={styles.homeIconImage}
+              source={require('../../../image/home.png')}
+            />
+            <Image
+              style={styles.addAddress}
+              source={require('../../../image/plus-vector.png')}
             />
           </View>
         </View>
-      </ScrollView>
-     <View style={{width: '100%', height: 400,}}>
-     <EnterpriseAddNewLocationsMap />
-     </View>
-    </>
+        <View>
+          <Text style={styles.locationtitle}>Add new location</Text>
+          <Text style={styles.locationsubTitle}>
+            Set your company’s location and save it to your profile
+          </Text>
+        </View>
+        <View style={styles.nameInputDiv}>
+          <Text style={styles.searchLocation}>Location title</Text>
+          <TextInput
+            style={styles.loginput}
+            placeholder="Type here"
+            placeholderTextColor="#999"
+            value={title}
+            onChangeText={text => setTitle(text)}
+          />
+        </View>
+      </View>
+      <View style={{width: '100%', height: 400}}>
+        <EnterpriseAddNewLocationsMap title = {title} location = {params} />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -128,12 +137,14 @@ const styles = StyleSheet.create({
   },
   addAddress: {
     position: 'absolute',
-    bottom: -10,
-    left: 125,
+    bottom: -3,
+    left: 35,
+    height:20,
+    width:20,
   },
   homeIconCard: {
     position: 'relative',
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 20,
   },
   mainCardAddress: {
@@ -167,11 +178,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     borderRadius: 5,
     marginBottom: 20,
+    color: colors.text,
     borderWidth: 1,
     borderColor: '#2C303336',
   },
   nameInputDiv: {
-    marginTop: '10%',
+    marginTop: '5%',
+  },
+  homeIconImage: {
+    width: 50,
+    height: 50,
   },
 });
 

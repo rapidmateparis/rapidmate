@@ -13,6 +13,7 @@ import {
 } from '../commonComponent/StoreContext';
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
+import SavedAddressModal from './SavedAddressModal';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Constants
@@ -43,26 +44,29 @@ const MapAddress = props => {
   const [destination, setDestination] = useState(null);
   const [time, setTime] = useState(0);
   const [distance, setDistance] = useState(0);
+  const [selectedSourceAddress, setSelectedSourceAddress] = useState();
+  const [selectedDistinationAddress, setSelectedDistinationAddress] =
+    useState();
+  const [addressType, setAddressType] = useState();
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = addressType => {
+    setAddressType(addressType);
+    setModalVisible(!isModalVisible);
+  };
 
   useEffect(() => {
     getLiveLocation();
   }, []);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     getLiveLocation();
-  //   }, 6000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const getLiveLocation = async () => {
     try {
-      const locationPermissionDenied = await locationPermission();
-      if (locationPermissionDenied) {
-        const {latitude, longitude} = await getCurrentLocation();
-        setOrigin({latitude, longitude});
-        moveToLocation({latitude, longitude});
-      }
+      // const locationPermissionDenied = await locationPermission();
+      // if (locationPermissionDenied) {
+      //   const {latitude, longitude} = await getCurrentLocation();
+      //   setOrigin({latitude, longitude});
+      //   moveToLocation({latitude, longitude});
+      // }
       // Example code (without actual location logic)
       const latitude = 48.85754309772872;
       const longitude = 2.3513877855537912;
@@ -90,80 +94,138 @@ const MapAddress = props => {
     props.onFetchDistanceAndTime({distance: d, time: t});
   };
 
+  const onSelectedAddress = address => {
+    console.log('address', address, addressType);
+    if (address) {
+      if (addressType == 0) {
+        setSelectedSourceAddress(address);
+      } else {
+        setSelectedDistinationAddress(address);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* GooglePlacesAutocomplete */}
       <View style={{zIndex: 1, paddingTop: 10}}>
         <View style={styles.locationCard}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MapPickupAddress')}>
-            <View style={styles.locationAddress}>
-              <Ionicons style={{marginTop:15}} name="location-outline" size={18} color="#000000" />
-              <GooglePlacesAutocomplete
-                fetchDetails
-                placeholder="Enter pickup address"
-                styles={{
-                  textInput: {
-                    color: colors.text,
-                  },
-                  description : {color : colors.text}
-                }}
-                onPress={(data, details = null) => {
-                  const originCoordinates = {
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                  };
-                  setOrigin(originCoordinates);
-                  moveToLocation(originCoordinates);
-                  props.onSourceLocation({
-                    originCoordinates: originCoordinates,
-                    sourceDescription: data.description,
-                  });
-                }}
-                query={{
-                  key: MAPS_API_KEY,
-                  language: 'en',
-                }}
-                onFail={() => console.error('Error')}
-              />
-              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.locationAddress}>
+            <Ionicons
+              style={{marginTop: 15}}
+              name="location-outline"
+              size={18}
+              color="#000000"
+            />
+            <GooglePlacesAutocomplete
+              fetchDetails
+              placeholder="Enter pickup address"
+              styles={{
+                textInput: {
+                  color: colors.black,
+                },
+                description: {color: colors.black},
+                color: colors.black,
+              }}
+              ref={ref => {
+                if (selectedSourceAddress) {
+                  ref?.setAddressText(selectedSourceAddress);
+                }
+              }}
+              textInputProps={{
+                placeholderTextColor: colors.lightGrey,
+                returnKeyType: 'search',
+                onChangeText: text => {
+                  if (text) {
+                    setSelectedSourceAddress(null);
+                  }
+                },
+              }}
+              onPress={(data, details = null) => {
+                const originCoordinates = {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                };
+                setOrigin(originCoordinates);
+                moveToLocation(originCoordinates);
+                props.onSourceLocation({
+                  originCoordinates: originCoordinates,
+                  sourceDescription: data.description,
+                });
+              }}
+              query={{
+                key: MAPS_API_KEY,
+                language: 'en',
+              }}
+              onFail={() => console.error('Error')}
+            />
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="favorite-outline"
+              size={18}
+              color="#000000"
+              onPress={() => toggleModal(0)}
+            />
+          </View>
+
           <View style={styles.borderDummy}></View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MapDropAddress')}>
-            <View style={styles.locationAddress}>
-              <MaterialIcons style={{marginTop:15}} name="my-location" size={18} color="#000000" />
-              <GooglePlacesAutocomplete
-                fetchDetails
-                placeholder="Enter drop address"
-                styles={{
-                  textInput: {
-                    color: colors.text,
-                  },
-                  description : {color : colors.text},
-                }}
-                onPress={(data, details = null) => {
-                  const destinationCoordinates = {
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                  };
-                  setDestination(destinationCoordinates);
-                  moveToLocation(destinationCoordinates);
-                  props.onDestinationLocation({
-                    destinationCoordinates: destinationCoordinates,
-                    destinationDescription: data.description,
-                  });
-                }}
-                query={{
-                  key: MAPS_API_KEY,
-                  language: 'en',
-                }}
-                onFail={() => console.error('Error')}
-              />
-              <AntDesign style={{marginTop:15}} name="arrowright" size={18} color="#000000" />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.locationAddress}>
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="my-location"
+              size={18}
+              color="#000000"
+            />
+            <GooglePlacesAutocomplete
+              fetchDetails
+              placeholder="Enter drop address"
+              styles={{
+                textInput: {
+                  color: colors.black,
+                },
+                description: {color: colors.black},
+                color: colors.black,
+              }}
+              ref={ref => {
+                if (selectedDistinationAddress) {
+                  ref?.setAddressText(selectedDistinationAddress);
+                }
+              }}
+              textInputProps={{
+                placeholderTextColor: colors.lightGrey,
+                returnKeyType: 'search',
+                onChangeText: text => {
+                  if (text) {
+                    setSelectedDistinationAddress(null);
+                  }
+                },
+              }}
+              onPress={(data, details = null) => {
+                const destinationCoordinates = {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                };
+                setDestination(destinationCoordinates);
+                moveToLocation(destinationCoordinates);
+                props.onDestinationLocation({
+                  destinationCoordinates: destinationCoordinates,
+                  destinationDescription: data.description,
+                });
+              }}
+              query={{
+                key: MAPS_API_KEY,
+                language: 'en',
+              }}
+              onFail={() => console.error('Error')}
+            />
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="favorite-outline"
+              size={18}
+              color="#000000"
+              onPress={() => toggleModal(1)}
+            />
+          </View>
           <View style={styles.borderShowOff}></View>
         </View>
       </View>
@@ -222,6 +284,11 @@ const MapAddress = props => {
           />
         )}
       </MapView>
+      <SavedAddressModal
+        isModalVisible={isModalVisible}
+        setModalVisible={setModalVisible}
+        selectedAddress={onSelectedAddress}
+      />
     </View>
   );
 };

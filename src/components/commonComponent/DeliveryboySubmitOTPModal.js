@@ -14,13 +14,17 @@ import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import {TextInput} from 'react-native-gesture-handler';
 
-function DeliveryboySubmitOTPModal({setOTPModalVisible, isOTPModalVisible}) {
+function DeliveryboySubmitOTPModal({
+  setOTPModalVisible,
+  isOTPModalVisible,
+  submitOTP,
+}) {
   const [enableMask, setEnableMask] = useState(true);
   const [enableBtn, setEnableBtn] = useState(false);
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
   const ref1 = useBlurOnFulfill({value, cellCount: CELL_COUNT});
-  const CELL_COUNT = 6;
+  const CELL_COUNT = 4;
   const [handler, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -41,7 +45,7 @@ function DeliveryboySubmitOTPModal({setOTPModalVisible, isOTPModalVisible}) {
           </View>
           <View style={styles.modalCard}>
             <View style={styles.lockImageCard}>
-                <Image source={require('../../image/OTP-Lock.png')} />
+              <Image source={require('../../image/OTP-Lock.png')} />
             </View>
             <View style={styles.viewOtpEnter}>
               <CodeField
@@ -50,7 +54,7 @@ function DeliveryboySubmitOTPModal({setOTPModalVisible, isOTPModalVisible}) {
                 // Use caretHidden={false} when users can't paste a text value, because context menu doesn't appear
                 value={value}
                 onChangeText={value1 => {
-                  if (value1.length == 6) {
+                  if (value1.length == 4) {
                     setEnableBtn(true);
                     setError('');
                   } else {
@@ -99,7 +103,11 @@ function DeliveryboySubmitOTPModal({setOTPModalVisible, isOTPModalVisible}) {
               />
             </View>
           </View>
-          <TouchableOpacity style={styles.buttonCard}>
+          <TouchableOpacity
+            style={styles.buttonCard}
+            onPress={() => {
+              submitOTP(value);
+            }}>
             <Text style={styles.okButton}>Submit</Text>
           </TouchableOpacity>
         </View>

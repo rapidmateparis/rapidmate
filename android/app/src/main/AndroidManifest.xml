@@ -1,10 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.ajsgroup.rapidmate">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/> 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+
     <application
       android:name="com.ajsgroup.rapidmate.MainApplication"
       android:label="@string/app_name"
@@ -13,6 +24,11 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="true">
+
+      <meta-data
+        android:name="android.requestLegacyExternalStorage"
+        android:value="true" />
+
       <meta-data
        android:name="com.google.android.geo.API_KEY"
        android:value="AIzaSyC_pj9pk_9fMHL0JDsgstUXlc67nqB97zw"/>

@@ -7,15 +7,59 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../colors';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import BicycleImage from '../../image/Cycle-Icon.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Icon.png';
+import PartnerImage from '../../image/Partner-icon.png';
+import VanImage from '../../image/Van-Icon.png';
+import PickupImage from '../../image/Pickup-Icon.png';
+import TruckImage from '../../image/Truck-Icon.png';
+import BigTruckImage from '../../image/Big-Package.png';
+import {useLoader} from '../../utils/loaderContext';
+import {createEnterpriseOrder} from '../../data_manager';
+import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
+import {API} from '../../utils/constant';
 
-const EnterprisePickupOrderPriview = ({navigation}) => {
+const EnterprisePickupOrderPriview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+  const toggleModal = () => {
+    setImageModalVisible(!isImageModalVisible);
+  };
+  const params = route.params;
+
+  console.log('Image ID:', params.imageViewId);
+
+  const getVechicleImage = vehicleTypeId => {
+    switch (vehicleTypeId) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return PickupImage;
+      case 6:
+        return VanImage;
+      case 7:
+        return TruckImage;
+      default:
+        return BigTruckImage;
+    }
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -24,38 +68,81 @@ const EnterprisePickupOrderPriview = ({navigation}) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              3891 Ranchview , California 62639
+              {params.pickup_location.sourceDescription}
             </Text>
           </View>
           <View style={styles.borderDummy}></View>
-          <View style={styles.locationAddress}>
-            <MaterialIcons name="my-location" size={18} color="#000000" />
-            <Text style={styles.TextAddress}>
-              1901 Thornridge Cir. Shiloh, California
-            </Text>
-          </View>
+          {params.delivery_type_id == 2 ? (
+            params.branches.map((item, index) => {
+              return (
+                <View style={[styles.locationAddress, {marginVertical: 7}]}>
+                  <MaterialIcons name="my-location" size={18} color="#000000" />
+                  <Text style={styles.TextAddress}>
+                    {item.destinationDescription}
+                  </Text>
+                </View>
+              );
+            })
+          ) : (
+            <View style={styles.locationAddress}>
+              <MaterialIcons name="my-location" size={18} color="#000000" />
+              <Text style={styles.TextAddress}>
+                {params.dropoff_location.destinationDescription}
+              </Text>
+            </View>
+          )}
+
           <View style={styles.borderShowOff}></View>
         </View>
         <View style={styles.pickupCard}>
           <Text style={styles.vehicleDetails}>Vehicle details</Text>
           <View style={styles.semiTruckDetails}>
             <View>
-              <Text style={styles.vehicleName}>Semi Truck</Text>
+              <Text style={styles.vehicleName}>
+                {params.vehicle_type.vehicle_type}
+              </Text>
               <Text style={styles.vehicleCapacity}>
-                20000 liters max capacity
+                {params.vehicle_type.vehicle_type_desc
+                  ? params.vehicle_type.vehicle_type_desc
+                  : null}{' '}
+                max capacity
               </Text>
             </View>
             <View>
-              <Image style={{width: 130, height: 75,}} source={require('../../image/Semi-Truck.png')} />
+              <Image
+                style={[styles.vehicleImage, {width: 100, height: 100}]}
+                source={getVechicleImage(params.vehicle_type.vehicle_type_id)}
+              />
             </View>
           </View>
         </View>
 
         <View style={styles.pickupCard}>
           <Text style={styles.pickupDetails}>Pickup details</Text>
-          <View>
-            <Text style={styles.vehicleName}>Adam Smith</Text>
-            <Text style={styles.vehicleCapacity}>Adam Inc.</Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>
+                {userDetails.userDetails[0].first_name +
+                  ' ' +
+                  userDetails.userDetails[0].last_name}
+              </Text>
+              <Text style={styles.vehicleCapacity}>{params.company_name}</Text>
+            </View>
+            <View>
+              <TouchableOpacity onPress={() => toggleModal()}>
+                {params.imageId ? (
+                  <Image
+                    style={styles.packagePhoto}
+                    source={{uri: API.imageViewUrl + params.imageId}}
+                  />
+                ) : (
+                  <Image
+                    style={styles.packagePhoto}
+                    source={require('../../image/PackagePhoto.png')}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -65,7 +152,9 @@ const EnterprisePickupOrderPriview = ({navigation}) => {
                 size={12}
                 color="#000000"
               />
-              <Text style={styles.contactInfo}>adaminc@email.com</Text>
+              <Text style={styles.contactInfo}>
+                {userDetails.userDetails[0].email}
+              </Text>
             </View>
 
             <View style={styles.pickupManDetails}>
@@ -75,16 +164,12 @@ const EnterprisePickupOrderPriview = ({navigation}) => {
                 size={15}
                 color="#000000"
               />
-              <Text style={styles.contactInfo}>+33 1 23 45 67 89</Text>
+              <Text style={styles.contactInfo}>+33{params.mobile}</Text>
             </View>
           </View>
 
           <View>
-            <Text style={styles.pickupNotes}>
-              Lorem ipsum dolor sit amet consectetur. Ornare faucibus ac
-              ultricies sed penatibus. Integer sit sagit tis tempor cursus amet.
-              Nunc cursus cras fermen tum elit pulvinar amet.
-            </Text>
+            <Text style={styles.pickupNotes}>{params.package_note}</Text>
           </View>
         </View>
 
@@ -92,29 +177,26 @@ const EnterprisePickupOrderPriview = ({navigation}) => {
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
-              <Text style={styles.vehicleName}>€34</Text>
+              <Text style={styles.vehicleName}>€{params.amount}</Text>
               <View style={{flexDirection: 'row'}}>
                 <Text
                   style={[
                     styles.bookininfo,
                     {borderRightWidth: 1, paddingRight: 5},
                   ]}>
-                  2.6 km
+                  {params.distance} km
                 </Text>
                 <Text
                   style={[
                     styles.bookininfo,
                     {borderRightWidth: 1, paddingHorizontal: 5},
                   ]}>
-                  Semi truck
+                  {params.vehicle_type.vehicle_type}
                 </Text>
                 <Text style={[styles.bookininfo, {paddingLeft: 5}]}>
-                  23 minutes
+                  {params.time} minutes
                 </Text>
               </View>
-            </View>
-            <View>
-              <Image source={require('../../image/euro.png')} />
             </View>
           </View>
         </View>
@@ -125,6 +207,7 @@ const EnterprisePickupOrderPriview = ({navigation}) => {
             value={toggleCheckBox}
             onValueChange={newValue => setToggleCheckBox(newValue)}
             style={{alignSelf: 'center'}}
+            tintColors={{true: '#FFC72B', false: '#999'}}
           />
           <Text style={styles.checkboxText}>
             Save these addresses for later
@@ -132,11 +215,18 @@ const EnterprisePickupOrderPriview = ({navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpriseOrderPayment')}
+          onPress={() =>
+            navigation.navigate('EnterpriseOrderPayment', {...params})
+          }
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
       </View>
+
+      <DeliveryboyPackagePreviewModal
+        isImageModalVisible={isImageModalVisible}
+        setImageModalVisible={setImageModalVisible}
+      />
     </ScrollView>
   );
 };
@@ -279,6 +369,24 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     marginHorizontal: 9,
     marginVertical: 15,
+  },
+  vehicleImage: {
+    height: 62,
+    resizeMode: 'center',
+  },
+  packageBasicInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headingOTP: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  packagePhoto: {
+    width: 48,
+    height: 48,
+    borderRadius: 5,
   },
 });
 

@@ -15,13 +15,10 @@ import BicycleImage from '../../image/Cycle-Icon.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import CarImage from '../../image/Car-Icon.png';
 import PartnerImage from '../../image/Partner-icon.png';
-import VanImage from '../../image/Van-Icon.png';
-import PickupImage from '../../image/Pickup-Icon.png';
-import TruckImage from '../../image/Truck-Icon.png';
 import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
-import BigTruckImage from '../../image/Big-Package.png';
+import OtherImage from '../../image/Big-Package.png';
 import {getAllVehicleTypes} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 
@@ -53,6 +50,14 @@ const AddVehicle = ({route, navigation}) => {
     setSelectedOption(option);
   };
 
+  const handleContinue = () => {
+    if (selectedOption === 'Other') {
+      navigation.navigate('DeliveryboyOtherOptions');
+    } else {
+      navigation.navigate('AddPickupVehicle');
+    }
+  };
+
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
       case 1:
@@ -63,14 +68,14 @@ const AddVehicle = ({route, navigation}) => {
         return CarImage;
       case 4:
         return PartnerImage;
+      case 5:
+        return MiniVanImage;
       case 6:
         return MiniTruckImage;
       case 7:
         return SemiTruckImage;
-      case 5:
-        return MiniVanImage;
       default:
-        return MiniVanImage;
+        return OtherImage;
     }
   };
 

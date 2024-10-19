@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -15,12 +15,23 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {colors} from '../../colors';
 import PlaningFilterModal from '../commonComponent/PlaningFilterModal';
+import {getDeliveryBoyListUsingDate, getLocations} from '../../data_manager';
+import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
+import {FlatList} from 'react-native-gesture-handler';
+import moment from 'moment';
 
 const Planning = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const {userDetails} = useUserDetails();
+  const {lookupData} = useLookupData();
+  const [orderList, setOrderList] = useState([]);
+  const [locationList, setLocationList] = useState([]);
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  console.log('lookupData', lookupData);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -29,19 +40,113 @@ const Planning = ({navigation}) => {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(getCurrentDate());
+
+  useEffect(() => {
+    getLocationsData();
+  }, []);
+
+  const getLocationsData = () => {
+    setLocationList([]);
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+      },
+      errorResponse => {
+        if (errorResponse[0]._errors.message) {
+          setLocationList([]);
+        }
+      },
+    );
+  };
+
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
+  const getDeliveryBoyPlannningList = selectedDate => {
+    setOrderList([]);
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+      page: 1,
+      size: 10,
+      planning_date: selectedDate,
+    };
+    getDeliveryBoyListUsingDate(
+      params,
+      succesResponse => {
+        let tempOrderList = succesResponse[0]._response;
+        setOrderList(tempOrderList);
+      },
+      errorResponse => {
+        console.log('print_data==>', JSON.stringify(errorResponse));
+      },
+    );
+  };
+
+  const renderPlanningList = planningItem => (
+    <View style={styles.packageDetailCard}>
+      <View style={styles.packageHeader}>
+        <Image source={require('../../image/package-medium-icon.png')} />
+        <Text style={styles.deliveryTime}>
+          Delivered on{' '}
+          {moment(new Date(planningItem.item.delivery_date)).format(
+            'DD MMMM YYYY hh:mm a',
+          )}
+        </Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <Ionicons name="location-outline" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          From{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(planningItem.item.pickup_location_id)}
+          </Text>
+        </Text>
+      </View>
+
+      <View style={styles.packageMiddle}>
+        <MaterialIcons name="my-location" size={15} color="#717172" />
+        <Text style={styles.fromLocation}>
+          To{' '}
+          <Text style={styles.Location}>
+            {getLocationAddress(planningItem.item.dropoff_location_id)}
+          </Text>
+        </Text>
+      </View>
+
+      <View style={styles.footerCard}>
+        <Text style={styles.orderId}>
+          Order ID: {planningItem.item.order_number}
+        </Text>
+        <Text style={styles.valueMoney}>
+          For {planningItem.item.company_name}
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{backgroundColor: '#fff',}}>
-        <View style={{paddingHorizontal: 15, paddingVertical: 10,}}>
+    <View style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
+      <View style={{backgroundColor: '#fff'}}>
+        <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
           <View style={styles.header}>
             <Text style={styles.headerText}>Planning</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity onPress={() => toggleModal()}>
                 <AntDesign name="filter" size={25} color={colors.secondary} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('DeliveryboySetAvailability')} style={styles.availbilityBt}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('DeliveryboySetAvailability')
+                }
+                style={styles.availbilityBt}>
                 <Text style={styles.availabilityText}>Set availability</Text>
               </TouchableOpacity>
             </View>
@@ -52,21 +157,18 @@ const Planning = ({navigation}) => {
         <Calendar
           onDayPress={day => {
             setSelected(day.dateString);
+            getDeliveryBoyPlannningList(day.dateString);
           }}
           markedDates={{
             [selected]: {
               selected: true,
               disableTouchEvent: true,
+              selectedColor: colors.primary,
             },
             [getCurrentDate()]: {
               selected: true,
-              disableTouchEvent: true,
+              selectedColor: colors.secondary,
             },
-            '2024-05-13': {marked: true, dotColor: colors.primary},
-            '2024-05-14': {marked: true, dotColor: colors.MountainMeadow},
-            '2024-05-15': {marked: true, dotColor: colors.CuriousBlue},
-            '2024-05-16': {marked: true, dotColor: colors.Wisteria},
-            // '2024-05-17': {selected: true, marked: true, dotColor: colors.secondary, selectedColor: 'yellow'},
           }}
           theme={{
             backgroundColor: '#ffffff',
@@ -95,7 +197,6 @@ const Planning = ({navigation}) => {
           <Octicons name="dot-fill" size={20} color={colors.CuriousBlue} />
           <Text style={styles.colorWiseText}>E-Commerce</Text>
         </View>
-
       </View>
 
       <View style={styles.mainColorCard}>
@@ -108,61 +209,12 @@ const Planning = ({navigation}) => {
       <View style={{flex: 1}}>
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
           <View style={styles.packageDetailCard}>
-          <Text style={styles.listText}>No Record Found</Text>
-            {/* <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
-              <Text style={styles.deliveryTime}>
-                Delivered on Apr 19, 2024 at 11:30 AM
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Street, ABC</Text>
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <MaterialIcons name="my-location" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-              </Text>
-            </View>
-
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>For National Inc.</Text>
-            </View> */}
+            {orderList.length == 0 ? (
+              <Text style={styles.listText}>No Record Found</Text>
+            ) : (
+              <FlatList data={orderList} renderItem={renderPlanningList} />
+            )}
           </View>
-
-          {/* <View style={styles.packageDetailCard}>
-            <View style={styles.packageHeader}>
-              <Image source={require('../../image/package-medium-icon.png')} />
-              <Text style={styles.deliveryTime}>
-                Delivered on Apr 19, 2024 at 11:30 AM
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Street, ABC</Text>
-              </Text>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <MaterialIcons name="my-location" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-              </Text>
-            </View>
-
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>For National Inc.</Text>
-            </View>
-          </View> */}
         </View>
       </View>
       {/* Modal start here  */}
@@ -170,7 +222,7 @@ const Planning = ({navigation}) => {
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
       />
-    </ScrollView>
+    </View>
   );
 };
 

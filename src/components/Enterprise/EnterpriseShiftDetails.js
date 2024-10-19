@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,24 @@ import {
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import moment from 'moment';
 
-const EnterpriseShiftDetails = ({navigation}) => {
+const EnterpriseShiftDetails = ({route, navigation}) => {
+  const params = route.params;
+  const {userDetails} = useUserDetails();
+  const [totalHours, setTotalHours] = useState(0);
+
+  useEffect(() => {
+    var hours = 0;
+    params.shiftItem.slots.forEach(element => {
+      hours +=
+        moment(element.to_time, 'HH:mm:ss').diff(
+          moment(element.from_time, 'HH:mm:ss'),
+        ) / 3600000;
+    });
+    setTotalHours(hours);
+  }, []);
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
@@ -23,10 +39,12 @@ const EnterpriseShiftDetails = ({navigation}) => {
               source={require('../../image/home.png')}
             />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
+              <Text style={styles.franchiseStreet}>{params.branchName}</Text>
               <View style={styles.locationCard}>
                 <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {params.branchAddress}
+                </Text>
               </View>
             </View>
           </View>
@@ -37,9 +55,14 @@ const EnterpriseShiftDetails = ({navigation}) => {
               source={require('../../image/driver.jpeg')}
             />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>John Doe</Text>
+              <Text style={styles.franchiseStreet}>
+                {userDetails.userDetails[0].first_name}{' '}
+                {userDetails.userDetails[0].last_name}
+              </Text>
               <View style={styles.locationCard}>
-                <Text style={styles.franchiseSubTitle}>VOLVO FH16 2022</Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {params.vehicleType}
+                </Text>
               </View>
             </View>
           </View>
@@ -50,14 +73,63 @@ const EnterpriseShiftDetails = ({navigation}) => {
               source={require('../../image/Big-Calender.png')}
             />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>Started 11 AM to 04 PM</Text>
+              <Text style={styles.franchiseStreet}>
+                Started {params.fromTime} to {params.toTime}
+              </Text>
               <View>
-                <Text style={styles.franchiseSubTitle}>Total duration: <Text style={styles.boldTexts}>5 hours</Text></Text>
-                <Text style={styles.franchiseSubTitle}>Total deliveries: <Text style={styles.boldTexts}>12</Text></Text>
-                <Text style={styles.franchiseSubTitle}>Motor Bike</Text>
+                <Text style={styles.franchiseSubTitle}>
+                  Total duration:{' '}
+                  <Text style={styles.boldTexts}>{totalHours} hours</Text>
+                </Text>
+                <Text style={styles.franchiseSubTitle}>
+                  Total deliveries:{' '}
+                  <Text style={styles.boldTexts}>
+                    {params.shiftItem.slots.length}
+                  </Text>
+                </Text>
+                <Text style={styles.franchiseSubTitle}>{params.vehicleType}</Text>
               </View>
             </View>
           </View>
+
+          {/* <View style={styles.invoiceCard}>
+            <View>
+              <Image source={require('../../image/order-fare.png')} />
+            </View>
+            <View style={{marginLeft: 10}}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.orderFare}>Order fare</Text>
+                <Text style={styles.totalmoney}>€34.00</Text>
+              </View>
+
+              <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
+
+              <View style={styles.cardHeader}>
+                <Text style={styles.orderFareValue}>Order fare</Text>
+                <Text style={styles.value}>€30.00</Text>
+              </View>
+
+              <View style={styles.cardHeader}>
+                <Text style={styles.orderFareValue}>Waiting</Text>
+                <Text style={styles.value}>€03.00</Text>
+              </View>
+
+              <View style={styles.cardHeader}>
+                <Text style={styles.orderFareValue}>Platform fee</Text>
+                <Text style={styles.value}>€01.00</Text>
+              </View>
+
+              <View style={styles.cardHeader}>
+                <Text style={styles.orderFareValue}>Amount charged</Text>
+                <Text style={styles.value}>€34.00</Text>
+              </View>
+
+              <View style={styles.masterCard}>
+                <Image source={require('../../image/logos_mastercard.png')} />
+                <Text style={styles.paidWith}>Paid with mastercard</Text>
+              </View>
+            </View>
+          </View> */}
         </View>
       </View>
     </ScrollView>
@@ -65,140 +137,14 @@ const EnterpriseShiftDetails = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  informatinMainCard: {
-    width: '32%',
-    backgroundColor: colors.white,
-    padding: 13,
-    borderRadius: 5,
-    shadowColor: 'rgba(0, 0, 0, 0.16)',
-    shadowOffset: {
-      width: 0,
-      height: 0.0625,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    elevation: 0.5, // for Android
-    marginBottom: 7,
-    marginTop: 7,
-    marginRight: 10,
-  },
   informatinCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  allInformatinCard: {
-    flexDirection: 'row',
-  },
-  informationText: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
-  },
-  bookingsInfo: {
-    fontSize: 30,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  welcomeHome: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  userWelcome: {
-    fontSize: 20,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  userName: {
-    fontSize: 20,
-    fontFamily: 'Montserrat-Bold',
-    color: colors.text,
-  },
-  aboutPage: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
-  },
-  deliveryRecently: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-    marginBottom: 5,
-  },
-  recentlyInfo: {
-    marginTop: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  seAllText: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-SemiBold',
-    color: colors.secondary,
-  },
-  packageDetailCard: {
-    backgroundColor: colors.white,
-    padding: 13,
-    borderRadius: 5,
-    shadowColor: 'rgba(0, 0, 0, 0.16)',
-    shadowOffset: {
-      width: 0,
-      height: 0.0625,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    elevation: 0.5, // for Android
-    marginBottom: 7,
-    marginTop: 7,
-    marginRight: 10,
-  },
-  packageHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  deliveryTime: {
-    fontSize: 14,
-    color: colors.text,
-    fontFamily: 'Montserrat-SemiBold',
-    marginLeft: 10,
-  },
-  packageMiddle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-    paddingLeft: 5,
-  },
-  fromLocation: {
-    color: colors.subText,
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    marginLeft: 15,
   },
   Location: {
     color: colors.text,
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
-  },
-  borderShow: {
-    borderWidth: 0.5,
-    borderColor: '#ccc',
-    width: '100%',
-    marginVertical: 15,
-  },
-  orderId: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
-  },
-  valueMoney: {
-    fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
-    color: colors.secondary,
-  },
-  allDeleveryCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   requestPickup: {
     flexDirection: 'row',
@@ -405,7 +351,66 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   boldTexts: {
-    fontFamily: 'Montserrat-Bold', 
+    fontFamily: 'Montserrat-Bold',
+  },
+  invoiceCard: {
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    padding: 10,
+    borderRadius: 5,
+    shadowColor: 'rgba(0, 0, 0, 0.16)',
+    shadowOffset: {
+      width: 0,
+      height: 0.0625,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 0.5, // for Android
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Add this line
+  },
+  orderFare: {
+    width: '75%',
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: '#131314',
+  },
+  totalmoney: {
+    fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.secondary,
+  },
+  travel: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.subText,
+    marginVertical: 5,
+  },
+  orderFareValue: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.subText,
+    marginVertical: 5,
+  },
+  value: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  masterCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  paidWith: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.subText,
+    marginLeft: 5,
+    marginVertical: 5,
   },
 });
 

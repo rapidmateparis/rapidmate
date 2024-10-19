@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,38 +7,151 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Platform,
+  Alert,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
+import {downloadInvoiceOrder, getLocationById} from '../../data_manager';
+import RNFS from 'react-native-fs';
+import {Buffer} from 'buffer';
+import {API} from '../../utils/constant';
+import FileViewer from 'react-native-file-viewer';
+import {useLoader} from '../../utils/loaderContext';
 
-const DeliveryboyMainDeliveryDetails = ({navigation}) => {
+const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
+  const {setLoading} = useLoader();
+  const [orderDetails, setOrderDetails] = useState(route.params.orderItem);
+  const [pickUpLocation, setPickUpLocation] = useState({});
+  const [dropOffLocation, setDropOffLocation] = useState({});
+
+  useEffect(() => {
+    getLocationInfoById(orderDetails.pickup_location_id, 0);
+    getLocationInfoById(orderDetails.dropoff_location_id, 1);
+  }, []);
+
+  const downloadInvoiceFile = async () => {
+    setLoading(true);
+    try {
+      const successResponse = await new Promise((resolve, reject) => {
+        downloadInvoiceOrder(orderDetails.order_number, resolve, reject);
+      });
+
+      const invoiceData = successResponse;
+      const filePath =
+        Platform.OS === 'android'
+          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderDetails.order_number}.pdf`
+          : `${RNFS.DocumentDirectoryPath}/invoice_${orderDetails.order_number}.pdf`;
+
+      // Convert binary data to base64
+      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+
+      // Write the file to the document directory
+      await RNFS.writeFile(filePath, base64Data, 'base64');
+
+      // Verify the file exists
+      const fileExists = await RNFS.exists(filePath);
+      if (fileExists) {
+        Alert.alert('Success', 'Invoice saved successfully.', [
+          {
+            text: 'Open Invoice',
+            onPress: () => {
+              openPDFWithNativeViewer(filePath);
+            },
+          },
+        ]);
+        console.log('Invoice saved to: ', filePath);
+      } else {
+        Alert.alert('Error', 'Failed to save invoice file.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save invoice file.');
+      console.error('File saving error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openPDFWithNativeViewer = async filePath => {
+    const fileExists = await RNFS.exists(filePath);
+
+    if (fileExists) {
+      FileViewer.open(filePath)
+        .then(() => {})
+        .catch(error => {
+          Alert.alert('Error', 'Unable to open file: ' + error);
+        });
+    } else {
+      Alert.alert('Error', 'File not found');
+    }
+  };
+
+  const getLocationInfoById = async (locationId, locationType) => {
+    setLoading(true);
+    getLocationById(
+      locationId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          locationType == 0
+            ? setPickUpLocation(successResponse[0]._response[0])
+            : setDropOffLocation(successResponse[0]._response[0]);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('destination==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails />
+          <MapDeliveryDetails
+            addressData={{
+              sourceAddress: pickUpLocation,
+              destinationAddress: dropOffLocation,
+            }}
+          />
         </View>
 
         <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/Pickup-Package-Icon.png')}
+          />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Pickup information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
+            <Text style={styles.companyInfo}>
+              {orderDetails.company_name
+                ? orderDetails.company_name
+                : 'Company Name'}
+            </Text>
             <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
+              {pickUpLocation.address}, {pickUpLocation.city},{' '}
+              {pickUpLocation.state}
             </Text>
           </View>
         </View>
 
         <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/package-img.png')}
+          />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
             <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
+              {dropOffLocation.address}, {dropOffLocation.city},{' '}
+              {dropOffLocation.state}
             </Text>
           </View>
         </View>
@@ -50,67 +163,94 @@ const DeliveryboyMainDeliveryDetails = ({navigation}) => {
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>Order fare</Text>
-              <Text style={styles.totalmoney}>€34.00</Text>
+              <Text style={styles.totalmoney}>€ {orderDetails.amount}</Text>
             </View>
 
-            <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
+            <Text style={styles.travel}>
+              Travelled{' '}
+              {orderDetails.distance
+                ? orderDetails.distance.toFixed(2)
+                : '0.00'}{' '}
+              km in{' '}
+              {orderDetails.total_duration ? orderDetails.total_duration : '00'}
+            </Text>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Order fare</Text>
-              <Text style={styles.value}>€30.00</Text>
+              <Text style={styles.value}>
+                €{' '}
+                {orderDetails.order_amount
+                  ? orderDetails.order_amount.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>€03.00</Text>
+              <Text style={styles.value}>
+                €{' '}
+                {orderDetails.waiting_fare
+                  ? orderDetails.waiting_fare.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Platform fee</Text>
-              <Text style={styles.value}>€01.00</Text>
+              <Text style={styles.orderFareValue}>Promo</Text>
+              <Text style={styles.value}>
+                {orderDetails.promo_value ? orderDetails.promo_value : '0%'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Amount charged</Text>
-              <Text style={styles.value}>€34.00</Text>
+              <Text style={styles.value}>
+                €{' '}
+                {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
-              <Text style={styles.paidWith}>Paid with mastercard</Text>
+              <Text style={styles.paidWith}>
+                Paid with {orderDetails.paid_with ? orderDetails.paid_with : ''}
+              </Text>
             </View>
           </View>
         </View>
-
+        {console.log(orderDetails)}
         <View style={styles.packageInformationCard}>
           <Text style={styles.packageTitle}>Package information</Text>
           <Text style={styles.orderdetails}>
-            Order ID: <Text style={styles.detailsId}>20394</Text>
+            Order ID:{' '}
+            <Text style={styles.detailsId}>
+              {orderDetails.package_id ? orderDetails.package_id : ''}
+            </Text>
           </Text>
           <Text style={styles.orderdetails}>
             Comments:{' '}
             <Text style={styles.detailsId}>
-              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-              sed.
+              {orderDetails.pickup_notes ? orderDetails.pickup_notes : ''}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Vehicle: <Text style={styles.detailsId}>Pickup truck</Text>
+            Vehicle:{' '}
+            <Text style={styles.detailsId}>
+              {orderDetails.vehicle_type_id ? orderDetails.vehicle_type_id : ''}
+            </Text>
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.packageInvoiceCard}>
+        <TouchableOpacity
+          style={styles.packageInvoiceCard}
+          onPress={downloadInvoiceFile}>
           <View style={styles.invoiceCardBtn}>
-            <FontAwesome5
-              name="file-invoice"
-              size={20}
-              color="#FF0058"
-            />
+            <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
 
             <Text style={styles.downloadInvoiceText}>Download invoice</Text>
           </View>
           <View>
-          <Feather
+            <Feather
               style={{marginTop: 5}}
               name="download"
               size={20}
