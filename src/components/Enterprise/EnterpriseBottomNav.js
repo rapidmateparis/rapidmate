@@ -7,7 +7,7 @@ import {
   BackHandler,
   Platform,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -24,12 +24,25 @@ import RNExitApp from 'react-native-exit-app';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-import { updateUserProfile } from '../../data_manager';
-import { useUserDetails } from '../commonComponent/StoreContext';
+import {
+  getViewEnterpriseOrderDetail,
+  updateUserProfile,
+} from '../../data_manager';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
+import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
 
 const Bottom = createBottomTabNavigator();
 const EnterpriseBottomNav = ({navigation}) => {
   const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+  const [
+    isDeliveryBoyAcceptRejectModalModalVisible,
+    setDeliveryBoyAcceptRejectModalModalVisible,
+  ] = useState(false);
+  const [deliveryBoyAcceptRejectMessage, setDeliveryBoyAcceptRejectMessage] =
+    useState();
+
   useEffect(() => {
     const onBackPress = () => {
       Alert.alert(
@@ -70,13 +83,6 @@ const EnterpriseBottomNav = ({navigation}) => {
       if (fcmToken) {
         updateProfile(fcmToken);
       }
-
-      messaging().onMessage(async remoteMessage => {
-        Alert.alert(
-          'A new FCM message arrived!',
-          JSON.stringify(remoteMessage),
-        );
-      });
     }
     onSignIn();
   }, []);
@@ -90,13 +96,42 @@ const EnterpriseBottomNav = ({navigation}) => {
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
-        console.log('updateUserProfile', '' + successResponse);
+        console.log('updateUserProfile success', '' + successResponse);
       },
       errorResponse => {
-        console.log('updateUserProfile', '' + errorResponse);
+        console.log('updateUserProfile error', '' + errorResponse);
       },
     );
   };
+
+  useEffect(async () => {
+    messaging().onMessage(async remoteMessage => {
+      setDeliveryBoyAcceptRejectModalModalVisible(true);
+      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      getViewEnterpriseOrderDetail(
+        remoteMessage.data?.orderNumber,
+        successResponse => {
+          setLoading(false);
+          if (successResponse[0]._success) {
+            setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log('orderDetail==>errorResponse', errorResponse[0]);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    });
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Background Msg!!!!', JSON.stringify(remoteMessage));
+      navigation.navigate('Notifications', {
+        params: JSON.stringify(remoteMessage),
+      });
+    });
+  }, []);
 
   async function onSignIn() {
     crashlytics().log('User signed in.');
@@ -111,106 +146,117 @@ const EnterpriseBottomNav = ({navigation}) => {
   }
 
   return (
-    <Bottom.Navigator
-      tabBarOptions={{
-        activeTintColor: '#FF0058',
-        inactiveTintColor: '#A1A1A1',
-        labelStyle: {
-          fontSize: 12,
-          fontFamily: 'Montserrat-Regular',
-        },
-      }}>
-      <Bottom.Screen
-        key="EnterpriseHome"
-        name="Home"
-        component={EnterpriseHome}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <AntDesign
-              name="home"
-              size={23}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-
-      <Bottom.Screen
-        key="Notifications"
-        name="Chat"
-        component={Notifications}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <Ionicons
-              name="chatbox-ellipses-outline"
-              size={23}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-
-      <Bottom.Screen
-        key="EnterprisePlanning"
-        name="Planning"
-        component={EnterprisePlanning}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <Ionicons
-              name="calendar-outline"
-              size={20}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-
-      <Bottom.Screen
-        key="EnterpriseHistory"
-        name="Orders"
-        component={EnterpriseHistory}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <Ionicons
-              name="timer-outline"
-              size={24}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-
-      <Bottom.Screen
-        key="EnterprisesSettins"
-        name="Account"
-        component={EnterprisesSettins}
-        options={{
-          headerTitle: 'Settings',
-          headerTitleStyle: {
-            fontFamily: 'Montserrat-SemiBold',
-            fontSize: 16,
+    <>
+      <Bottom.Navigator
+        tabBarOptions={{
+          activeTintColor: '#FF0058',
+          inactiveTintColor: '#A1A1A1',
+          labelStyle: {
+            fontSize: 12,
+            fontFamily: 'Montserrat-Regular',
           },
-          headerTintColor: colors.text,
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#FBFAF5',
-            borderBottomWidth: 0,
-            elevation: 0,
-          },
-          tabBarIcon: ({focused}) => (
-            <AntDesign
-              name="user"
-              size={20}
-              color={focused ? '#FF0058' : '#B5B3B2'}
-            />
-          ),
-        }}
-      />
-    </Bottom.Navigator>
+        }}>
+        <Bottom.Screen
+          key="EnterpriseHome"
+          name="Home"
+          component={EnterpriseHome}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <AntDesign
+                name="home"
+                size={23}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+
+        <Bottom.Screen
+          key="Notifications"
+          name="Chat"
+          component={Notifications}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <Ionicons
+                name="chatbox-ellipses-outline"
+                size={23}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+
+        <Bottom.Screen
+          key="EnterprisePlanning"
+          name="Planning"
+          component={EnterprisePlanning}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <Ionicons
+                name="calendar-outline"
+                size={20}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+
+        <Bottom.Screen
+          key="EnterpriseHistory"
+          name="Orders"
+          component={EnterpriseHistory}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => (
+              <Ionicons
+                name="timer-outline"
+                size={24}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+
+        <Bottom.Screen
+          key="EnterprisesSettins"
+          name="Account"
+          component={EnterprisesSettins}
+          options={{
+            headerTitle: 'Settings',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat-SemiBold',
+              fontSize: 16,
+            },
+            headerTintColor: colors.text,
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#FBFAF5',
+              borderBottomWidth: 0,
+              elevation: 0,
+            },
+            tabBarIcon: ({focused}) => (
+              <AntDesign
+                name="user"
+                size={20}
+                color={focused ? '#FF0058' : '#B5B3B2'}
+              />
+            ),
+          }}
+        />
+      </Bottom.Navigator>
+      {/* <DeliveryBoyAcceptRejectModal
+        isDeliveryBoyAcceptRejectModalModalVisible={
+          isDeliveryBoyAcceptRejectModalModalVisible
+        }
+        setDeliveryBoyAcceptRejectModalModalVisible={
+          setDeliveryBoyAcceptRejectModalModalVisible
+        }
+        deliveryBoyAcceptRejectMessage={deliveryBoyAcceptRejectMessage}
+      /> */}
+    </>
   );
 };
 
