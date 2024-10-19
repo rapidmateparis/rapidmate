@@ -37,7 +37,7 @@ const DeliveryboyHome = ({navigation}) => {
       try {
         await Promise.all([
           getLocationsData(),
-          getOrderList(0), 
+          getOrderList(0),
           getOrderList(1),
           getLookup(),
           getCompanyConnectionList(),
@@ -61,7 +61,7 @@ const DeliveryboyHome = ({navigation}) => {
       errorResponse => {
         console.log(
           'getCompanyConnectionList==>errorResponse',
-          '' + errorResponse[0],
+          '' + JSON.stringify(errorResponse[0]),
         );
       },
     );
@@ -106,6 +106,7 @@ const DeliveryboyHome = ({navigation}) => {
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: status === 0 ? 'upcoming' : 'past',
+      orderType: 'N',
     };
     getDeliveryBoyViewOrdersList(
       postParams,
@@ -131,7 +132,9 @@ const DeliveryboyHome = ({navigation}) => {
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
-        <Text style={styles.deliveryTime}>Pickup in {moment(item.delivery_date).format('YYYY-MM-DD')}</Text>
+        <Text style={styles.deliveryTime}>
+          Pickup in {moment(item.delivery_date).format('YYYY-MM-DD')}
+        </Text>
       </View>
 
       <View style={styles.packageMiddle}>

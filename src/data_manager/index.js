@@ -212,7 +212,7 @@ export const getDeliveryBoyViewOrdersList = (
       postParams.extentedId +
       '?status=' +
       postParams.status +
-      '&orderTyp=' +
+      '&orderType=' +
       postParams.orderType,
     postParams,
   );
