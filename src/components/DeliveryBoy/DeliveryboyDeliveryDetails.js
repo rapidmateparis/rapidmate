@@ -77,6 +77,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       order_number: orderNumber,
       otp: otpValue,
     };
+    console.log('print_data===>', isOTP, otpValue);
     if (isOTP) {
       orderOPTVerify(
         params,
@@ -126,8 +127,10 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const handleStatusUpdated = () => {
     if (updateStatus == 'Enter OTP') {
       toggleModalOTP();
+      setIsOTP(true);
     } else if (updateStatus == 'Enter Delivered OTP') {
       toggleModalOTP();
+      setIsOTP(false);
     } else {
       setLoading(true);
       let params = {

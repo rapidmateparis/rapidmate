@@ -1181,6 +1181,7 @@ export const updateUserProfileEnterprise = (
 };
 
 export const orderOPTVerify = (params, successCallback, errorCallback) => {
+  console.log('url==>orderOPTVerify', API.verifyOrderOTP, params);
   axiosCall(
     API.verifyOrderOTP,
     HTTPMethod.PUT,
@@ -1194,7 +1195,16 @@ export const orderOPTVerify = (params, successCallback, errorCallback) => {
   );
 };
 
-export const orderOPTVerifyForDelivery = (params, successCallback, errorCallback) => {
+export const orderOPTVerifyForDelivery = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url==>orderOPTVerifyForDelivery',
+    API.verifyOrderDeliveryOTP,
+    params,
+  );
   axiosCall(
     API.verifyOrderDeliveryOTP,
     HTTPMethod.PUT,
