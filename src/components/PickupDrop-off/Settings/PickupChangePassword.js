@@ -6,10 +6,14 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import {changeUserPassword} from '../../../data_manager';
+import { useLoader } from '../../../utils/loaderContext';
 
 const PickupChangePassword = ({navigation}) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -18,6 +22,8 @@ const PickupChangePassword = ({navigation}) => {
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false);
   const [newPasswordVisible, setNewPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
 
   const togglePasswordVisibility = field => {
     if (field === 'currentPassword') {
@@ -29,9 +35,55 @@ const PickupChangePassword = ({navigation}) => {
     }
   };
 
-  const handleResetPassword = async () => {
-    // Implement password reset logic here
-    // Example: Call API to reset password
+  const handleResetPassword = () => {
+    if (currentPassword == '' || newPassword == '') {
+      Alert.alert('Error', 'Password fill the required password fields.', [
+        {
+          text: 'OK',
+          onPress: () => {
+          },
+        },
+      ]);
+    } else if (newPassword != confirmNewPassword){
+      Alert.alert('Error', 'Passwords do not match.', [
+        {
+          text: 'OK',
+          onPress: () => {
+          },
+        },
+      ]);
+    } else {
+      let params = {
+        info: {
+          userName: userDetails.userDetails[0].username,
+          oldPassword: currentPassword,
+          newPassword: newPassword,
+        },
+      };
+      setLoading(true);
+      changeUserPassword(
+        params,
+        successResponse => {
+          if (successResponse[0]._success) {
+            setLoading(false);
+            Alert.alert('Success', 'Password updated successfully', [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.goBack();
+                },
+              },
+            ]);
+          }
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }
   };
 
   return (
@@ -61,7 +113,9 @@ const PickupChangePassword = ({navigation}) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('PasswordRecovery')} style={styles.forgotPasswordLink}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('PasswordRecovery')}
+            style={styles.forgotPasswordLink}>
             <Text style={styles.forgotText}>Forgot your password?</Text>
           </TouchableOpacity>
 
@@ -142,7 +196,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingHorizontal: 10,
     color: colors.text,
-    fontFamily: 'Montserrat-Regular'
+    fontFamily: 'Montserrat-Regular',
   },
   button: {
     width: '100%',

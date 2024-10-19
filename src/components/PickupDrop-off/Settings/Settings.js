@@ -51,7 +51,7 @@ const Settings = ({navigation}) => {
                 userDetails.userDetails[0].last_name}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('PickupTakeSelfie')}
+              onPress={() => navigation.navigate('ConsumerManageProfile')}
               style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
@@ -66,7 +66,6 @@ const Settings = ({navigation}) => {
             }
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
-            <Text style={styles.titleStatus}>3 addresses</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -91,7 +90,7 @@ const Settings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('')}
+            onPress={() => navigation.navigate('PickupBillingDetails')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Billing details</Text>
             <AntDesign name="right" size={13} color="#909090" />

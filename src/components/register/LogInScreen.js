@@ -7,7 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
-  Platform
+  Platform,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,7 +19,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-
 
 const LogInScreen = ({navigation}) => {
   const {saveUserDetails} = useUserDetails();
@@ -47,28 +46,8 @@ const LogInScreen = ({navigation}) => {
       if (fcmToken) {
         setFcmToken(fcmToken);
       }
-
-      messaging().onMessage(async remoteMessage => {
-        Alert.alert(
-          'A new FCM message arrived!',
-          JSON.stringify(remoteMessage),
-        );
-      });
     }
-    onSignIn();
   }, []);
-
-  async function onSignIn() {
-    crashlytics().log('User signed in.');
-    await Promise.all([
-      crashlytics().setUserId(userDetails.userDetails[0].ext_id.toString()),
-      crashlytics().setAttributes({
-        role: userDetails.userDetails[0].role,
-        email: userDetails.userDetails[0].email,
-        extId: userDetails.userDetails[0].ext_id,
-      }),
-    ]);
-  }
 
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -134,7 +113,7 @@ const LogInScreen = ({navigation}) => {
                 ]);
               } else {
                 saveUserDetails({
-                  userInfo: successResponse[0]._response.user.idToken.payload,
+                  userInfo: successResponse[0]._response.user?.idToken?.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
                 console.log('userDetials===>', successResponse[0]._response);
@@ -147,20 +126,33 @@ const LogInScreen = ({navigation}) => {
                   successResponse[0]._response.user_profile[0].role ==
                   'DELIVERY_BOY'
                 ) {
-                  navigation.navigate('DeliveryboyBottomNav');
+                  if (
+                    successResponse[0]._response.user_profile[0].is_active == 0
+                  ) {
+                    navigation.navigate('DeliveryboyThanksPage');
+                  } else {
+                    navigation.navigate('DeliveryboyBottomNav');
+                  }
                 } else {
-                  navigation.navigate('EnterpriseBottomNav');
+                  if (
+                    successResponse[0]._response.user_profile[0].is_active == 0
+                  ) {
+                    navigation.navigate('EnterpriseThanksPage');
+                  } else {
+                    navigation.navigate('EnterpriseBottomNav');
+                  }
                 }
-                console.log(
-                  'successResponse[0]._response.user_profile',
-                  successResponse[0]._response.user_profile,
-                );
                 saveUserDetailsInAsync({
                   userInfo: successResponse[0]._response.user.idToken.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
               }
             }
+          } else {
+            setLoading(false);
+            Alert.alert('Error Alert', 'Invalid credentials', [
+              {text: 'OK', onPress: () => {}},
+            ]);
           }
         },
         errorResponse => {

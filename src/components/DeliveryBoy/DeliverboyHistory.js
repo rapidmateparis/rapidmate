@@ -8,13 +8,23 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useFocusEffect} from '@react-navigation/native';
-import {getDeliveryBoyViewOrdersList, getLocations} from '../../data_manager';
+import {
+  getDeliveryBoyViewOrdersList,
+  getDeliveryBoyViewOrdersListBySearch,
+  getLocations,
+} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
 import {useLoader} from '../../utils/loaderContext';
@@ -22,13 +32,13 @@ import moment from 'moment';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = ({navigation}) => {
-  const [searchText, setSearchText] = useState('');
+const TodayList = ({navigation, filterCriteria, searchText}) => {
   const [index, setIndex] = useState(0);
   const [currentOrderList, setCurrentOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
+  const timeout = React.useRef(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -36,13 +46,14 @@ const TodayList = ({navigation}) => {
       let postParams = {
         extentedId: userDetails.userDetails[0].ext_id,
         status: 'current',
+        orderType: filterCriteria,
       };
       setLoading(true);
       getDeliveryBoyViewOrdersList(
         postParams,
         null,
         successResponse => {
-          console.log('ordr',successResponse[0]._response)
+          console.log('ordr', successResponse[0]._response);
           setCurrentOrderList(successResponse[0]._response);
           setLoading(false);
         },
@@ -55,8 +66,44 @@ const TodayList = ({navigation}) => {
       return () => {
         setCurrentOrderList([]);
       };
-    }, []),
+    }, [filterCriteria]),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setCurrentOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+      filterCriteria: filterCriteria,
+      orderNumber: searchValue,
+    };
+    getDeliveryBoyViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setCurrentOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setCurrentOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -90,7 +137,13 @@ const TodayList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyDeliveryDetails',{order_number:item.item.order_number})}
+          onPress={() => {
+            navigation.navigate('DeliveryboyDeliveryDetails', {
+              order_number: item.item.order_number,
+              package_photo: item.item.package_photo,
+              orderItem: item.item,
+            });
+          }}
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -98,10 +151,11 @@ const TodayList = ({navigation}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              Scheduled on{' '}
+              {item.item.delivery_boy_order_title}
+              {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
-              )}
+              )} */}
             </Text>
           </View>
 
@@ -135,7 +189,10 @@ const TodayList = ({navigation}) => {
 
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€{item.item.amount? item.item.amount : '34.00'}</Text>
+            <Text style={styles.valueMoney}>
+              €
+              {item.item.amount ? Number(item.item.amount).toFixed(2) : '34.00'}
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -168,11 +225,12 @@ const TodayList = ({navigation}) => {
   );
 };
 
-const PastList = ({navigation}) => {
+const PastList = ({navigation, filterCriteria, searchText}) => {
   const [pastOrderList, setPastOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
+  const timeout = React.useRef(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -180,6 +238,7 @@ const PastList = ({navigation}) => {
       let postParams = {
         extentedId: userDetails.userDetails[0].ext_id,
         status: 'past',
+        orderType: filterCriteria,
       };
       setLoading(true);
       getDeliveryBoyViewOrdersList(
@@ -198,8 +257,44 @@ const PastList = ({navigation}) => {
       return () => {
         setPastOrderList([]);
       };
-    }, []),
+    }, [filterCriteria]),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setPastOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+      filterCriteria: filterCriteria,
+      orderNumber: searchValue,
+    };
+    getDeliveryBoyViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setPastOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setPastOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -233,7 +328,11 @@ const PastList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyMainDeliveryDetails')}
+          onPress={() =>
+            navigation.navigate('DeliveryboyMainDeliveryDetails', {
+              orderItem: item.item,
+            })
+          }
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -241,10 +340,11 @@ const PastList = ({navigation}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              Scheduled on{' '}
+              {item.item.delivery_boy_order_title}
+              {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
-              )}
+              )} */}
             </Text>
           </View>
 
@@ -278,7 +378,7 @@ const PastList = ({navigation}) => {
 
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
+            <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
           </View>
         </TouchableOpacity>
 
@@ -327,241 +427,6 @@ const PastList = ({navigation}) => {
             <Text style={styles.valueMoney}>€34.00</Text>
           </View>
         </View>
-
-        {/* <TouchableOpacity
-          onPress={() => navigation.navigate('NewDeliveryPackageRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryDetailsMultipleOrder')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyShiftDetails')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyShiftStaredRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryPackageRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryPackageScheduleRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity> */}
       </View>
     </View>
   );
@@ -610,6 +475,7 @@ const Past = () => {
 const DeliveryboyHistory = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const [filterCriteria, setFilterCriteria] = useState('N');
 
   return (
     <View style={{flex: 1}}>
@@ -618,10 +484,21 @@ const DeliveryboyHistory = ({navigation}) => {
         {/* Your Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('DeliveryboyDeliveryDetails')}>
-            <AntDesign name="filter" size={20} color={colors.secondary} />
-          </TouchableOpacity>
+          <Menu>
+            <MenuTrigger>
+              <AntDesign name="filter" size={20} color={colors.secondary} />
+            </MenuTrigger>
+            <MenuOptions>
+              <MenuOption
+                onSelect={() => setFilterCriteria('N')}
+                text="Normal"
+              />
+              <MenuOption
+                onSelect={() => setFilterCriteria('E')}
+                text="Enterprise"
+              />
+            </MenuOptions>
+          </Menu>
         </View>
         <View style={styles.searchContainer}>
           <AntDesign
@@ -632,10 +509,20 @@ const DeliveryboyHistory = ({navigation}) => {
           />
           <TextInput
             style={styles.searchinput}
+            placeholderTextColor="#999"
             placeholder="Search your deliveries"
             value={searchText}
             onChangeText={setSearchText}
           />
+          {searchText && (
+            <AntDesign
+              name="close"
+              size={20}
+              color="#000"
+              style={styles.searchIcon}
+              onPress={() => setSearchText('')}
+            />
+          )}
         </View>
 
         {/* End of Search Bar */}
@@ -646,15 +533,27 @@ const DeliveryboyHistory = ({navigation}) => {
         screenOptions={{
           tabBarActiveTintColor: colors.secondary,
           tabBarInactiveTintColor: colors.subText,
-          tabBarLabelStyle: {fontSize: 14},
+          tabBarLabelStyle: {fontSize: 12, fontFamily: 'Montserrat-Regular'},
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
-          tabBarStyle: {backgroundColor: '#fff'},
+          tabBarStyle: [{display: 'flex', backgroundColor: '#fff'}],
         }}>
         <Tab.Screen name="Ongoing">
-          {() => <TodayList navigation={navigation} />}
+          {() => (
+            <TodayList
+              navigation={navigation}
+              filterCriteria={filterCriteria}
+              searchText={searchText}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="Past">
-          {() => <PastList navigation={navigation} />}
+          {() => (
+            <PastList
+              navigation={navigation}
+              filterCriteria={filterCriteria}
+              searchText={searchText}
+            />
+          )}
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}

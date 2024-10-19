@@ -1,17 +1,28 @@
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
-  ImageBackground,
+  BackHandler,
 } from 'react-native';
 import {colors} from '../../colors';
 
 const PaymentSuccess = ({navigation}) => {
+  useEffect(() => {
+    const onBackPress = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <ScrollView
       style={{width: '100%', height: '100%', backgroundColor: '#FBFAF5'}}
@@ -25,12 +36,12 @@ const PaymentSuccess = ({navigation}) => {
         }}>
         <View style={styles.container}>
           <Image
-            style={{width:100,height:100}}
+            style={{width: 100, height: 100}}
             source={require('../../image/payment_success.png')}
           />
           <Text style={styles.text}>Payment Successful!</Text>
           <Text style={styles.subText}>
-          Your payment was successful, let’s look for a delivery boy now...
+            Your payment was successful, let’s look for a delivery boy now...
           </Text>
         </View>
       </View>

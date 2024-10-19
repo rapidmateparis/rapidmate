@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,10 +15,18 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {colors} from '../../colors';
-import PlaningFilterModal from '../commonComponent/PlaningFilterModal';
+import {
+  fetchEnterprisePlans,
+  getAllVehicleTypes,
+  getEnterpriseBranch,
+  getLocations,
+} from '../../data_manager';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import moment from 'moment';
+import {useLoader} from '../../utils/loaderContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 const EnterprisePlanning = ({navigation}) => {
-
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -26,6 +35,138 @@ const EnterprisePlanning = ({navigation}) => {
     return `${year}-${month}-${day}`;
   };
   const [selected, setSelected] = useState('');
+  const [enterprisePlans, setEnterprisePlans] = useState([]);
+  const {userDetails} = useUserDetails();
+  const [locationList, setLocationList] = useState([]);
+  const {setLoading} = useLoader();
+  const [vehicleTypeList, setVehicleTypeList] = useState([]);
+  const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setSelected(moment(new Date()).format('YYYY-MM-DD'));
+      getVehicleTypes();
+      getLocationsData();
+      getEnterprisePlans(moment(new Date()).format('YYYY-MM-DD'));
+      getBranchesList();
+    }, []),
+  );
+
+  const getEnterprisePlans = dateString => {
+    let params = {
+      enterprise_ext_id: userDetails.userDetails[0].ext_id,
+      plan_date: dateString,
+    };
+    fetchEnterprisePlans(
+      params,
+      successResponse => {
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            setEnterprisePlans(successResponse[0]._response);
+          }
+        } else {
+          setEnterprisePlans([]);
+        }
+      },
+      errorResponse => {
+        setEnterprisePlans([]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getLocationsData = () => {
+    setLoading(true);
+    setLocationList([]);
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setLocationList([]);
+        }
+      },
+    );
+  };
+
+  const getVehicleTypes = () => {
+    getAllVehicleTypes(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setVehicleTypeList(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getBranchesList = () => {
+    getEnterpriseBranch(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              var branches = [];
+              for (
+                let index = 0;
+                index < successResponse[0]._response.length;
+                index++
+              ) {
+                const element = successResponse[0]._response[index];
+                element.isSelected = false;
+                branches.push(element);
+              }
+              setEnterpriseBranches(branches);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getLocationAddress = locationId => {
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
+  const getVehicleType = vehicleId => {
+    let result = vehicleTypeList.filter(vehicle => vehicle.id == vehicleId);
+    return result[0]?.vehicle_type;
+  };
+
+  const getBranchAddress = branchId => {
+    let result = enterpriseBranches.filter(branch => branch.id == branchId);
+    return result[0]?.address;
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -34,7 +175,10 @@ const EnterprisePlanning = ({navigation}) => {
           <View style={styles.header}>
             <Text style={styles.headerText}>Planning</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <TouchableOpacity onPress={() => navigation.navigate('EnterpriseScheduleNewDelivery')}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('EnterpriseScheduleNewDelivery')
+                }>
                 <AntDesign name="pluscircle" size={25} color={colors.primary} />
               </TouchableOpacity>
             </View>
@@ -44,14 +188,11 @@ const EnterprisePlanning = ({navigation}) => {
       <View style={styles.calenderCard}>
         <Calendar
           onDayPress={day => {
+            getEnterprisePlans(day.dateString);
             setSelected(day.dateString);
           }}
           markedDates={{
             [selected]: {
-              selected: true,
-              disableTouchEvent: true,
-            },
-            [getCurrentDate()]: {
               selected: true,
               disableTouchEvent: true,
             },
@@ -99,58 +240,128 @@ const EnterprisePlanning = ({navigation}) => {
 
       <View style={{flex: 1}}>
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
-          <View style={styles.packageDetailCard}>
-            <View style={styles.packageHeader}>
-              <Image style={styles.manageImages} source={require('../../image/Big-Package.png')} />
-              <Text style={styles.deliveryTime}>
-                Delivered on Apr 19, 2024 at 11:30 AM
-              </Text>
-            </View>
+          {enterprisePlans.map((item, index) => {
+            return (
+              <View>
+                {item.delivery_type_id == 3 ? (
+                  <View key={index} style={styles.packageDetailCard}>
+                    <TouchableOpacity style={styles.packageDetailCard}>
+                      <View style={styles.packageshiftHeader}>
+                        <View style={styles.packageshiftHeader}>
+                          <Image
+                            style={styles.imagesManage}
+                            source={require('../../image/Big-Calender.png')}
+                          />
+                          <Text style={styles.deliveryTime}>
+                            {item.slots[0]
+                              ? moment(
+                                  item.slots[0].from_time,
+                                  'HH:mm:ss',
+                                ).format('hh A')
+                              : '--'}
+                            {' to '}
+                            {item.slots[0]
+                              ? moment(
+                                  item.slots[0].to_time,
+                                  'HH:mm:ss',
+                                ).format('hh A')
+                              : '--'}
+                          </Text>
+                        </View>
+                        <Text style={styles.deliveryTime}>
+                          {item.slots[0]
+                            ? moment(item.slots[0].to_time, 'HH:mm:ss').diff(
+                                moment(item.slots[0].from_time, 'HH:mm:ss'),
+                              ) / 3600000
+                            : '0'}{' '}
+                          hours shift
+                        </Text>
+                      </View>
 
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Street, ABC</Text>
-              </Text>
-            </View>
+                      <View style={styles.packageMiddle}>
+                        <Ionicons
+                          name="location-outline"
+                          size={15}
+                          color="#717172"
+                        />
+                        <Text style={styles.fromshiftLocation}>
+                          {getBranchAddress(item.branch_id)}
+                        </Text>
+                      </View>
 
-            <View style={styles.packageMiddle}>
-              <MaterialIcons name="my-location" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-              </Text>
-            </View>
+                      <View style={styles.footerCard}>
+                        <Text
+                          style={[
+                            styles.orderActive,
+                            {
+                              color: colors.Pending,
+                              backgroundColor: '#F39C1212',
+                            },
+                          ]}>
+                          {item.order_status.replace(/_/g, ' ')}
+                        </Text>
+                        <Text style={styles.orderId}>
+                          {getVehicleType(item.vehicle_type_id)}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View key={index} style={styles.packageDetailCard}>
+                    <View style={styles.packageHeader}>
+                      <Image
+                        style={styles.manageImages}
+                        source={require('../../image/Big-Package.png')}
+                      />
+                      <Text style={styles.deliveryTime}>
+                        Delivered on{' '}
+                        {moment(item.delivery_date).format('MMM DD, YYYY')}
+                        {' at '}
+                        {moment(item.delivery_date).format('hh:mm A')}
+                      </Text>
+                    </View>
 
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>Pickup Truck</Text>
-            </View>
-          </View>
+                    <View style={styles.packageMiddle}>
+                      <Ionicons
+                        name="location-outline"
+                        size={15}
+                        color="#717172"
+                      />
+                      <Text style={styles.fromLocation}>
+                        From{' '}
+                        <Text style={styles.Location}>
+                          {getLocationAddress(item.pickup_location)}
+                        </Text>
+                      </Text>
+                    </View>
 
-          <View style={styles.packageDetailCard}>
-            <View style={styles.packageHeader}>
-              <Image
-                style={styles.manageImages}
-                source={require('../../image/Big-Calender.png')}
-              />
-              <View style={styles.shiftCard}>
-                <Text style={styles.deliveryShiftTime}>11 AM to 04 PM</Text>
-                <Text style={styles.deliveryTime}>5 hours shift</Text>
+                    <View style={styles.packageMiddle}>
+                      <MaterialIcons
+                        name="my-location"
+                        size={15}
+                        color="#717172"
+                      />
+                      <Text style={styles.fromLocation}>
+                        To{' '}
+                        <Text style={styles.Location}>
+                          {getLocationAddress(item.dropoff_location)}
+                        </Text>
+                      </Text>
+                    </View>
+
+                    <View style={styles.footerCard}>
+                      <Text style={styles.orderId}>
+                        Order ID: {item.order_number}
+                      </Text>
+                      <Text style={styles.valueMoney}>
+                        {getVehicleType(item.vehicle_type_id)}
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </View>
-            </View>
-
-            <View style={styles.packageMiddle}>
-              <Ionicons name="location-outline" size={15} color="#717172" />
-              <Text style={styles.fromLocation}>
-                From <Text style={styles.Location}>North Franchise</Text>
-              </Text>
-            </View>
-
-            <View style={styles.footerCard}>
-              <Text style={styles.orderId}>Order ID: 98237469</Text>
-              <Text style={styles.valueMoney}>Motor Bike</Text>
-            </View>
-          </View>
+            );
+          })}
         </View>
       </View>
     </ScrollView>
@@ -188,7 +399,7 @@ const styles = StyleSheet.create({
   },
   packageDetailCard: {
     backgroundColor: colors.white,
-    padding: 13,
+    padding: 7,
     borderRadius: 5,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
@@ -297,6 +508,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,
     width: '62%',
+  },
+  packageshiftHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  fromshiftLocation: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.subText,
+    marginLeft: 10,
+  },
+  imagesManage: {
+    width: 20,
+    height: 20,
   },
 });
 

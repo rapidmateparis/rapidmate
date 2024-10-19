@@ -295,6 +295,7 @@ const styles = StyleSheet.create({
   uploadTextUpper: {
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
+    color: '#999',
   },
   uploadLargePhoto: {
     borderWidth: 1,
@@ -329,6 +330,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     borderRadius: 5,
     paddingHorizontal: 15,
+    color: colors.text,
     borderWidth: 1,
     borderColor: '#2C303336',
   },

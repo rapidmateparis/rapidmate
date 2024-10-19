@@ -52,7 +52,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
-  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
+  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -142,8 +142,8 @@ const DeliveryBoySignup = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
+        console.log('errorResponse', errorResponse[0]._errors.message);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -231,7 +231,11 @@ const DeliveryBoySignup = ({navigation}) => {
                   {text: 'OK', onPress: () => {}},
                 ]);
               } else if (successResponse[0]._httpsStatusCode == 200) {
-                saveSignUpDetails({...signUpDetails, userName:email, password:password})
+                saveSignUpDetails({
+                  ...signUpDetails,
+                  userName: email,
+                  password: password,
+                });
                 navigation.navigate('SignUpVerify', {
                   delivery_boy_details: successResponse[0]._response,
                 });
@@ -385,8 +389,10 @@ const DeliveryBoySignup = ({navigation}) => {
                   data={data}
                   search
                   maxHeight={300}
-                  itemTextStyle={{color: colors.text}}
-                  selectedTextStyle={{color: colors.text}}
+                  itemTextStyle={styles.itemtextStyle}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? '+33' : '...'}
@@ -427,8 +433,10 @@ const DeliveryBoySignup = ({navigation}) => {
               data={countryList}
               search
               maxHeight={300}
-              itemTextStyle={{color: colors.text}}
-              selectedTextStyle={{color: colors.text}}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Country' : '...'}
@@ -474,8 +482,10 @@ const DeliveryBoySignup = ({navigation}) => {
                 data={stateList}
                 search
                 maxHeight={300}
-                itemTextStyle={{color: colors.text}}
-                selectedTextStyle={{color: colors.text}}
+                itemTextStyle={styles.itemtextStyle}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Ain' : '...'}
@@ -513,8 +523,10 @@ const DeliveryBoySignup = ({navigation}) => {
                 data={cityList}
                 search
                 maxHeight={300}
-                itemTextStyle={{color: colors.text}}
-                selectedTextStyle={{color: colors.text}}
+                itemTextStyle={styles.itemtextStyle}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'ambérieu-e...' : '...'}
@@ -559,6 +571,7 @@ const DeliveryBoySignup = ({navigation}) => {
               value={toggleCheckBox}
               onValueChange={newValue => setToggleCheckBox(newValue)}
               style={{alignSelf: 'flex-start'}}
+              tintColors={{true: '#FFC72B', false: '#999'}}
             />
             <Text style={styles.checkboxText}>
               We collect this data for the purposes of processing your
@@ -746,6 +759,22 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     marginTop: 25,
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

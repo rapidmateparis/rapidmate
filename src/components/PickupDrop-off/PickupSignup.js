@@ -29,7 +29,6 @@ const PickupSignup = ({navigation}) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
-  const [openDropDown, setOpenDropDown] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -190,7 +189,7 @@ const PickupSignup = ({navigation}) => {
       <View style={{paddingHorizontal: 15}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '85%'}}>
-            <Text style={[styles.logInText, {color: colors.text}]}>
+            <Text style={[styles.logInText, {color: colors.black}]}>
               Pickup & Drop-off{' '}
               <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
             </Text>
@@ -287,8 +286,11 @@ const PickupSignup = ({navigation}) => {
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
-                  itemTextStyle={{color: colors.text}}
-                  selectedTextStyle={{color: colors.text}}
+                  itemTextStyle={styles.itemtextStyle}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  style={{color: colors.black}}
                   placeholder={!isFocus ? '+33' : '...'}
                   searchPlaceholder="+.."
                   value={dropdownValue}
@@ -329,8 +331,10 @@ const PickupSignup = ({navigation}) => {
               maxHeight={300}
               labelField="label"
               valueField="value"
-              itemTextStyle={{color: colors.text}}
-              selectedTextStyle={{color: colors.text}}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               placeholder={!isFocus ? 'Country' : '...'}
               searchPlaceholder="Search.."
               value={dropdownCountryValue}
@@ -345,7 +349,7 @@ const PickupSignup = ({navigation}) => {
                   style={{marginRight: 10}}
                   name="globe"
                   size={18}
-                  color={colors.text}
+                  color={colors.black}
                 />
               )}
             />
@@ -455,7 +459,7 @@ const styles = StyleSheet.create({
   loginput: {
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',
-    color: colors.text,
+    color: colors.black,
     paddingHorizontal: 10,
     width: '90%',
   },
@@ -477,13 +481,14 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.black,
     fontFamily: 'Montserrat-Medium',
   },
   signUpContainer: {
     marginVertical: 20,
     alignItems: 'center',
   },
+  notSelectedCard: {},
   signUpText: {
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
@@ -507,7 +512,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     paddingHorizontal: 10,
-    color: colors.text,
+    color: colors.black,
     fontFamily: 'Montserrat-Regular',
   },
   accountType: {
@@ -515,7 +520,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
     fontSize: 12,
-    color: colors.text,
+    color: colors.black,
   },
   accountCard: {
     flexDirection: 'row',
@@ -536,7 +541,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     fontSize: 14,
     marginLeft: 5,
-    color: colors.text,
+    color: colors.black,
   },
   checkIcon: {
     backgroundColor: colors.primary,
@@ -557,7 +562,7 @@ const styles = StyleSheet.create({
   termOfRapidmate: {
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
-    color: colors.text,
+    color: colors.black,
     textAlign: 'center',
     marginTop: 10,
     marginHorizontal: 50,
@@ -568,8 +573,24 @@ const styles = StyleSheet.create({
     height: 20,
     padding: 3,
     borderRadius: 15,
-    borderBlockColor: colors.text,
+    borderBlockColor: colors.black,
     borderWidth: 1,
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

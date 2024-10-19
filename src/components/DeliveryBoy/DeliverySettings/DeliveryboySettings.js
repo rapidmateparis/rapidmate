@@ -50,7 +50,7 @@ const DeliveryboySettings = ({navigation}) => {
                 userDetails.userDetails[0].last_name}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('DeliveryboyTakeSelfie')}
+              onPress={() => navigation.navigate('DeliveryboyManageProfile')}
               style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
@@ -65,7 +65,6 @@ const DeliveryboySettings = ({navigation}) => {
             }
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Address book</Text>
-            <Text style={styles.titleStatus}>3 addresses</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -81,7 +80,7 @@ const DeliveryboySettings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Wallet')}
+            onPress={() => navigation.navigate('DeliveryboyWallet')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Wallet</Text>
             <AntDesign name="right" size={13} color="#909090" />

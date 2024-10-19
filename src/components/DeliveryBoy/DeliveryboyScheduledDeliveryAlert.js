@@ -2,17 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
   Image,
   ImageBackground,
+  StyleSheet,
+  ScrollView,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import SwipeButtonComponent from '../commonComponent/SwipeButton';
 import ScheduledDeliverySwipe from '../commonComponent/ScheduledDeliverySwipe';
+import DeliveryboyScheduleCancellationModal from './DeliveryboyScheduleCancellationModal';
 
 const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
   const [deliveryTime, setDeliveryTime] = useState(90 * 60); // 90 minutes in seconds
@@ -78,8 +75,8 @@ const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
               </View>
             </View>
           </View>
-          <View style={{marginBottom: 40,}}>
-            <ScheduledDeliverySwipe />
+          <View style={{marginBottom: 40}}>
+            <ScheduledDeliverySwipe/>
           </View>
         </ImageBackground>
       </View>

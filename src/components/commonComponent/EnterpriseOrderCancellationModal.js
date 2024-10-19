@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
-import {colors} from '../../colors';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { colors } from '../../colors';
 
-function EnterpriseOrderCancellationModal({setModalVisible, isModalVisible}) {
+function EnterpriseOrderCancellationModal({ setModalVisible, isModalVisible }) {
   const [selectedReason, setSelectedReason] = useState(null);
   const navigation = useNavigation(); // Initialize navigation using useNavigation hook
 
@@ -33,8 +33,18 @@ function EnterpriseOrderCancellationModal({setModalVisible, isModalVisible}) {
     );
   };
 
+  const handleSubmit = () => {
+    if (selectedReason) {
+      // Perform any additional operations before navigation, if needed
+      toggleModal(); // Optionally close the modal
+      navigation.navigate('EnterpriseOrderCancelled'); // Navigate to the EnterpriseOrderCancelled screen
+    } else {
+      Alert.alert('Selection Required', 'Please select a cancellation reason.');
+    }
+  };
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
@@ -53,7 +63,7 @@ function EnterpriseOrderCancellationModal({setModalVisible, isModalVisible}) {
             ].map(reason => renderReason(reason))}
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseOrderCancelled')}
+            onPress={handleSubmit}
             style={styles.buttonCard}>
             <Text style={styles.okButton}>Submit</Text>
           </TouchableOpacity>
@@ -121,6 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingVertical: 12,
     textAlign: 'center',
+    color: colors.white, // Ensure text is visible on button
   },
   CancellationReasonCard: {
     padding: 20,
