@@ -42,12 +42,12 @@ const VehicleDimensionsModal = ({
       vehicleImageStyle = styles.partnerImage;
       break;
     case 5:
-      vehicleImageSource = VanImage;
-      vehicleImageStyle = styles.vanImage;
-      break;
-    case 6:
       vehicleImageSource = MiniVanImage;
       vehicleImageStyle = styles.miniVanImage;
+      break;
+    case 6:
+      vehicleImageSource = VanImage;
+      vehicleImageStyle = styles.vanImage;
       break;
     case 7:
       vehicleImageSource = SemiTruckImage;

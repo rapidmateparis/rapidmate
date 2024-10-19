@@ -24,6 +24,7 @@ import {
 } from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
+import EnterpriseShiftFillter from './EnterpriseShiftFillter';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -224,6 +225,11 @@ function EnterpriseHistory({navigation}) {
   const [locationList, setLocationList] = useState([]);
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
+  const [isShiftModalVisible, setShiftModalVisible] = useState(false);
+
+  const toggleShiftModal = () => {
+    setShiftModalVisible(!isShiftModalVisible);
+  };
 
   useEffect(() => {
     getVehicleTypes();
@@ -365,7 +371,7 @@ function EnterpriseHistory({navigation}) {
             <TouchableOpacity>
               <AntDesign name="download" size={25} color={colors.secondary} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleShiftModal}>
               <AntDesign
                 style={{marginLeft: 10}}
                 name="filter"
@@ -432,6 +438,12 @@ function EnterpriseHistory({navigation}) {
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}
+
+      {/* Modal start here  */}
+      <EnterpriseShiftFillter
+        isShiftModalVisible={isShiftModalVisible}
+        setShiftModalVisible={setShiftModalVisible}
+      />
     </View>
   );
 }
