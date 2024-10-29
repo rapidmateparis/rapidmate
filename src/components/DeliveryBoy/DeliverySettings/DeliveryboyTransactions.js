@@ -57,6 +57,30 @@ function DeliveryboyTransactions() {
     );
   }, [activeOption]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(true);
+      let params = {
+        extId: userDetails.userDetails[0].ext_id,
+        searchText: searchText,
+      };
+      getDeliveryBoyTransactions(
+        params,
+        successResponse => {
+          setLoading(false);
+          setTransactionList(successResponse[0]._response.transactions);
+          setWalletBalance(successResponse[0]._response.balance);
+        },
+        errorResponse => {
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }, 1000);
+  }, [searchText]);
+
   const renderTransactionItem = transactionItem => (
     <View style={styles.transactioneDetailCard}>
       <Image source={require('../../../image/Wallet-Icon1x.png')} />

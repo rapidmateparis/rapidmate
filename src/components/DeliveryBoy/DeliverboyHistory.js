@@ -491,12 +491,34 @@ const DeliveryboyHistory = ({navigation}) => {
             <MenuOptions>
               <MenuOption
                 onSelect={() => setFilterCriteria('N')}
-                text="Normal"
-              />
+                customStyles={{
+                  optionWrapper:
+                    filterCriteria === 'N' ? styles.selectedOption : null,
+                }}>
+                <Text
+                  style={
+                    filterCriteria === 'N'
+                      ? styles.selectedText
+                      : styles.defaultText
+                  }>
+                  Normal
+                </Text>
+              </MenuOption>
               <MenuOption
                 onSelect={() => setFilterCriteria('E')}
-                text="Enterprise"
-              />
+                customStyles={{
+                  optionWrapper:
+                    filterCriteria === 'E' ? styles.selectedOption : null,
+                }}>
+                <Text
+                  style={
+                    filterCriteria === 'E'
+                      ? styles.selectedText
+                      : styles.defaultText
+                  }>
+                  Enterprise
+                </Text>
+              </MenuOption>
             </MenuOptions>
           </Menu>
         </View>
@@ -733,6 +755,16 @@ const styles = StyleSheet.create({
   packageManage: {
     width: 25,
     height: 25,
+  },
+  selectedOption: {
+    backgroundColor: '#d3d3d3',
+  },
+  selectedText: {
+    color: colors.secondary,
+    fontWeight: 'bold',
+  },
+  defaultText: {
+    color: 'black',
   },
 });
 
