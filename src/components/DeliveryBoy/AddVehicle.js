@@ -69,9 +69,9 @@ const AddVehicle = ({route, navigation}) => {
       case 4:
         return PartnerImage;
       case 5:
-        return MiniVanImage;
-      case 6:
         return MiniTruckImage;
+      case 6:
+        return MiniVanImage;
       case 7:
         return SemiTruckImage;
       default:

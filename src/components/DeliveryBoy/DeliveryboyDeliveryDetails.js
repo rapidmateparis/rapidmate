@@ -331,15 +331,6 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.borderShowOff} />
 
             <View style={styles.packageBasicInfo}>
-              <Text style={styles.headingOTP}>OTP</Text>
-              <Text style={styles.subheadingOTP}>
-                {route.params.orderItem ? route.params.orderItem.otp : ''}
-              </Text>
-            </View>
-
-            <View style={styles.borderShowOff} />
-
-            <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>When?</Text>
               <Text style={styles.subheadingOTP}>
                 {order.order
@@ -372,7 +363,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
 
             <View style={styles.borderShowOff} />
 
-            <View>
+            <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>Pickup notes</Text>
               <Text style={styles.dropInfo}>
                 {order.order ? order.order.pickup_notes : ''}
