@@ -46,6 +46,11 @@ const Planning = ({navigation}) => {
     getLocationsData();
   }, []);
 
+
+  const onPressPlanningFilter = (probs) => {
+    console.log("print_data===>onPressPlanningFilter", probs)
+  }
+
   const getLocationsData = () => {
     setLocationList([]);
     getLocations(
@@ -221,6 +226,7 @@ const Planning = ({navigation}) => {
       <PlaningFilterModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
+        onPressPlanningFilter={onPressPlanningFilter}
       />
     </View>
   );
