@@ -46,6 +46,25 @@ const Planning = ({navigation}) => {
     getLocationsData();
   }, []);
 
+
+  const onPressPlanningFilter = (probs) => {
+    setOrderList([]);
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+      ...probs
+    };
+    getDeliveryBoyListUsingDate(
+      params,
+      succesResponse => {
+        let tempOrderList = succesResponse[0]._response;
+        setOrderList(tempOrderList);
+      },
+      errorResponse => {
+        console.log('print_data==>', JSON.stringify(errorResponse));
+      },
+    );
+  }
+
   const getLocationsData = () => {
     setLocationList([]);
     getLocations(
@@ -221,6 +240,7 @@ const Planning = ({navigation}) => {
       <PlaningFilterModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
+        onPressPlanningFilter={onPressPlanningFilter}
       />
     </View>
   );
