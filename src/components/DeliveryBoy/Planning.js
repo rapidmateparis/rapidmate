@@ -48,7 +48,21 @@ const Planning = ({navigation}) => {
 
 
   const onPressPlanningFilter = (probs) => {
-    console.log("print_data===>onPressPlanningFilter", probs)
+    setOrderList([]);
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+      ...probs
+    };
+    getDeliveryBoyListUsingDate(
+      params,
+      succesResponse => {
+        let tempOrderList = succesResponse[0]._response;
+        setOrderList(tempOrderList);
+      },
+      errorResponse => {
+        console.log('print_data==>', JSON.stringify(errorResponse));
+      },
+    );
   }
 
   const getLocationsData = () => {
