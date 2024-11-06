@@ -120,7 +120,9 @@ const DeliveryDetails = ({navigation, route}) => {
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location_id,
           );
-          getSourceAddress(successResponse[0]._response.order.pickup_location_id);
+          getSourceAddress(
+            successResponse[0]._response.order.pickup_location_id,
+          );
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
@@ -425,6 +427,15 @@ const DeliveryDetails = ({navigation, route}) => {
             Vehicle:
             <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
+          {route.params?.orderItem?.delivered_otp && (
+            <Text style={styles.orderdetails}>
+              Delivered OTP:
+              <Text style={styles.detailsId}>
+                {' '}
+                {route.params?.orderItem?.delivered_otp}
+              </Text>
+            </Text>
+          )}
         </View>
 
         <TouchableOpacity
