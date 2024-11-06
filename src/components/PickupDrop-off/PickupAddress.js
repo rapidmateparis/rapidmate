@@ -256,7 +256,7 @@ const PickupAddress = ({route, navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{height: 500, position: 'relative'}}>
+      <View style={{height: '50%', position: 'relative'}}>
         <MapAddress
           onFetchDistanceAndTime={onFetchDistanceAndTime}
           onSourceLocation={onSourceLocation}
