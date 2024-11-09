@@ -643,6 +643,30 @@ export const updateAddressBookforConsumer = (
   );
 };
 
+
+export const updateAddressBookforDeliveryBoy = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url==>updateAddressBookforDeliveryBoy',
+    API.addressBookUpdateDeliveryBoyUrl,
+    param,
+  );
+  axiosCall(
+    API.addressBookUpdateDeliveryBoyUrl,
+    HTTPMethod.PUT,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const deleteAddressBookforDeliveryBoy = (
   param,
   successCallback,
