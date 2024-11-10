@@ -144,7 +144,7 @@ const PickupPayment = ({route, navigation}) => {
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
       console.log('params.schedule_date_time', params.schedule_date_time);
-      if (params.serviceTypeId == 2) {
+      if (params.serviceTypeId == 1) {
         var scheduleParam = {schedule_date_time: params.schedule_date_time};
       }
       let requestParams = {

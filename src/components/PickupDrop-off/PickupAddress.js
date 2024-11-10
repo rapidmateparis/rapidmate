@@ -199,7 +199,7 @@ const PickupAddress = ({route, navigation}) => {
       sourceLocationId &&
       destinationLocationId
     ) {
-      if (route?.params?.pickupService?.id == 2) {
+      if (route?.params?.pickupService?.id == 1) {
         var scheduleParam = {
           schedule_date_time: `${pickupDateTime.pickupDate} ${moment(
             pickupDateTime.time,
