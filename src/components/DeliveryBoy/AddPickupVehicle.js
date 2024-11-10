@@ -136,10 +136,10 @@ const AddPickupVehicle = ({route, navigation}) => {
         modal: vehicleModel,
         make: vehicleMake,
         variant: vehicleVariant,
-        reg_doc: '1',
-        driving_license: '1',
-        insurance: '1',
-        passport: '1',
+        reg_doc: 'none.png',
+        driving_license: 'none.png',
+        insurance: 'none.png',
+        passport: 'none.png',
       };
       setLoading(true);
       addVehicleApi(
