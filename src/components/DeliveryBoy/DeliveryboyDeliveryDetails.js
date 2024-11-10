@@ -330,14 +330,14 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
 
             <View style={styles.borderShowOff} />
 
-            <View style={styles.packageBasicInfo}>
+            {/* <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>OTP</Text>
               <Text style={styles.subheadingOTP}>
                 {route.params.orderItem ? route.params.orderItem.otp : ''}
               </Text>
             </View>
 
-            <View style={styles.borderShowOff} />
+            <View style={styles.borderShowOff} /> */}
 
             <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>When?</Text>
