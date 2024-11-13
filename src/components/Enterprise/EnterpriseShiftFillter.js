@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -8,7 +8,7 @@ import {TextInput} from 'react-native-gesture-handler';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
-function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
+const EnterpriseShiftFillter = props => {
   const [selectedType, setSelectedType] = useState(null);
   const [fromDate, setFromDate] = useState(new Date());
   const [fromDateOpen, setFromDateOpen] = useState(false);
@@ -20,15 +20,22 @@ function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
   const handleTypeSelect = type => {
     setSelectedType(type);
   };
+
+  useEffect(() => {
+    setFromDate(new Date());
+    setToDate(new Date());
+  }, []);
+
   const toggleShiftModal = () => {
-    setShiftModalVisible(!isShiftModalVisible);
+    props.setShiftModalVisible(!props.isShiftModalVisible);
   };
-  const [formdate, setFormdate] = useState('');
-  const [todate, setTodate] = useState('');
+  const applyModal = () => {
+    props.onFilterSelected({fromDate: fromDate, toDate: toDate});
+  };
 
   return (
     <View>
-      <Modal isVisible={isShiftModalVisible}>
+      <Modal isVisible={props.isShiftModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerTitle}>Apply filters</Text>
@@ -103,9 +110,9 @@ function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.borderShowOff}></View>
+            {/* <View style={styles.borderShowOff}></View> */}
 
-            <View>
+            {/* <View>
               <Text style={styles.deliveryTypesText}>Delivery type</Text>
               <View style={styles.deliveryTypesCard}>
                 <TouchableOpacity onPress={() => handleTypeSelect('one-time')}>
@@ -136,18 +143,18 @@ function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
                   </Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </View> */}
 
             <View style={styles.borderShowOff}></View>
           </View>
-          <TouchableOpacity style={styles.buttonCard}>
+          <TouchableOpacity onPress={applyModal} style={styles.buttonCard}>
             <Text style={styles.okButton}>Apply</Text>
           </TouchableOpacity>
         </View>
       </Modal>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   modalContent: {
