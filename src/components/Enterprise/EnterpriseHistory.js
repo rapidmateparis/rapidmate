@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -21,14 +21,16 @@ import {
   getEnterpriseBranch,
   getEnterpriseOrders,
   getLocations,
+  searchOrderApi,
 } from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import EnterpriseShiftFillter from './EnterpriseShiftFillter';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 
-const OneTimeList = ({orders, locations, navigation}) => {
+const OneTimeList = ({orders, locations, navigation, onActive}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
 
@@ -36,6 +38,12 @@ const OneTimeList = ({orders, locations, navigation}) => {
     let result = locations.filter(location => location.id == locationId);
     return result[0]?.address;
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      onActive();
+    }, []),
+  );
 
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -116,14 +124,19 @@ const OneTimeList = ({orders, locations, navigation}) => {
   );
 };
 
-const ShiftsList = ({orders, branches, vehicles, navigation}) => {
+const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
+  useFocusEffect(
+    useCallback(() => {
+      onActive();
+    }, []),
+  );
 
   const getBranchName = branchId => {
     let result = branches.filter(branch => branch.id == branchId);
     return result[0]?.branch_name;
   };
 
-  const getBranchAddress = (branchId) => {
+  const getBranchAddress = branchId => {
     let result = branches.filter(branch => branch.id == branchId);
     if (result.length > 0) {
       let branch = result[0];
@@ -151,14 +164,18 @@ const ShiftsList = ({orders, branches, vehicles, navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 let props = {
-                  branchName : getBranchName(item.branch_id),
+                  branchName: getBranchName(item.branch_id),
                   branchAddress: getBranchAddress(item.branch_id),
-                  fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format('hh A'),
-                  toTime : moment(item.slots[0].to_time, 'HH:mm:ss').format('hh A'),
+                  fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format(
+                    'hh A',
+                  ),
+                  toTime: moment(item.slots[0].to_time, 'HH:mm:ss').format(
+                    'hh A',
+                  ),
                   shiftItem: item,
-                  vehicleType : getVehicleType(item.vehicle_type_id)
-                }
-                navigation.navigate('EnterpriseShiftDetails',{...props});
+                  vehicleType: getVehicleType(item.vehicle_type_id),
+                };
+                navigation.navigate('EnterpriseShiftDetails', {...props});
               }}
               style={styles.packageDetailCard}>
               <View style={styles.packageshiftHeader}>
@@ -168,15 +185,20 @@ const ShiftsList = ({orders, branches, vehicles, navigation}) => {
                     source={require('../../image/Big-Calender.png')}
                   />
                   <Text style={styles.deliveryTime}>
-                    {moment(item.slots[0].from_time, 'HH:mm:ss').format('hh A')}
+                    {item.slots[0] &&
+                      moment(item.slots[0].from_time, 'HH:mm:ss').format(
+                        'hh A',
+                      )}
                     {' to '}
-                    {moment(item.slots[0].to_time, 'HH:mm:ss').format('hh A')}
+                    {item.slots[0] &&
+                      moment(item.slots[0].to_time, 'HH:mm:ss').format('hh A')}
                   </Text>
                 </View>
                 <Text style={styles.deliveryTime}>
-                  {moment(item.slots[0].to_time, 'HH:mm:ss').diff(
-                    moment(item.slots[0].from_time, 'HH:mm:ss'),
-                  ) / 3600000}{' '}
+                  {item.slots[0] &&
+                    moment(item.slots[0].to_time, 'HH:mm:ss').diff(
+                      moment(item.slots[0].from_time, 'HH:mm:ss'),
+                    ) / 3600000}{' '}
                   hours shift
                 </Text>
               </View>
@@ -214,14 +236,106 @@ const ShiftsList = ({orders, branches, vehicles, navigation}) => {
   );
 };
 
+const PastList = ({orders, locations, navigation, onActive}) => {
+  const [searchText, setSearchText] = useState('');
+  const [index, setIndex] = useState(0);
+
+  const getLocationAddress = locationId => {
+    let result = locations.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      onActive();
+    }, []),
+  );
+
+  return (
+    <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
+      {orders.map((item, index) => {
+        return (
+          <View
+            key={index}
+            style={{
+              paddingHorizontal: 15,
+              paddingTop: 5,
+              backgroundColor: '#FBFAF5',
+            }}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('DeliveryDetails', {
+                  orderItem: item,
+                  componentType: 'ENTERPRISE',
+                })
+              }
+              style={styles.packageDetailCard}>
+              <View style={styles.packageHeader}>
+                <Image
+                  source={require('../../image/package-medium-icon.png')}
+                />
+                <Text style={styles.deliveryTime}>
+                  Delivered on{' '}
+                  {moment(new Date(item.delivery_date)).format(
+                    'MMMM DD, YYYY hh:mm A',
+                  )}
+                </Text>
+              </View>
+
+              <View style={styles.packageMiddle}>
+                <Ionicons name="location-outline" size={15} color="#717172" />
+                <Text style={styles.fromLocation}>
+                  From{' '}
+                  <Text style={styles.Location}>
+                    {getLocationAddress(item.pickup_location)}
+                  </Text>
+                </Text>
+              </View>
+
+              <View style={styles.packageMiddle}>
+                <MaterialIcons name="my-location" size={15} color="#717172" />
+                <Text style={styles.fromLocation}>
+                  To{' '}
+                  <Text style={styles.Location}>
+                    {getLocationAddress(item.dropoff_location)}
+                  </Text>
+                </Text>
+              </View>
+
+              <View style={styles.footerCard}>
+                <Text
+                  style={[
+                    styles.orderActive,
+                    {color: colors.Completed, backgroundColor: '#27AE6012'},
+                  ]}>
+                  Active
+                </Text>
+                <Text style={styles.orderId}>
+                  Order ID: {item.order_number}
+                </Text>
+              </View>
+
+              <View style={styles.borderShow}></View>
+              <View style={styles.footerCard}>
+                <Text style={styles.orderId}>Pickup Truck</Text>
+                <Text style={styles.valueMoney}>
+                  €{item.amount ? item.amount.toFixed(2) : '0.00'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
+    </ScrollView>
+  );
+};
+
 function EnterpriseHistory({navigation}) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
-  const [oneTimeOrderList, setOnetimeOrderList] = useState([]);
-  const [shiftsList, setShiftsList] = useState([]);
-  const [pastList, setpastList] = useState([]);
+  const [enterpriseOrderList, setEnterpriseOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
@@ -235,7 +349,6 @@ function EnterpriseHistory({navigation}) {
     getVehicleTypes();
     getLocationsData();
     getBranchesList();
-    getEnterpriseOrderList();
   }, []);
 
   const getVehicleTypes = () => {
@@ -356,6 +469,72 @@ function EnterpriseHistory({navigation}) {
     );
   };
 
+  const searchFunction = params => {
+    (params.enterprise_ext_id = userDetails.userDetails[0].ext_id),
+      setLoading(true);
+    searchOrderApi(
+      params,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._success) {
+            if (params.tab_id == 2) {
+              setEnterpriseOrderList(
+                successResponse[0]._response.filter(
+                  item => item.slots.length > 0,
+                ),
+              );
+            } else {
+              setEnterpriseOrderList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        setEnterpriseOrderList([]);
+        if (errorResponse[0]._errors.message) {
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        }
+      },
+    );
+  };
+
+  const onOneTimeActive = () => {
+    setSearchText('');
+    let params = {
+      tab_id: 1,
+    };
+    searchFunction(params);
+  };
+
+  const onShiftActive = () => {
+    setSearchText('');
+    let params = {
+      tab_id: 2,
+    };
+    searchFunction(params);
+  };
+
+  const onPastActive = () => {
+    setSearchText('');
+    let params = {
+      tab_id: 3,
+    };
+    searchFunction(params);
+  };
+
+  const onFilterSelected = date => {
+    let params = {
+      from_date: moment(date.fromDate).format('YYYY-MM-DD'),
+      to_date: moment(date.toDate).format('YYYY-MM-DD'),
+    };
+    searchFunction(params);
+    setShiftModalVisible(false);
+  };
+
   return (
     <View style={{flex: 1}}>
       <View
@@ -391,8 +570,17 @@ function EnterpriseHistory({navigation}) {
           <TextInput
             style={styles.searchinput}
             placeholder="Search your deliveries"
+            placeholderTextColor={colors.subText}
             value={searchText}
-            onChangeText={setSearchText}
+            onChangeText={value => {
+              setSearchText(value);
+            }}
+            onSubmitEditing={event => {
+              let params = {
+                order_number: searchText,
+              };
+              searchFunction(params);
+            }}
           />
         </View>
 
@@ -411,28 +599,31 @@ function EnterpriseHistory({navigation}) {
         <Tab.Screen name="One-time">
           {() => (
             <OneTimeList
-              orders={oneTimeOrderList}
+              orders={enterpriseOrderList}
               locations={locationList}
               navigation={navigation}
+              onActive={onOneTimeActive}
             />
           )}
         </Tab.Screen>
         <Tab.Screen name="Shifts">
           {() => (
             <ShiftsList
-              orders={shiftsList}
+              orders={enterpriseOrderList}
               branches={enterpriseBranches}
               vehicles={vehicleTypeList}
               navigation={navigation}
+              onActive={onShiftActive}
             />
           )}
         </Tab.Screen>
         <Tab.Screen name="Past">
           {() => (
-            <OneTimeList
-              orders={oneTimeOrderList}
+            <PastList
+              orders={enterpriseOrderList}
               locations={locationList}
               navigation={navigation}
+              onActive={onPastActive}
             />
           )}
         </Tab.Screen>
@@ -443,6 +634,7 @@ function EnterpriseHistory({navigation}) {
       <EnterpriseShiftFillter
         isShiftModalVisible={isShiftModalVisible}
         setShiftModalVisible={setShiftModalVisible}
+        onFilterSelected={onFilterSelected}
       />
     </View>
   );
@@ -476,6 +668,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',
+    color: colors.text,
   },
   packageDetailCard: {
     backgroundColor: colors.white,

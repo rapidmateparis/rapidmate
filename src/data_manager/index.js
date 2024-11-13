@@ -1258,3 +1258,18 @@ export const addEnterprisePaymentMethod = (
     },
   );
 };
+
+export const searchOrderApi = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.searchOrder,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+

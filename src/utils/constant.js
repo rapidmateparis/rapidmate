@@ -105,4 +105,5 @@ export const API = {
   verifyOrderOTP: BASE_URL + 'order/otp/verify',
   verifyOrderDeliveryOTP: BASE_URL + 'order/delivered/otp/verify',
   enterprisePaymentMethodUrl: BASE_URL + 'enterprise/paymentmethod',
+  searchOrder: BASE_URL + 'enterprise/order/search',
 };
