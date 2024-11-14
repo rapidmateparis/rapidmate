@@ -123,6 +123,10 @@ import EnterpriseDriverNotAvailable from './components/Enterprise/EnterpriseSett
 import AddDropDetails from './components/PickupDrop-off/AddDropDetails';
 import WithdrawPayment from './components/PickupDrop-off/Settings/WithdrawPayment';
 import WithdrawAmountTransfered from './components/PickupDrop-off/Settings/WithdrawAmountTransfered';
+import EnterpriseShiftRequestNewDelivery from './components/Enterprise/EnterpriseShiftRequestNewDelivery';
+import EnterpriseShiftAddDetsils from './components/Enterprise/EnterpriseShiftAddDetsils';
+import EnterpriseShiftOrderPreview from './components/Enterprise/EnterpriseShiftOrderPreview';
+import EnterpriseShiftDeliveryboyAssigned from './components/Enterprise/EnterpriseShiftDeliveryboyAssigned';
 
 const Stack = createStackNavigator();
 
@@ -2374,6 +2378,95 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: 'Payment',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftRequestNewDelivery"
+                component={EnterpriseShiftRequestNewDelivery}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftAddDetsils"
+                component={EnterpriseShiftAddDetsils}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Add Pickup Details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftOrderPreview"
+                component={EnterpriseShiftOrderPreview}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Order Preview',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftDeliveryboyAssigned"
+                component={EnterpriseShiftDeliveryboyAssigned}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Shift Details',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

@@ -169,7 +169,7 @@ const EnterpriseHome = ({navigation}) => {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() => navigation.navigate('EnterpriseShiftDeliveryboyAssigned')}>
             <EvilIcons name="bell" size={40} color="#000" />
           </TouchableOpacity>
         </View>
