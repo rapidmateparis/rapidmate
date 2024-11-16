@@ -23,6 +23,7 @@ import {
   getAllocatedDeliveryBoy,
   getAVehicleByTypeId,
   getLocationById,
+  getLocations,
   getViewEnterpriseOrderDetail,
   getViewOrderDetail,
 } from '../../data_manager';
@@ -45,6 +46,7 @@ const DeliveryDetails = ({navigation, route}) => {
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
+  const [locations, setLocations] = useState([]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -83,6 +85,8 @@ const DeliveryDetails = ({navigation, route}) => {
     }
   }, []);
 
+  useEffect(() => {}, [locations]);
+
   const enterpriseOrderDetail = () => {
     setLoading(true);
     getViewEnterpriseOrderDetail(
@@ -90,7 +94,11 @@ const DeliveryDetails = ({navigation, route}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order);
+          let data = successResponse[0]._response.order;
+          if (data.branches && data.branches.length > 0) {
+            getAllLocations();
+          }
+          serOrder(data);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location,
@@ -120,13 +128,35 @@ const DeliveryDetails = ({navigation, route}) => {
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location_id,
           );
-          getSourceAddress(successResponse[0]._response.order.pickup_location_id);
+          getSourceAddress(
+            successResponse[0]._response.order.pickup_location_id,
+          );
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
       errorResponse => {
         setLoading(false);
         console.log('orderDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getAllLocations = async () => {
+    setLoading(true);
+    getLocations(
+      null,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setLocations(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('locations==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -351,10 +381,28 @@ const DeliveryDetails = ({navigation, route}) => {
             <Text style={styles.companyInfo}>
               {order.company_name ? order.company_name : 'Company Name'}
             </Text>
-            <Text style={styles.dropInfo}>
-              {destinationAddress.address}, {destinationAddress.city},{' '}
-              {destinationAddress.state}
-            </Text>
+            {order.branches && order.branches.length > 0 ? (
+              <View>
+                {order.branches.map((item, index) => {
+                  var branch = locations.filter(
+                    i => i.id == item.dropoff_location,
+                  );
+                  console.log('branch',branch)
+                  return (
+                    <Text style={styles.dropInfo}>
+                      {branch[0] && branch[0].address}, {branch[0] && branch[0].city}, {branch[0] && branch[0].state}
+                    </Text>
+                  );
+                })}
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.dropInfo}>
+                  {destinationAddress.address}, {destinationAddress.city},{' '}
+                  {destinationAddress.state}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -425,6 +473,15 @@ const DeliveryDetails = ({navigation, route}) => {
             Vehicle:
             <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
+          {route.params?.orderItem?.delivered_otp && (
+            <Text style={styles.orderdetails}>
+              Delivered OTP:
+              <Text style={styles.detailsId}>
+                {' '}
+                {route.params?.orderItem?.delivered_otp}
+              </Text>
+            </Text>
+          )}
         </View>
 
         <TouchableOpacity
@@ -520,6 +577,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
+    marginBottom: 10,
   },
   companyAddress: {
     fontSize: 12,
