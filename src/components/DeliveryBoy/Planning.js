@@ -43,15 +43,19 @@ const Planning = ({navigation}) => {
   const [selected, setSelected] = useState(getCurrentDate());
 
   useEffect(() => {
-    getLocationsData();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getLocationsData();
+      getDeliveryBoyPlannningList(selected);
+    });
 
+    return unsubscribe;
+  }, [navigation]);
 
-  const onPressPlanningFilter = (probs) => {
+  const onPressPlanningFilter = probs => {
     setOrderList([]);
     let params = {
       delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
-      ...probs
+      ...probs,
     };
     getDeliveryBoyListUsingDate(
       params,
@@ -63,7 +67,7 @@ const Planning = ({navigation}) => {
         console.log('print_data==>', JSON.stringify(errorResponse));
       },
     );
-  }
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -96,6 +100,7 @@ const Planning = ({navigation}) => {
       size: 10,
       planning_date: selectedDate,
     };
+    console.log('print_data===>post', params);
     getDeliveryBoyListUsingDate(
       params,
       succesResponse => {

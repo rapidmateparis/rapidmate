@@ -24,10 +24,10 @@ function PlaningFilterModal({
 }) {
   const [fromDate, setFromDate] = useState(new Date());
   const [fromDateOpen, setFromDateOpen] = useState(false);
-  const [fromPickupDate, setFromPickupDate] = useState('');
+  const [fromPickupDate, setFromPickupDate] = useState(moment(new Date()).format('DD/MM/YYYY'));
   const [toDate, setToDate] = useState(new Date());
   const [toDateOpen, setToDateOpen] = useState(false);
-  const [toPickupDate, setToPickupDate] = useState('');
+  const [toPickupDate, setToPickupDate] = useState(moment(new Date()).format('DD/MM/YYYY'));
   const [formdate, setFormdate] = useState('');
   const [day, setDay] = useState(0);
   const [companyList, setCompanyList] = useState([]);
