@@ -19,6 +19,7 @@ import {
   addPayment,
   checkPromoCode,
   createPickupOrder,
+  orderStatusUpdate,
 } from '../../data_manager';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
@@ -215,7 +216,27 @@ const PickupPayment = ({route, navigation}) => {
       errorResponse => {
         setLoading(false);
         Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
-          {text: 'OK', onPress: () => {}},
+          {
+            text: 'OK',
+            onPress: () => {
+              setLoading(true);
+              let params = {
+                order_number: orderNumber,
+                status: 'Payment Failded',
+              };
+              orderStatusUpdate(
+                params,
+                successResponse => {
+                  console.log('message===>', JSON.stringify(successResponse));
+                  setLoading(false);
+                },
+                errorResponse => {
+                  setLoading(false);
+                  console.log('message===>', JSON.stringify(errorResponse));
+                },
+              );
+            },
+          },
         ]);
       },
     );

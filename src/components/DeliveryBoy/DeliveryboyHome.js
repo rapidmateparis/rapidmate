@@ -132,9 +132,7 @@ const DeliveryboyHome = ({navigation}) => {
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
-        <Text style={styles.deliveryTime}>
-          Pickup in {moment(item.delivery_date).format('YYYY-MM-DD')}
-        </Text>
+        <Text style={styles.deliveryTime}>{item?.consumer_order_title}</Text>
       </View>
 
       <View style={styles.packageMiddle}>
@@ -167,7 +165,7 @@ const DeliveryboyHome = ({navigation}) => {
     <View style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
-        <Text style={styles.deliveryTime}>Delivered 2hrs ago</Text>
+        <Text style={styles.deliveryTime}>{item?.consumer_order_title}</Text>
       </View>
 
       <View style={styles.packageMiddle}>
@@ -375,6 +373,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,
+    width: 150,
   },
   packageMiddle: {
     flexDirection: 'row',
