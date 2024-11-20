@@ -314,10 +314,7 @@ const EnterprisePlanning = ({navigation}) => {
                         source={require('../../image/Big-Package.png')}
                       />
                       <Text style={styles.deliveryTime}>
-                        Delivered on{' '}
-                        {moment(item.delivery_date).format('MMM DD, YYYY')}
-                        {' at '}
-                        {moment(item.delivery_date).format('hh:mm A')}
+                        {item.consumer_order_title}
                       </Text>
                     </View>
 

@@ -19,6 +19,7 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {
   cancelOrderConsumer,
+  cancelOrderEnterprise,
   downloadInvoiceOrder,
   getAllocatedDeliveryBoy,
   getAVehicleByTypeId,
@@ -231,21 +232,47 @@ const DeliveryDetails = ({navigation, route}) => {
       cancel_reason_id: selectedReason.id,
       cancel_reason: selectedReason.reason,
     };
-    cancelOrderConsumer(
-      params,
-      successResponse => {
-        setLoading(false);
-        console.log(
-          'order_cancel===>successResponse',
-          '' + JSON.stringify(successResponse),
-        );
-        navigation.navigate('PickupOrderCancelled');
-      },
-      errorResponse => {
-        setLoading(false);
-        console.log('order_cancel===>errorResponse', '' + errorResponse);
-      },
-    );
+    console.log('params', params);
+    console.log('componentType', componentType);
+    if (componentType == 'ENTERPRISE') {
+      // navigation.navigate('EnterpriseOrderCancelled');
+      cancelOrderEnterprise(
+        params,
+        successResponse => {
+          setLoading(false);
+          console.log(
+            'enterprise_order_cancel===>successResponse',
+            '' + JSON.stringify(successResponse),
+          );
+          navigation.navigate('EnterpriseOrderCancelled');
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log('enterprise_order_cancel===>errorResponse', '' + errorResponse);
+          Alert.alert('Success', errorResponse[0]._errors.message, [
+            {
+              text: 'Okay',
+            },
+          ]);
+        },
+      );
+    } else {
+      cancelOrderConsumer(
+        params,
+        successResponse => {
+          setLoading(false);
+          console.log(
+            'order_cancel===>successResponse',
+            '' + JSON.stringify(successResponse),
+          );
+          navigation.navigate('PickupOrderCancelled');
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log('order_cancel===>errorResponse', '' + errorResponse);
+        },
+      );
+    }
   };
 
   const openPDFWithNativeViewer = async filePath => {
@@ -387,10 +414,11 @@ const DeliveryDetails = ({navigation, route}) => {
                   var branch = locations.filter(
                     i => i.id == item.dropoff_location,
                   );
-                  console.log('branch',branch)
                   return (
                     <Text style={styles.dropInfo}>
-                      {branch[0] && branch[0].address}, {branch[0] && branch[0].city}, {branch[0] && branch[0].state}
+                      {branch[0] && branch[0].address},{' '}
+                      {branch[0] && branch[0].city},{' '}
+                      {branch[0] && branch[0].state}
                     </Text>
                   );
                 })}

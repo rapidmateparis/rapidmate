@@ -69,10 +69,7 @@ const OneTimeList = ({orders, locations, navigation, onActive}) => {
                   source={require('../../image/package-medium-icon.png')}
                 />
                 <Text style={styles.deliveryTime}>
-                  Delivered on{' '}
-                  {moment(new Date(item.delivery_date)).format(
-                    'MMMM DD, YYYY hh:mm A',
-                  )}
+                  {item.consumer_order_title}
                 </Text>
               </View>
 
@@ -275,10 +272,7 @@ const PastList = ({orders, locations, navigation, onActive}) => {
                   source={require('../../image/package-medium-icon.png')}
                 />
                 <Text style={styles.deliveryTime}>
-                  Delivered on{' '}
-                  {moment(new Date(item.delivery_date)).format(
-                    'MMMM DD, YYYY hh:mm A',
-                  )}
+                  {item.consumer_order_title}
                 </Text>
               </View>
 
@@ -470,8 +464,8 @@ function EnterpriseHistory({navigation}) {
   };
 
   const searchFunction = params => {
-    (params.enterprise_ext_id = userDetails.userDetails[0].ext_id),
-      setLoading(true);
+    params.enterprise_ext_id = userDetails.userDetails[0].ext_id;
+    setLoading(true);
     searchOrderApi(
       params,
       successResponse => {
