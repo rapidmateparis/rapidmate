@@ -201,7 +201,7 @@ const PickupPayment = ({route, navigation}) => {
 
   const createPayment = async () => {
     let requestParams = {
-      order_number: '',
+      order_number: orderNumber,
       amount: paymentAmount,
     };
     setLoading(true);
