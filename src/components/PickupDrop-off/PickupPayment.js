@@ -201,7 +201,7 @@ const PickupPayment = ({route, navigation}) => {
 
   const createPayment = async () => {
     let requestParams = {
-      order_number: orderNumber,
+      order_number: '',
       amount: paymentAmount,
     };
     setLoading(true);
@@ -214,21 +214,18 @@ const PickupPayment = ({route, navigation}) => {
         }
       },
       errorResponse => {
-        setLoading(false);
         Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
           {
             text: 'OK',
             onPress: () => {
-              setLoading(true);
               let params = {
                 order_number: orderNumber,
-                status: 'Payment Failded',
+                status: 'Payment Failed',
               };
               orderStatusUpdate(
                 params,
                 successResponse => {
                   console.log('message===>', JSON.stringify(successResponse));
-                  setLoading(false);
                 },
                 errorResponse => {
                   setLoading(false);
