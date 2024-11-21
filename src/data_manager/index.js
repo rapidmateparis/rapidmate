@@ -735,6 +735,20 @@ export const cancelOrderConsumer = (params, successCallback, errorCallback) => {
   );
 };
 
+export const cancelOrderEnterprise = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.cancelOrderEnterpriseUrl,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const downloadInvoiceOrder = (
   params,
   successCallback,
@@ -1258,3 +1272,18 @@ export const addEnterprisePaymentMethod = (
     },
   );
 };
+
+export const searchOrderApi = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.searchOrder,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+

@@ -79,6 +79,7 @@ export const API = {
   getFaqListUrl: BASE_URL + 'faq',
   enterprisebranchCreate: BASE_URL + 'enterprisebranch',
   cancelOrderUrl: BASE_URL + 'order/cancel',
+  cancelOrderEnterpriseUrl: BASE_URL + 'enterprise/order/cancel',
   deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
   checkPromoCodeUrl: BASE_URL + 'promocode/check',
   orderRequestActionUrl: BASE_URL + 'order/deliveryboy/request/action',

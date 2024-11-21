@@ -118,10 +118,7 @@ const Planning = ({navigation}) => {
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
         <Text style={styles.deliveryTime}>
-          Delivered on{' '}
-          {moment(new Date(planningItem.item.delivery_date)).format(
-            'DD MMMM YYYY hh:mm a',
-          )}
+          {planningItem.item.consumer_order_title}
         </Text>
       </View>
 
