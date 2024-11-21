@@ -232,8 +232,6 @@ const DeliveryDetails = ({navigation, route}) => {
       cancel_reason_id: selectedReason.id,
       cancel_reason: selectedReason.reason,
     };
-    console.log('params', params);
-    console.log('componentType', componentType);
     if (componentType == 'ENTERPRISE') {
       // navigation.navigate('EnterpriseOrderCancelled');
       cancelOrderEnterprise(
