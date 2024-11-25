@@ -387,10 +387,12 @@ const DeliveryDetails = ({navigation, route}) => {
                   var branch = locations.filter(
                     i => i.id == item.dropoff_location,
                   );
-                  console.log('branch',branch)
+                  console.log('branch', branch);
                   return (
                     <Text style={styles.dropInfo}>
-                      {branch[0] && branch[0].address}, {branch[0] && branch[0].city}, {branch[0] && branch[0].state}
+                      {branch[0] && branch[0].address},{' '}
+                      {branch[0] && branch[0].city},{' '}
+                      {branch[0] && branch[0].state}
                     </Text>
                   );
                 })}
@@ -473,15 +475,21 @@ const DeliveryDetails = ({navigation, route}) => {
             Vehicle:
             <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
-          {route.params?.orderItem?.delivered_otp && (
-            <Text style={styles.orderdetails}>
-              Delivered OTP:
-              <Text style={styles.detailsId}>
-                {' '}
-                {route.params?.orderItem?.delivered_otp}
-              </Text>
+          <Text style={styles.orderdetails}>
+            OTP:
+            <Text style={styles.detailsId}>
+              {' '}
+              {route.params?.orderItem?.otp}
             </Text>
-          )}
+          </Text>
+
+          <Text style={styles.orderdetails}>
+            Delivered OTP:
+            <Text style={styles.detailsId}>
+              {' '}
+              {route.params?.orderItem?.delivered_otp}
+            </Text>
+          </Text>
         </View>
 
         <TouchableOpacity
