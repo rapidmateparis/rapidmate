@@ -499,15 +499,21 @@ const DeliveryDetails = ({navigation, route}) => {
             Vehicle:
             <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
-          {route.params?.orderItem?.delivered_otp && (
-            <Text style={styles.orderdetails}>
-              Delivered OTP:
-              <Text style={styles.detailsId}>
-                {' '}
-                {route.params?.orderItem?.delivered_otp}
-              </Text>
+          <Text style={styles.orderdetails}>
+            OTP:
+            <Text style={styles.detailsId}>
+              {' '}
+              {route.params?.orderItem?.otp}
             </Text>
-          )}
+          </Text>
+
+          <Text style={styles.orderdetails}>
+            Delivered OTP:
+            <Text style={styles.detailsId}>
+              {' '}
+              {route.params?.orderItem?.delivered_otp}
+            </Text>
+          </Text>
         </View>
 
         <TouchableOpacity
