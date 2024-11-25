@@ -174,6 +174,7 @@ export const getCityList = (params, successCallback, errorCallback) => {
 };
 
 export const addVehicleApi = (params, successCallback, errorCallback) => {
+  console.log('print_view===>', API.vehicles, JSON.stringify(params));
   axiosCall(
     API.vehicles,
     HTTPMethod.POST,
