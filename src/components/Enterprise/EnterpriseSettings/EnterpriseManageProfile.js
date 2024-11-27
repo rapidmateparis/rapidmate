@@ -87,7 +87,7 @@ const EnterpriseManageProfile = ({navigation}) => {
           userDetails: [
             {
               ...userDetails.userDetails[0],
-              company_name: profileParams.company,
+              company_name: profileParams.company_name,
               email: profileParams.email,
               first_name: profileParams.first_name,
               phone: profileParams.phone,
