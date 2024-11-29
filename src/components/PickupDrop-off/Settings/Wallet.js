@@ -62,11 +62,7 @@ const Wallet = ({navigation}) => {
               <Text style={styles.walletBalance}>Wallet balance</Text>
             </View>
             <View style={styles.actionCard}>
-              <TouchableOpacity
-                style={styles.actionsBt}
-                onPress={() => {
-                  navigation.navigate('WithdrawPayment');
-                }}>
+              <TouchableOpacity style={styles.actionsBt}>
                 <Text style={styles.btnText}>Withdraw</Text>
               </TouchableOpacity>
 

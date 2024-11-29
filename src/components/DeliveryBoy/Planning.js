@@ -158,7 +158,7 @@ const Planning = ({navigation}) => {
       <View style={{backgroundColor: '#fff'}}>
         <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Planning</Text>
+            <Text style={styles.headerText}>Availability</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity onPress={() => toggleModal()}>
                 <AntDesign name="filter" size={25} color={colors.secondary} />
