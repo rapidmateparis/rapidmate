@@ -491,7 +491,6 @@ function EnterpriseHistory({navigation}) {
     );
   };
 
-
   const getLocationsData = () => {
     setLoading(true);
     setLocationList([]);
@@ -647,6 +646,11 @@ function EnterpriseHistory({navigation}) {
           tabBarLabelStyle: {fontSize: 14},
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
           tabBarStyle: {backgroundColor: '#fff'},
+          tabBarScrollEnabled: true,
+          tabBarItemStyle: {
+            width: 120,
+            alignItems: 'center',
+          },
         }}>
         <Tab.Screen name="One-time">
           {() => (
