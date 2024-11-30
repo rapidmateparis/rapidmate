@@ -55,13 +55,19 @@ const DeliveryboyBottomNav = ({navigation}) => {
           setLoading(false);
           if (successResponse[0]._success) {
             setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+            setDeliveryBoyAcceptRejectModalModalVisible(false);
           }
         },
         errorResponse => {
           setLoading(false);
           console.log('orderDetail==>errorResponse', errorResponse[0]);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
+            {
+              text: 'OK',
+              onPress: () => {
+                setDeliveryBoyAcceptRejectModalModalVisible(false);
+              },
+            },
           ]);
         },
       );
