@@ -88,6 +88,7 @@ const SignUpVerify = ({route, navigation}) => {
                 if (successResponse[0]._success) {
                   console.log(successResponse[0]._response);
                   saveUserDetails({
+                    rapidToken : successResponse[0]._response.rapid_token,
                     userInfo: successResponse[0]._response.user.idToken.payload,
                     userDetails: successResponse[0]._response.user_profile,
                   });
