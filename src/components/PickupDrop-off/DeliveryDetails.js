@@ -246,7 +246,10 @@ const DeliveryDetails = ({navigation, route}) => {
         },
         errorResponse => {
           setLoading(false);
-          console.log('enterprise_order_cancel===>errorResponse', '' + errorResponse);
+          console.log(
+            'enterprise_order_cancel===>errorResponse',
+            '' + errorResponse,
+          );
           Alert.alert('Success', errorResponse[0]._errors.message, [
             {
               text: 'Okay',
@@ -493,7 +496,9 @@ const DeliveryDetails = ({navigation, route}) => {
           </Text>
           <Text style={styles.orderdetails}>
             Comments:
-            <Text style={styles.detailsId}>{order.pickup_notes}</Text>
+            <Text style={styles.detailsId}>
+              {order.pickup_notes || 'No pickup notes available'}
+            </Text>
           </Text>
           <Text style={styles.orderdetails}>
             Vehicle:
