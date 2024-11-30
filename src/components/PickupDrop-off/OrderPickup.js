@@ -30,6 +30,8 @@ const OrderPickup = ({route, navigation}) => {
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
 
+  console.log("details------", placedOrderDetails)
+
   useEffect(() => {
     const onBackPress = () => {
       return true;
