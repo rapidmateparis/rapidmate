@@ -121,6 +121,97 @@ const OneTimeList = ({orders, locations, navigation, onActive}) => {
   );
 };
 
+const MultipleList = ({orders, locations, navigation, onActive}) => {
+  const [searchText, setSearchText] = useState('');
+  const [index, setIndex] = useState(0);
+
+  const getLocationAddress = locationId => {
+    let result = locations.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      onActive();
+    }, []),
+  );
+
+  return (
+    <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
+      {orders.map((item, index) => {
+        return (
+          <View
+            key={index}
+            style={{
+              paddingHorizontal: 15,
+              paddingTop: 5,
+              backgroundColor: '#FBFAF5',
+            }}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('DeliveryDetails', {
+                  orderItem: item,
+                  componentType: 'ENTERPRISE',
+                })
+              }
+              style={styles.packageDetailCard}>
+              <View style={styles.packageHeader}>
+                <Image
+                  source={require('../../image/package-medium-icon.png')}
+                />
+                <Text style={styles.deliveryTime}>
+                  {item.consumer_order_title}
+                </Text>
+              </View>
+
+              <View style={styles.packageMiddle}>
+                <Ionicons name="location-outline" size={15} color="#717172" />
+                <Text style={styles.fromLocation}>
+                  From{' '}
+                  <Text style={styles.Location}>
+                    {getLocationAddress(item.pickup_location)}
+                  </Text>
+                </Text>
+              </View>
+
+              <View style={styles.packageMiddle}>
+                <MaterialIcons name="my-location" size={15} color="#717172" />
+                <Text style={styles.fromLocation}>
+                  To{' '}
+                  <Text style={styles.Location}>
+                    {getLocationAddress(item.dropoff_location)}
+                  </Text>
+                </Text>
+              </View>
+
+              <View style={styles.footerCard}>
+                <Text
+                  style={[
+                    styles.orderActive,
+                    {color: colors.Completed, backgroundColor: '#27AE6012'},
+                  ]}>
+                  Active
+                </Text>
+                <Text style={styles.orderId}>
+                  Order ID: {item.order_number}
+                </Text>
+              </View>
+
+              <View style={styles.borderShow}></View>
+              <View style={styles.footerCard}>
+                <Text style={styles.orderId}>Pickup Truck</Text>
+                <Text style={styles.valueMoney}>
+                  €{item.amount ? item.amount.toFixed(2) : '0.00'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
+    </ScrollView>
+  );
+};
+
 const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
   useFocusEffect(
     useCallback(() => {
@@ -400,48 +491,6 @@ function EnterpriseHistory({navigation}) {
     );
   };
 
-  const getEnterpriseOrderList = () => {
-    setLoading(true);
-    getEnterpriseOrders(
-      userDetails.userDetails[0].ext_id,
-      successResponse => {
-        setLoading(false);
-        if (successResponse[0]._success) {
-          var currentOnetimeList = [];
-          var currentShiftsList = [];
-          var currentPastList = [];
-          successResponse[0]._response.forEach(element => {
-            if (element.delivery_type_id == 1) {
-              currentOnetimeList.push(element);
-            }
-            if (element.delivery_type_id == 2) {
-              currentOnetimeList.push(element);
-            }
-            if (
-              element.delivery_type_id == 3 &&
-              element.slots &&
-              element.slots.length > 0
-            ) {
-              currentShiftsList.push(element);
-            }
-          });
-          setOnetimeOrderList(currentOnetimeList);
-          setShiftsList(currentShiftsList);
-        }
-      },
-      errorResponse => {
-        setLoading(false);
-        console.log(
-          'getEnterpriseOrderList==>errorResponse',
-          '' + errorResponse[0],
-        );
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-    );
-  };
-
   const getLocationsData = () => {
     setLoading(true);
     setLocationList([]);
@@ -504,7 +553,7 @@ function EnterpriseHistory({navigation}) {
     searchFunction(params);
   };
 
-  const onShiftActive = () => {
+  const onMultipleActive = () => {
     setSearchText('');
     let params = {
       tab_id: 2,
@@ -512,10 +561,18 @@ function EnterpriseHistory({navigation}) {
     searchFunction(params);
   };
 
-  const onPastActive = () => {
+  const onShiftActive = () => {
     setSearchText('');
     let params = {
       tab_id: 3,
+    };
+    searchFunction(params);
+  };
+
+  const onPastActive = () => {
+    setSearchText('');
+    let params = {
+      tab_id: 4,
     };
     searchFunction(params);
   };
@@ -589,6 +646,11 @@ function EnterpriseHistory({navigation}) {
           tabBarLabelStyle: {fontSize: 14},
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
           tabBarStyle: {backgroundColor: '#fff'},
+          tabBarScrollEnabled: true,
+          tabBarItemStyle: {
+            width: 120,
+            alignItems: 'center',
+          },
         }}>
         <Tab.Screen name="One-time">
           {() => (
@@ -597,6 +659,16 @@ function EnterpriseHistory({navigation}) {
               locations={locationList}
               navigation={navigation}
               onActive={onOneTimeActive}
+            />
+          )}
+        </Tab.Screen>
+        <Tab.Screen name="Multiple">
+          {() => (
+            <MultipleList
+              orders={enterpriseOrderList}
+              locations={locationList}
+              navigation={navigation}
+              onActive={onMultipleActive}
             />
           )}
         </Tab.Screen>
