@@ -12,7 +12,7 @@ export async function axiosCall(
   callbackResponse,
   callbackErrorResponse,
 ) {
-  const token = await AsyncStorage.getItem('TOKEN');
+  const token = (userDetails && userDetails.rapidToken)? userDetails.rapidToken : ""; //await AsyncStorage.getItem('TOKEN');
 
   const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -27,7 +27,7 @@ export async function axiosCall(
   axiosInstance.interceptors.request.use(
     function (config) {
       if (token) {
-        config.headers.rapid_token = (userDetails && userDetails.rapidToken)? userDetails.rapidToken : "";
+        config.headers.rapid_token = token;
       }
       return config;
     },
