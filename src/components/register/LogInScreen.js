@@ -78,6 +78,10 @@ const LogInScreen = ({navigation}) => {
     await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
   };
 
+  const saveRapidTokenInAsync = async rapidToken => {
+    await AsyncStorage.setItem('rapidToken', rapidToken);
+  };
+
   const handleLogin = async () => {
     const isValid = validateForm();
 
@@ -148,6 +152,7 @@ const LogInScreen = ({navigation}) => {
                   userInfo: successResponse[0]._response.user.idToken.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
+                saveRapidTokenInAsync(successResponse[0]._response.rapid_token);
               }
             }
           } else {

@@ -1,9 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {BASE_URL, HTTPMethod} from '../utils/constant';
-import {useUserDetails} from '../components/commonComponent/StoreContext';
-
-
 
 export async function axiosCall(
   url,
@@ -12,8 +9,6 @@ export async function axiosCall(
   callbackResponse,
   callbackErrorResponse,
 ) {
-  const {userDetails} = useUserDetails();
-  
   const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 20000,
@@ -23,7 +18,7 @@ export async function axiosCall(
       'Access-Control-Allow-Origin': '*',
     },
   });
-  const token = (userDetails && userDetails.rapidToken)? userDetails.rapidToken : ""; //await AsyncStorage.getItem('TOKEN');
+  const token = await AsyncStorage.getItem('rapidToken');
 
   axiosInstance.interceptors.request.use(
     function (config) {
