@@ -140,8 +140,6 @@ const PickupPayment = ({route, navigation}) => {
     }
   };
 
-  console.log('print_data===>', params);
-
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
       console.log('params.schedule_date_time', params.schedule_date_time);
@@ -214,7 +212,7 @@ const PickupPayment = ({route, navigation}) => {
         }
       },
       errorResponse => {
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
           {
             text: 'OK',
             onPress: () => {
@@ -407,7 +405,7 @@ const PickupPayment = ({route, navigation}) => {
             />
             <Text style={styles.discountInfo}>
               {offerDiscount}% off on{' '}
-              {params.serviceTypeId == 1
+              {params.serviceTypeId == 2
                 ? 'Schedule Order'
                 : 'Pickup&Drop Order'}
             </Text>
