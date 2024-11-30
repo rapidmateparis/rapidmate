@@ -113,6 +113,7 @@ const LogInScreen = ({navigation}) => {
                 ]);
               } else {
                 saveUserDetails({
+                  rapidToken : successResponse[0]._response.rapid_token,
                   userInfo: successResponse[0]._response.user?.idToken?.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
@@ -143,6 +144,7 @@ const LogInScreen = ({navigation}) => {
                   }
                 }
                 saveUserDetailsInAsync({
+                  rapidToken : successResponse[0]._response.rapid_token,
                   userInfo: successResponse[0]._response.user.idToken.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
