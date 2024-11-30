@@ -1,6 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {BASE_URL, HTTPMethod} from '../utils/constant';
+import {useUserDetails} from '../components/commonComponent/StoreContext';
+
+const {userDetails} = useUserDetails();
 
 export async function axiosCall(
   url,
@@ -24,7 +27,7 @@ export async function axiosCall(
   axiosInstance.interceptors.request.use(
     function (config) {
       if (token) {
-        config.headers.rapid_token = token;
+        config.headers.rapid_token = (userDetails && userDetails.rapidToken)? userDetails.rapidToken : "";
       }
       return config;
     },
