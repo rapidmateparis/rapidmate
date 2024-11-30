@@ -226,6 +226,11 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
         setImageModalVisible={setImageModalVisible}
+        previewImage={
+          params.imageId
+            ? params.imageId
+            : null
+        }
       />
     </ScrollView>
   );
