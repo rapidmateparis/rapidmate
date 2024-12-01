@@ -263,10 +263,17 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          <View style={[styles.distanceTime, {marginVertical: 15}]}>
+          <View style={styles.distanceTime}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From {params.pickup_location.sourceDescription}
+              From - {params.pickup_location.sourceDescription}
+            </Text>
+          </View>
+
+          <View style={styles.distanceTime}>
+            <EvilIcons name="location" size={18} color="#606060" />
+            <Text style={styles.vehicleCapacity}>
+              To - {params.dropoff_location.destinationDescription}
             </Text>
           </View>
 
