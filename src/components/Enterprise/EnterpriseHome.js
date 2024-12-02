@@ -60,7 +60,10 @@ const EnterpriseHome = ({navigation}) => {
   };
 
   const dropdownData2 = [
+    {label: 'Today', value: 'Today'},
     {label: 'This week', value: 'This week'},
+    {label: 'This month', value: 'This month'},
+    {label: 'This year', value: 'This year'},
   ];
 
   const chartConfig = {
