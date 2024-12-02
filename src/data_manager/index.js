@@ -235,6 +235,39 @@ export const getDeliveryBoyViewOrdersList = (
   );
 };
 
+export const getDeliveryBoyViewOrdersDashboardList = (
+  postParams,
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status +
+      '&orderType=' +
+      postParams.orderType,
+    postParams,
+  );
+  axiosCall(
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status +
+      '&orderType=' +
+      postParams.orderType,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const getConsumerViewOrdersList = (
   postParams,
   params,

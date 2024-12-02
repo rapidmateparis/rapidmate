@@ -15,6 +15,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {
   getDeliveryBoyViewOrdersList,
+  getDeliveryBoyViewOrdersDashboardList,
   getLocations,
   getLookupData,
   getCompanyList,
@@ -108,7 +109,7 @@ const DeliveryboyHome = ({navigation}) => {
       status: status === 0 ? 'upcoming' : 'past',
       orderType: 'N',
     };
-    getDeliveryBoyViewOrdersList(
+    getDeliveryBoyViewOrdersDashboardList(
       postParams,
       null,
       successResponse => {
