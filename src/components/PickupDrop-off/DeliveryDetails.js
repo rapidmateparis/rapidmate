@@ -40,7 +40,7 @@ const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
   const orderNumber = route.params?.orderItem?.order_number;
   const componentType = route.params?.componentType;
-  const [order, serOrder] = useState({});
+  const [order, setOrder] = useState({});
   const [deliveryboy, setDeliveryboy] = useState({});
   const [vehicle, setVehicle] = useState({});
   const [sourceAddress, setSourceAddress] = useState({});
@@ -125,9 +125,9 @@ const DeliveryDetails = ({navigation, route}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order);
+          setOrder(successResponse[0]._response.order);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
-          if(successResponse[0]._response.vehicle){
+          if (successResponse[0]._response.vehicle) {
             setVehicle(successResponse[0]._response.vehicle);
           }
           getDestinationAddress(
