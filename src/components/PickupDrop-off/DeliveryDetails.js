@@ -542,15 +542,14 @@ const DeliveryDetails = ({navigation, route}) => {
           </View>
         </TouchableOpacity>
       </View>
+      
       {order.is_enable_cancel_request == 1 ? (
         <TouchableOpacity
           onPress={() => toggleModal()}
           style={styles.requestTouch}>
           <Text style={styles.cancelRequest}>Cancel request</Text>
         </TouchableOpacity>
-      ):(
-        <Text style={styles.cancelRequest}></Text>
-      )};
+      ) : null}
 
       {/* CancellationModal Modal  */}
       <CancellationModal
