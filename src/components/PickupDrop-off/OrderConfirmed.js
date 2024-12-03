@@ -10,12 +10,15 @@ import {
   ImageBackground,
   Alert,
   BackHandler,
+  Dimensions,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {API} from '../../utils/constant';
 import {useUserDetails} from '../commonComponent/StoreContext';
+
+const {height: screenHeight} = Dimensions.get('window');
 
 const OrderConfirm = ({route, navigation}) => {
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
@@ -103,8 +106,8 @@ const OrderConfirm = ({route, navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
-      <View>
+    <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+      <View style={{flex: 1}}>
         <View>
           <Text style={styles.mainTitle}>Your order is on its way!</Text>
           <View style={styles.textContainer}>
@@ -142,7 +145,7 @@ const OrderConfirm = ({route, navigation}) => {
             )}
           </View>
           <View
-            style={[styles.textContainer, {marginBottom: 30, marginTop: 10}]}>
+            style={styles.textContainer}>
             <Text style={styles.oderIdText}>
               Delivery in:{' '}
               <Text style={styles.text}>{formatTime(deliveryTime)}</Text>
@@ -150,9 +153,9 @@ const OrderConfirm = ({route, navigation}) => {
           </View>
         </View>
         <ImageBackground
-          style={{width: '100%'}}
+          style={{flex: 1, height: screenHeight}}
           source={require('../../image/orderConfirm-Bg.png')}>
-          <View style={{paddingTop: '71%', paddingHorizontal: 20}}>
+          <View style={{paddingTop: '72%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Delivering to</Text>
@@ -169,7 +172,7 @@ const OrderConfirm = ({route, navigation}) => {
               <View style={{position: 'relative'}}>
                 {driverDetails?.deliveryBoy?.profile_pic ? (
                   <Image
-                    style={{width: 60, height: 60, borderRadius: 30}}
+                    style={{width: 50, height: 50, borderRadius: 30}}
                     source={{
                       uri:
                         API.viewImageUrl +
@@ -178,23 +181,23 @@ const OrderConfirm = ({route, navigation}) => {
                   />
                 ) : (
                   <Image
-                    style={{width: 60, height: 60, borderRadius: 30}}
+                    style={{width: 50, height: 50, borderRadius: 30}}
                     source={require('../../image/driver.jpeg')}
                   />
                 )}
                 <Image
                   style={{
                     position: 'absolute',
-                    bottom: 1,
-                    left: 40,
-                    height: 40,
-                    width: 40,
+                    bottom: 0,
+                    left: 30,
+                    height: 30,
+                    width: 30,
                     borderRadius: 30,
                   }}
                   source={require('../../image/Drivers-Truck.jpg')}
                 />
               </View>
-              <View style={{width: '40%'}}>
+              <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>
                   {driverDetails?.deliveryBoy?.first_name +
                     ' ' +
@@ -203,12 +206,12 @@ const OrderConfirm = ({route, navigation}) => {
                 <Text style={styles.truckName}>{driverDetails?.vehicle?.plat_no}</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity style={{marginRight: 10}}>
-                  <Image source={require('../../image/chat-icon.png')} />
+                <TouchableOpacity style={{marginRight: 5}}>
+                  <Image style={{width: 35, height: 35,}} source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
 
                 <TouchableOpacity>
-                  <Image source={require('../../image/call-icon.png')} />
+                  <Image style={{width: 35, height: 35,}} source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -233,11 +236,10 @@ const OrderConfirm = ({route, navigation}) => {
 
 const styles = StyleSheet.create({
   mainTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
-    marginBottom: 10,
   },
   textContainer: {
     flexDirection: 'row',
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
   text: {
     marginRight: 5,
     color: colors.text,
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
   },
   copyIcon: {
@@ -260,7 +262,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   oderIdText: {
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
@@ -328,8 +330,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 80,
     paddingVertical: 12,
     borderRadius: 5,
-    marginTop: 20,
-    marginBottom: 80,
+    marginTop: 10,
+    marginBottom: 20,
   },
   trackText: {
     color: colors.text,

@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   saveBTn: {
     width: '45%',
     borderRadius: 8,
-    padding: 15,
+    padding: 12,
     backgroundColor: colors.primary,
   },
   CancellationReasonCard: {
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   logFormView: {
     backgroundColor: '#fff',
-    padding: 15,
+    paddingHorizontal: 15,
   },
   textInputDiv: {
     flexDirection: 'row',
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   logbutton: {
     width: '45%',
     borderRadius: 8,
-    padding: 15,
+    padding: 12,
     borderWidth: 1,
     borderColor: '#BA1A1A',
   },
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   textlable: {
     fontFamily: 'Montserrat-SemiBold',
     marginBottom: 7,
-    marginTop: 10,
+    marginTop: 7,
     fontSize: 12,
     color: colors.text,
   },
@@ -418,7 +418,8 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     color: colors.text,
     borderRadius: 5,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
   },

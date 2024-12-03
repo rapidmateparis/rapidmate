@@ -747,7 +747,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   checkboxText: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
     marginLeft: 5,
@@ -755,6 +755,7 @@ const styles = StyleSheet.create({
   pirvacyTextBold: {
     fontFamily: 'Montserrat-Bold',
     color: colors.primary,
+    fontSize: 10,
   },
   checkboxContainer: {
     flexDirection: 'row',

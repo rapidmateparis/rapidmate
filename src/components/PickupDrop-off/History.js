@@ -416,7 +416,7 @@ function History({navigation}) {
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
           <TouchableOpacity>
-            <AntDesign name="filter" size={30} color={colors.secondary} />
+            <AntDesign name="filter" size={25} color={colors.secondary} />
           </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>

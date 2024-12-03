@@ -15,7 +15,7 @@ const PickupFeedbackThanks = ({navigation}) => {
   return (
     <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <ImageBackground
-        style={{width: '100%', marginTop: '30%', paddingTop: '20%',}}
+        style={{width: '100%', marginTop: '25%', paddingTop: '20%',}}
         source={require('../../image/DeliveryRequest-bg.png')}>
         <View style={{paddingHorizontal: 15}}>
           <View style={styles.boxCard}>
@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
-    paddingHorizontal: 40,
     marginTop: 50,
   },
   textContainer: {

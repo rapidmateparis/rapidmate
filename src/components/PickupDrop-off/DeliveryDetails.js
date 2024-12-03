@@ -368,7 +368,7 @@ const DeliveryDetails = ({navigation, route}) => {
 
   return (
     <ScrollView
-      style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
+      style={{width: '100%', height: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
           <MapDeliveryDetails
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', // Add this line
   },
   orderFare: {
-    width: '75%',
+    width: '70%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',

@@ -7,11 +7,14 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Dimensions,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {downloadInvoiceOrder} from '../../data_manager'
+
+const {height: screenHeight} = Dimensions.get('window');
 
 const PickupDeliveryCompleted = ({navigation}) => {
   const [deliveryBoyRating, setDeliveryBoyRating] = useState(0);
@@ -43,7 +46,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
           </View>
         </View>
         <ImageBackground
-          style={{width: '100%'}}
+          style={{flex: 1, height: screenHeight}}
           source={require('../../image/DeliveryRequest-bg.png')}>
           <View style={styles.boxCard}>
             <Image source={require('../../image/Package-BOxChecked.png')} />
@@ -248,12 +251,12 @@ const PickupDeliveryCompleted = ({navigation}) => {
 
 const styles = StyleSheet.create({
   mainTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
     paddingHorizontal: 40,
-    marginTop: 50,
+    marginTop: 20,
   },
   textContainer: {
     flexDirection: 'row',
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   oderIdText: {
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
@@ -353,7 +356,7 @@ const styles = StyleSheet.create({
   boxCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: '10%',
+    paddingTop: 20,
     position: 'relative',
   },
   cloud1: {
@@ -393,7 +396,7 @@ const styles = StyleSheet.create({
   mainBtnCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 20,
+    marginVertical: 15,
   },
   invoiceDownload: {
     flexDirection: 'row',

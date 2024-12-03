@@ -82,7 +82,7 @@ const TrackDelivery = ({route, navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{height: '60%', position: 'relative'}}>
+      <View style={{height: 350, position: 'relative'}}>
         {/* Assuming TrackLiveLocation is a custom component */}
         <TrackLiveLocation />
       </View>

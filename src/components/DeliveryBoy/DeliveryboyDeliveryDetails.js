@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   borderStyle: {
     borderWidth: 1,
     borderColor: '#f1f1f1',
-    width: 50,
+    width: 42,
   },
   deliveryinfo: {
     flexDirection: 'row',
