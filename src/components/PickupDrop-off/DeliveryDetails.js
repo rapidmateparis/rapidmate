@@ -100,7 +100,7 @@ const DeliveryDetails = ({navigation, route}) => {
           if (data.branches && data.branches.length > 0) {
             getAllLocations();
           }
-          serOrder(data);
+          setOrder(data);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location,
@@ -492,16 +492,15 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
           </View>
         </View>
-
         <View style={styles.packageInformationCard}>
           <Text style={styles.packageTitle}>Package information</Text>
           <Text style={styles.orderdetails}>
             Order ID:<Text style={styles.detailsId}> {order.order_number}</Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Comments:
+            Comments:{' '}
             <Text style={styles.detailsId}>
-              {order.pickup_notes || 'No pickup notes available'}
+              {order.pickup_notes || '-'}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>

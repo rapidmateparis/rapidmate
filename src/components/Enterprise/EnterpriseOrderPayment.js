@@ -72,7 +72,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       if (selectedOptionIndex != 99) {
         createPaymentIntent();
       } else {
-        navigation.navigate('EnterpriseLookingForDriver');
+        navigation.navigate('EnterpriseLookingForDriver', {
+          cancellable: orderResponse.is_enable_cancel_request,
+        });
       }
     }
   }, [orderNumber]);
@@ -164,7 +166,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('EnterpriseLookingForDriver');
+          navigation.navigate('EnterpriseLookingForDriver', {
+            cancellable: orderResponse.is_enable_cancel_request,
+          });
         }
       },
       errorResponse => {
@@ -206,7 +210,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       email: userDetails.userDetails[0].email,
       mobile: params.mobile,
       package_id: params.package_id,
-      package_note: params.package_note,
+      pickup_notes: params.pickup_notes,
       is_same_dropoff_location: 0,
       repeat_dropoff_location_id: '',
       distance: parseFloat(params.distance).toFixed(1),
@@ -224,7 +228,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         if (successResponse[0]._success) {
           console.log('createEnterpriseOrder', successResponse[0]._response);
           savePlacedOrderDetails(successResponse[0]._response);
-          setOrderResponse(successResponse[0]._response);
+          setOrderResponse(successResponse[0]._response[0]);
           setLoading(false);
           setOrderNumber(successResponse[0]._response[0].order_number);
         }
@@ -311,7 +315,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
           {paymentMethod.map((item, index) => {
             return (
-              <TouchableOpacity key={index}
+              <TouchableOpacity
+                key={index}
                 onPress={() => {
                   setSelectedOptionIndex(index);
                 }}
