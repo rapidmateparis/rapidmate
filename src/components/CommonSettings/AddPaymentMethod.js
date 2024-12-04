@@ -123,7 +123,7 @@ const AddPaymentMethod = ({navigation}) => {
   }
 
   return (
-    <View style={{backgroundColor: '#FBFAF5', flex: 1}}>
+    <View style={{backgroundColor: '#FBFAF5', flex: 1, height:'100%'}}>
       <View style={{paddingHorizontal: 15, flex: 1}}>
         <TouchableOpacity onPress={toggleCardAdd}>
           <View style={styles.addressCard}>
@@ -211,10 +211,10 @@ const AddPaymentMethod = ({navigation}) => {
           </TouchableOpacity>
         </View> */}
       </View>
-      <Image
+      {/* <Image
         style={styles.bgImages}
         source={require('../../image/online_payments_bg.png')}
-      />
+      /> */}
     </View>
   );
 };
@@ -270,6 +270,8 @@ const styles = StyleSheet.create({
     width: '80%',
     resizeMode: 'contain',
     opacity: 0.6,
+    bottom:10,
+    position: 'absolute',
   },
   textlable: {
     fontFamily: 'Montserrat-Medium',
