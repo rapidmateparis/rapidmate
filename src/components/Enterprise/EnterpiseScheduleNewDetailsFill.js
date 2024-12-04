@@ -545,6 +545,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateOpen}
                     date={date}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateOpen(false);
                       setDate(date);
@@ -719,6 +720,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       open={dateUntilOpen}
                       date={untilDate}
                       mode="date"
+                      minimumDate={new Date()}
                       onConfirm={date => {
                         setDateUntilOpen(false);
                         setUntilDate(date);
@@ -818,6 +820,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateUntilOpen}
                     date={untilDate}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateUntilOpen(false);
                       setUntilDate(date);
@@ -937,6 +940,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateUntilOpen}
                     date={untilDate}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateUntilOpen(false);
                       setUntilDate(date);

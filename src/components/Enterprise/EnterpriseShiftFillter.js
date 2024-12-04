@@ -51,6 +51,7 @@ const EnterpriseShiftFillter = props => {
                 open={fromDateOpen}
                 date={fromDate}
                 mode="date"
+                minimumDate={new Date()}
                 onConfirm={date => {
                   setFromDateOpen(false);
                   setFromDate(date);
@@ -84,6 +85,7 @@ const EnterpriseShiftFillter = props => {
                 open={toDateOpen}
                 date={toDate}
                 mode="date"
+                minimumDate={new Date()}
                 onConfirm={date => {
                   setToDateOpen(false);
                   setToDate(date);

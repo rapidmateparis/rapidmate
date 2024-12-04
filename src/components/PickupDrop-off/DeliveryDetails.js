@@ -40,8 +40,9 @@ const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
   const orderNumber = route.params?.orderItem?.order_number;
   const componentType = route.params?.componentType;
-  const [order, serOrder] = useState({});
+  const [order, setOrder] = useState({});
   const [deliveryboy, setDeliveryboy] = useState({});
+  const [vehicle, setVehicle] = useState({});
   const [sourceAddress, setSourceAddress] = useState({});
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
@@ -124,8 +125,11 @@ const DeliveryDetails = ({navigation, route}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order);
+          setOrder(successResponse[0]._response.order);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
+          if (successResponse[0]._response.vehicle) {
+            setVehicle(successResponse[0]._response.vehicle);
+          }
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location_id,
           );
@@ -386,7 +390,7 @@ const DeliveryDetails = ({navigation, route}) => {
               />
               <View style={{marginLeft: 10}}>
                 <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
-                <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
+                <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
           ) : (
@@ -538,12 +542,14 @@ const DeliveryDetails = ({navigation, route}) => {
           </View>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity
-        onPress={() => toggleModal()}
-        style={styles.requestTouch}>
-        <Text style={styles.cancelRequest}>Cancel request</Text>
-      </TouchableOpacity>
+      
+      {order.is_enable_cancel_request == 1 ? (
+        <TouchableOpacity
+          onPress={() => toggleModal()}
+          style={styles.requestTouch}>
+          <Text style={styles.cancelRequest}>Cancel request</Text>
+        </TouchableOpacity>
+      ) : null}
 
       {/* CancellationModal Modal  */}
       <CancellationModal
