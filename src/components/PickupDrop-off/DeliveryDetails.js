@@ -97,7 +97,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           let data = successResponse[0]._response.order;
-          if (data.branches && data.branches.length > 0) {
+          if (data.orderLines && data.orderLines.length > 0) {
             getAllLocations();
           }
           setOrder(data);
@@ -413,9 +413,9 @@ const DeliveryDetails = ({navigation, route}) => {
             <Text style={styles.companyInfo}>
               {order.company_name ? order.company_name : 'Company Name'}
             </Text>
-            {order.branches && order.branches.length > 0 ? (
+            {order.orderLines && order.orderLines.length > 0 ? (
               <View>
-                {order.branches.map((item, index) => {
+                {order.orderLines.map((item, index) => {
                   var branch = locations.filter(
                     i => i.id == item.dropoff_location,
                   );
