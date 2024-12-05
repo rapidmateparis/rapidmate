@@ -95,7 +95,7 @@ const AddPickupdetails = ({route, navigation}) => {
           '' + errorResponse,
         );
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },
@@ -197,7 +197,7 @@ const AddPickupdetails = ({route, navigation}) => {
         userDetails.package_photo = packageImageId;
       }
       route.params.userDetails = userDetails;
-      navigation.navigate('PickupOrderPreview', {props: route.params});
+      navigation.navigate('AddDropDetails', {props: route.params});
     }
   };
 

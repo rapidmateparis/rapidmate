@@ -27,6 +27,8 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
   const [pickUpLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
 
+  console.log("order details", orderDetails)
+
   useEffect(() => {
     getLocationInfoById(orderDetails.pickup_location_id, 0);
     getLocationInfoById(orderDetails.dropoff_location_id, 1);
@@ -224,7 +226,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           <Text style={styles.orderdetails}>
             Order ID:{' '}
             <Text style={styles.detailsId}>
-              {orderDetails.package_id ? orderDetails.package_id : ''}
+              {orderDetails.order_number ? orderDetails.order_number : ''}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
@@ -236,7 +238,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           <Text style={styles.orderdetails}>
             Vehicle:{' '}
             <Text style={styles.detailsId}>
-              {orderDetails.vehicle_type_id ? orderDetails.vehicle_type_id : ''}
+              {orderDetails.vehicle_type ? orderDetails.vehicle_type : ''}
             </Text>
           </Text>
         </View>

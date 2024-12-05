@@ -102,6 +102,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                 open={startDateOpen}
                 date={startDate}
                 mode="date"
+                minimumDate={new Date()}
                 onConfirm={date => {
                   setStartDateOpen(false);
                   setStartDate(date);
@@ -140,6 +141,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                 open={endDateOpen}
                 date={endDate}
                 mode="date"
+                minimumDate={new Date()}
                 onConfirm={date => {
                   setEndDateOpen(false);
                   setEndDate(date);
@@ -305,7 +307,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                       />
                       <TextInput
                         style={styles.loginput}
-                        placeholder="From HH:MM"
+                        placeholder="To HH:MM"
                         placeholderTextColor="#999"
                         value={item.toTimeText}
                         editable={false}

@@ -63,10 +63,14 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     orderRequestAction(
       params,
       successResponse => {
+        navigation.navigate('Home')
         console.log('successResponse==>', JSON.stringify(successResponse));
+        navigation.goBack();
       },
       errorResponse => {
+        navigation.navigate('Home')
         console.log('errorResponse==>', JSON.stringify(errorResponse));
+        navigation.goBack();
       },
     );
   };
@@ -77,6 +81,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       order_number: orderNumber,
       otp: otpValue,
     };
+    console.log('print_data===>', isOTP, otpValue);
     if (isOTP) {
       orderOPTVerify(
         params,
@@ -101,18 +106,21 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       orderOPTVerifyForDelivery(
         params,
         successResponse => {
+          const data = successResponse[0]._response.next_action_status
           Alert.alert(
             'Success',
-            '' + JSON.stringify(successResponse[0]._response),
+            'Delivered OPT verified successfully',
             [
               {
                 text: 'OK',
                 onPress: () => {
                   toggleModalOTP();
+                  setUpdateStatus(data);
                 },
+
               },
-            ],
-          );
+            },
+          ]);
         },
         errorResponse => {
           Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
@@ -126,8 +134,10 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const handleStatusUpdated = () => {
     if (updateStatus == 'Enter OTP') {
       toggleModalOTP();
+      setIsOTP(true);
     } else if (updateStatus == 'Enter Delivered OTP') {
       toggleModalOTP();
+      setIsOTP(false);
     } else {
       setLoading(true);
       let params = {
@@ -327,14 +337,14 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
 
             <View style={styles.borderShowOff} />
 
-            <View style={styles.packageBasicInfo}>
+            {/* <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>OTP</Text>
               <Text style={styles.subheadingOTP}>
                 {route.params.orderItem ? route.params.orderItem.otp : ''}
               </Text>
             </View>
 
-            <View style={styles.borderShowOff} />
+            <View style={styles.borderShowOff} /> */}
 
             <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>When?</Text>

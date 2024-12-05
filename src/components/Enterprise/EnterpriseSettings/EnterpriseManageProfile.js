@@ -7,15 +7,18 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
+import {updateUserProfile} from '../../../data_manager';
+import {useLoader} from '../../../utils/loaderContext';
 
 const EnterpriseManageProfile = ({navigation}) => {
-  const {userDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [number, setNumber] = useState('');
@@ -24,18 +27,88 @@ const EnterpriseManageProfile = ({navigation}) => {
   const [industry, setIndustry] = useState('');
   const [deliveryCount, setDeliveryCount] = useState('');
 
-  const fullName = `${userDetails.userDetails[0].first_name} ${userDetails.userDetails[0].last_name}`;
+  const [userName, setUserName] = useState('');
+  const [dropdownIndustryValue, setDropdownIndustryValue] = useState(null);
 
-  const [userName, setUserName] = useState(fullName);
+  const data = [{label: '+33', value: '+33'}];
+  const {setLoading} = useLoader();
+  const industryList = [
+    {label: 'Restaurant and takeaway', value: 1},
+    {label: 'Grocery and speciality', value: 2},
+    {label: 'Gift delivery', value: 3},
+    {label: 'Health and beauty', value: 4},
+    {label: 'Tech and electronics', value: 5},
+    {label: 'Retail and shopping', value: 6},
+    {label: 'Professional services', value: 7},
+    {label: 'Other', value: 8},
+  ];
 
   useEffect(() => {
-    setUserName(fullName);
+    console.log('userDetails.userDetails[0]', userDetails.userDetails[0]);
+    setCompany(userDetails.userDetails[0].company_name);
+    setNumber(userDetails.userDetails[0].phone.substring(3));
+    setEmail(userDetails.userDetails[0].email);
+    setUserName(
+      userDetails.userDetails[0].first_name +
+        ' ' +
+        userDetails.userDetails[0].last_name,
+    );
+    setDropdownIndustryValue(userDetails.userDetails[0].industry_type_id);
+    if (userDetails.userDetails[0].deliveryMonthHours) {
+      setDeliveryCount(userDetails.userDetails[0].deliveryMonthHours);
+    }
   }, [userDetails]);
 
-  const data = [
-    {label: '+91', value: '+91'},
-    {label: '+33', value: '+33'},
-  ];
+  const updateProfile = () => {
+    let usernamelist = userName.split(' ');
+    let profileParams = {
+      ext_id: userDetails.userDetails[0].ext_id,
+      company_name: company,
+      email: email,
+      first_name: userName.split(' ')[0],
+      phone: '+33' + number,
+      industry_type_id: dropdownIndustryValue,
+    };
+    if (userName.split.length > 1) {
+      profileParams.last_name = usernamelist[1];
+    }
+    if (deliveryCount) {
+      profileParams.deliveryMonthHours = deliveryCount;
+    }
+    setLoading(true);
+    updateUserProfile(
+      userDetails.userDetails[0].role,
+      profileParams,
+      successResponse => {
+        setLoading(false);
+        console.log('updateUserProfile success', '' + successResponse);
+        saveUserDetails({
+          userInfo: userDetails.userInfo,
+          userDetails: [
+            {
+              ...userDetails.userDetails[0],
+              company_name: profileParams.company_name,
+              email: profileParams.email,
+              first_name: profileParams.first_name,
+              phone: profileParams.phone,
+              industry_type_id: profileParams.industry_type_id,
+              last_name: profileParams.last_name ? profileParams.last_name : '',
+              deliveryMonthHours: profileParams.deliveryMonthHours
+                ? profileParams.deliveryMonthHours
+                : '',
+            },
+          ],
+        });
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('updateUserProfile error', '' + errorResponse);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -60,7 +133,7 @@ const EnterpriseManageProfile = ({navigation}) => {
               name="camerao"
               size={25}
               color="#fff"
-              onPress={()=>{
+              onPress={() => {
                 navigation.navigate('EnterprisesTakeSelfie');
               }}
             />
@@ -68,7 +141,7 @@ const EnterpriseManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Company Name</Text>
+          <Text style={styles.textlable}>Name</Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -84,7 +157,6 @@ const EnterpriseManageProfile = ({navigation}) => {
               <View style={styles.containerDropdown}>
                 <Dropdown
                   data={data}
-                  search
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
@@ -94,7 +166,6 @@ const EnterpriseManageProfile = ({navigation}) => {
                   inputSearchStyle={styles.inputSearchStyle}
                   style={{color: colors.black}}
                   placeholder={!isFocus ? '+33' : '...'}
-                  searchPlaceholder="+.."
                   value={dropdownValue}
                   onFocus={() => setIsFocus(true)}
                   onBlur={() => setIsFocus(false)}
@@ -112,7 +183,11 @@ const EnterpriseManageProfile = ({navigation}) => {
               </View>
             </View>
             <TextInput
-              style={styles.input}
+              style={{
+                fontFamily: 'Montserrat-Regular',
+                fontSize: 12,
+                color: colors.text,
+              }}
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
@@ -144,13 +219,34 @@ const EnterpriseManageProfile = ({navigation}) => {
         </View>
         <View style={{flex: 1}}>
           <Text style={styles.textlable}>Industry Type</Text>
-          <TextInput
-            style={styles.inputTextStyle}
-            placeholder="Type here"
-            placeholderTextColor={'#999'}
-            value={industry}
-            onChangeText={text => setIndustry(text)}
-          />
+          <View style={styles.containerCountry}>
+            <Dropdown
+              data={industryList}
+              maxHeight={500}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              labelField="label"
+              valueField="value"
+              searchPlaceholder="Search.."
+              value={dropdownIndustryValue}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setDropdownIndustryValue(item.value);
+                setIsFocus(false);
+              }}
+              renderLeftIcon={() => (
+                <AntDesign
+                  style={{marginRight: 10}}
+                  name="API"
+                  size={18}
+                  color={colors.text}
+                />
+              )}
+            />
+          </View>
         </View>
         <View style={{flex: 1}}>
           <Text style={styles.textlable}>
@@ -165,6 +261,9 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View>
         <TouchableOpacity
+          onPress={() => {
+            updateProfile();
+          }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
@@ -255,6 +354,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.black,
     fontFamily: 'Montserrat-Medium',
+  },
+  containerCountry: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginBottom: 20,
   },
 });
 

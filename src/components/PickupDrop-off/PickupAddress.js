@@ -199,7 +199,7 @@ const PickupAddress = ({route, navigation}) => {
       sourceLocationId &&
       destinationLocationId
     ) {
-      if (route?.params?.pickupService?.id == 2) {
+      if (route?.params?.pickupService?.id == 1) {
         var scheduleParam = {
           schedule_date_time: `${pickupDateTime.pickupDate} ${moment(
             pickupDateTime.time,
@@ -239,9 +239,9 @@ const PickupAddress = ({route, navigation}) => {
       case 4:
         return PartnerImage;
       case 5:
-        return MiniVanImage;
-      case 6:
         return MiniTruckImage;
+      case 6:
+        return MiniVanImage;
       case 7:
         return SemiTruckImage;
       default:
@@ -256,13 +256,13 @@ const PickupAddress = ({route, navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{height: 500, position: 'relative'}}>
+      <View style={{height: '50%', position: 'relative'}}>
         <MapAddress
           onFetchDistanceAndTime={onFetchDistanceAndTime}
           onSourceLocation={onSourceLocation}
           onDestinationLocation={onDestinationLocation}
         />
-        {route?.params?.pickupService?.id == 2 && (
+        {route?.params?.pickupService?.id == 1 && (
           <View style={styles.dateCard}>
             <EvilIcons name="calendar" size={25} color="#000" />
             <Text style={styles.dateCardText}>

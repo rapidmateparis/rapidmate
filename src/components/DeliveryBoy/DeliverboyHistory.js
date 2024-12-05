@@ -382,7 +382,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           </View>
         </TouchableOpacity>
 
-        <View style={styles.packageDetailCard}>
+        {/* <View style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
               style={{width: 25, height: 25}}
@@ -426,7 +426,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.orderId}>For National Inc.</Text>
             <Text style={styles.valueMoney}>€34.00</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -491,12 +491,34 @@ const DeliveryboyHistory = ({navigation}) => {
             <MenuOptions>
               <MenuOption
                 onSelect={() => setFilterCriteria('N')}
-                text="Normal"
-              />
+                customStyles={{
+                  optionWrapper:
+                    filterCriteria === 'N' ? styles.selectedOption : null,
+                }}>
+                <Text
+                  style={
+                    filterCriteria === 'N'
+                      ? styles.selectedText
+                      : styles.defaultText
+                  }>
+                  Normal
+                </Text>
+              </MenuOption>
               <MenuOption
                 onSelect={() => setFilterCriteria('E')}
-                text="Enterprise"
-              />
+                customStyles={{
+                  optionWrapper:
+                    filterCriteria === 'E' ? styles.selectedOption : null,
+                }}>
+                <Text
+                  style={
+                    filterCriteria === 'E'
+                      ? styles.selectedText
+                      : styles.defaultText
+                  }>
+                  Enterprise
+                </Text>
+              </MenuOption>
             </MenuOptions>
           </Menu>
         </View>
@@ -586,6 +608,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   searchinput: {
+    color: colors.text,
     flex: 1,
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',
@@ -733,6 +756,16 @@ const styles = StyleSheet.create({
   packageManage: {
     width: 25,
     height: 25,
+  },
+  selectedOption: {
+    backgroundColor: '#d3d3d3',
+  },
+  selectedText: {
+    color: colors.secondary,
+    fontWeight: 'bold',
+  },
+  defaultText: {
+    color: 'black',
   },
 });
 

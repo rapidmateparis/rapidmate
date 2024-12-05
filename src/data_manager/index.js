@@ -174,6 +174,7 @@ export const getCityList = (params, successCallback, errorCallback) => {
 };
 
 export const addVehicleApi = (params, successCallback, errorCallback) => {
+  console.log('print_view===>', API.vehicles, JSON.stringify(params));
   axiosCall(
     API.vehicles,
     HTTPMethod.POST,
@@ -212,7 +213,40 @@ export const getDeliveryBoyViewOrdersList = (
       postParams.extentedId +
       '?status=' +
       postParams.status +
-      '&orderTyp=' +
+      '&orderType=' +
+      postParams.orderType,
+    postParams,
+  );
+  axiosCall(
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status +
+      '&orderType=' +
+      postParams.orderType,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyViewOrdersDashboardList = (
+  postParams,
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    API.viewDeliveryBoyOrderUrl +
+      postParams.extentedId +
+      '?status=' +
+      postParams.status +
+      '&orderType=' +
       postParams.orderType,
     postParams,
   );
@@ -643,6 +677,30 @@ export const updateAddressBookforConsumer = (
   );
 };
 
+
+export const updateAddressBookforDeliveryBoy = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url==>updateAddressBookforDeliveryBoy',
+    API.addressBookUpdateDeliveryBoyUrl,
+    param,
+  );
+  axiosCall(
+    API.addressBookUpdateDeliveryBoyUrl,
+    HTTPMethod.PUT,
+    param,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
 export const deleteAddressBookforDeliveryBoy = (
   param,
   successCallback,
@@ -700,6 +758,20 @@ export const createEnterpriseBranch = (
 export const cancelOrderConsumer = (params, successCallback, errorCallback) => {
   axiosCall(
     API.cancelOrderUrl,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const cancelOrderEnterprise = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.cancelOrderEnterpriseUrl,
     HTTPMethod.POST,
     params,
     response => {
@@ -850,18 +922,17 @@ export const getDeliveryBoyTransactions = (
   successCallback,
   errorCallback,
 ) => {
-  console.log(
-    'url',
-    API.getDeliveryBoyTransactionUrl +
-      param.extId +
-      '?durationType=' +
-      param.durationType,
-  );
+  let tempUrl = API.getDeliveryBoyTransactionUrl + param.extId;
+  if (param?.searchText) {
+    tempUrl += '?o=' + param.searchText;
+  }
+  if (param?.durationType) {
+    tempUrl += '?durationType=' + param.durationType;
+  }
+  console.log('url', tempUrl);
+
   axiosCall(
-    API.getDeliveryBoyTransactionUrl +
-      param.extId +
-      '?durationType=' +
-      param.durationType,
+    tempUrl,
     HTTPMethod.GET,
     {},
     response => {
@@ -1181,6 +1252,7 @@ export const updateUserProfileEnterprise = (
 };
 
 export const orderOPTVerify = (params, successCallback, errorCallback) => {
+  console.log('url==>orderOPTVerify', API.verifyOrderOTP, params);
   axiosCall(
     API.verifyOrderOTP,
     HTTPMethod.PUT,
@@ -1194,7 +1266,16 @@ export const orderOPTVerify = (params, successCallback, errorCallback) => {
   );
 };
 
-export const orderOPTVerifyForDelivery = (params, successCallback, errorCallback) => {
+export const orderOPTVerifyForDelivery = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(
+    'url==>orderOPTVerifyForDelivery',
+    API.verifyOrderDeliveryOTP,
+    params,
+  );
   axiosCall(
     API.verifyOrderDeliveryOTP,
     HTTPMethod.PUT,
@@ -1225,3 +1306,18 @@ export const addEnterprisePaymentMethod = (
     },
   );
 };
+
+export const searchOrderApi = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.searchOrder,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+

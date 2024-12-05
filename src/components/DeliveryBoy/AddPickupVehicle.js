@@ -19,7 +19,7 @@ import {
   handleImageLibraryLaunchFunction,
 } from '../../utils/common';
 import {useLoader} from '../../utils/loaderContext';
-import {addVehicleApi} from '../../data_manager';
+import {addVehicleApi, uploadDocumentsApi} from '../../data_manager';
 import BicycleImage from '../../image/Cycle-Icon.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import CarImage from '../../image/Car-Icon.png';
@@ -49,6 +49,11 @@ const AddPickupVehicle = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const [errors, setErrors] = useState({});
 
+  const [regDocId, setRegDocId] = useState(null);
+  const [drivingLicenseDocId, setDrivingLicenseDocId] = useState(null);
+  const [insuranceDocId, setInsuranceDocId] = useState(null);
+  const [passportDocId, setPassportDocId] = useState(null);
+
   const toggleModal = item => {
     setImageFileUrl(item);
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -57,20 +62,74 @@ const AddPickupVehicle = ({route, navigation}) => {
     setModalVisibleCamera(!visible);
   };
 
+  const updateImageState = imageData => {
+    switch (imageFileUrl) {
+      case 'VehicleRegistration':
+        setImageFileNameVehicleReg(imageData);
+        break;
+      case 'DrivingLicense':
+        setImageFileDrivingLicense(imageData);
+        break;
+      case 'VehicleInsurance':
+        setImageFileVehicleInsurance(imageData);
+        break;
+      case 'Passport':
+        setImageFilePassport(imageData);
+        break;
+      default:
+        console.error('Unknown image type:', imageFileUrl);
+    }
+  };
+
+  const uploadImage = async image => {
+    setLoading(true);
+    if (image != null) {
+      var photo = {
+        uri: image.data.uri,
+        type: image.data.type,
+        name: image.data.fileName,
+      };
+      const formdata = new FormData();
+      formdata.append('file', photo);
+      uploadDocumentsApi(
+        formdata,
+        successResponse => {
+          setLoading(false);
+          if (imageFileUrl === 'VehicleRegistration') {
+            setRegDocId(JSON.parse(successResponse).id);
+          } else if (imageFileUrl === 'DrivingLicense') {
+            setDrivingLicenseDocId(JSON.parse(successResponse).id);
+          } else if (imageFileUrl === 'VehicleInsurance') {
+            setInsuranceDocId(JSON.parse(successResponse).id);
+          } else if (imageFileUrl === 'Passport') {
+            setPassportDocId(JSON.parse(successResponse).id);
+          }
+        },
+        errorResponse => {
+          console.log(
+            'print_data==>errorResponseuploadDocumentsApi',
+            '' + errorResponse,
+          );
+          setLoading(false);
+          Alert.alert('Error Alert', '' + errorResponse, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      Alert.alert('Error Alert', 'Please choose a picture', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
+  };
+
   const handleCameraLaunch = async item => {
     setModalVisibleCamera(!isModalVisibleCamera);
     try {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
-        if (imageFileUrl === 'VehicleRegistration') {
-          setImageFileNameVehicleReg(cameraData.data);
-        } else if (imageFileUrl === 'DrivingLicense') {
-          setImageFileDrivingLicense(cameraData.data);
-        } else if (imageFileUrl === 'VehicleInsurance') {
-          setImageFileVehicleInsurance(cameraData.data);
-        } else if (imageFileUrl === 'Passport') {
-          setImageFilePassport(cameraData.data);
-        }
+        updateImageState(cameraData.data);
+        uploadImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -82,15 +141,8 @@ const AddPickupVehicle = ({route, navigation}) => {
     try {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
-        if (imageFileUrl === 'VehicleRegistration') {
-          setImageFileNameVehicleReg(imageData.data);
-        } else if (imageFileUrl === 'DrivingLicense') {
-          setImageFileDrivingLicense(imageData.data);
-        } else if (imageFileUrl === 'VehicleInsurance') {
-          setImageFileVehicleInsurance(imageData.data);
-        } else if (imageFileUrl === 'Passport') {
-          setImageFilePassport(imageData.data);
-        }
+        updateImageState(imageData.data);
+        uploadImage(imageData);
       }
     } catch (error) {
       // Handle errors here
@@ -136,11 +188,12 @@ const AddPickupVehicle = ({route, navigation}) => {
         modal: vehicleModel,
         make: vehicleMake,
         variant: vehicleVariant,
-        reg_doc: '1',
-        driving_license: '1',
-        insurance: '1',
-        passport: '1',
+        reg_doc: regDocId,
+        driving_license: drivingLicenseDocId,
+        insurance: insuranceDocId,
+        passport: passportDocId,
       };
+      console.log("print_data===>", params)
       setLoading(true);
       addVehicleApi(
         params,
@@ -164,9 +217,10 @@ const AddPickupVehicle = ({route, navigation}) => {
         },
         errorResponse => {
           setLoading(false);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
+          console.log("print_data===>", JSON.stringify(errorResponse))
+          // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          //   {text: 'OK', onPress: () => {}},
+          // ]);
         },
       );
     }
@@ -275,9 +329,9 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFileVehicleReg && imageFileUrl === 'VehicleRegistration'
+                  {imageFileVehicleReg
                     ? getFileName(imageFileVehicleReg.uri)
-                    : `image.jpeg`}
+                    : ''}
                 </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
@@ -297,9 +351,9 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFileDrivingLicense && imageFileUrl === 'DrivingLicense'
+                  {imageFileDrivingLicense
                     ? getFileName(imageFileDrivingLicense.uri)
-                    : `image.jpeg`}
+                    : ''}
                 </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
@@ -319,10 +373,9 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFileVehicleInsurance &&
-                  imageFileUrl === 'VehicleInsurance'
+                  {imageFileVehicleInsurance
                     ? getFileName(imageFileVehicleInsurance.uri)
-                    : `image.jpeg`}
+                    : ''}
                 </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>
@@ -343,9 +396,7 @@ const AddPickupVehicle = ({route, navigation}) => {
               <Text style={styles.tapUploadDoc}>Tap to upload</Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
-                  {imageFilePassport && imageFileUrl === 'Passport'
-                    ? getFileName(imageFilePassport.uri)
-                    : `image.jpeg`}
+                  {imageFilePassport ? getFileName(imageFilePassport.uri) : ''}
                 </Text>
                 <MaterialCommunityIcons name="close" color="#000" size={20} />
               </View>

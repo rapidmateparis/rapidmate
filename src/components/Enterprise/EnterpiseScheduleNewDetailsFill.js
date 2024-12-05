@@ -545,6 +545,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateOpen}
                     date={date}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateOpen(false);
                       setDate(date);
@@ -719,6 +720,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       open={dateUntilOpen}
                       date={untilDate}
                       mode="date"
+                      minimumDate={new Date()}
                       onConfirm={date => {
                         setDateUntilOpen(false);
                         setUntilDate(date);
@@ -818,6 +820,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateUntilOpen}
                     date={untilDate}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateUntilOpen(false);
                       setUntilDate(date);
@@ -937,6 +940,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateUntilOpen}
                     date={untilDate}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateUntilOpen(false);
                       setUntilDate(date);
@@ -1096,7 +1100,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       dropoff_location_id: destinationLocationId,
                       mobile: number,
                       company_name: company,
-                      package_note: pickupNotes,
+                      pickup_notes: pickupNotes,
                       pickup_date: moment(date).format('YYYY-MM-DD'),
                       pickup_time: moment(time).format('HH:MM'),
                       is_repeat_mode: promoEmails ? 1 : 0,
@@ -1130,7 +1134,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       dropoff_location_id: destinationLocationId,
                       mobile: number,
                       company_name: company,
-                      package_note: pickupNotes,
+                      pickup_notes: pickupNotes,
                       pickup_date: moment(date).format('YYYY-MM-DD'),
                       pickup_time: moment(time).format('HH:MM'),
                       is_repeat_mode: promoEmails ? 1 : 0,

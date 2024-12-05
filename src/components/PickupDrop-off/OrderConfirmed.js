@@ -157,7 +157,7 @@ const OrderConfirm = ({route, navigation}) => {
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Delivering to</Text>
                 <Text style={styles.subAddress}>
-                  {getLocationAddress(orderDetails?.pickup_location_id)}
+                  {getLocationAddress(orderDetails?.dropoff_location_id)}
                 </Text>
               </View>
               <View>
@@ -200,7 +200,7 @@ const OrderConfirm = ({route, navigation}) => {
                     ' ' +
                     driverDetails?.deliveryBoy?.last_name}
                 </Text>
-                <Text style={styles.truckName}>{'TEST'}</Text>
+                <Text style={styles.truckName}>{driverDetails?.vehicle?.plat_no}</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity style={{marginRight: 10}}>

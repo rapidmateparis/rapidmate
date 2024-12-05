@@ -55,11 +55,17 @@ const DeliveryboyWallet = ({navigation}) => {
               />
             </View>
             <View>
-              <Text style={styles.dollerSymbol}>{`€ ${walletAmount ? walletAmount : ''}`}</Text>
+              <Text style={styles.dollerSymbol}>{`€ ${
+                walletAmount ? walletAmount : ''
+              }`}</Text>
               <Text style={styles.walletBalance}>Wallet balance</Text>
             </View>
             <View style={styles.actionCard}>
-              <TouchableOpacity style={styles.actionsBt}>
+              <TouchableOpacity
+                style={styles.actionsBt}
+                onPress={() => {
+                  navigation.navigate('WithdrawPayment');
+                }}>
                 <Text style={styles.btnText}>Withdraw</Text>
               </TouchableOpacity>
 

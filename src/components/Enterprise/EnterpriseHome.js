@@ -60,7 +60,10 @@ const EnterpriseHome = ({navigation}) => {
   };
 
   const dropdownData2 = [
+    {label: 'Today', value: 'Today'},
     {label: 'This week', value: 'This week'},
+    {label: 'This month', value: 'This month'},
+    {label: 'This year', value: 'This year'},
   ];
 
   const chartConfig = {
@@ -131,12 +134,14 @@ const EnterpriseHome = ({navigation}) => {
                 tempdropDownBranches.push(item);
               },
             );
-            setDropdownBranches(tempdropDownBranches);
-            setSelectedDropdownBranch(tempdropDownBranches[0]);
-            setDropdownWeek(dropdownData2[0]);
-            displayChartData(
-              successResponse[0]._response[0].dashboard.branch[0],
-            );
+            if (successResponse[0]._response[0].dashboard.branch.length > 0) {
+              setDropdownBranches(tempdropDownBranches);
+              setSelectedDropdownBranch(tempdropDownBranches[0]);
+              setDropdownWeek(dropdownData2[0]);
+              displayChartData(
+                successResponse[0]._response[0].dashboard.branch[0],
+              );
+            }
           }
         },
         errorResponse => {

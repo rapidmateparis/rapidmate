@@ -82,9 +82,11 @@ function DeliveryBoyAcceptRejectModal({
       params,
       successResponse => {
         console.log('successResponse==>', JSON.stringify(successResponse));
+        toggleModal();
       },
       errorResponse => {
         console.log('errorResponse==>', JSON.stringify(errorResponse));
+        toggleModal();
       },
     );
   };

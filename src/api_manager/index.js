@@ -9,8 +9,6 @@ export async function axiosCall(
   callbackResponse,
   callbackErrorResponse,
 ) {
-  const token = await AsyncStorage.getItem('TOKEN');
-
   const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 20000,
@@ -20,20 +18,21 @@ export async function axiosCall(
       'Access-Control-Allow-Origin': '*',
     },
   });
+  const token = await AsyncStorage.getItem('rapidToken');
 
-  // axiosInstance.interceptors.request.use(
-  //   function (config) {
-  //     if (token) {
-  //       config.headers.Authorization = `Bearer ${token}`;
-  //     }
-  //     return config;
-  //   },
-  //   function (error) {
-  //     let parseError = JSON.stringify(error);
-  //     let errorResponse = JSON.parse(parseError);
-  //     return callbackErrorResponse(axiosError(errorResponse.code));
-  //   },
-  // );
+  axiosInstance.interceptors.request.use(
+    function (config) {
+      if (token) {
+        config.headers.rapid_token = token;
+      }
+      return config;
+    },
+    function (error) {
+      let parseError = JSON.stringify(error);
+      let errorResponse = JSON.parse(parseError);
+      return callbackErrorResponse(axiosError(errorResponse.code));
+    },
+  );
 
   axiosInstance.interceptors.response.use(
     function (response) {
