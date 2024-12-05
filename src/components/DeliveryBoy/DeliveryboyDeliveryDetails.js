@@ -65,10 +65,12 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       successResponse => {
         navigation.navigate('Home')
         console.log('successResponse==>', JSON.stringify(successResponse));
+        navigation.goBack();
       },
       errorResponse => {
         navigation.navigate('Home')
         console.log('errorResponse==>', JSON.stringify(errorResponse));
+        navigation.goBack();
       },
     );
   };
@@ -115,9 +117,10 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   toggleModalOTP();
                   setUpdateStatus(data);
                 },
+
               },
-            ],
-          );
+            },
+          ]);
         },
         errorResponse => {
           Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
