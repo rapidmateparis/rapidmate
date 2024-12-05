@@ -37,11 +37,43 @@ const AddDropDetails = ({route, navigation}) => {
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
   const {setLoading} = useLoader();
+  const params = route.params.props;
 
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+
+
+  const validateForm = () => {
+    if (
+      !name ||
+      !lastname ||
+      !email ||
+      !number ||
+      !dropdownValue ||
+      !dropNotes
+    ) {
+      Alert.alert('Validation Error', 'Please fill all the required fields.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleNextPress =()=>{
+    if(!validateForm()) return 
+    const includeDropDetails = {...params,
+      drop_details:{
+        drop_first_name: name,
+        drop_last_name: lastname,
+        drop_mobile: number,
+        drop_notes: dropNotes,
+        drop_email: email,
+        drop_company_name: company,
+      }
+    }
+    navigation.navigate('PickupOrderPreview', {props: includeDropDetails});
+  }
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
@@ -151,7 +183,7 @@ const AddDropDetails = ({route, navigation}) => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('')}
+            onPress={() => handleNextPress()}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>

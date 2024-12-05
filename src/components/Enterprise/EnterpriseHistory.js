@@ -30,13 +30,18 @@ import {useFocusEffect} from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 
-const OneTimeList = ({orders, locations, navigation, onActive}) => {
+const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
 
   const getLocationAddress = locationId => {
     let result = locations.filter(location => location.id == locationId);
     return result[0]?.address;
+  };
+
+  const getVehicleType = vehicleId => {
+    let result = vehicles.filter(vehicle => vehicle.id == vehicleId);
+    return result[0]?.vehicle_type;
   };
 
   useFocusEffect(
@@ -108,7 +113,9 @@ const OneTimeList = ({orders, locations, navigation, onActive}) => {
 
               <View style={styles.borderShow}></View>
               <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Pickup Truck</Text>
+                <Text style={styles.orderId}>
+                  {getVehicleType(item.vehicle_type_id)}
+                </Text>
                 <Text style={styles.valueMoney}>
                   €{item.amount ? item.amount.toFixed(2) : '0.00'}
                 </Text>
@@ -121,13 +128,18 @@ const OneTimeList = ({orders, locations, navigation, onActive}) => {
   );
 };
 
-const MultipleList = ({orders, locations, navigation, onActive}) => {
+const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
 
   const getLocationAddress = locationId => {
     let result = locations.filter(location => location.id == locationId);
     return result[0]?.address;
+  };
+
+  const getVehicleType = vehicleId => {
+    let result = vehicles.filter(vehicle => vehicle.id == vehicleId);
+    return result[0]?.vehicle_type;
   };
 
   useFocusEffect(
@@ -199,7 +211,10 @@ const MultipleList = ({orders, locations, navigation, onActive}) => {
 
               <View style={styles.borderShow}></View>
               <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Pickup Truck</Text>
+                <Text style={styles.orderId}>
+                  {' '}
+                  {getVehicleType(item.vehicle_type_id)}
+                </Text>
                 <Text style={styles.valueMoney}>
                   €{item.amount ? item.amount.toFixed(2) : '0.00'}
                 </Text>
@@ -324,13 +339,18 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
   );
 };
 
-const PastList = ({orders, locations, navigation, onActive}) => {
+const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
 
   const getLocationAddress = locationId => {
     let result = locations.filter(location => location.id == locationId);
     return result[0]?.address;
+  };
+
+  const getVehicleType = vehicleId => {
+    let result = vehicles.filter(vehicle => vehicle.id == vehicleId);
+    return result[0]?.vehicle_type;
   };
 
   useFocusEffect(
@@ -402,7 +422,10 @@ const PastList = ({orders, locations, navigation, onActive}) => {
 
               <View style={styles.borderShow}></View>
               <View style={styles.footerCard}>
-                <Text style={styles.orderId}>Pickup Truck</Text>
+                <Text style={styles.orderId}>
+                  {' '}
+                  {getVehicleType(item.vehicle_type_id)}
+                </Text>
                 <Text style={styles.valueMoney}>
                   €{item.amount ? item.amount.toFixed(2) : '0.00'}
                 </Text>
@@ -657,6 +680,7 @@ function EnterpriseHistory({navigation}) {
             <OneTimeList
               orders={enterpriseOrderList}
               locations={locationList}
+              vehicles={vehicleTypeList}
               navigation={navigation}
               onActive={onOneTimeActive}
             />
@@ -667,6 +691,7 @@ function EnterpriseHistory({navigation}) {
             <MultipleList
               orders={enterpriseOrderList}
               locations={locationList}
+              vehicles={vehicleTypeList}
               navigation={navigation}
               onActive={onMultipleActive}
             />
@@ -688,6 +713,7 @@ function EnterpriseHistory({navigation}) {
             <PastList
               orders={enterpriseOrderList}
               locations={locationList}
+              vehicles={vehicleTypeList}
               navigation={navigation}
               onActive={onPastActive}
             />

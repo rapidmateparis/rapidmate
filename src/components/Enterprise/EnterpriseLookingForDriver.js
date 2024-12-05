@@ -18,10 +18,11 @@ import {
 } from '../commonComponent/StoreContext';
 import {getAllocatedEnterprise, getLocations} from '../../data_manager';
 
-const EnterpriseLookingForDriver = ({navigation}) => {
+const EnterpriseLookingForDriver = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
+  const params = route.params;
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -46,7 +47,10 @@ const EnterpriseLookingForDriver = ({navigation}) => {
               });
             },
             errorResponse => {
-              navigation.navigate('EnterpriseDriverNotAvailable', errorResponse);
+              navigation.navigate(
+                'EnterpriseDriverNotAvailable',
+                errorResponse,
+              );
             },
           );
         }
@@ -103,11 +107,13 @@ const EnterpriseLookingForDriver = ({navigation}) => {
           source={require('../../image/Driver-Bg2.png')}
         />
       </View>
-      <TouchableOpacity
-        onPress={() => toggleModal()}
-        style={styles.requestTouch}>
-        <Text style={styles.cancelRequest}>Cancel request</Text>
-      </TouchableOpacity>
+      {params.cancellable == 1 ? (
+        <TouchableOpacity
+          onPress={() => toggleModal()}
+          style={styles.requestTouch}>
+          <Text style={styles.cancelRequest}>Cancel request</Text>
+        </TouchableOpacity>
+      ) : null}
 
       {/* CancellationModal Modal  */}
       <EnterpriseOrderCancellationModal

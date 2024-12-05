@@ -43,6 +43,14 @@ const PickupHome = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
+  const getScheduledServiceDetails =()=>{
+   return serviceTypeDetails.find((service=>service.service_name === 'Scheduled'))
+  }
+
+  const getNonScheduledServiceDetails =()=>{
+    return serviceTypeDetails.find((service=>service.service_name !== 'Scheduled'))
+   }
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
@@ -70,7 +78,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
             });
           }}>
           <View style={styles.pickcard}>
@@ -91,7 +99,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
             });
           }}>
           <View>
@@ -112,7 +120,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
             });
           }}>
           <View style={styles.pickcard}>
@@ -133,7 +141,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickupPack}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+              pickupService: serviceTypeDetails ? getScheduledServiceDetails() : [], //
             });
           }}>
           <View style={styles.packingCardImgas}>

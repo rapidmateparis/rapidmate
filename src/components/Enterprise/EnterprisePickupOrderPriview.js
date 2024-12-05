@@ -169,7 +169,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           </View>
 
           <View>
-            <Text style={styles.pickupNotes}>{params.package_note}</Text>
+            <Text style={styles.pickupNotes}>{params.pickup_notes}</Text>
           </View>
         </View>
 

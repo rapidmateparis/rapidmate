@@ -140,6 +140,21 @@ const PickupPayment = ({route, navigation}) => {
     }
   };
 
+
+  const getCurrentDateAndTime =()=>{ // return format like YYYY-MM-DD HH:mm:ss
+    const currentDate = new Date()
+    const date = currentDate.getDate() > 9 ? currentDate.getDate() :'0'+currentDate.getDate()
+    const month = currentDate.getMonth()+1  > 9 ? currentDate.getMonth()+1 :'0'+currentDate.getMonth()+1
+    const year = currentDate.getFullYear()
+
+    const hour = currentDate.getHours() > 9 ? currentDate.getHours() :'0'+currentDate.getHours()
+    const min = currentDate.getMinutes() > 9 ? currentDate.getMinutes() :'0'+currentDate.getMinutes()
+    const sec = currentDate.getSeconds() > 9 ? currentDate.getSeconds() :'0'+currentDate.getSeconds()
+
+    return `${year}-${month}-${date} ${hour}:${min}:${sec}`
+
+  }
+
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
       console.log('params.schedule_date_time', params.schedule_date_time);
@@ -162,6 +177,14 @@ const PickupPayment = ({route, navigation}) => {
         pickup_notes: params.userDetails.pickupNotes,
         company_name: params.userDetails.company,
         ...scheduleParam,
+
+        drop_first_name: params.drop_details.drop_first_name,
+        drop_last_name: params.drop_details.drop_last_name,
+        drop_mobile: params.drop_details.drop_mobile,
+        drop_notes: params.drop_details.drop_notes,
+        drop_email: params.drop_details.drop_email,
+        drop_company_name: params.drop_details.drop_company_name,
+        order_date: getCurrentDateAndTime()
       };
 
       if (promoCodeResponse) {
