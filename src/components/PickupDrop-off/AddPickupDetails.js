@@ -197,7 +197,7 @@ const AddPickupdetails = ({route, navigation}) => {
         userDetails.package_photo = packageImageId;
       }
       route.params.userDetails = userDetails;
-      navigation.navigate('PickupOrderPreview', {props: route.params});
+      navigation.navigate('AddDropDetails', {props: route.params});
     }
   };
 
