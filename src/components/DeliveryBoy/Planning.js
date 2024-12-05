@@ -43,8 +43,31 @@ const Planning = ({navigation}) => {
   const [selected, setSelected] = useState(getCurrentDate());
 
   useEffect(() => {
-    getLocationsData();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getLocationsData();
+      getDeliveryBoyPlannningList(selected);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const onPressPlanningFilter = probs => {
+    setOrderList([]);
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+      ...probs,
+    };
+    getDeliveryBoyListUsingDate(
+      params,
+      succesResponse => {
+        let tempOrderList = succesResponse[0]._response;
+        setOrderList(tempOrderList);
+      },
+      errorResponse => {
+        console.log('print_data==>', JSON.stringify(errorResponse));
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -77,6 +100,7 @@ const Planning = ({navigation}) => {
       size: 10,
       planning_date: selectedDate,
     };
+    console.log('print_data===>post', params);
     getDeliveryBoyListUsingDate(
       params,
       succesResponse => {
@@ -94,10 +118,7 @@ const Planning = ({navigation}) => {
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
         <Text style={styles.deliveryTime}>
-          Delivered on{' '}
-          {moment(new Date(planningItem.item.delivery_date)).format(
-            'DD MMMM YYYY hh:mm a',
-          )}
+          {planningItem.item.consumer_order_title}
         </Text>
       </View>
 
@@ -137,7 +158,7 @@ const Planning = ({navigation}) => {
       <View style={{backgroundColor: '#fff'}}>
         <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Planning</Text>
+            <Text style={styles.headerText}>Availability</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity onPress={() => toggleModal()}>
                 <AntDesign name="filter" size={25} color={colors.secondary} />
@@ -221,6 +242,7 @@ const Planning = ({navigation}) => {
       <PlaningFilterModal
         isModalVisible={isModalVisible}
         setModalVisible={setModalVisible}
+        onPressPlanningFilter={onPressPlanningFilter}
       />
     </View>
   );

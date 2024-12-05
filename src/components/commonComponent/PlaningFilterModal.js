@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  FlatList,
+} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -7,18 +14,58 @@ import {colors} from '../../colors';
 import {TextInput} from 'react-native-gesture-handler';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {getCompanyList} from '../../data_manager';
+import {useUserDetails} from './StoreContext';
 
-function PlaningFilterModal({setModalVisible, isModalVisible}) {
+function PlaningFilterModal({
+  setModalVisible,
+  isModalVisible,
+  onPressPlanningFilter,
+}) {
   const [fromDate, setFromDate] = useState(new Date());
   const [fromDateOpen, setFromDateOpen] = useState(false);
-  const [fromPickupDate, setFromPickupDate] = useState('');
+  const [fromPickupDate, setFromPickupDate] = useState(moment(new Date()).format('DD/MM/YYYY'));
   const [toDate, setToDate] = useState(new Date());
   const [toDateOpen, setToDateOpen] = useState(false);
-  const [toPickupDate, setToPickupDate] = useState('');
+  const [toPickupDate, setToPickupDate] = useState(moment(new Date()).format('DD/MM/YYYY'));
   const [formdate, setFormdate] = useState('');
+  const [day, setDay] = useState(0);
+  const [companyList, setCompanyList] = useState([]);
+  const {userDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  useEffect(() => {
+    getCompanyConnectionList();
+  }, []);
+
+  const renderCompanyItem = ({item}) => (
+    <View style={styles.companyInfo}>
+      <Image
+        style={styles.companyLogosImage}
+        source={require('../../image/Subway-logo.png')}
+      />
+      <Text style={styles.companyNames}>{item.company_name}</Text>
+    </View>
+  );
+
+  const getCompanyConnectionList = () => {
+    getCompanyList(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setCompanyList(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        console.log(
+          'getCompanyConnectionList==>errorResponse',
+          '' + JSON.stringify(errorResponse[0]),
+        );
+      },
+    );
   };
 
   return (
@@ -39,6 +86,7 @@ function PlaningFilterModal({setModalVisible, isModalVisible}) {
                 open={fromDateOpen}
                 date={fromDate}
                 mode="date"
+                minimumDate={new Date()}
                 onConfirm={date => {
                   setFromDateOpen(false);
                   setFromDate(date);
@@ -72,6 +120,7 @@ function PlaningFilterModal({setModalVisible, isModalVisible}) {
                 open={toDateOpen}
                 date={toDate}
                 mode="date"
+                minimumDate={new Date()}
                 onConfirm={date => {
                   setToDateOpen(false);
                   setToDate(date);
@@ -105,33 +154,117 @@ function PlaningFilterModal({setModalVisible, isModalVisible}) {
                 Filter by a day of the week
               </Text>
               <View style={styles.dayCard}>
-                <TouchableOpacity>
-                  <Text style={styles.dayByFilter}>Su</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDay(2);
+                  }}>
+                  <Text
+                    style={[
+                      styles.dayByFilter,
+                      {
+                        backgroundColor:
+                          day == 2 ? colors.secondary : colors.white,
+                      },
+                    ]}>
+                    Su
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Text style={styles.dayByFilter}>Mo</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDay(3);
+                  }}>
+                  <Text
+                    style={[
+                      styles.dayByFilter,
+                      {
+                        backgroundColor:
+                          day == 3 ? colors.secondary : colors.white,
+                      },
+                    ]}>
+                    Mo
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Text style={styles.dayByFilter}>Tu</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDay(4);
+                  }}>
+                  <Text
+                    style={[
+                      styles.dayByFilter,
+                      {
+                        backgroundColor:
+                          day == 4 ? colors.secondary : colors.white,
+                      },
+                    ]}>
+                    Tu
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Text style={styles.dayByFilter}>We</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDay(5);
+                  }}>
+                  <Text
+                    style={[
+                      styles.dayByFilter,
+                      {
+                        backgroundColor:
+                          day == 5 ? colors.secondary : colors.white,
+                      },
+                    ]}>
+                    We
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Text style={styles.dayByFilter}>Th</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDay(6);
+                  }}>
+                  <Text
+                    style={[
+                      styles.dayByFilter,
+                      {
+                        backgroundColor:
+                          day == 6 ? colors.secondary : colors.white,
+                      },
+                    ]}>
+                    Th
+                  </Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.dayCard}>
-                <TouchableOpacity>
-                  <Text style={styles.dayByFilter}>Fr</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDay(7);
+                  }}>
+                  <Text
+                    style={[
+                      styles.dayByFilter,
+                      {
+                        backgroundColor:
+                          day == 7 ? colors.secondary : colors.white,
+                      },
+                    ]}>
+                    Fr
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Text style={styles.dayByFilter}>Sa</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDay(1);
+                  }}>
+                  <Text
+                    style={[
+                      styles.dayByFilter,
+                      {
+                        backgroundColor:
+                          day == 1 ? colors.secondary : colors.white,
+                      },
+                    ]}>
+                    Sa
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -143,40 +276,28 @@ function PlaningFilterModal({setModalVisible, isModalVisible}) {
             </View>
 
             <View style={styles.companyLogoCard}>
-              <View style={styles.companyInfo}>
-                <Image
-                  style={styles.companyLogosImage}
-                  source={require('../../image/Subway-logo.png')}
+              {companyList.length === 0 ? (
+                <Text style={styles.userName}>No Company Details</Text>
+              ) : (
+                <FlatList
+                  data={companyList}
+                  horizontal
+                  renderItem={renderCompanyItem}
+                  keyExtractor={item => item.id.toString()} // Add keyExtractor if needed
                 />
-                <Text style={styles.companyNames}>Company Name</Text>
-              </View>
-
-              <View style={styles.companyInfo}>
-                <Image
-                  style={styles.companyLogosImage}
-                  source={require('../../image/Levis-logo.png')}
-                />
-                <Text style={styles.companyNames}>Company Name</Text>
-              </View>
-
-              <View style={styles.companyInfo}>
-                <Image
-                  style={styles.companyLogosImage}
-                  source={require('../../image/Nike-logo.png')}
-                />
-                <Text style={styles.companyNames}>Company Name</Text>
-              </View>
-
-              <View style={styles.companyInfo}>
-                <Image
-                  style={styles.companyLogosImage}
-                  source={require('../../image/Spark-logo.png')}
-                />
-                <Text style={styles.companyNames}>Company Name</Text>
-              </View>
+              )}
             </View>
           </View>
-          <TouchableOpacity style={styles.buttonCard}>
+          <TouchableOpacity
+            style={styles.buttonCard}
+            onPress={() => {
+              toggleModal(false);
+              onPressPlanningFilter({
+                planning_from_date: fromDate,
+                planning_to_date: toDate,
+                day: day,
+              });
+            }}>
             <Text style={styles.okButton}>Apply</Text>
           </TouchableOpacity>
         </View>

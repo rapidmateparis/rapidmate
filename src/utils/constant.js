@@ -52,6 +52,7 @@ export const API = {
   cityList: BASE_URL + 'city',
   vehicles: BASE_URL + 'vehicles',
   viewDeliveryBoyOrderUrl: BASE_URL + 'order/deliveryboy/',
+  viewDeliveryBoyDashboardOrderUrl: BASE_URL + 'order/deliveryboy/dashboard/',
   viewConsumerOrderUrl: BASE_URL + 'order/consumer/',
   payment: BASE_URL + 'payment',
   documentsUpload: BASE_URL + 'documents/upload',
@@ -79,6 +80,7 @@ export const API = {
   getFaqListUrl: BASE_URL + 'faq',
   enterprisebranchCreate: BASE_URL + 'enterprisebranch',
   cancelOrderUrl: BASE_URL + 'order/cancel',
+  cancelOrderEnterpriseUrl: BASE_URL + 'enterprise/order/cancel',
   deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
   checkPromoCodeUrl: BASE_URL + 'promocode/check',
   orderRequestActionUrl: BASE_URL + 'order/deliveryboy/request/action',
@@ -105,4 +107,5 @@ export const API = {
   verifyOrderOTP: BASE_URL + 'order/otp/verify',
   verifyOrderDeliveryOTP: BASE_URL + 'order/delivered/otp/verify',
   enterprisePaymentMethodUrl: BASE_URL + 'enterprise/paymentmethod',
+  searchOrder: BASE_URL + 'enterprise/order/search',
 };

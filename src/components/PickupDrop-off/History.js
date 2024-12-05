@@ -25,6 +25,7 @@ import {RefreshControl} from 'react-native-gesture-handler';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
+import { color } from 'react-native-reanimated';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -492,6 +493,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   searchinput: {
+    color: colors.text,
     flex: 1,
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',

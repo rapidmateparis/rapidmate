@@ -249,7 +249,7 @@ const EnterpriseSignup = ({navigation}) => {
           firstName: name,
           lastName: lastname,
           companyName: companyName,
-          deliveryMonthHours: deliveries + 'hours',
+          deliveryMonthHours: deliveries,
           description: comments,
           industryId: dropdownIndustryValue.toString(),
           city: dropdownCityValue.toString(),

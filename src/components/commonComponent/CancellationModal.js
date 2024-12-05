@@ -42,7 +42,7 @@ function CancellationModal({
       submitCancelOrder(selectedReason);
       setSelectedReason(null);
       toggleModal(); // Optionally close the modal
-      navigation.navigate('PickupOrderCancelled'); // Navigate to the PickupOrderCancelled screen
+      // navigation.navigate('PickupOrderCancelled'); // Navigate to the PickupOrderCancelled screen
     } else {
       Alert.alert('Selection Required', 'Please select a cancellation reason.');
     }

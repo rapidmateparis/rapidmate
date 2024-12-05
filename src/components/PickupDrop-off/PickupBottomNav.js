@@ -25,18 +25,10 @@ import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {getViewOrderDetail, updateUserProfile} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
-import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
-import {set} from 'react-native-reanimated';
 
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
-  const [
-    isDeliveryBoyAcceptRejectModalModalVisible,
-    setDeliveryBoyAcceptRejectModalModalVisible,
-  ] = useState(false);
-  const [deliveryBoyAcceptRejectMessage, setDeliveryBoyAcceptRejectMessage] =
-    useState();
 
   useEffect(() => {
     const onBackPress = () => {
@@ -69,13 +61,12 @@ const PickupBottomNav = ({navigation}) => {
 
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      setDeliveryBoyAcceptRejectModalModalVisible(true);
       console.log('remoteMessage', JSON.stringify(remoteMessage));
       getViewOrderDetail(
         remoteMessage.data?.orderNumber,
         successResponse => {
           if (successResponse[0]._success) {
-            setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+            // setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
           }
         },
         errorResponse => {
@@ -247,16 +238,6 @@ const PickupBottomNav = ({navigation}) => {
           }}
         />
       </Bottom.Navigator>
-
-      <DeliveryBoyAcceptRejectModal
-        isDeliveryBoyAcceptRejectModalModalVisible={
-          isDeliveryBoyAcceptRejectModalModalVisible
-        }
-        setDeliveryBoyAcceptRejectModalModalVisible={
-          setDeliveryBoyAcceptRejectModalModalVisible
-        }
-        deliveryBoyAcceptRejectMessage={deliveryBoyAcceptRejectMessage}
-      />
     </>
   );
 };

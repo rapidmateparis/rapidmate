@@ -19,10 +19,12 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {
   cancelOrderConsumer,
+  cancelOrderEnterprise,
   downloadInvoiceOrder,
   getAllocatedDeliveryBoy,
   getAVehicleByTypeId,
   getLocationById,
+  getLocations,
   getViewEnterpriseOrderDetail,
   getViewOrderDetail,
 } from '../../data_manager';
@@ -38,13 +40,15 @@ const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
   const orderNumber = route.params?.orderItem?.order_number;
   const componentType = route.params?.componentType;
-  const [order, serOrder] = useState({});
+  const [order, setOrder] = useState({});
   const [deliveryboy, setDeliveryboy] = useState({});
+  const [vehicle, setVehicle] = useState({});
   const [sourceAddress, setSourceAddress] = useState({});
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
+  const [locations, setLocations] = useState([]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -83,6 +87,8 @@ const DeliveryDetails = ({navigation, route}) => {
     }
   }, []);
 
+  useEffect(() => {}, [locations]);
+
   const enterpriseOrderDetail = () => {
     setLoading(true);
     getViewEnterpriseOrderDetail(
@@ -90,7 +96,11 @@ const DeliveryDetails = ({navigation, route}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order);
+          let data = successResponse[0]._response.order;
+          if (data.orderLines && data.orderLines.length > 0) {
+            getAllLocations();
+          }
+          setOrder(data);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location,
@@ -115,18 +125,43 @@ const DeliveryDetails = ({navigation, route}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order);
+          setOrder(successResponse[0]._response.order);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
+          if (successResponse[0]._response.vehicle) {
+            setVehicle(successResponse[0]._response.vehicle);
+          }
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location_id,
           );
-          getSourceAddress(successResponse[0]._response.order.pickup_location_id);
+          getSourceAddress(
+            successResponse[0]._response.order.pickup_location_id,
+          );
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
       },
       errorResponse => {
         setLoading(false);
         console.log('orderDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getAllLocations = async () => {
+    setLoading(true);
+    getLocations(
+      null,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setLocations(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('locations==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -201,21 +236,48 @@ const DeliveryDetails = ({navigation, route}) => {
       cancel_reason_id: selectedReason.id,
       cancel_reason: selectedReason.reason,
     };
-    cancelOrderConsumer(
-      params,
-      successResponse => {
-        setLoading(false);
-        console.log(
-          'order_cancel===>successResponse',
-          '' + JSON.stringify(successResponse),
-        );
-        navigation.navigate('PickupOrderCancelled');
-      },
-      errorResponse => {
-        setLoading(false);
-        console.log('order_cancel===>errorResponse', '' + errorResponse);
-      },
-    );
+    if (componentType == 'ENTERPRISE') {
+      // navigation.navigate('EnterpriseOrderCancelled');
+      cancelOrderEnterprise(
+        params,
+        successResponse => {
+          setLoading(false);
+          console.log(
+            'enterprise_order_cancel===>successResponse',
+            '' + JSON.stringify(successResponse),
+          );
+          navigation.navigate('EnterpriseOrderCancelled');
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log(
+            'enterprise_order_cancel===>errorResponse',
+            '' + errorResponse,
+          );
+          Alert.alert('Success', errorResponse[0]._errors.message, [
+            {
+              text: 'Okay',
+            },
+          ]);
+        },
+      );
+    } else {
+      cancelOrderConsumer(
+        params,
+        successResponse => {
+          setLoading(false);
+          console.log(
+            'order_cancel===>successResponse',
+            '' + JSON.stringify(successResponse),
+          );
+          navigation.navigate('PickupOrderCancelled');
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log('order_cancel===>errorResponse', '' + errorResponse);
+        },
+      );
+    }
   };
 
   const openPDFWithNativeViewer = async filePath => {
@@ -328,7 +390,7 @@ const DeliveryDetails = ({navigation, route}) => {
               />
               <View style={{marginLeft: 10}}>
                 <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
-                <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
+                <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
           ) : (
@@ -351,10 +413,29 @@ const DeliveryDetails = ({navigation, route}) => {
             <Text style={styles.companyInfo}>
               {order.company_name ? order.company_name : 'Company Name'}
             </Text>
-            <Text style={styles.dropInfo}>
-              {destinationAddress.address}, {destinationAddress.city},{' '}
-              {destinationAddress.state}
-            </Text>
+            {order.orderLines && order.orderLines.length > 0 ? (
+              <View>
+                {order.orderLines.map((item, index) => {
+                  var branch = locations.filter(
+                    i => i.id == item.dropoff_location,
+                  );
+                  return (
+                    <Text style={styles.dropInfo}>
+                      {branch[0] && branch[0].address},{' '}
+                      {branch[0] && branch[0].city},{' '}
+                      {branch[0] && branch[0].state}
+                    </Text>
+                  );
+                })}
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.dropInfo}>
+                  {destinationAddress.address}, {destinationAddress.city},{' '}
+                  {destinationAddress.state}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -411,23 +492,39 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
           </View>
         </View>
-
         <View style={styles.packageInformationCard}>
           <Text style={styles.packageTitle}>Package information</Text>
           <Text style={styles.orderdetails}>
             Order ID:<Text style={styles.detailsId}> {order.order_number}</Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Comments:
-            <Text style={styles.detailsId}>{order.pickup_notes}</Text>
+            Comments:{' '}
+            <Text style={styles.detailsId}>
+              {order.pickup_notes || '-'}
+            </Text>
           </Text>
           <Text style={styles.orderdetails}>
             Vehicle:
             <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
+          <Text style={styles.orderdetails}>
+            OTP:
+            <Text style={styles.detailsId}>
+              {' '}
+              {route.params?.orderItem?.otp}
+            </Text>
+          </Text>
+
+          <Text style={styles.orderdetails}>
+            Delivered OTP:
+            <Text style={styles.detailsId}>
+              {' '}
+              {route.params?.orderItem?.delivered_otp}
+            </Text>
+          </Text>
         </View>
 
-        <TouchableOpacity
+        {route?.params?.orderItem?.order_status === 'COMPLETED'&&<TouchableOpacity
           style={styles.packageInvoiceCard}
           onPress={downloadInvoiceFile}>
           <View style={styles.invoiceCard}>
@@ -442,14 +539,16 @@ const DeliveryDetails = ({navigation, route}) => {
               color="#FF0058"
             />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
-
-      <TouchableOpacity
-        onPress={() => toggleModal()}
-        style={styles.requestTouch}>
-        <Text style={styles.cancelRequest}>Cancel request</Text>
-      </TouchableOpacity>
+      
+      {order.is_enable_cancel_request == 1 ? (
+        <TouchableOpacity
+          onPress={() => toggleModal()}
+          style={styles.requestTouch}>
+          <Text style={styles.cancelRequest}>Cancel request</Text>
+        </TouchableOpacity>
+      ) : null}
 
       {/* CancellationModal Modal  */}
       <CancellationModal
@@ -520,6 +619,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
+    marginBottom: 10,
   },
   companyAddress: {
     fontSize: 12,

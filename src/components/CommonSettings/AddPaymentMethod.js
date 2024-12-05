@@ -123,22 +123,22 @@ const AddPaymentMethod = ({navigation}) => {
   }
 
   return (
-    <View style={{backgroundColor: '#FBFAF5', flex: 1}}>
+    <View style={{backgroundColor: '#FBFAF5', flex: 1, height:'100%'}}>
       <View style={{paddingHorizontal: 15, flex: 1}}>
-        <View style={styles.addressCard}>
-          <Image source={require('../../image/debitCard.png')} />
-          <View style={{marginLeft: 5, flex: 1}}>
-            <Text style={styles.paymentPlateform}>Debit/credit card</Text>
-          </View>
-          <TouchableOpacity onPress={toggleCardAdd}>
+        <TouchableOpacity onPress={toggleCardAdd}>
+          <View style={styles.addressCard}>
+            <Image source={require('../../image/debitCard.png')} />
+            <View style={{marginLeft: 5, flex: 1}}>
+              <Text style={styles.paymentPlateform}>Debit/credit card</Text>
+            </View>
             <AntDesign name="down" size={15} color="#00000080" />
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
         {toggleCheckBox && (
           <View
             style={{
               backgroundColor: colors.white,
-              height: '55%',
+              height: '65%',
               paddingHorizontal: 15,
             }}>
             <View>
@@ -211,10 +211,10 @@ const AddPaymentMethod = ({navigation}) => {
           </TouchableOpacity>
         </View> */}
       </View>
-      <Image
+      {/* <Image
         style={styles.bgImages}
         source={require('../../image/online_payments_bg.png')}
-      />
+      /> */}
     </View>
   );
 };
@@ -270,6 +270,8 @@ const styles = StyleSheet.create({
     width: '80%',
     resizeMode: 'contain',
     opacity: 0.6,
+    bottom:10,
+    position: 'absolute',
   },
   textlable: {
     fontFamily: 'Montserrat-Medium',

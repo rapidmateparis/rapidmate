@@ -242,11 +242,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
 
           <View style={styles.vehicleTypePrice}>
             <Text style={styles.selectServiceTitle}>Select vehicle type</Text>
-            {selectedVehiclePrice && (
-              <Text style={styles.selectedVehiclePrice}>
-                {selectedVehiclePrice}
-              </Text>
-            )}
+            <Text style={styles.selectedVehiclePrice}>
+              {selectedVehiclePrice && selectedVehiclePrice.toFixed(2)}
+            </Text>
           </View>
         </View>
 

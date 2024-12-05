@@ -1,26 +1,41 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import {TextInput} from 'react-native-gesture-handler';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
-function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
+const EnterpriseShiftFillter = props => {
   const [selectedType, setSelectedType] = useState(null);
+  const [fromDate, setFromDate] = useState(new Date());
+  const [fromDateOpen, setFromDateOpen] = useState(false);
+  const [fromPickupDate, setFromPickupDate] = useState('');
+  const [toDate, setToDate] = useState(new Date());
+  const [toDateOpen, setToDateOpen] = useState(false);
+  const [toPickupDate, setToPickupDate] = useState('');
 
   const handleTypeSelect = type => {
     setSelectedType(type);
   };
+
+  useEffect(() => {
+    setFromDate(new Date());
+    setToDate(new Date());
+  }, []);
+
   const toggleShiftModal = () => {
-    setShiftModalVisible(!isShiftModalVisible);
+    props.setShiftModalVisible(!props.isShiftModalVisible);
   };
-  const [formdate, setFormdate] = useState('');
-  const [todate, setTodate] = useState('');
+  const applyModal = () => {
+    props.onFilterSelected({fromDate: fromDate, toDate: toDate});
+  };
 
   return (
-    <View style={{flex: 1}}>
-      <Modal isVisible={isShiftModalVisible}>
+    <View>
+      <Modal isVisible={props.isShiftModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerTitle}>Apply filters</Text>
@@ -31,16 +46,31 @@ function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
           <View style={styles.modalCard}>
             <Text style={styles.textlable}>From date</Text>
             <View style={styles.textInputDiv}>
+              <DatePicker
+                modal
+                open={fromDateOpen}
+                date={fromDate}
+                mode="date"
+                minimumDate={new Date()}
+                onConfirm={date => {
+                  setFromDateOpen(false);
+                  setFromDate(date);
+                  setFromPickupDate(moment(date).format('DD/MM/YYYY'));
+                }}
+                onCancel={() => {
+                  setFromDateOpen(false);
+                }}
+              />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Select"
+                placeholder="DD/MM/YYYY"
                 placeholderTextColor="#999"
-                value={formdate}
-                onChangeText={text => setFormdate(text)}
+                editable={false}
+                value={fromPickupDate}
               />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setFromDateOpen(true)}>
                 <Feather
-                  name="calendar" // Change the icon based on passwordVisible state
+                  name="calendar"
                   size={20}
                   color="#FFC72B"
                   style={{marginTop: 15}}
@@ -50,16 +80,31 @@ function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
 
             <Text style={styles.textlable}>To date</Text>
             <View style={styles.textInputDiv}>
+              <DatePicker
+                modal
+                open={toDateOpen}
+                date={toDate}
+                mode="date"
+                minimumDate={new Date()}
+                onConfirm={date => {
+                  setToDateOpen(false);
+                  setToDate(date);
+                  setToPickupDate(moment(date).format('DD/MM/YYYY'));
+                }}
+                onCancel={() => {
+                  setToDateOpen(false);
+                }}
+              />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Select"
+                placeholder="DD/MM/YYYY"
                 placeholderTextColor="#999"
-                value={todate}
-                onChangeText={text => setTodate(text)}
+                editable={false}
+                value={toPickupDate}
               />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setToDateOpen(true)}>
                 <Feather
-                  name="calendar" // Change the icon based on passwordVisible state
+                  name="calendar"
                   size={20}
                   color="#FFC72B"
                   style={{marginTop: 15}}
@@ -67,9 +112,9 @@ function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.borderShowOff}></View>
+            {/* <View style={styles.borderShowOff}></View> */}
 
-            <View>
+            {/* <View>
               <Text style={styles.deliveryTypesText}>Delivery type</Text>
               <View style={styles.deliveryTypesCard}>
                 <TouchableOpacity onPress={() => handleTypeSelect('one-time')}>
@@ -100,18 +145,18 @@ function EnterpriseShiftFillter({setShiftModalVisible, isShiftModalVisible}) {
                   </Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </View> */}
 
             <View style={styles.borderShowOff}></View>
           </View>
-          <TouchableOpacity style={styles.buttonCard}>
+          <TouchableOpacity onPress={applyModal} style={styles.buttonCard}>
             <Text style={styles.okButton}>Apply</Text>
           </TouchableOpacity>
         </View>
       </Modal>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   modalContent: {
@@ -187,6 +232,7 @@ const styles = StyleSheet.create({
   },
   loginput: {
     fontSize: 14,
+    color: colors.text,
     paddingHorizontal: 10,
     width: '90%',
   },
