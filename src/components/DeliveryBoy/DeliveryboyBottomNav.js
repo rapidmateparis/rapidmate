@@ -47,30 +47,35 @@ const DeliveryboyBottomNav = ({navigation}) => {
 
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      setDeliveryBoyAcceptRejectModalModalVisible(true);
-      console.log('remoteMessage', JSON.stringify(remoteMessage));
-      getViewOrderDetail(
-        remoteMessage.data?.orderNumber,
-        successResponse => {
-          setLoading(false);
-          if (successResponse[0]._success) {
-            setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
-            setDeliveryBoyAcceptRejectModalModalVisible(false);
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          console.log('orderDetail==>errorResponse', errorResponse[0]);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {
-              text: 'OK',
-              onPress: () => {
+      console.log('remoteMessage ', JSON.stringify(remoteMessage));
+      if(remoteMessage?.data?.orderStatus === 'COMPLETED') {
+        // do nothing
+      } else if(remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
+        setDeliveryBoyAcceptRejectModalModalVisible(true);
+        getViewOrderDetail(
+          remoteMessage.data?.orderNumber,
+          successResponse => {
+            setLoading(false);
+            if (successResponse[0]._success) {
+              setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+              setTimeout(()=>{
                 setDeliveryBoyAcceptRejectModalModalVisible(false);
+              },10000)
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  setDeliveryBoyAcceptRejectModalModalVisible(false);
+                },
               },
-            },
-          ]);
-        },
-      );
+            ]);
+          },
+        );
+      }
     });
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Background Msg!!!!', JSON.stringify(remoteMessage));

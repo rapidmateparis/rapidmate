@@ -524,7 +524,7 @@ const DeliveryDetails = ({navigation, route}) => {
           </Text>
         </View>
 
-        <TouchableOpacity
+        {route?.params?.orderItem?.order_status === 'COMPLETED'&&<TouchableOpacity
           style={styles.packageInvoiceCard}
           onPress={downloadInvoiceFile}>
           <View style={styles.invoiceCard}>
@@ -539,7 +539,7 @@ const DeliveryDetails = ({navigation, route}) => {
               color="#FF0058"
             />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
       
       {order.is_enable_cancel_request == 1 ? (

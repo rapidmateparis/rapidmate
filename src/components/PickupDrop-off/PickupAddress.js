@@ -262,7 +262,7 @@ const PickupAddress = ({route, navigation}) => {
           onSourceLocation={onSourceLocation}
           onDestinationLocation={onDestinationLocation}
         />
-        {route?.params?.pickupService?.id == 2 && (
+        {route?.params?.pickupService?.id == 1 && (
           <View style={styles.dateCard}>
             <EvilIcons name="calendar" size={25} color="#000" />
             <Text style={styles.dateCardText}>
