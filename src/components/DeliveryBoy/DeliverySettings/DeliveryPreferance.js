@@ -98,7 +98,7 @@ const DeliveryPreferance = ({navigation}) => {
         <Text style={[styles.logInText, {color: colors.text}]}>
           Select how would you like to work?
         </Text>
-        <View style={{marginTop: 35}}>
+        <View style={{marginTop: 20}}>
           {deliveryPreferenceList.map(item => (
             <TouchableOpacity
               style={styles.profileCard}
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     width: '65%',
   },
   roleText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
   },
@@ -227,25 +227,25 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '20%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 150,
+    marginBottom: 30,
   },
   profileCard: {
     marginBottom: 10,
   },
   disabledButton: {
     width: '100%',
-    marginTop: '20%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FCF9EA',
-    marginBottom: 150,
+    marginBottom: 30,
   },
   roleTypeText: {
     fontSize: 18,

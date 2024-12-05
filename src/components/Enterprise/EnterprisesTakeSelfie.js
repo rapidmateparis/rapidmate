@@ -209,10 +209,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 50,
+    marginVertical: 40,
   },
   statusTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingVertical: 30,
-    marginTop: '30%',
+    marginTop: 90,
   },
   logbutton: {
     width: '45%',

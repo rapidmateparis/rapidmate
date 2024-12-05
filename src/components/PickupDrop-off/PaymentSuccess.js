@@ -32,7 +32,6 @@ const PaymentSuccess = ({navigation}) => {
           width: 350,
           height: 500,
           position: 'relative',
-          marginVertical: 30,
         }}>
         <View style={styles.container}>
           <Image

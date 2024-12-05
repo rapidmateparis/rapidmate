@@ -102,9 +102,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       orderOPTVerifyForDelivery(
         params,
         successResponse => {
-          Alert.alert(
-            'Success',
-            '' + JSON.stringify(successResponse[0]._response),
+          Alert.alert('Success', 'Delivered OTP Verified Successfully',
             [
               {
                 text: 'OK',
@@ -455,6 +453,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             flexDirection: 'row',
             justifyContent: 'space-evenly',
             marginTop: 7,
+            marginBottom: 10,
           }}>
           <TouchableOpacity
             onPress={() => {
@@ -483,7 +482,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   updateStatus == 'Ready to pickup' ? '#D9D9D9' : '#FF0058'
                 }
               />
-              <Text style={styles.statusInfo}>Picked up</Text>
+              <Text style={styles.statusInfo}>Going to pickup</Text>
             </View>
             <View style={styles.borderStyle} />
 
@@ -717,7 +716,7 @@ const styles = StyleSheet.create({
   borderStyle: {
     borderWidth: 1,
     borderColor: '#f1f1f1',
-    width: 50,
+    width: 42,
   },
   deliveryinfo: {
     flexDirection: 'row',
