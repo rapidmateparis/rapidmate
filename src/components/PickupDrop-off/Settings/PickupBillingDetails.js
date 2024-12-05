@@ -43,10 +43,11 @@ const PickupBillingDetails = ({navigation}) => {
   const [masterCityList, setMasterCityList] = useState(null);
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
+  const [billingDetails, setBillingDetails] = useState({});
 
   const account = [
-    {label: 'Individual', value: 'Individual'},
-    {label: 'Company', value: 'Company'},
+    {label: 'Individual', value: 1},
+    {label: 'Company', value: 2},
   ];
 
   useEffect(() => {
@@ -144,6 +145,8 @@ const PickupBillingDetails = ({navigation}) => {
         setDropdownCityValue(resultResponse.city_id);
         setPostalCode(resultResponse.postal_code);
         setDNINumber(resultResponse.dni_number);
+        setAccountType(resultResponse.account_type);
+        setBillingDetails(resultResponse);
       },
       errorResponse => {
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
@@ -152,6 +155,34 @@ const PickupBillingDetails = ({navigation}) => {
       },
     );
   }, []);
+
+  useEffect(()=>{
+    if(masterStateList?.length > 0){
+    var formattedStateList = [];
+      masterStateList.forEach(element => {
+        if (billingDetails.country_id == element.country_id) {
+          formattedStateList.push({
+            label: element.state_name,
+            value: element.id,
+          });
+        }
+      });
+      setStateList(formattedStateList);
+    }
+
+    if(masterCityList?.length > 0){
+      var formattedCityList = [];
+        masterCityList.forEach(element => {
+          if (billingDetails.state_id == element.state_id) {
+            formattedCityList.push({
+              label: element.city_name,
+              value: element.id,
+            });
+          }
+        });
+        setCityList(formattedCityList);
+      }
+  },[billingDetails,masterCityList,masterStateList])
 
   const submitBillingDetails = () => {
     let params = {
@@ -164,12 +195,13 @@ const PickupBillingDetails = ({navigation}) => {
       country_id: dropdownCountryValue.toString(),
       dni_number: dninumber,
       postal_code: postalcode,
+      account_type:accountType
     };
 
     addConsumerBillingDetails(
       params,
       successResponse => {
-        Alert.alert('Success', successResponse[0]._response.message, [
+        Alert.alert('Success', 'Billing details updated successfully', [
           {
             text: 'OK',
             onPress: () => {
