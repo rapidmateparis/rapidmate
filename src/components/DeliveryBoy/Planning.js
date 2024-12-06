@@ -15,10 +15,13 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {colors} from '../../colors';
 import PlaningFilterModal from '../commonComponent/PlaningFilterModal';
-import {getDeliveryBoyListUsingDate, getLocations} from '../../data_manager';
+import {
+  getCalendarPlanDate,
+  getDeliveryBoyListUsingDate,
+  getLocations,
+} from '../../data_manager';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
-import moment from 'moment';
 
 const Planning = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -26,6 +29,7 @@ const Planning = ({navigation}) => {
   const {lookupData} = useLookupData();
   const [orderList, setOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
+  const [calendarData, setCalendarData] = useState();
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -46,10 +50,49 @@ const Planning = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       getLocationsData();
       getDeliveryBoyPlannningList(selected);
+      getCalendarDate();
     });
 
     return unsubscribe;
   }, [navigation]);
+
+  const getCalendarDate = () => {
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+    };
+    getCalendarPlanDate(
+      params,
+      succesResponse => {
+        let tempDateList = succesResponse[0]._response;
+        const transformedObject = tempDateList.calendarData.reduce(
+          (acc, date) => {
+            acc[date] = {marked: true};
+            return acc;
+          },
+          {},
+        );
+        const combinedConfig = {
+          ...transformedObject,
+          [selected]: {
+            selected: true,
+            disableTouchEvent: true,
+            selectedColor: colors.primary,
+          },
+          [getCurrentDate()]: {
+            selected: true,
+            selectedColor: colors.secondary,
+          },
+        };
+        setCalendarData(combinedConfig);
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>getCalendarPlanDate',
+          JSON.stringify(errorResponse),
+        );
+      },
+    );
+  };
 
   const onPressPlanningFilter = probs => {
     setOrderList([]);
@@ -180,17 +223,7 @@ const Planning = ({navigation}) => {
             setSelected(day.dateString);
             getDeliveryBoyPlannningList(day.dateString);
           }}
-          markedDates={{
-            [selected]: {
-              selected: true,
-              disableTouchEvent: true,
-              selectedColor: colors.primary,
-            },
-            [getCurrentDate()]: {
-              selected: true,
-              selectedColor: colors.secondary,
-            },
-          }}
+          markedDates={calendarData}
           theme={{
             backgroundColor: '#ffffff',
             calendarBackground: '#ffffff',

@@ -769,7 +769,11 @@ export const cancelOrderConsumer = (params, successCallback, errorCallback) => {
   );
 };
 
-export const cancelOrderEnterprise = (params, successCallback, errorCallback) => {
+export const cancelOrderEnterprise = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
   axiosCall(
     API.cancelOrderEnterpriseUrl,
     HTTPMethod.POST,
@@ -1321,3 +1325,16 @@ export const searchOrderApi = (params, successCallback, errorCallback) => {
   );
 };
 
+export const getCalendarPlanDate = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.calendarPlanDate + params.delivery_boy_ext_id,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
