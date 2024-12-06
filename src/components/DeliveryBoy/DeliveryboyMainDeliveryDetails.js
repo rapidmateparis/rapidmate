@@ -27,8 +27,6 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
   const [pickUpLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
 
-  console.log("order details", orderDetails)
-
   useEffect(() => {
     getLocationInfoById(orderDetails.pickup_location_id, 0);
     getLocationInfoById(orderDetails.dropoff_location_id, 1);
@@ -150,7 +148,11 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
+            <Text style={styles.companyInfo}>
+              {orderDetails.drop_company_name
+                ? orderDetails.drop_company_name
+                : 'Company Name'}
+            </Text>
             <Text style={styles.dropInfo}>
               {dropOffLocation.address}, {dropOffLocation.city},{' '}
               {dropOffLocation.state}
