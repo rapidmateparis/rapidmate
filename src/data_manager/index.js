@@ -223,7 +223,11 @@ export const getDeliveryBoyViewOrdersList = (
       '?status=' +
       postParams.status +
       '&orderType=' +
-      postParams.orderType,
+      postParams.orderType +
+      '&page=' +
+      postParams.page +
+      '&size=' +
+      postParams.size,
     HTTPMethod.GET,
     params,
     response => {

@@ -16,6 +16,7 @@ export async function axiosCall(
       'Content-Type': 'application/json',
       'Cache-Control': 'no-cache',
       'Access-Control-Allow-Origin': '*',
+      'time_zone':Intl.DateTimeFormat().resolvedOptions().timeZone
     },
   });
   const token = await AsyncStorage.getItem('rapidToken');

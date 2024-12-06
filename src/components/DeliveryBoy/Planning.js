@@ -156,8 +156,17 @@ const Planning = ({navigation}) => {
     );
   };
 
-  const renderPlanningList = planningItem => (
-    <View style={styles.packageDetailCard}>
+  const navigateToDeliveryBoyDeliveryDetails=(details)=>{
+    navigation.navigate('DeliveryboyDeliveryDetails', {
+      order_number: details.order_number,
+      package_photo: details.package_photo,
+      orderItem: details,
+    });
+  }
+
+  const renderPlanningList = planningItem =>{
+    return(
+    <TouchableOpacity style={styles.packageDetailCard} onPress={()=>navigateToDeliveryBoyDeliveryDetails(planningItem.item)}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
         <Text style={styles.deliveryTime}>
@@ -193,8 +202,8 @@ const Planning = ({navigation}) => {
           For {planningItem.item.company_name}
         </Text>
       </View>
-    </View>
-  );
+    </TouchableOpacity>
+  )};
 
   return (
     <View style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>

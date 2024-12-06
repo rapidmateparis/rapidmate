@@ -123,6 +123,7 @@ import EnterpriseDriverNotAvailable from './components/Enterprise/EnterpriseSett
 import AddDropDetails from './components/PickupDrop-off/AddDropDetails';
 import WithdrawPayment from './components/PickupDrop-off/Settings/WithdrawPayment';
 import WithdrawAmountTransfered from './components/PickupDrop-off/Settings/WithdrawAmountTransfered';
+import ScheduleOrderSuccess from './components/PickupDrop-off/ScheduleOrderSuccess';
 
 const Stack = createStackNavigator();
 
@@ -577,6 +578,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: 'Payment Success',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="ScheduleOrderSuccess"
+                component={ScheduleOrderSuccess}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Schedule Order Success',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
