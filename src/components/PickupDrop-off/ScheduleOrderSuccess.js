@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 
-const PaymentSuccess = ({navigation,route}) => {
-
+const ScheduleOrderSuccess = ({navigation,route}) => {
   const params = route.params;
+
   useEffect(() => {
     const onBackPress = () => {
       return true;
@@ -41,26 +41,17 @@ const PaymentSuccess = ({navigation,route}) => {
             style={{width: 100, height: 100}}
             source={require('../../image/payment_success.png')}
           />
-          <Text style={styles.text}>Payment Successful!</Text>
+          <Text style={styles.text}>Schedule Order Successful!</Text>
           <Text style={styles.subText}>
-            Your payment was successful, let’s look for a delivery boy now...
+            {`Delivery boy will be allocated on ${params.schedule_date_time} ...`}
           </Text>
         </View>
       </View>
       <View style={styles.actionBtnCard}>
         <TouchableOpacity
-          onPress={() =>{ 
-            if(params.serviceTypeId === 1){
-              navigation.navigate('ScheduleOrderSuccess',{
-                schedule_date_time: params.schedule_date_time,
-                serviceTypeId:params.serviceTypeId
-              })
-            }else{
-              navigation.navigate('LoaderForDriver')
-            }
-            }}
+          onPress={() => navigation.navigate('Home')}
           style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text style={styles.buttonText}>Go To Home</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -143,4 +134,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentSuccess;
+export default ScheduleOrderSuccess;

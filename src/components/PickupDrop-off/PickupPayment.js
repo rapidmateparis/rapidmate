@@ -158,7 +158,7 @@ const PickupPayment = ({route, navigation}) => {
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
       console.log('params.schedule_date_time', params.schedule_date_time);
-      if (params.serviceTypeId == 2) {
+      if (params.serviceTypeId == 1) {
         var scheduleParam = {schedule_date_time: params.schedule_date_time};
       }
       let requestParams = {
@@ -231,7 +231,10 @@ const PickupPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('PaymentSuccess');
+          navigation.navigate('PaymentSuccess',{
+            schedule_date_time: params.schedule_date_time,
+            serviceTypeId:params.serviceTypeId
+          });
         }
       },
       errorResponse => {
