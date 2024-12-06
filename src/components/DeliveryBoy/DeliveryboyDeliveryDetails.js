@@ -63,12 +63,12 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     orderRequestAction(
       params,
       successResponse => {
-        navigation.navigate('Home')
+        navigation.navigate('Home');
         console.log('successResponse==>', JSON.stringify(successResponse));
         navigation.goBack();
       },
       errorResponse => {
-        navigation.navigate('Home')
+        navigation.navigate('Home');
         console.log('errorResponse==>', JSON.stringify(errorResponse));
         navigation.goBack();
       },
@@ -106,18 +106,13 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
       orderOPTVerifyForDelivery(
         params,
         successResponse => {
-          const data = successResponse[0]._response.next_action_status
-          Alert.alert(
-            'Success',
-            'Delivered OPT verified successfully',
-            [
-              {
-                text: 'OK',
-                onPress: () => {
-                  toggleModalOTP();
-                  setUpdateStatus(data);
-                },
-
+          const data = successResponse[0]._response.next_action_status;
+          Alert.alert('Success', 'Delivered OPT verified successfully', [
+            {
+              text: 'OK',
+              onPress: () => {
+                toggleModalOTP();
+                setUpdateStatus(data);
               },
             },
           ]);

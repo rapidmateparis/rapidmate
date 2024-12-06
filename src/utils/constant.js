@@ -108,4 +108,5 @@ export const API = {
   verifyOrderDeliveryOTP: BASE_URL + 'order/delivered/otp/verify',
   enterprisePaymentMethodUrl: BASE_URL + 'enterprise/paymentmethod',
   searchOrder: BASE_URL + 'enterprise/order/search',
+  calendarPlanDate: BASE_URL + 'order/deliveryboy/plan/calendar/data/',
 };
