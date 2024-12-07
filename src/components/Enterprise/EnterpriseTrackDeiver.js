@@ -72,7 +72,7 @@ const EnterpriseTrackDeiver = ({navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{height: '60%', position: 'relative'}}>
+      <View style={{height: 360, position: 'relative'}}>
         {/* Assuming TrackLiveLocation is a custom component */}
         <TrackLiveLocation />
       </View>
@@ -103,32 +103,32 @@ const EnterpriseTrackDeiver = ({navigation}) => {
           <View style={styles.driverCard}>
             <View style={{position: 'relative'}}>
               <Image
-                style={{width: 60, height: 60, borderRadius: 30}}
+                style={{width: 50, height: 50, borderRadius: 30}}
                 source={require('../../image/driver.jpeg')}
               />
               <Image
                 style={{
                   position: 'absolute',
-                  bottom: 1,
-                  left: 40,
-                  height: 40,
-                  width: 40,
+                  bottom: 0,
+                  left: 30,
+                  height: 30,
+                  width: 30,
                   borderRadius: 30,
                 }}
                 source={require('../../image/Drivers-Truck.jpg')}
               />
             </View>
-            <View style={{width: '40%'}}>
+            <View style={{width: '48%'}}>
               <Text style={styles.driverName}>John Doe</Text>
               <Text style={styles.truckName}>VOLVO FH16 2022</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity style={{marginRight: 10}}>
-                <Image source={require('../../image/chat-icon.png')} />
+                <Image style={{width: 35, height: 35,}} source={require('../../image/chat-icon.png')} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('EnterpriseDeliveryCompleted')}>
-                <Image source={require('../../image/call-icon.png')} />
+                <Image style={{width: 35, height: 35,}} source={require('../../image/call-icon.png')} />
               </TouchableOpacity>
             </View>
           </View>

@@ -63,10 +63,6 @@ const Wallet = ({navigation}) => {
             </View>
             <View style={styles.actionCard}>
               <TouchableOpacity style={styles.actionsBt}>
-                <Text style={styles.btnText}>Withdraw</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.actionsBt}>
                 <Text style={styles.btnText}>Add funds</Text>
               </TouchableOpacity>
             </View>
@@ -169,7 +165,7 @@ const styles = StyleSheet.create({
   actionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     marginTop: 30,
   },
   addCardsHeader: {
@@ -230,7 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '55%',
+    marginTop: 170,
   },
   paymentInfo: {
     color: '#1D1617',
