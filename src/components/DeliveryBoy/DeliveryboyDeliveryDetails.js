@@ -481,7 +481,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.statusAboutDelivery}>
               <Octicons
                 name={updateStatus == 'Ready to pickup' ? 'dot-fill' : 'check'}
-                size={18}
+                size={15}
                 color={
                   updateStatus == 'Ready to pickup' ? '#D9D9D9' : '#FF0058'
                 }
@@ -497,7 +497,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                     ? 'dot-fill'
                     : 'check'
                 }
-                size={18}
+                size={15}
                 color={
                   updateStatus == 'Reached' || updateStatus == 'Ready to pickup'
                     ? '#D9D9D9'
@@ -511,7 +511,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.statusAboutDelivery}>
               <Octicons
                 name={updateStatus == 'Completed' ? 'check' : 'dot-fill'}
-                size={18}
+                size={15}
                 color={updateStatus == 'Completed' ? '#FF0058' : '#D9D9D9'}
               />
               <Text style={styles.statusInfo}>Delivered</Text>
@@ -720,7 +720,7 @@ const styles = StyleSheet.create({
   borderStyle: {
     borderWidth: 1,
     borderColor: '#f1f1f1',
-    width: 42,
+    width: 20,
   },
   deliveryinfo: {
     flexDirection: 'row',
