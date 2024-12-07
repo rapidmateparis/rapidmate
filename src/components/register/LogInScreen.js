@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   signUpContainer: {
-    marginTop: '80%',
+    marginTop: '50%',
     alignItems: 'center',
   },
   signUpText: {

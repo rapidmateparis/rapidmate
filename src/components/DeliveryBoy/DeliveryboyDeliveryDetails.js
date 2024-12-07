@@ -457,6 +457,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             flexDirection: 'row',
             justifyContent: 'space-evenly',
             marginTop: 7,
+            marginBottom: 10,
           }}>
           <TouchableOpacity
             onPress={() => {
@@ -480,12 +481,12 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.statusAboutDelivery}>
               <Octicons
                 name={updateStatus == 'Ready to pickup' ? 'dot-fill' : 'check'}
-                size={18}
+                size={15}
                 color={
                   updateStatus == 'Ready to pickup' ? '#D9D9D9' : '#FF0058'
                 }
               />
-              <Text style={styles.statusInfo}>Picked up</Text>
+              <Text style={styles.statusInfo}>Going to pickup</Text>
             </View>
             <View style={styles.borderStyle} />
 
@@ -496,7 +497,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                     ? 'dot-fill'
                     : 'check'
                 }
-                size={18}
+                size={15}
                 color={
                   updateStatus == 'Reached' || updateStatus == 'Ready to pickup'
                     ? '#D9D9D9'
@@ -510,32 +511,37 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.statusAboutDelivery}>
               <Octicons
                 name={updateStatus == 'Completed' ? 'check' : 'dot-fill'}
-                size={18}
+                size={15}
                 color={updateStatus == 'Completed' ? '#FF0058' : '#D9D9D9'}
               />
               <Text style={styles.statusInfo}>Delivered</Text>
             </View>
           </View>
           <View style={styles.earningCard}>
-            {delivered && (
+            {updateStatus === 'Completed' && (
               <Text style={styles.boyEarning}>
                 This order is closed, you earned{' '}
                 <Text style={styles.earnedMoney}>
-                  € {route.params.orderItem.delivery_boy_amount}
+                  €{' '}
+                  {parseFloat(
+                    route.params.orderItem.delivery_boy_amount,
+                  ).toFixed(2)}
                 </Text>
               </Text>
             )}
           </View>
 
-          <TouchableOpacity
-            onPress={handleStatusUpdated}
-            // onPress={() => toggleModalOTP()}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}
-            disabled={updateStatus == 'Completed' ? true : false}>
-            <Text style={styles.buttonText}>{updateStatus}</Text>
-          </TouchableOpacity>
+          {updateStatus !== 'Completed' && (
+            <TouchableOpacity
+              onPress={handleStatusUpdated}
+              style={[styles.logbutton, {backgroundColor: colors.primary}]}
+              disabled={updateStatus == 'Completed' ? true : false}>
+              <Text style={styles.buttonText}>{updateStatus}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
+
       {/* Modal start here  */}
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
@@ -719,7 +725,7 @@ const styles = StyleSheet.create({
   borderStyle: {
     borderWidth: 1,
     borderColor: '#f1f1f1',
-    width: 50,
+    width: 20,
   },
   deliveryinfo: {
     flexDirection: 'row',
@@ -770,7 +776,7 @@ const styles = StyleSheet.create({
   earningCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 10,
+    // marginVertical: 10,
   },
   packageManager: {
     width: 30,

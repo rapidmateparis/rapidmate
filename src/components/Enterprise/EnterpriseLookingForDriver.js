@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 90,
     paddingVertical: 10,
-    marginTop: '20%',
+    marginTop: 20,
   },
 });
 

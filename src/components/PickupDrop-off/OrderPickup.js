@@ -10,12 +10,15 @@ import {
   Alert,
   Linking,
   BackHandler,
+  Dimensions,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 import {API} from '../../utils/constant';
+
+const {height: screenHeight} = Dimensions.get('window');
 
 const OrderPickup = ({route, navigation}) => {
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
@@ -30,12 +33,8 @@ const OrderPickup = ({route, navigation}) => {
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
 
-  console.log("details------", placedOrderDetails)
-
   useEffect(() => {
-    const onBackPress = () => {
-      return true;
-    };
+    const onBackPress = () => true;
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -83,70 +82,62 @@ const OrderPickup = ({route, navigation}) => {
   };
 
   return (
-    <ScrollView
-      style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
-      <View>
-        <View>
-          <Text style={styles.mainTitle}>
-            Delivery boy is on the way to pick your order up
-          </Text>
-          <View style={styles.textContainer}>
-            <Text style={styles.oderIdText}>Order ID: </Text>
-            <TouchableOpacity onPress={handleCopyOrderId}>
-              <Text style={styles.text}>{orderId}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleCopyOrderId}>
-              <AntDesign
-                name="copy1"
-                size={18}
-                color="#FF0058"
-                style={styles.copyIcon}
-              />
-            </TouchableOpacity>
-            {showCopiedOrderIdMessage && (
-              <Text style={styles.copiedMessage}>Copied to clipboard!</Text>
-            )}
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.oderIdText}>OTP: </Text>
-            <TouchableOpacity onPress={handleCopyOtp}>
-              <Text style={styles.text}>{otp}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleCopyOtp}>
-              <AntDesign
-                name="copy1"
-                size={18}
-                color="#FF0058"
-                style={styles.copyIcon}
-              />
-            </TouchableOpacity>
-            {showCopiedOtpMessage && (
-              <Text style={styles.copiedMessage}>Copied to clipboard!</Text>
-            )}
-          </View>
-          <View
-            style={[styles.textContainer, {marginBottom: 30, marginTop: 10}]}>
-            <Text style={styles.oderIdText}>
-              Delivery in:{' '}
-              <Text style={styles.text}>{formatTime(deliveryTime)}</Text>
-            </Text>
-          </View>
-        </View>
+    <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+      <View style={{flex: 1}}>
         <ImageBackground
-          style={{width: '100%'}}
+          style={{flex: 1, height: screenHeight}}
           source={require('../../image/DeliveryRequest-bg.png')}>
-          <View style={styles.boxCard}>
-            <Image source={require('../../image/Delivery-Box-Imga.png')} />
-            <Image
-              style={styles.cloud1}
-              source={require('../../image/Cloud-Graphic.png')}
-            />
-            <Image
-              style={styles.cloud2}
-              source={require('../../image/Cloud-Graphic.png')}
-            />
-          </View>
-          <View style={{paddingTop: '15%', paddingHorizontal: 20}}>
+          <View style={{paddingHorizontal: 20, flex: 1}}>
+            <Text style={styles.mainTitle}>
+              Delivery boy is on the way to pick your order up
+            </Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.oderIdText}>Order ID: </Text>
+              <TouchableOpacity onPress={handleCopyOrderId}>
+                <Text style={styles.text}>{orderId}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCopyOrderId}>
+                <AntDesign
+                  name="copy1"
+                  size={18}
+                  color="#FF0058"
+                  style={styles.copyIcon}
+                />
+              </TouchableOpacity>
+              {showCopiedOrderIdMessage && (
+                <Text style={styles.copiedMessage}>Copied to clipboard!</Text>
+              )}
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.oderIdText}>OTP: </Text>
+              <TouchableOpacity onPress={handleCopyOtp}>
+                <Text style={styles.text}>{otp}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCopyOtp}>
+                <AntDesign
+                  name="copy1"
+                  size={18}
+                  color="#FF0058"
+                  style={styles.copyIcon}
+                />
+              </TouchableOpacity>
+              {showCopiedOtpMessage && (
+                <Text style={styles.copiedMessage}>Copied to clipboard!</Text>
+              )}
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.oderIdText}>
+                Delivery in:{' '}
+                <Text style={styles.text}>{formatTime(deliveryTime)}</Text>
+              </Text>
+            </View>
+
+            <View style={styles.boxCard}>
+                <Image source={require('../../image/Delivery-Box-Imga.png')}/>
+                <Image style={styles.cloud1} source={require('../../image/Cloud-Graphic.png')}/>
+                <Image style={styles.cloud2} source={require('../../image/Cloud-Graphic.png')}/>
+            </View>
+
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Pickup from</Text>
@@ -165,7 +156,7 @@ const OrderPickup = ({route, navigation}) => {
               <View style={{position: 'relative'}}>
                 {driverDetails?.deliveryBoy?.profile_pic ? (
                   <Image
-                    style={{width: 60, height: 60, borderRadius: 30}}
+                    style={{width: 50, height: 50, borderRadius: 30}}
                     source={{
                       uri:
                         API.viewImageUrl +
@@ -174,23 +165,23 @@ const OrderPickup = ({route, navigation}) => {
                   />
                 ) : (
                   <Image
-                    style={{width: 60, height: 60, borderRadius: 30}}
+                    style={{width: 50, height: 50, borderRadius: 30}}
                     source={require('../../image/driver.jpeg')}
                   />
                 )}
                 <Image
                   style={{
                     position: 'absolute',
-                    bottom: 1,
-                    left: 40,
-                    height: 40,
-                    width: 40,
+                    bottom: 0,
+                    left: 30,
+                    height: 30,
+                    width: 30,
                     borderRadius: 30,
                   }}
                   source={require('../../image/Drivers-Truck.jpg')}
                 />
               </View>
-              <View style={{width: '40%'}}>
+              <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>
                   {driverDetails?.deliveryBoy?.first_name +
                     ' ' +
@@ -201,12 +192,20 @@ const OrderPickup = ({route, navigation}) => {
                 </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity style={{marginRight: 10}}>
-                  <Image source={require('../../image/chat-icon.png')} />
+                <TouchableOpacity style={{marginRight: 5}}>
+                  <Image
+                    style={{width: 35, height: 35}}
+                    source={require('../../image/chat-icon.png')}
+                  />
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => handleCall(driverDetails?.deliveryBoy?.phone_number)}>
-                  <Image source={require('../../image/call-icon.png')} />
+                <TouchableOpacity
+                  onPress={() =>
+                    handleCall(driverDetails?.deliveryBoy?.phone_number)
+                  }>
+                  <Image
+                    style={{width: 35, height: 35}}
+                    source={require('../../image/call-icon.png')}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -231,11 +230,10 @@ const OrderPickup = ({route, navigation}) => {
 
 const styles = StyleSheet.create({
   mainTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
-    marginBottom: 10,
     paddingHorizontal: 40,
   },
   textContainer: {
@@ -247,7 +245,7 @@ const styles = StyleSheet.create({
   text: {
     marginRight: 5,
     color: colors.text,
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
   },
   copyIcon: {
@@ -259,7 +257,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   oderIdText: {
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
@@ -328,7 +326,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 5,
     marginTop: 20,
-    marginBottom: 80,
+    marginBottom: 20,
   },
   trackText: {
     color: colors.text,
@@ -339,7 +337,7 @@ const styles = StyleSheet.create({
   boxCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: '20%',
+    paddingVertical: 50,
     position: 'relative',
   },
   cloud1: {

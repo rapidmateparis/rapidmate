@@ -48,7 +48,7 @@ const LoginSignup = ({navigation}) => {
               Login with phone or email
             </Text>
           </TouchableOpacity>
-          <View style={{marginTop: 30}}>
+          <View style={{marginTop: 20}}>
             <Text style={[styles.loginDisclemar, {color: colors.white}]}>
               By logging in or registering, you agreed to the{' '}
               <Text
@@ -71,7 +71,7 @@ const LoginSignup = ({navigation}) => {
 
 const styles = StyleSheet.create({
   deliveryIconMain: {
-    marginVertical: 110,
+    marginVertical: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },

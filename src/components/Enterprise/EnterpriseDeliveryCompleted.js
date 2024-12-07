@@ -243,12 +243,12 @@ const EnterpriseDeliveryCompleted = ({navigation}) => {
 
 const styles = StyleSheet.create({
   mainTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
     paddingHorizontal: 40,
-    marginTop: 50,
+    marginTop: 20,
   },
   textContainer: {
     flexDirection: 'row',
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   oderIdText: {
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   boxCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingTop: '10%',
+    paddingTop: 20,
     position: 'relative',
   },
   cloud1: {
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     borderColor: colors.text,
     paddingVertical: 12,
     borderRadius: 10,
-    marginBottom: 140,
+    marginBottom: 20,
   },
 });
 
