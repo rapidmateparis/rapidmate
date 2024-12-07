@@ -518,25 +518,30 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             </View>
           </View>
           <View style={styles.earningCard}>
-            {delivered && (
+            {updateStatus === 'Completed' && (
               <Text style={styles.boyEarning}>
                 This order is closed, you earned{' '}
                 <Text style={styles.earnedMoney}>
-                  € {route.params.orderItem.delivery_boy_amount}
+                  €{' '}
+                  {parseFloat(
+                    route.params.orderItem.delivery_boy_amount,
+                  ).toFixed(2)}
                 </Text>
               </Text>
             )}
           </View>
 
-          <TouchableOpacity
-            onPress={handleStatusUpdated}
-            // onPress={() => toggleModalOTP()}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}
-            disabled={updateStatus == 'Completed' ? true : false}>
-            <Text style={styles.buttonText}>{updateStatus}</Text>
-          </TouchableOpacity>
+          {updateStatus !== 'Completed' && (
+            <TouchableOpacity
+              onPress={handleStatusUpdated}
+              style={[styles.logbutton, {backgroundColor: colors.primary}]}
+              disabled={updateStatus == 'Completed' ? true : false}>
+              <Text style={styles.buttonText}>{updateStatus}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
+
       {/* Modal start here  */}
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
@@ -771,7 +776,7 @@ const styles = StyleSheet.create({
   earningCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 10,
+    // marginVertical: 10,
   },
   packageManager: {
     width: 30,
