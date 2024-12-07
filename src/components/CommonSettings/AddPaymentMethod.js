@@ -123,8 +123,9 @@ const AddPaymentMethod = ({navigation}) => {
   }
 
   return (
-    <View style={{backgroundColor: '#FBFAF5', flex: 1, height:'100%'}}>
-      <View style={{paddingHorizontal: 15, flex: 1}}>
+    <View style={{backgroundColor: '#FBFAF5', flex: 1}}>
+      <View style={{paddingHorizontal: 10, flex: 1}}>
+
         <TouchableOpacity onPress={toggleCardAdd}>
           <View style={styles.addressCard}>
             <Image source={require('../../image/debitCard.png')} />
@@ -138,8 +139,9 @@ const AddPaymentMethod = ({navigation}) => {
           <View
             style={{
               backgroundColor: colors.white,
-              height: '65%',
-              paddingHorizontal: 15,
+              height: 300,
+              paddingHorizontal: 10,
+              zIndex: 9999,
             }}>
             <View>
               <Text style={styles.textlable}>Name on card</Text>
@@ -224,8 +226,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
     borderRadius: 5,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
@@ -276,7 +278,7 @@ const styles = StyleSheet.create({
   textlable: {
     fontFamily: 'Montserrat-Medium',
     marginBottom: 7,
-    marginTop: 15,
+    marginTop: 7,
     fontSize: 12,
     color: colors.text,
   },
@@ -284,7 +286,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
     fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',

@@ -333,13 +333,19 @@ const PickupPayment = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          <View style={[styles.distanceTime, {marginVertical: 15}]}>
+          <View style={[styles.distanceTime, {marginVertical: 3}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
               From:{' '}
               {params.sourceLocation.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : ''}{' '}
+            </Text>
+          </View>
+
+          <View style={styles.distanceTime}>
+            <EvilIcons name="location" size={18} color="#606060" />
+            <Text style={styles.vehicleCapacity}>
               To:{' '}
               {params.destinationLocation.destinationDescription
                 ? params.destinationLocation.destinationDescription
@@ -612,7 +618,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '50%',
+    marginTop: 100,
+    marginBottom: 20,
   },
   PayText: {
     backgroundColor: '#FFFFFF',

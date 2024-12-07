@@ -72,7 +72,7 @@ const TrackDelivery = ({navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{height: 360, position: 'relative'}}>
+      <View style={{height: 300, position: 'relative'}}>
         {/* Assuming TrackLiveLocation is a custom component */}
         <TrackLiveLocation />
       </View>
@@ -88,7 +88,7 @@ const TrackDelivery = ({navigation}) => {
             </Text>
             <Text style={styles.timeText}>Total time elapsed</Text>
           </View>
-          <View style={{marginVertical: 40,}}>
+          <View style={{marginVertical: 10,}}>
             <StepIndicator
               customStyles={customStyles}
               currentPosition={currentPosition}
@@ -111,10 +111,10 @@ const TrackDelivery = ({navigation}) => {
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity style={{marginRight: 10}}>
-                <Image source={require('../../image/chat-icon.png')} />
+                <Image style={{width: 35, height: 35,}} source={require('../../image/chat-icon.png')} />
               </TouchableOpacity>
               <TouchableOpacity>
-                <Image source={require('../../image/call-icon.png')} />
+                <Image style={{width: 35, height: 35,}} source={require('../../image/call-icon.png')} />
               </TouchableOpacity>
             </View>
           </View>
@@ -173,12 +173,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   timerText: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-Bold',
     color: colors.text,
   },
   timeText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
   },
