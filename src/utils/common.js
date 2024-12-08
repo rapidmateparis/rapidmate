@@ -2,6 +2,7 @@ import axios from 'axios';
 import {apiHost} from './constant';
 import {PermissionsAndroid} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import moment from 'moment-timezone';
 
 export const formatDate = date => {
   var d = new Date(date),
@@ -315,3 +316,14 @@ export const handleImageLibraryLaunchFunction = () => {
 // };
 
 // https://www.youtube.com/watch?v=8opgD2Ooi9w
+
+
+
+export const localToUTC=(date=new Date(),timezone,format='YYYY-MM-DD HH:mm:ss')=>{
+  return moment.tz(date,timezone || Intl.DateTimeFormat().resolvedOptions().timeZone).utc().format(format)
+}
+
+export const utcLocal=(date=new Date(),format='YYYY-MM-DD HH:mm:ss')=>{
+  return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(format);
+}
+

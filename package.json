@@ -25,6 +25,8 @@
     "@stripe/stripe-react-native": "^0.38.3",
     "axios": "^1.6.8",
     "geolib": "^3.3.4",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.46",
     "react": "18.1.0",
     "react-native": "0.70.6",
     "react-native-calendars": "^1.1305.0",
