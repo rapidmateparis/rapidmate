@@ -17,6 +17,7 @@ import {
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
+import { localToUTC } from '../../utils/common';
 
 const AddPaymentMethod = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -42,7 +43,7 @@ const AddPaymentMethod = ({navigation}) => {
 
     if (userDetails.userDetails[0].role == 'CONSUMER') {
       params.consumer_ext_id = userDetails.userDetails[0].ext_id;
-      params.expiration_date = expiryDate;
+      params.expiration_date = localToUTC(expiryDate);
       addConsumerPaymentMethod(
         params,
         successResponse => {

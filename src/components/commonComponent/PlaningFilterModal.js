@@ -16,6 +16,7 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {getCompanyList} from '../../data_manager';
 import {useUserDetails} from './StoreContext';
+import { localToUTC } from '../../utils/common';
 
 function PlaningFilterModal({
   setModalVisible,
@@ -293,8 +294,8 @@ function PlaningFilterModal({
             onPress={() => {
               toggleModal(false);
               onPressPlanningFilter({
-                planning_from_date: fromDate,
-                planning_to_date: toDate,
+                planning_from_date: localToUTC(fromDate),
+                planning_to_date: localToUTC(toDate),
                 day: day,
               });
             }}>

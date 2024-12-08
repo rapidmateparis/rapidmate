@@ -380,28 +380,30 @@ const DeliveryDetails = ({navigation, route}) => {
         </View>
 
         <View>
-          {route.params?.orderItem?.is_delivery_boy_allocated == 1 ? (
-            <View style={styles.driverCard}>
-              <Image
-                style={styles.driverImage}
-                source={{
-                  uri: API.viewImageUrl + deliveryboy?.profile_pic,
-                }}
-              />
-              <View style={{marginLeft: 10}}>
-                <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
-                <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
-              </View>
+          {
+          route.params?.orderItem?.is_delivery_boy_allocated === 1 ? 
+          <View style={styles.driverCard}>
+            <Image
+              style={styles.driverImage}
+              source={{
+                uri: API.viewImageUrl + deliveryboy?.profile_pic,
+              }}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
+              <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
             </View>
-          ) : (
-            <View style={{alignContent: 'flex-end'}}>
-              <Button
-                title="Allocate Driver"
-                color={colors.primary}
-                onPress={getDeliveryBoyAllocation}
-              />
-            </View>
-          )}
+          </View>
+         : 
+         route.params?.orderItem?.service_type_id === 1  ? null:
+          <View style={{alignContent: 'flex-end'}}>
+            <Button
+              title="Allocate Driver"
+              color={colors.primary}
+              onPress={getDeliveryBoyAllocation}
+            />
+          </View>
+          }
         </View>
         <View style={styles.packageCard}>
           <Image

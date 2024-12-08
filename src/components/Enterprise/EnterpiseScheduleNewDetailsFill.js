@@ -22,6 +22,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localToUTC,
 } from '../../utils/common';
 import MapAddress from '../commonComponent/MapAddress';
 import {useLoader} from '../../utils/loaderContext';
@@ -324,7 +325,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             route.params.vehicle_type.base_price +
               route.params.vehicle_type.km_price * element.distance,
           );
-        currentElement.delivery_date = moment(new Date()).format('YYYY-MM-DD');
+        currentElement.delivery_date = moment(localToUTC(new Date())).format('YYYY-MM-DD');
         currentElement.destinationDescription = element.destinationDescription;
         branches.push(currentElement);
       }
