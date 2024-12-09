@@ -152,9 +152,9 @@ const TodayList = ({navigation, searchText}) => {
           at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')} */}
           {currentOrderItem.item.consumer_order_title}{' '}
           {
-          currentOrderItem.item.order_status === 'ORDER_PLACED' ?
+          currentOrderItem.item.is_show_datetime_in_title==1? (currentOrderItem.item.order_status === 'ORDER_PLACED' ?
           utcLocal(currentOrderItem.item.schedule_date_time || currentOrderItem.item.order_date)
-          :utcLocal(currentOrderItem.item.updated_on)}
+          :utcLocal(currentOrderItem.item.updated_on)):""}
         </Text>
       </View>
 
@@ -346,7 +346,11 @@ const PastList = ({navigation, searchText}) => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          {pastOrderItem.item.consumer_order_title}
+          {pastOrderItem.item.consumer_order_title}{' '}
+          {
+          pastOrderItem.item.is_show_datetime_in_title==1? (pastOrderItem.item.order_status === 'ORDER_PLACED' ?
+          utcLocal(pastOrderItem.item.schedule_date_time || pastOrderItem.item.order_date)
+          :utcLocal(pastOrderItem.item.updated_on)):""}
           {/* Delivered on{' '}
           {moment(pastOrderItem.item.delivery_date).format(
             'MMM DD, YYYY',
