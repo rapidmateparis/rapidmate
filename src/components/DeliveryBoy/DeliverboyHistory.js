@@ -165,7 +165,11 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              {item.item.delivery_boy_order_title}
+              {item.item.delivery_boy_order_title}{' '}
+              {
+              item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
+              utcLocal(item.item.schedule_date_time || item.item.order_date)
+              :utcLocal(item.item.updated_on)):""}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
@@ -390,7 +394,11 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              {item.item.delivery_boy_order_title}
+              {item.item.delivery_boy_order_title}{' '}
+              {
+              item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
+              utcLocal(item.item.schedule_date_time || item.item.order_date)
+              :utcLocal(item.item.updated_on)):""}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
