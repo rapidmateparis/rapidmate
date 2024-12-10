@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   },
   packageDetailCard: {
     backgroundColor: colors.white,
-    padding: 13,
+    paddingHorizontal: 5,
     borderRadius: 5,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
