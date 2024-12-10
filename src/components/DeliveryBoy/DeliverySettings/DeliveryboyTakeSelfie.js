@@ -25,7 +25,7 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
-  const {userDetails} = useUserDetails();
+  const {userDetails,saveUserDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -95,14 +95,19 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
         updateUserProfile(
           userDetails.userDetails[0].role,
           profileParams,
-          successResponse => {
-            console.log('updateUserProfile', successResponse);
+          updatesuccessResponse => {
+
+            const newUserDetails = userDetails.userDetails[0]
+            newUserDetails['profile_pic']=JSON.parse(successResponse).id
+            saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+    
+            console.log('updateUserProfile', updatesuccessResponse);
             if (route.params) {
               navigation.navigate('AddVehicle', {
                 delivery_boy_details: route.params.delivery_boy_details,
               });
             } else {
-              Alert.alert('Success', '' + successResponse[0]._response, [
+              Alert.alert('Success', '' + updatesuccessResponse[0]._response.message, [
                 {
                   text: 'OK',
                   onPress: () => {

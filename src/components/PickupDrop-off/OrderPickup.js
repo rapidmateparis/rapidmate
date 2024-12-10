@@ -211,15 +211,17 @@ const OrderPickup = ({route, navigation}) => {
             </View>
 
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('OrderConfirm', {
-                  driverDetails: route.params.driverDetails,
-                  locationList: route.params.locationList,
-                  placedOrderDetails: placedOrderDetails[0],
-                })
+              onPress={() =>{
+                // navigation.navigate('OrderConfirm', {
+                //   driverDetails: route.params.driverDetails,
+                //   locationList: route.params.locationList,
+                //   placedOrderDetails: placedOrderDetails[0],
+                // })
+                navigation.navigate('PickupBottomNav')
+              }
               }
               style={styles.trackOrderBtn}>
-              <Text style={styles.trackText}>Track order</Text>
+              <Text style={styles.trackText}>Go To Home</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>

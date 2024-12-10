@@ -229,7 +229,7 @@ const PickupAddress = ({route, navigation}) => {
         distanceTime: distanceTime,
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
-        serviceTypeId: route?.params?.pickupService?.id || 1,
+        serviceTypeId: route?.params?.pickupService?.id || 2,
         paymentDiscount: route?.params?.pickupService?.discount,
         ...scheduleParam,
       });

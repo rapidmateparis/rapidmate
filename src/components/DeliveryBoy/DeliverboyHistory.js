@@ -29,7 +29,7 @@ import {
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
-import { utcLocal } from '../../utils/common';
+import { titleFormat, utcLocal } from '../../utils/common';
 const Tab = createMaterialTopTabNavigator();
 
 const TodayList = ({navigation, filterCriteria, searchText}) => {
@@ -168,8 +168,8 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
               {item.item.delivery_boy_order_title}{' '}
               {
               item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
-              utcLocal(item.item.schedule_date_time || item.item.order_date)
-              :utcLocal(item.item.updated_on)):""}
+              titleFormat(item.item.schedule_date_time || item.item.order_date)
+              :titleFormat(item.item.updated_on)):""}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
@@ -397,8 +397,8 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
               {item.item.delivery_boy_order_title}{' '}
               {
               item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
-              utcLocal(item.item.schedule_date_time || item.item.order_date)
-              :utcLocal(item.item.updated_on)):""}
+              titleFormat(item.item.schedule_date_time || item.item.order_date)
+              :titleFormat(item.item.updated_on)):""}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',

@@ -23,7 +23,7 @@ const Settings = ({navigation}) => {
     await AsyncStorage.clear();
     RNRestart.restart();
   };
-
+// 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>

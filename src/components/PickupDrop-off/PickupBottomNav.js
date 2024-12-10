@@ -183,7 +183,7 @@ const PickupBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="PickupAddress"
-          name="Requst"
+          name="Requsts"
           component={PickupAddress}
           options={{
             headerShown: false,

@@ -26,7 +26,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import { color } from 'react-native-reanimated';
-import { utcLocal } from '../../utils/common';
+import { titleFormat, utcLocal } from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -153,8 +153,8 @@ const TodayList = ({navigation, searchText}) => {
           {currentOrderItem.item.consumer_order_title}{' '}
           {
           currentOrderItem.item.is_show_datetime_in_title==1? (currentOrderItem.item.order_status === 'ORDER_PLACED' ?
-          utcLocal(currentOrderItem.item.schedule_date_time || currentOrderItem.item.order_date)
-          :utcLocal(currentOrderItem.item.updated_on)):""}
+          titleFormat(currentOrderItem.item.schedule_date_time || currentOrderItem.item.order_date)
+          :titleFormat(currentOrderItem.item.updated_on)):""}
         </Text>
       </View>
 
@@ -349,8 +349,8 @@ const PastList = ({navigation, searchText}) => {
           {pastOrderItem.item.consumer_order_title}{' '}
           {
           pastOrderItem.item.is_show_datetime_in_title==1? (pastOrderItem.item.order_status === 'ORDER_PLACED' ?
-          utcLocal(pastOrderItem.item.schedule_date_time || pastOrderItem.item.order_date)
-          :utcLocal(pastOrderItem.item.updated_on)):""}
+          titleFormat(pastOrderItem.item.schedule_date_time || pastOrderItem.item.order_date)
+          :titleFormat(pastOrderItem.item.updated_on)):""}
           {/* Delivered on{' '}
           {moment(pastOrderItem.item.delivery_date).format(
             'MMM DD, YYYY',

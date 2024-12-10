@@ -110,3 +110,7 @@ export const API = {
   searchOrder: BASE_URL + 'enterprise/order/search',
   calendarPlanDate: BASE_URL + 'order/deliveryboy/plan/calendar/data/',
 };
+
+export const DATE_FORMAT ={
+  titleFormat:'MMM DD, YYYY [at] hh:mm A'
+}

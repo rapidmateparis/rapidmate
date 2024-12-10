@@ -94,6 +94,7 @@ function DeliveryBoyAcceptRejectModal({
   };
 
   const handleOrderRequest = value => {
+    console.log('deliveryBoyAcceptRejectMessage ======>',deliveryBoyAcceptRejectMessage)
     let params = {
       delivery_boy_ext_id: deliveryBoyAcceptRejectMessage?.deliveryBoy?.ext_id,
       order_number: deliveryBoyAcceptRejectMessage?.order?.order_number,
@@ -104,6 +105,13 @@ function DeliveryBoyAcceptRejectModal({
     orderRequestAction(
       params,
       successResponse => {
+
+        // navigation.navigate('DeliveryboyDeliveryDetails', {
+        //   order_number: deliveryBoyAcceptRejectMessage.order.order_number,
+        //   package_photo: deliveryBoyAcceptRejectMessage.order.package_photo,
+        //   orderItem: deliveryBoyAcceptRejectMessage.order,
+        // });
+        // TODO go to delivery details 
         console.log('successResponse==>', JSON.stringify(successResponse));
         toggleModal();
       },
