@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {apiHost} from './constant';
+import {DATE_FORMAT, apiHost} from './constant';
 import {PermissionsAndroid} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import moment from 'moment-timezone';
@@ -325,5 +325,9 @@ export const localToUTC=(date=new Date(),timezone,format='YYYY-MM-DD HH:mm:ss')=
 
 export const utcLocal=(date=new Date(),format='YYYY-MM-DD HH:mm:ss')=>{
   return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(format);
+}
+
+export const titleFormat=(date=new Date())=>{
+  return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(DATE_FORMAT.titleFormat);
 }
 

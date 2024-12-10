@@ -22,7 +22,7 @@ import {
 } from '../../data_manager';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
-import { utcLocal } from '../../utils/common';
+import { titleFormat, utcLocal } from '../../utils/common';
 
 const Planning = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -174,8 +174,8 @@ const Planning = ({navigation}) => {
           {planningItem.item.consumer_order_title}{' '}
           {
           planningItem.item.is_show_datetime_in_title==1? (planningItem.item.order_status === 'ORDER_PLACED' ?
-          utcLocal(planningItem.item.schedule_date_time || planningItem.item.order_date)
-          :utcLocal(planningItem.item.updated_on)):""}
+          titleFormat(planningItem.item.schedule_date_time || planningItem.item.order_date)
+          :titleFormat(planningItem.item.updated_on)):""}
         </Text>
       </View>
 
