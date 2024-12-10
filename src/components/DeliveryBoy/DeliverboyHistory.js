@@ -29,7 +29,7 @@ import {
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
-
+import { utcLocal } from '../../utils/common';
 const Tab = createMaterialTopTabNavigator();
 
 const TodayList = ({navigation, filterCriteria, searchText}) => {
