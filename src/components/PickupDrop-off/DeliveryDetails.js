@@ -368,7 +368,12 @@ const DeliveryDetails = ({navigation, route}) => {
 
   return (
     <ScrollView
-      style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
+      style={{
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#FBFAF5',
+        marginBottom: 20,
+      }}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
           <MapDeliveryDetails
@@ -380,7 +385,7 @@ const DeliveryDetails = ({navigation, route}) => {
         </View>
 
         <View>
-          {route.params?.orderItem?.is_delivery_boy_allocated == 1 ? (
+          {route.params?.orderItem?.is_delivery_boy_allocated === 1 ? (
             <View style={styles.driverCard}>
               <Image
                 style={styles.driverImage}
@@ -393,7 +398,7 @@ const DeliveryDetails = ({navigation, route}) => {
                 <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
-          ) : (
+          ) : route.params?.orderItem?.service_type_id === 1 ? null : (
             <View style={{alignContent: 'flex-end'}}>
               <Button
                 title="Allocate Driver"
@@ -406,12 +411,32 @@ const DeliveryDetails = ({navigation, route}) => {
         <View style={styles.packageCard}>
           <Image
             style={styles.packageManager}
+            source={require('../../image/Pickup-Package-Icon.png')}
+          />
+          <View style={{marginLeft: 10}}>
+            <Text style={styles.dropInfo}>Pickup information</Text>
+            <Text style={styles.companyInfo}>
+              {order.company_name ? order.company_name : 'Company Name'}
+            </Text>
+
+            <View>
+              <Text style={styles.dropInfo}>
+                {sourceAddress.address}, {sourceAddress.city},{' '}
+                {sourceAddress.state}
+              </Text>
+            </View>
+            <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
+          </View>
+        </View>
+        <View style={styles.packageCard}>
+          <Image
+            style={styles.packageManager}
             source={require('../../image/package-img.png')}
           />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off information</Text>
             <Text style={styles.companyInfo}>
-              {order.company_name ? order.company_name : 'Company Name'}
+              {order.company_name ? order.drop_company_name : 'Company Name'}
             </Text>
             {order.orderLines && order.orderLines.length > 0 ? (
               <View>
@@ -436,6 +461,43 @@ const DeliveryDetails = ({navigation, route}) => {
                 </Text>
               </View>
             )}
+            <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+          </View>
+        </View>
+
+        <View style={styles.invoiceMainCard}>
+          <View>
+            <Image
+              style={{height: 26, width: 26}}
+              source={require('../../image/Big-Package.png')}
+            />
+          </View>
+          <View style={{marginLeft: 10}}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.orderFare}>Package information</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Order ID:</Text>
+              <Text style={styles.value}>{order.order_number}</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Vehicle:</Text>
+              <Text style={styles.value}>{vehicleType.vehicle_type}</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Pickup OTP:</Text>
+              <Text style={styles.value}>{route.params?.orderItem?.otp}</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Delivered OTP:</Text>
+              <Text style={styles.value}>
+                {route.params?.orderItem?.delivered_otp}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -492,56 +554,27 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
           </View>
         </View>
-        <View style={styles.packageInformationCard}>
-          <Text style={styles.packageTitle}>Package information</Text>
-          <Text style={styles.orderdetails}>
-            Order ID:<Text style={styles.detailsId}> {order.order_number}</Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Comments:{' '}
-            <Text style={styles.detailsId}>
-              {order.pickup_notes || '-'}
-            </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Vehicle:
-            <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            OTP:
-            <Text style={styles.detailsId}>
-              {' '}
-              {route.params?.orderItem?.otp}
-            </Text>
-          </Text>
 
-          <Text style={styles.orderdetails}>
-            Delivered OTP:
-            <Text style={styles.detailsId}>
-              {' '}
-              {route.params?.orderItem?.delivered_otp}
-            </Text>
-          </Text>
-        </View>
-
-        {route?.params?.orderItem?.order_status === 'COMPLETED'&&<TouchableOpacity
-          style={styles.packageInvoiceCard}
-          onPress={downloadInvoiceFile}>
-          <View style={styles.invoiceCard}>
-            <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
-          </View>
-          <View>
-            <Feather
-              style={{marginTop: 5}}
-              name="download"
-              size={20}
-              color="#FF0058"
-            />
-          </View>
-        </TouchableOpacity>}
+        {route?.params?.orderItem?.order_status === 'COMPLETED' && (
+          <TouchableOpacity
+            style={styles.packageInvoiceCard}
+            onPress={downloadInvoiceFile}>
+            <View style={styles.invoiceCard}>
+              <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
+              <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+            </View>
+            <View>
+              <Feather
+                style={{marginTop: 5}}
+                name="download"
+                size={20}
+                color="#FF0058"
+              />
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
-      
+
       {order.is_enable_cancel_request == 1 ? (
         <TouchableOpacity
           onPress={() => toggleModal()}
@@ -613,13 +646,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   companyInfo: {
     fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   companyAddress: {
     fontSize: 12,
@@ -628,10 +661,15 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Add this line
+    justifyContent: 'space-between',
+  },
+  cardHeaderValues: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '72%',
   },
   orderFare: {
-    width: '75%',
+    width: '70%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',

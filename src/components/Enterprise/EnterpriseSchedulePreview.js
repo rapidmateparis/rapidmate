@@ -16,6 +16,7 @@ import {createEnterpriseOrder} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
+import { localToUTC } from '../../utils/common';
 
 const DeliveryScheduleDetails = ({route, navigation}) => {
   const params = route.params;
@@ -41,8 +42,8 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       delivery_type_id: params.delivery_type_id,
       service_type_id: params.service_type_id,
       vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      shift_from_date: params.schedule.startDate,
-      shift_tp_date: params.schedule.endDate,
+      shift_from_date: localToUTC(params.schedule.startDate),
+      shift_tp_date: localToUTC(params.schedule.endDate),
       is_same_slot_all_days: 0,
       slots: slots
     };

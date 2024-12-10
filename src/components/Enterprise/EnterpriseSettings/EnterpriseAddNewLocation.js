@@ -57,7 +57,7 @@ const EnterpriseAddNewLocation = ({route, navigation}) => {
           />
         </View>
       </View>
-      <View style={{width: '100%', height: 400}}>
+      <View style={{width: '100%', height: 430}}>
         <EnterpriseAddNewLocationsMap title = {title} location = {params} />
       </View>
     </KeyboardAvoidingView>
@@ -144,15 +144,14 @@ const styles = StyleSheet.create({
   },
   homeIconCard: {
     position: 'relative',
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 10,
   },
   mainCardAddress: {
     flexDirection: 'row',
     justifyContent: 'center',
   },
   locationtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: colors.text,
     textAlign: 'center',
     fontFamily: 'Montserrat-SemiBold',
@@ -169,21 +168,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
-    marginVertical: 5,
+    marginBottom: 5,
   },
   loginput: {
     fontSize: 12,
     paddingHorizontal: 10,
+    paddingVertical: 7,
     width: '100%',
     fontFamily: 'Montserrat-Regular',
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: 10,
     color: colors.text,
     borderWidth: 1,
     borderColor: '#2C303336',
   },
   nameInputDiv: {
-    marginTop: '5%',
+    marginTop: 5,
   },
   homeIconImage: {
     width: 50,

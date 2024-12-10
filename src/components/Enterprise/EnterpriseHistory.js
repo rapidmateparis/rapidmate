@@ -27,6 +27,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import EnterpriseShiftFillter from './EnterpriseShiftFillter';
 import {useFocusEffect} from '@react-navigation/native';
+import { localToUTC } from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -602,8 +603,8 @@ function EnterpriseHistory({navigation}) {
 
   const onFilterSelected = date => {
     let params = {
-      from_date: moment(date.fromDate).format('YYYY-MM-DD'),
-      to_date: moment(date.toDate).format('YYYY-MM-DD'),
+      from_date: moment(localToUTC(date.fromDate)).format('YYYY-MM-DD'),
+      to_date: moment(localToUTC(date.toDate)).format('YYYY-MM-DD'),
     };
     searchFunction(params);
     setShiftModalVisible(false);

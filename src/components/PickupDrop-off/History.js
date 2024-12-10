@@ -26,6 +26,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import { color } from 'react-native-reanimated';
+import { titleFormat, utcLocal } from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -64,6 +65,8 @@ const TodayList = ({navigation, searchText}) => {
     getConsumerViewOrdersListBySearch(
       postParams,
       successResponse => {
+        console.log('successResponse ===> f ',JSON.stringify(successResponse))
+
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setOrderList(tempOrderList);
@@ -116,6 +119,8 @@ const TodayList = ({navigation, searchText}) => {
       postParams,
       null,
       successResponse => {
+        console.log('successResponse ===> f ',JSON.stringify(successResponse))
+
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setOrderList(tempOrderList);
@@ -145,7 +150,11 @@ const TodayList = ({navigation, searchText}) => {
           {/* Delivered on{' '}
           {moment(currentOrderItem.item.delivery_date).format('MMM DD, YYYY')}{' '}
           at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')} */}
-          {currentOrderItem.item.consumer_order_title}
+          {currentOrderItem.item.consumer_order_title}{' '}
+          {
+          currentOrderItem.item.is_show_datetime_in_title==1? (currentOrderItem.item.order_status === 'ORDER_PLACED' ?
+          titleFormat(currentOrderItem.item.schedule_date_time || currentOrderItem.item.order_date)
+          :titleFormat(currentOrderItem.item.updated_on)):""}
         </Text>
       </View>
 
@@ -310,6 +319,7 @@ const PastList = ({navigation, searchText}) => {
       postParams,
       null,
       successResponse => {
+        console.log('successResponse ===> past ',JSON.stringify(successResponse))
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setPastOrderList(tempOrderList);
@@ -336,7 +346,11 @@ const PastList = ({navigation, searchText}) => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          {pastOrderItem.item.consumer_order_title}
+          {pastOrderItem.item.consumer_order_title}{' '}
+          {
+          pastOrderItem.item.is_show_datetime_in_title==1? (pastOrderItem.item.order_status === 'ORDER_PLACED' ?
+          titleFormat(pastOrderItem.item.schedule_date_time || pastOrderItem.item.order_date)
+          :titleFormat(pastOrderItem.item.updated_on)):""}
           {/* Delivered on{' '}
           {moment(pastOrderItem.item.delivery_date).format(
             'MMM DD, YYYY',
@@ -416,7 +430,7 @@ function History({navigation}) {
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
           <TouchableOpacity>
-            <AntDesign name="filter" size={30} color={colors.secondary} />
+            <AntDesign name="filter" size={25} color={colors.secondary} />
           </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>

@@ -25,7 +25,7 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
-  const {userDetails} = useUserDetails();
+  const {userDetails,saveUserDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -95,14 +95,19 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
         updateUserProfile(
           userDetails.userDetails[0].role,
           profileParams,
-          successResponse => {
-            console.log('updateUserProfile', successResponse);
+          updatesuccessResponse => {
+
+            const newUserDetails = userDetails.userDetails[0]
+            newUserDetails['profile_pic']=JSON.parse(successResponse).id
+            saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+    
+            console.log('updateUserProfile', updatesuccessResponse);
             if (route.params) {
               navigation.navigate('AddVehicle', {
                 delivery_boy_details: route.params.delivery_boy_details,
               });
             } else {
-              Alert.alert('Success', '' + successResponse[0]._response, [
+              Alert.alert('Success', '' + updatesuccessResponse[0]._response.message, [
                 {
                   text: 'OK',
                   onPress: () => {
@@ -191,10 +196,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 50,
+    marginVertical: 30,
   },
   statusTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
@@ -214,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingVertical: 30,
-    marginTop: '30%',
+    marginTop: 100,
   },
   logbutton: {
     width: '45%',

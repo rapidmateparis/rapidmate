@@ -23,8 +23,8 @@ export const HTTPMethod = {
 
 export const PORT = {
   qa: '3009',
-  uat: '3000',
-  prod: '3008',
+  uat: '3041',
+  prod: '3906',
 };
 
 export const BASE_URL = `http://16.171.224.246:${PORT.qa}/api/`;
@@ -108,4 +108,9 @@ export const API = {
   verifyOrderDeliveryOTP: BASE_URL + 'order/delivered/otp/verify',
   enterprisePaymentMethodUrl: BASE_URL + 'enterprise/paymentmethod',
   searchOrder: BASE_URL + 'enterprise/order/search',
+  calendarPlanDate: BASE_URL + 'order/deliveryboy/plan/calendar/data/',
 };
+
+export const DATE_FORMAT ={
+  titleFormat:'MMM DD, YYYY [at] hh:mm A'
+}

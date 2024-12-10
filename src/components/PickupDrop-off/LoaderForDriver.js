@@ -29,6 +29,9 @@ const LoaderForDriver = ({navigation}) => {
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
 
+  const [reTryCount, updateReTryCount] = useState(0);
+
+
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
   };
@@ -53,6 +56,14 @@ const LoaderForDriver = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
+  useEffect(() => {
+    if(reTryCount <= 5){
+      getLocationsData();
+    }
+
+  }, [reTryCount]);
+
+
   const getLocationsData = () => {
     getLocations(
       null,
@@ -72,7 +83,13 @@ const LoaderForDriver = ({navigation}) => {
               });
             },
             errorResponse => {
-              navigation.navigate('DriverNotAvailable', errorResponse);
+              setTimeout(()=>{
+                updateReTryCount(reTryCount+1)
+                if(reTryCount === 5){
+                  navigation.navigate('DriverNotAvailable', errorResponse);
+                }
+              },10000)
+              
             },
           );
         }
@@ -209,7 +226,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 90,
     paddingVertical: 10,
-    marginTop: '20%',
+    marginTop: 20,
   },
 });
 

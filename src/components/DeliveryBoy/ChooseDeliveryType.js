@@ -244,25 +244,25 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '25%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 140
+    marginBottom: 20
   },
   profileCard: {
     marginBottom: 10,
   },
   disabledButton: {
     width: '100%',
-    marginTop: '25%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FCF9EA',
-    marginBottom: 140,
+    marginBottom: 20,
   },
   continueBt: {
     fontSize: 14,
