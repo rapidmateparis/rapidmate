@@ -323,6 +323,7 @@ const PickupAddress = ({route, navigation}) => {
         contentContainerStyle={{
           paddingHorizontal: 15,
           backgroundColor: colors.white,
+          flexGrow: 1,
         }}>
         <View>
           <View style={styles.chooseVehicleCard}>

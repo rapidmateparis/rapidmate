@@ -210,10 +210,20 @@ const AddPickupdetails = ({route, navigation}) => {
               radioButtons={radioButtons}
               onPress={setSelectedId}
               selectedId={selectedId}
-              labelStyle={{color: colors.text}}
+              labelStyle={{
+                color: colors.text,
+                fontSize: 16,
+                fontWeight: 'bold',
+                marginHorizontal: 10,
+              }}
               containerStyle={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
+                padding: 10,
+                borderWidth: 1,
+                borderColor: '#ccc',
+                borderRadius: 10,
+                backgroundColor: colors.background,
               }}
             />
           </View>
@@ -345,7 +355,7 @@ const AddPickupdetails = ({route, navigation}) => {
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
-              numberOfLines={4} 
+              numberOfLines={4}
               placeholderTextColor="#999"
               placeholder="Type here"
               textAlignVertical="top"
