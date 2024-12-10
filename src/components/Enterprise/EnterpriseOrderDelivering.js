@@ -8,11 +8,14 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Dimensions,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
+
+const {height: screenHeight} = Dimensions.get('window');
 
 const EnterpriseOrderDelivering = ({navigation}) => {
   const orderId = '9AS68D7G698GH';
@@ -63,8 +66,8 @@ const EnterpriseOrderDelivering = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
-      <View>
+    <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+      <View style={{flex: 1}}>
         <View>
           <Text style={styles.mainTitle}>Your order is on its way!</Text>
           <View style={styles.textContainer}>
@@ -102,7 +105,7 @@ const EnterpriseOrderDelivering = ({navigation}) => {
             )}
           </View>
           <View
-            style={[styles.textContainer, {marginBottom: 30, marginTop: 10}]}>
+            style={[styles.textContainer, {marginBottom: 10,}]}>
             <Text style={styles.oderIdText}>
               Delivery in:{' '}
               <Text style={styles.text}>{formatTime(deliveryTime)}</Text>
@@ -110,9 +113,9 @@ const EnterpriseOrderDelivering = ({navigation}) => {
           </View>
         </View>
         <ImageBackground
-          style={{width: '100%'}}
+          style={{flex: 1, height: screenHeight}}
           source={require('../../image/orderConfirm-Bg.png')}>
-          <View style={{paddingTop: '71%', paddingHorizontal: 20}}>
+          <View style={{paddingTop: '70%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Delivering to</Text>
@@ -127,23 +130,23 @@ const EnterpriseOrderDelivering = ({navigation}) => {
 
             <View style={styles.driverCard}>
               <View style={{position: 'relative'}}>
-                <Image style={{width: 60, height: 60, borderRadius: 30,}} source={require('../../image/driver.jpeg')} />
+                <Image style={{width: 50, height: 50, borderRadius: 30,}} source={require('../../image/driver.jpeg')} />
                 <Image
-                  style={{position: 'absolute', bottom: 1, left: 40, height: 40, width: 40, borderRadius: 30,}}
+                  style={{position: 'absolute', bottom: 0, left: 30, height: 30, width: 30, borderRadius: 30,}}
                   source={require('../../image/Drivers-Truck.jpg')}
                 />
               </View>
-              <View style={{width: '40%'}}>
+              <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>John Doe</Text>
                 <Text style={styles.truckName}>VOLVO FH16 2022</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity style={{marginRight: 10}}>
-                  <Image source={require('../../image/chat-icon.png')} />
+                  <Image style={{width: 35, height: 35,}} source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
 
                 <TouchableOpacity>
-                  <Image source={require('../../image/call-icon.png')} />
+                  <Image style={{width: 35, height: 35,}} source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -160,7 +163,7 @@ const EnterpriseOrderDelivering = ({navigation}) => {
 
 const styles = StyleSheet.create({
   mainTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     textAlign: 'center',
@@ -175,7 +178,7 @@ const styles = StyleSheet.create({
   text: {
     marginRight: 5,
     color: colors.text,
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
   },
   copyIcon: {
@@ -187,7 +190,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   oderIdText: {
-    fontSize: 15,
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
@@ -255,8 +258,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 80,
     paddingVertical: 12,
     borderRadius: 5,
-    marginTop: 20,
-    marginBottom: 80,
+    marginTop: 10,
+    marginBottom: 20,
   },
   trackText: {
     color: colors.text,

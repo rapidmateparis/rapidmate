@@ -33,6 +33,7 @@ import {
 } from '../commonComponent/StoreContext';
 import {useStripe} from '@stripe/stripe-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { localToUTC } from '../../utils/common';
 
 const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
@@ -197,8 +198,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       delivery_type_id: params.delivery_type_id,
       service_type_id: 2,
       vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      pickup_date: params.pickup_date,
-      pickup_time: params.pickup_time,
+      pickup_date: localToUTC(params.pickup_date),
+      pickup_time: localToUTC(params.pickup_time),
       pickup_location_id: params.pickup_location_id,
       dropoff_location_id: params.dropoff_location_id,
       is_repeat_mode: params.is_repeat_mode,
@@ -571,7 +572,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '20%',
+    marginTop: 50,
+    marginBottom: 20,
   },
   PayText: {
     backgroundColor: '#FFFFFF',

@@ -223,7 +223,11 @@ export const getDeliveryBoyViewOrdersList = (
       '?status=' +
       postParams.status +
       '&orderType=' +
-      postParams.orderType,
+      postParams.orderType +
+      '&page=' +
+      postParams.page +
+      '&size=' +
+      postParams.size,
     HTTPMethod.GET,
     params,
     response => {
@@ -769,7 +773,11 @@ export const cancelOrderConsumer = (params, successCallback, errorCallback) => {
   );
 };
 
-export const cancelOrderEnterprise = (params, successCallback, errorCallback) => {
+export const cancelOrderEnterprise = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
   axiosCall(
     API.cancelOrderEnterpriseUrl,
     HTTPMethod.POST,
@@ -1321,3 +1329,16 @@ export const searchOrderApi = (params, successCallback, errorCallback) => {
   );
 };
 
+export const getCalendarPlanDate = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.calendarPlanDate + params.delivery_boy_ext_id,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};

@@ -189,6 +189,7 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
+    console.log('pickupDateTime ===>',pickupDateTime)
     if (
       selectedVehicle &&
       sourceLocation &&
@@ -197,8 +198,21 @@ const PickupAddress = ({route, navigation}) => {
       distanceTime &&
       selectedVehicleDetails &&
       sourceLocationId &&
-      destinationLocationId
+      destinationLocationId 
+     
     ) {
+
+      if(route?.params?.pickupService?.id == 1 && (!pickupDateTime.pickupTime ||
+        !pickupDateTime.pickupDate)){
+          Alert.alert(
+            'Alert',
+            'Please choose the schedule date and time',
+            [{text: 'OK', onPress: () => {}}],
+          );
+          return
+        }
+
+
       if (route?.params?.pickupService?.id == 1) {
         var scheduleParam = {
           schedule_date_time: `${pickupDateTime.pickupDate} ${moment(
@@ -215,7 +229,7 @@ const PickupAddress = ({route, navigation}) => {
         distanceTime: distanceTime,
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
-        serviceTypeId: route?.params?.pickupService?.id || 1,
+        serviceTypeId: route?.params?.pickupService?.id || 2,
         paymentDiscount: route?.params?.pickupService?.discount,
         ...scheduleParam,
       });
@@ -309,6 +323,7 @@ const PickupAddress = ({route, navigation}) => {
         contentContainerStyle={{
           paddingHorizontal: 15,
           backgroundColor: colors.white,
+          flexGrow: 1,
         }}>
         <View>
           <View style={styles.chooseVehicleCard}>

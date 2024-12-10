@@ -31,6 +31,7 @@ import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 import {debounce} from 'lodash';
+import { localToUTC } from '../../utils/common';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -158,8 +159,8 @@ const PickupPayment = ({route, navigation}) => {
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
       console.log('params.schedule_date_time', params.schedule_date_time);
-      if (params.serviceTypeId == 2) {
-        var scheduleParam = {schedule_date_time: params.schedule_date_time};
+      if (params.serviceTypeId == 1) {
+        var scheduleParam = {schedule_date_time: localToUTC(params.schedule_date_time)};
       }
       let requestParams = {
         consumer_ext_id: userDetails.userDetails[0].ext_id,
@@ -184,9 +185,11 @@ const PickupPayment = ({route, navigation}) => {
         drop_notes: params.drop_details.drop_notes,
         drop_email: params.drop_details.drop_email,
         drop_company_name: params.drop_details.drop_company_name,
-        order_date: getCurrentDateAndTime()
+        // order_date: getCurrentDateAndTime()
+        order_date: localToUTC()
       };
 
+      console.log('LOCAL to UTC ==:', localToUTC())      
       if (promoCodeResponse) {
         requestParams.promo_code = promoCodeResponse.promoCode;
         requestParams.promo_value = promoCodeResponse.discount;
@@ -231,7 +234,10 @@ const PickupPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('PaymentSuccess');
+          navigation.navigate('PaymentSuccess',{
+            schedule_date_time: params.schedule_date_time,
+            serviceTypeId:params.serviceTypeId
+          });
         }
       },
       errorResponse => {
@@ -330,13 +336,19 @@ const PickupPayment = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          <View style={[styles.distanceTime, {marginVertical: 15}]}>
+          <View style={[styles.distanceTime, {marginVertical: 3}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
               From:{' '}
               {params.sourceLocation.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : ''}{' '}
+            </Text>
+          </View>
+
+          <View style={styles.distanceTime}>
+            <EvilIcons name="location" size={18} color="#606060" />
+            <Text style={styles.vehicleCapacity}>
               To:{' '}
               {params.destinationLocation.destinationDescription
                 ? params.destinationLocation.destinationDescription
@@ -609,7 +621,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '50%',
+    marginTop: 100,
+    marginBottom: 20,
   },
   PayText: {
     backgroundColor: '#FFFFFF',

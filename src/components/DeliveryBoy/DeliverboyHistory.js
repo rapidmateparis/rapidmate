@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -26,10 +27,9 @@ import {
   getLocations,
 } from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
-import {FlatList} from 'react-native-gesture-handler';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
-
+import { titleFormat, utcLocal } from '../../utils/common';
 const Tab = createMaterialTopTabNavigator();
 
 const TodayList = ({navigation, filterCriteria, searchText}) => {
@@ -39,35 +39,49 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
   const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
+
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
-      let postParams = {
-        extentedId: userDetails.userDetails[0].ext_id,
-        status: 'current',
-        orderType: filterCriteria,
-      };
-      setLoading(true);
-      getDeliveryBoyViewOrdersList(
-        postParams,
-        null,
-        successResponse => {
-          console.log('ordr', successResponse[0]._response);
-          setCurrentOrderList(successResponse[0]._response);
-          setLoading(false);
-        },
-        errorResponse => {
-          console.log(errorResponse);
-          setLoading(false);
-        },
-      );
-
+      getOnGoingRecords()
       return () => {
         setCurrentOrderList([]);
       };
     }, [filterCriteria]),
   );
+
+  const getOnGoingRecords = ()=>{
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+      orderType: filterCriteria,
+      page:page,
+      size:size
+    };
+    setLoading(true);
+    getDeliveryBoyViewOrdersList(
+      postParams,
+      null,
+      successResponse => {
+        if(size === successResponse[0]._response.length){
+          setPage(page+1)
+          setCheckMoreData(true)
+        }
+
+        setCurrentOrderList([...currentOrderList,...successResponse[0]._response]);
+        setLoading(false);
+      },
+      errorResponse => {
+        console.log(errorResponse);
+        setLoading(false);
+      },
+    );
+  }
+
 
   useEffect(() => {
     if (searchText) {
@@ -151,7 +165,11 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              {item.item.delivery_boy_order_title}
+              {item.item.delivery_boy_order_title}{' '}
+              {
+              item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
+              titleFormat(item.item.schedule_date_time || item.item.order_date)
+              :titleFormat(item.item.updated_on)):""}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
@@ -199,8 +217,27 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
     </View>
   );
 
+  const renderFooter = () => {
+    return (
+      <View style={{ padding: 10 }}>
+        <ActivityIndicator size="small" color="#d8d8d8" />
+      </View>
+    );
+  };
+
+
+  const handleLoadMoreOnGoingRecord=()=>{
+    if(checkMoreData){
+      getOnGoingRecords()
+    }
+
+  }
   return currentOrderList.length != 0 ? (
-    <FlatList data={currentOrderList} renderItem={renderItem} />
+    <FlatList data={currentOrderList} renderItem={renderItem} 
+    onEndReached={handleLoadMoreOnGoingRecord}
+    onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+    ListFooterComponent={renderFooter} 
+    />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View
@@ -231,34 +268,49 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
   const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
+  
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
-      let postParams = {
-        extentedId: userDetails.userDetails[0].ext_id,
-        status: 'past',
-        orderType: filterCriteria,
-      };
-      setLoading(true);
-      getDeliveryBoyViewOrdersList(
-        postParams,
-        null,
-        successResponse => {
-          setPastOrderList(successResponse[0]._response);
-          setLoading(false);
-        },
-        errorResponse => {
-          console.log(errorResponse);
-          setLoading(false);
-        },
-      );
-
+      getPastRecords()
       return () => {
         setPastOrderList([]);
       };
     }, [filterCriteria]),
   );
+
+  const getPastRecords=()=>{
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+      orderType: filterCriteria,
+      page:page,
+      size:size
+    };
+    setLoading(true);
+    getDeliveryBoyViewOrdersList(
+      postParams,
+      null,
+      successResponse => {
+        if(size === successResponse[0]._response.length){
+          setPage(page+1)
+          setCheckMoreData(true)
+        }
+
+        setPastOrderList([...pastOrderList, ...successResponse[0]._response]);
+        setLoading(false);
+      },
+      errorResponse => {
+        console.log(errorResponse);
+        setLoading(false);
+      },
+    );
+
+  }
 
   useEffect(() => {
     if (searchText) {
@@ -277,6 +329,8 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
       status: 'past',
       filterCriteria: filterCriteria,
       orderNumber: searchValue,
+      page:page,
+      size:size
     };
     getDeliveryBoyViewOrdersListBySearch(
       postParams,
@@ -340,7 +394,11 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              {item.item.delivery_boy_order_title}
+              {item.item.delivery_boy_order_title}{' '}
+              {
+              item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
+              titleFormat(item.item.schedule_date_time || item.item.order_date)
+              :titleFormat(item.item.updated_on)):""}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
@@ -431,8 +489,28 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
     </View>
   );
 
+  const handleLoadMorePastRecord=()=>{
+    if(checkMoreData){
+      getPastRecords()
+    }
+  }
+
+  
+  const renderFooter = () => {
+    return (
+      <View style={{ padding: 10 }}>
+        <ActivityIndicator size="small" color="#d8d8d8" />
+      </View>
+    );
+  };
+
   return pastOrderList.length != 0 ? (
-    <FlatList data={pastOrderList} renderItem={renderItem} />
+    <FlatList data={pastOrderList} renderItem={renderItem} 
+    keyExtractor={(item, index) => index.toString()}
+    onEndReached={handleLoadMorePastRecord}
+    onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+    ListFooterComponent={renderFooter} 
+    />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View

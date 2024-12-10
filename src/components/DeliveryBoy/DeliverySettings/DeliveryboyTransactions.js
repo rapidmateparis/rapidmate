@@ -20,6 +20,7 @@ import {useUserDetails} from '../../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
 import moment from 'moment';
 import {useLoader} from '../../../utils/loaderContext';
+import { utcLocal } from '../../../utils/common';
 
 function DeliveryboyTransactions() {
   const [searchText, setSearchText] = useState('');
@@ -87,7 +88,7 @@ function DeliveryboyTransactions() {
       <View style={styles.transactioneMainCard}>
         <View>
           <Text style={styles.transactioneDate}>
-            {moment(transactionItem.item.order_date).format('YYYY-MM-DD')}
+            {moment(utcLocal(transactionItem.item.order_date)).format('YYYY-MM-DD')}
           </Text>
           <Text style={styles.transactioneFrom}>
             Order Number{' '}

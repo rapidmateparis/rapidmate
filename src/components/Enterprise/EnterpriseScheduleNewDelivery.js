@@ -395,8 +395,8 @@ const styles = StyleSheet.create({
   },
   schedulecard: {
     paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 80,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   franchiseSubTitle: {
     fontSize: 12,

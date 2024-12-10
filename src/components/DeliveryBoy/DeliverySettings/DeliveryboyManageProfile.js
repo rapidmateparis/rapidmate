@@ -7,27 +7,32 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
+import { updateUserProfile } from '../../../data_manager';
+import { useLoader } from '../../../utils/loaderContext';
 
 const DeliveryboyManageProfile = ({navigation}) => {
-  const {userDetails} = useUserDetails();
+  const {userDetails,saveUserDetails} = useUserDetails();
+
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
-  const [number, setNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [vehicleNo, setVehicleNo] = useState('');
-  const [vehicleModel, setVehicleModel] = useState('');
-  const [vehicleMake, setVehicleMake] = useState('');
-  const [vehicleVariant, setVehicleVariant] = useState('');
+  const [number, setNumber] = useState(userDetails?.userDetails[0]?.phone || '');
+  const [email, setEmail] = useState(userDetails?.userDetails[0]?.email || '');
+  const [vehicleNo, setVehicleNo] = useState(userDetails?.userDetails[0]?.plat_no || '');
+  const [vehicleModel, setVehicleModel] = useState(userDetails?.userDetails[0]?.modal || '');
+  const [vehicleMake, setVehicleMake] = useState(userDetails?.userDetails[0]?.make || '');
+  const [vehicleVariant, setVehicleVariant] = useState(userDetails?.userDetails[0]?.variant || '');
 
   const fullName = `${userDetails.userDetails[0].first_name} ${userDetails.userDetails[0].last_name}`;
 
   const [userName, setUserName] = useState(fullName);
+  const {setLoading} = useLoader();
 
   useEffect(() => {
     setUserName(fullName);
@@ -37,6 +42,55 @@ const DeliveryboyManageProfile = ({navigation}) => {
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+
+  const saveProfileDetails = () => {
+    setLoading(true);
+    let profileParams = {
+      ext_id: userDetails.userDetails[0].ext_id,
+      first_name: userName,
+      last_name: '',
+      phone: dropdownValue + number,
+      email: email,
+
+      plat_no:vehicleNo,
+      modal:vehicleModel,
+      make:vehicleMake,
+      variant:vehicleVariant
+
+    };
+
+    updateUserProfile(
+      userDetails.userDetails[0].role,
+      profileParams,
+      successResponse => {
+        setLoading(false);
+        const newUserDetails = userDetails.userDetails[0]
+        newUserDetails['email'] = email
+        newUserDetails['first_name'] = userName
+        newUserDetails['phone'] = number
+
+        newUserDetails['plat_no'] = vehicleNo
+        newUserDetails['modal'] = vehicleModel
+        newUserDetails['make'] = vehicleMake
+        newUserDetails['variant'] = vehicleVariant
+
+        saveUserDetails({ ...userDetails, userDetails: [newUserDetails] });
+        console.log('updateUserProfile response ', successResponse);
+        Alert.alert('Success', 'Profile updates duccessfully', [
+          {
+            text: 'OK',
+            onPress: () => {},
+          },
+        ]);
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('updateUserProfile', errorResponse);
+      },
+    );
+  }
+
+
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -138,8 +192,8 @@ const DeliveryboyManageProfile = ({navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
-                value={vehicleMake}
-                onChangeText={text => setVehicleMake(text)}
+                value={vehicleNo}
+                onChangeText={text => setVehicleNo(text)}
               />
             </View>
             <View style={{flex: 1, marginLeft: 10}}>
@@ -148,8 +202,8 @@ const DeliveryboyManageProfile = ({navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
-                value={vehicleVariant}
-                onChangeText={text => setVehicleVariant(text)}
+                value={vehicleModel}
+                onChangeText={text => setVehicleModel(text)}
               />
             </View>
           </View>
@@ -176,6 +230,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
           </View>
         </View>
         <TouchableOpacity
+          onPress={()=>saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>

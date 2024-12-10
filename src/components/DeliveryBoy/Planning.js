@@ -15,10 +15,14 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {colors} from '../../colors';
 import PlaningFilterModal from '../commonComponent/PlaningFilterModal';
-import {getDeliveryBoyListUsingDate, getLocations} from '../../data_manager';
+import {
+  getCalendarPlanDate,
+  getDeliveryBoyListUsingDate,
+  getLocations,
+} from '../../data_manager';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
-import moment from 'moment';
+import { titleFormat, utcLocal } from '../../utils/common';
 
 const Planning = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -26,6 +30,7 @@ const Planning = ({navigation}) => {
   const {lookupData} = useLookupData();
   const [orderList, setOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
+  const [calendarData, setCalendarData] = useState();
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -46,10 +51,49 @@ const Planning = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       getLocationsData();
       getDeliveryBoyPlannningList(selected);
+      getCalendarDate();
     });
 
     return unsubscribe;
   }, [navigation]);
+
+  const getCalendarDate = () => {
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+    };
+    getCalendarPlanDate(
+      params,
+      succesResponse => {
+        let tempDateList = succesResponse[0]._response;
+        const transformedObject = tempDateList.calendarData.reduce(
+          (acc, date) => {
+            acc[date] = {marked: true};
+            return acc;
+          },
+          {},
+        );
+        const combinedConfig = {
+          ...transformedObject,
+          [selected]: {
+            selected: true,
+            disableTouchEvent: true,
+            selectedColor: colors.primary,
+          },
+          [getCurrentDate()]: {
+            selected: true,
+            selectedColor: colors.secondary,
+          },
+        };
+        setCalendarData(combinedConfig);
+      },
+      errorResponse => {
+        console.log(
+          'print_data==>getCalendarPlanDate',
+          JSON.stringify(errorResponse),
+        );
+      },
+    );
+  };
 
   const onPressPlanningFilter = probs => {
     setOrderList([]);
@@ -113,12 +157,25 @@ const Planning = ({navigation}) => {
     );
   };
 
-  const renderPlanningList = planningItem => (
-    <View style={styles.packageDetailCard}>
+  const navigateToDeliveryBoyDeliveryDetails=(details)=>{
+    navigation.navigate('DeliveryboyDeliveryDetails', {
+      order_number: details.order_number,
+      package_photo: details.package_photo,
+      orderItem: details,
+    });
+  }
+
+  const renderPlanningList = planningItem =>{
+    return(
+    <TouchableOpacity style={styles.packageDetailCard} onPress={()=>navigateToDeliveryBoyDeliveryDetails(planningItem.item)}>
       <View style={styles.packageHeader}>
         <Image source={require('../../image/package-medium-icon.png')} />
         <Text style={styles.deliveryTime}>
-          {planningItem.item.consumer_order_title}
+          {planningItem.item.consumer_order_title}{' '}
+          {
+          planningItem.item.is_show_datetime_in_title==1? (planningItem.item.order_status === 'ORDER_PLACED' ?
+          titleFormat(planningItem.item.schedule_date_time || planningItem.item.order_date)
+          :titleFormat(planningItem.item.updated_on)):""}
         </Text>
       </View>
 
@@ -150,8 +207,8 @@ const Planning = ({navigation}) => {
           For {planningItem.item.company_name}
         </Text>
       </View>
-    </View>
-  );
+    </TouchableOpacity>
+  )};
 
   return (
     <View style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -180,17 +237,7 @@ const Planning = ({navigation}) => {
             setSelected(day.dateString);
             getDeliveryBoyPlannningList(day.dateString);
           }}
-          markedDates={{
-            [selected]: {
-              selected: true,
-              disableTouchEvent: true,
-              selectedColor: colors.primary,
-            },
-            [getCurrentDate()]: {
-              selected: true,
-              selectedColor: colors.secondary,
-            },
-          }}
+          markedDates={calendarData}
           theme={{
             backgroundColor: '#ffffff',
             calendarBackground: '#ffffff',
@@ -279,7 +326,7 @@ const styles = StyleSheet.create({
   },
   packageDetailCard: {
     backgroundColor: colors.white,
-    padding: 13,
+    paddingHorizontal: 5,
     borderRadius: 5,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
