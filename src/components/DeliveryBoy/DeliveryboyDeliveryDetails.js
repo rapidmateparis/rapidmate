@@ -63,12 +63,10 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     orderRequestAction(
       params,
       successResponse => {
-        navigation.navigate('Home');
         console.log('successResponse==>', JSON.stringify(successResponse));
         navigation.goBack();
       },
       errorResponse => {
-        navigation.navigate('Home');
         console.log('errorResponse==>', JSON.stringify(errorResponse));
         navigation.goBack();
       },
