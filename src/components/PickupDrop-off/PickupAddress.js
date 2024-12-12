@@ -340,7 +340,7 @@ const PickupAddress = ({route, navigation}) => {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={{flexDirection: 'row'}}>
-                {vehicleTypeList.map((vehicle, index) => (
+                {vehicleTypeList.filter(vehicle=>vehicle.vehicle_type_id !== 8).map((vehicle, index) => (
                   <TouchableOpacity
                     key={index}
                     onPress={() => {
