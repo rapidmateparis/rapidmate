@@ -135,7 +135,27 @@ const PickupPayment = ({route, navigation}) => {
         },
         {
           text: 'Go Home',
-          onPress: () => navigation.navigate('PickupBottomNav'),
+          onPress: () => {
+            setLoading(true);
+            let params = {
+              order_number: orderNumber,
+              status: 'Payment Failed',
+            };
+            console.log('params ===>', JSON.stringify(params));
+
+            orderStatusUpdate(
+              params,
+              successResponse => {
+                setLoading(false);
+                console.log('message===>', JSON.stringify(successResponse));
+                navigation.navigate('PickupBottomNav')
+              },
+              errorResponse => {
+                setLoading(false);
+                console.log('message===>', JSON.stringify(errorResponse));
+              },
+            );
+          },
         },
       ]);
     }

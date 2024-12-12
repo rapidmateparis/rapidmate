@@ -48,9 +48,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
       console.log('remoteMessage ', JSON.stringify(remoteMessage));
-      if(remoteMessage?.data?.orderStatus === 'COMPLETED') {
-        // do nothing
-      } else if(remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
+      if(remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' && remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
         setDeliveryBoyAcceptRejectModalModalVisible(true);
         getViewOrderDetail(
           remoteMessage.data?.orderNumber,
