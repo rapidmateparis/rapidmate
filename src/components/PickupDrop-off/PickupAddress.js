@@ -371,7 +371,7 @@ const PickupAddress = ({route, navigation}) => {
                         <Image source={require('../../image/info.png')} />
                       </TouchableOpacity>
                       <Image
-                        style={[styles.vehicleImage, {width: 100, height: 100}]}
+                        style={[styles.vehicleImage, {width: 80, height: 80}]}
                         source={getImage(vehicle)}
                       />
                     </View>
