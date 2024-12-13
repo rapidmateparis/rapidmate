@@ -109,6 +109,11 @@ export const API = {
   enterprisePaymentMethodUrl: BASE_URL + 'enterprise/paymentmethod',
   searchOrder: BASE_URL + 'enterprise/order/search',
   calendarPlanDate: BASE_URL + 'order/deliveryboy/plan/calendar/data/',
+
+  notificationCount:BASE_URL + 'notification/count/',
+
+  deliveryBoyBillingAddressUpdate:BASE_URL + 'deliveryboy/billing/address/update/',
+  deliveryBoyBillingAddressGet: BASE_URL + 'deliveryboy/billing/address/get/'
 };
 
 export const DATE_FORMAT ={

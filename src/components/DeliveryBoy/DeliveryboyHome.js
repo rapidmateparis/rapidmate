@@ -19,6 +19,7 @@ import {
   getLocations,
   getLookupData,
   getCompanyList,
+  getNotificationCount,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
@@ -30,8 +31,8 @@ const DeliveryboyHome = ({navigation}) => {
   const [recentOrderList, setRecentOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
-  const {userDetails} = useUserDetails();
   const {saveLookupData} = useLookupData();
+  const {userDetails,saveUserDetails} = useUserDetails();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +43,7 @@ const DeliveryboyHome = ({navigation}) => {
           getOrderList(1),
           getLookup(),
           getCompanyConnectionList(),
+          getNotificationAllCount(),
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -96,6 +98,34 @@ const DeliveryboyHome = ({navigation}) => {
       },
     );
   };
+
+  const getNotificationAllCount = () => {
+    setLoading(true);
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
+  
+
+  
+
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id === locationId);
@@ -223,8 +253,17 @@ const DeliveryboyHome = ({navigation}) => {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() =>{
+              const newUserDetails = userDetails.userDetails[0]
+              newUserDetails['notificationCount']=0
+              saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      
+               navigation.navigate('Notifications')}
+            }>
             <EvilIcons name="bell" size={40} color="#000" />
+           {userDetails.userDetails[0].notificationCount > 0 && <View style={styles.notificationCountStyle}>
+              <Text style={styles.notificationCountText}>{userDetails.userDetails[0].notificationCount}</Text>
+            </View>}
           </TouchableOpacity>
         </View>
 
@@ -517,6 +556,21 @@ const styles = StyleSheet.create({
     color: colors.text,
     paddingVertical: 5,
   },
+  notificationCountStyle:{
+    position:'absolute',
+    right:0,
+    backgroundColor:'red',
+    borderRadius:50,
+    height:16, 
+    width:16,
+    justifyContent:'center',
+    alignItems:'center' 
+  },
+  notificationCountText:{
+    color:'#FFFFFF',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
+  }
 });
 
 export default DeliveryboyHome;
