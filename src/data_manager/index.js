@@ -1342,3 +1342,47 @@ export const getCalendarPlanDate = (params, successCallback, errorCallback) => {
     },
   );
 };
+
+export const getNotificationCount = (params, successCallback, errorCallback) => {
+  axiosCall(
+    API.notificationCount+params,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const updateDeliveryBoyBillingDetails = (params, successCallback, errorCallback) => {
+  console.log(params,API.deliveryBoyBillingAddressUpdate)
+  axiosCall(
+    API.deliveryBoyBillingAddressUpdate,
+    HTTPMethod.POST,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyBillingDetails = (params, successCallback, errorCallback) => {
+  console.log('URL ',API.deliveryBoyBillingAddressGet+params)
+  axiosCall(
+    API.deliveryBoyBillingAddressGet+params,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
