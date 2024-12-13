@@ -178,8 +178,8 @@ export default function MapDeliveryDetails(probs = null) {
           longitude: probs.addressData.sourceAddress.longitude
             ? parseFloat(probs.addressData.sourceAddress.longitude)
             : 2.3513877855537912,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.08,
+          longitudeDelta: 0.07,
         }}>
         {/* Markers */}
         {markers.map(marker => (
