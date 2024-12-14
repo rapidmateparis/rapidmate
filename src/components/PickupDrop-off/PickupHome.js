@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   packageRequst: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   pickcard: {
-    width: '65%',
+    width: '60%',
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
