@@ -14,13 +14,15 @@ import {
   useServiceTypeDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
-import {getServiceTypeApi} from '../../data_manager';
+import {getNotificationCount, getServiceTypeApi} from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 
 const PickupHome = ({navigation}) => {
-  const {userDetails} = useUserDetails();
+  const {userDetails,saveUserDetails} = useUserDetails();
   const {serviceTypeDetails, saveServiceTypeDetails} = useServiceTypeDetails();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+  const {setLoading} = useLoader();
 
   useEffect(() => {
     getServiceTypeApi(
@@ -33,6 +35,7 @@ const PickupHome = ({navigation}) => {
         console.log('errorResponse', errorResponse);
       },
     );
+    getNotificationAllCount()
   }, []);
 
   const togglePushNotifications = () => {
@@ -50,6 +53,28 @@ const PickupHome = ({navigation}) => {
   const getNonScheduledServiceDetails =()=>{
     return serviceTypeDetails.find((service=>service.service_name !== 'Scheduled'))
    }
+
+   const getNotificationAllCount = () => {
+    setLoading(true);
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -69,8 +94,15 @@ const PickupHome = ({navigation}) => {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() => {
+              const newUserDetails = userDetails.userDetails[0]
+              newUserDetails['notificationCount']=0
+              saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+              navigation.navigate('Notifications')}}>
             <EvilIcons name="bell" size={40} color="#000" />
+            {userDetails.userDetails[0].notificationCount > 0 && <View style={styles.notificationCountStyle}>
+              <Text style={styles.notificationCountText}>{userDetails.userDetails[0].notificationCount}</Text>
+            </View>}
           </TouchableOpacity>
         </View>
 
@@ -364,6 +396,21 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
   },
+  notificationCountStyle:{
+    position:'absolute',
+    right:0,
+    backgroundColor:'red',
+    borderRadius:50,
+    height:16, 
+    width:16,
+    justifyContent:'center',
+    alignItems:'center' 
+  },
+  notificationCountText:{
+    color:'#FFFFFF',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
+  }
 });
 
 export default PickupHome;
