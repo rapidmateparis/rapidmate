@@ -24,6 +24,7 @@ import {
 import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
+import { useFocusEffect } from '@react-navigation/native';
 
 const DeliveryboyHome = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -35,23 +36,34 @@ const DeliveryboyHome = ({navigation}) => {
   const {userDetails,saveUserDetails} = useUserDetails();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await Promise.all([
-          getLocationsData(),
-          getOrderList(0),
-          getOrderList(1),
-          getLookup(),
-          getCompanyConnectionList(),
-          getNotificationAllCount(),
-        ]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchData();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+
+      fetchData();      
+      return () => {
+        // Do something when the screen is unfocused
+      };
+    }, [])
+  );
+
+  const fetchData = async () => {
+    try {
+      await Promise.all([
+        getLocationsData(),
+        getOrderList(0),
+        getOrderList(1),
+        getLookup(),
+        getCompanyConnectionList(),
+        getNotificationAllCount(),
+      ]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
 
   const getCompanyConnectionList = () => {
     getCompanyList(

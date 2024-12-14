@@ -409,59 +409,71 @@ const DeliveryDetails = ({navigation, route}) => {
           )}
         </View>
         <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/Pickup-Package-Icon.png')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup information</Text>
-            <Text style={styles.companyInfo}>
-              {order.company_name ? order.company_name : 'Company Name'}
-            </Text>
+          <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/Pickup-Package-Icon.png')}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text style={styles.dropInfo}>Pickup information</Text>
+              {order.company_name && <Text style={styles.companyInfo}>
+                {order.company_name ? order.company_name : ''}
+              </Text>}
 
-            <View>
-              <Text style={styles.dropInfo}>
-                {sourceAddress.address}, {sourceAddress.city},{' '}
-                {sourceAddress.state}
-              </Text>
-            </View>
-            <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
-          </View>
-        </View>
-        <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/package-img.png')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>
-              {order.company_name ? order.drop_company_name : 'Company Name'}
-            </Text>
-            {order.orderLines && order.orderLines.length > 0 ? (
-              <View>
-                {order.orderLines.map((item, index) => {
-                  var branch = locations.filter(
-                    i => i.id == item.dropoff_location,
-                  );
-                  return (
-                    <Text style={styles.dropInfo}>
-                      {branch[0] && branch[0].address},{' '}
-                      {branch[0] && branch[0].city},{' '}
-                      {branch[0] && branch[0].state}
-                    </Text>
-                  );
-                })}
-              </View>
-            ) : (
               <View>
                 <Text style={styles.dropInfo}>
-                  {destinationAddress.address}, {destinationAddress.city},{' '}
-                  {destinationAddress.state}
+                  {sourceAddress.address}, {sourceAddress.city},{' '}
+                  {sourceAddress.state}
                 </Text>
               </View>
-            )}
-            <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+              <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
+            </View>
+          </View>
+
+          {order.package_photo && <Image
+            style={styles.driverImage}
+            source={{
+              uri:
+                API.viewImageUrl + order.package_photo,
+            }}
+          />}
+        </View>
+        <View style={styles.packageCard}>
+        <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/package-img.png')}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text style={styles.dropInfo}>Drop off information</Text>
+              {order.company_name && <Text style={styles.companyInfo}>
+                {order.company_name ? order.drop_company_name : ''}
+              </Text>}
+              {order.orderLines && order.orderLines.length > 0 ? (
+                <View>
+                  {order.orderLines.map((item, index) => {
+                    var branch = locations.filter(
+                      i => i.id == item.dropoff_location,
+                    );
+                    return (
+                      <Text style={styles.dropInfo}>
+                        {branch[0] && branch[0].address},{' '}
+                        {branch[0] && branch[0].city},{' '}
+                        {branch[0] && branch[0].state}
+                      </Text>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View>
+                  <Text style={styles.dropInfo}>
+                    {destinationAddress.address}, {destinationAddress.city},{' '}
+                    {destinationAddress.state}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+            </View>
           </View>
         </View>
 
@@ -612,6 +624,8 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   packageCard: {
+    justifyContent:'space-between',
+    alignItems:'center',
     flexDirection: 'row',
     backgroundColor: colors.white,
     padding: 10,
@@ -627,6 +641,12 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 7,
   },
+
+  packageLeftsideCard:{
+    flexDirection:"row",
+    flex:0.7
+  },
+
   driverImage: {
     width: 40,
     height: 40,
