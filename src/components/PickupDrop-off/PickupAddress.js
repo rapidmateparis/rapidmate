@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   BackHandler,
+  Dimensions,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -31,6 +32,8 @@ import {
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
 
+const {width} = Dimensions.get('window');
+
 const PickupAddress = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isScheduleModalVisible, setScheduleModalVisible] = useState(false);
@@ -47,6 +50,9 @@ const PickupAddress = ({route, navigation}) => {
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const [distancePriceList, setDistancePriceList] = useState([]);
   const [pickupDateTime, setPickupDateTime] = useState({});
+
+  const isLargeScreen = width >= 400; // Large screen: width >= 500
+  const isSmallScreen = width < 400; // Small screen: width < 350
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
@@ -189,7 +195,7 @@ const PickupAddress = ({route, navigation}) => {
   };
 
   const navigateToAddPickupAddress = () => {
-    console.log('pickupDateTime ===>',pickupDateTime)
+    console.log('pickupDateTime ===>', pickupDateTime);
     if (
       selectedVehicle &&
       sourceLocation &&
@@ -198,20 +204,17 @@ const PickupAddress = ({route, navigation}) => {
       distanceTime &&
       selectedVehicleDetails &&
       sourceLocationId &&
-      destinationLocationId 
-     
+      destinationLocationId
     ) {
-
-      if(route?.params?.pickupService?.id == 1 && (!pickupDateTime.pickupTime ||
-        !pickupDateTime.pickupDate)){
-          Alert.alert(
-            'Alert',
-            'Please choose the schedule date and time',
-            [{text: 'OK', onPress: () => {}}],
-          );
-          return
-        }
-
+      if (
+        route?.params?.pickupService?.id == 1 &&
+        (!pickupDateTime.pickupTime || !pickupDateTime.pickupDate)
+      ) {
+        Alert.alert('Alert', 'Please choose the schedule date and time', [
+          {text: 'OK', onPress: () => {}},
+        ]);
+        return;
+      }
 
       if (route?.params?.pickupService?.id == 1) {
         var scheduleParam = {
@@ -270,7 +273,7 @@ const PickupAddress = ({route, navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{height: '50%', position: 'relative'}}>
+      <View style={{height: '58%', position: 'relative'}}>
         <MapAddress
           onFetchDistanceAndTime={onFetchDistanceAndTime}
           onSourceLocation={onSourceLocation}
@@ -297,8 +300,8 @@ const PickupAddress = ({route, navigation}) => {
                       fontFamily: 'Montserrat-Medium',
                       color: colors.secondary,
                     }}>
-                    {' '}
-                    {'\n'}Time: {pickupDateTime.pickupTime}
+                    {'\n'}
+                    Time: {pickupDateTime.pickupTime}
                   </Text>
                 )}
               </Text>
@@ -319,20 +322,24 @@ const PickupAddress = ({route, navigation}) => {
           </View>
         )}
       </View>
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 15,
-          backgroundColor: colors.white,
-          flexGrow: 1,
-        }}>
+      <View>
         <View>
-          <View style={styles.chooseVehicleCard}>
+          <View
+            style={
+              isSmallScreen
+                ? styles.smallChooseVehicleCard
+                : isLargeScreen
+                ? styles.largeChooseVehicleCard
+                : styles.mediumChooseVehicleCard
+            }>
             <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingBottom: 10,
-              }}>
+              style={
+                isSmallScreen
+                  ? styles.smallVehicleNameCard
+                  : isLargeScreen
+                  ? styles.largeVehicleNameCard
+                  : styles.mediumVehicleNameCard
+              }>
               <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
               <Text style={styles.selectedVehiclePrice}>
                 € {getPriceUsingVechicelType(selectedVehicleDetails?.id)}
@@ -340,60 +347,75 @@ const PickupAddress = ({route, navigation}) => {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={{flexDirection: 'row'}}>
-                {vehicleTypeList.filter(vehicle=>vehicle.vehicle_type_id !== 8).map((vehicle, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => {
-                      if (sourceLocation && destinationLocation) {
-                        setSelectedVehicle(vehicle.vehicle_type);
-                        setSelectedVehicleDetails(vehicle);
-                        const price = getPriceUsingVechicelType(vehicle.id);
-                        setSelectedVehiclePrice(price);
-                      } else {
-                        Alert.alert(
-                          'Error Alert',
-                          'Please select source and distination',
-                          [{text: 'OK', onPress: () => {}}],
-                        );
-                      }
-                    }}
-                    style={styles.cardVehicle}>
-                    <View
-                      style={[
-                        styles.allVehicleCard,
-                        selectedVehicle === vehicle.vehicle_type
-                          ? styles.selectedCard
-                          : null,
-                      ]}>
-                      <TouchableOpacity
-                        onPress={() => toggleModal(vehicle)}
-                        style={styles.infoIcons}>
-                        <Image source={require('../../image/info.png')} />
-                      </TouchableOpacity>
-                      <Image
-                        style={[styles.vehicleImage, {width: 80, height: 80}]}
-                        source={getImage(vehicle)}
-                      />
-                    </View>
-                    <Text style={styles.vehicleTypeName}>
-                      {vehicle.vehicle_type}
-                    </Text>
-                    <Text style={styles.vehicleCap}>
-                      {vehicle.vehicle_type_desc}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                {vehicleTypeList
+                  .filter(vehicle => vehicle.vehicle_type_id !== 8)
+                  .map((vehicle, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        if (sourceLocation && destinationLocation) {
+                          setSelectedVehicle(vehicle.vehicle_type);
+                          setSelectedVehicleDetails(vehicle);
+                          const price = getPriceUsingVechicelType(vehicle.id);
+                          setSelectedVehiclePrice(price);
+                        } else {
+                          Alert.alert(
+                            'Error Alert',
+                            'Please select source and distination',
+                            [{text: 'OK', onPress: () => {}}],
+                          );
+                        }
+                      }}
+                      style={styles.cardVehicle}>
+                      <View
+                        style={[
+                          styles.allVehicleCard,
+                          selectedVehicle === vehicle.vehicle_type
+                            ? styles.selectedCard
+                            : null,
+                        ]}>
+                        <TouchableOpacity
+                          onPress={() => toggleModal(vehicle)}
+                          style={styles.infoIcons}>
+                          <Image source={require('../../image/info.png')} />
+                        </TouchableOpacity>
+                        <Image
+                          style={
+                            isSmallScreen
+                              ? styles.smallVehicleImage
+                              : isLargeScreen
+                              ? styles.largeVehicleImage
+                              : styles.mediumVehicleImage
+                          }
+                          source={getImage(vehicle)}
+                        />
+                      </View>
+                      <Text style={styles.vehicleTypeName}>
+                        {vehicle.vehicle_type}
+                      </Text>
+                      <Text style={styles.vehicleCap}>
+                        {vehicle.vehicle_type_desc}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
               </View>
             </ScrollView>
           </View>
         </View>
-        <TouchableOpacity
-          onPress={navigateToAddPickupAddress}
-          style={styles.continueBtn}>
-          <Text style={styles.continueText}>Continue to order details</Text>
-          <AntDesign name="arrowright" size={20} color="#000000" />
-        </TouchableOpacity>
-      </ScrollView>
+      </View>
+
+      <TouchableOpacity
+        onPress={navigateToAddPickupAddress}
+        style={
+          isSmallScreen
+            ? styles.smallContinueBtn
+            : isLargeScreen
+            ? styles.largeContinueBtn
+            : styles.mediumContinueBtn
+        }>
+        <Text style={styles.continueText}>Continue to order details</Text>
+        <AntDesign name="arrowright" size={25} color="#000000" />
+      </TouchableOpacity>
 
       {/* ----------- Modal Start Here -----------------  */}
       <VehicleDimensionsModal
@@ -442,9 +464,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Bold',
     color: colors.text,
   },
-  chooseVehicleCard: {
+  largeChooseVehicleCard: {
+    backgroundColor: colors.white,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+  },
+  smallChooseVehicleCard: {
     backgroundColor: colors.white,
     paddingVertical: 15,
+    paddingHorizontal: 15,
   },
   cardVehicle: {
     paddingHorizontal: 5,
@@ -460,10 +488,6 @@ const styles = StyleSheet.create({
   },
   selectedCard: {
     borderColor: colors.secondary,
-  },
-  vehicleImage: {
-    height: 62,
-    resizeMode: 'center',
   },
   vehicleTypeName: {
     fontSize: 14,
@@ -483,21 +507,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     color: colors.secondary,
   },
-  continueBtn: {
+  largeContinueBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
     paddingHorizontal: 20,
-    paddingTop: 15,
-    paddingBottom: 15,
-    borderRadius: 10,
-    marginBottom: 10,
+    paddingTop: 18,
+    paddingBottom: 80,
+  },
+  smallContinueBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingTop: 13,
+    paddingBottom: 80,
   },
   continueText: {
     flex: 1,
     color: colors.text,
-    fontFamily: 'Montserrat-Medium',
-    fontSize: 15,
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
   },
   infoIcons: {
     position: 'absolute',
@@ -505,25 +535,25 @@ const styles = StyleSheet.create({
     right: -11,
     padding: 10,
   },
-  bicycleImage: {
-    width: 48,
-    height: 57,
+  smallVehicleNameCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 15,
   },
-  motorbikeImage: {
-    width: 51,
-    height: 58,
+  largeVehicleNameCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 30,
   },
-  miniTruckImage: {
-    width: 74,
-    height: 58,
+  smallVehicleImage: {
+    height: 70,
+    width: 70,
+    resizeMode: 'center',
   },
-  miniVanImage: {
-    width: 110,
-    height: 58,
-  },
-  semiTruckImage: {
-    width: 110,
-    height: 58,
+  largeVehicleImage: {
+    height: 85,
+    width: 85,
+    resizeMode: 'center',
   },
 });
 
