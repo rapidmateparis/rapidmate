@@ -14,14 +14,16 @@ import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
-import { useLoader } from '../../../utils/loaderContext';
-import { updateUserProfile } from '../../../data_manager';
+import {useLoader} from '../../../utils/loaderContext';
+import {updateUserProfile} from '../../../data_manager';
 
 const ConsumerManageProfile = ({navigation}) => {
-  const {userDetails,saveUserDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
-  const [number, setNumber] = useState(userDetails?.userDetails[0]?.phone || '');
+  const [number, setNumber] = useState(
+    userDetails?.userDetails[0]?.phone || '',
+  );
   const [email, setEmail] = useState(userDetails?.userDetails[0]?.email || '');
   const {setLoading} = useLoader();
 
@@ -44,18 +46,18 @@ const ConsumerManageProfile = ({navigation}) => {
       first_name: vehicleModel,
       last_name: '',
       phone: dropdownValue + number,
-      email: email
+      email: email,
     };
     updateUserProfile(
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
         setLoading(false);
-        const newUserDetails = userDetails.userDetails[0]
-        newUserDetails['email'] = email
-        newUserDetails['first_name'] = vehicleModel
-        newUserDetails['phone'] = number
-        saveUserDetails({ ...userDetails, userDetails: [newUserDetails] });
+        const newUserDetails = userDetails.userDetails[0];
+        newUserDetails['email'] = email;
+        newUserDetails['first_name'] = vehicleModel;
+        newUserDetails['phone'] = number;
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
         console.log('updateUserProfile response ', successResponse);
         Alert.alert('Success', 'Profile updates duccessfully', [
           {
@@ -69,8 +71,7 @@ const ConsumerManageProfile = ({navigation}) => {
         console.log('updateUserProfile', errorResponse);
       },
     );
-  }
-
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -145,7 +146,11 @@ const ConsumerManageProfile = ({navigation}) => {
               </View>
             </View>
             <TextInput
-              style={styles.input}
+              style={{
+                fontFamily: 'Montserrat-Regular',
+                fontSize: 12,
+                color: colors.text,
+              }}
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
@@ -166,7 +171,7 @@ const ConsumerManageProfile = ({navigation}) => {
           />
         </View>
         <TouchableOpacity
-          onPress={()=>saveProfileDetails()}
+          onPress={() => saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>

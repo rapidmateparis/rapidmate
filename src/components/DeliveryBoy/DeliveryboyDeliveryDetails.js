@@ -54,6 +54,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [isOTP, setIsOTP] = useState();
 
+  console.log('order', order);
+
   const handleOrderRequest = value => {
     let params = {
       delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
@@ -63,12 +65,10 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     orderRequestAction(
       params,
       successResponse => {
-        navigation.navigate('Home');
         console.log('successResponse==>', JSON.stringify(successResponse));
         navigation.goBack();
       },
       errorResponse => {
-        navigation.navigate('Home');
         console.log('errorResponse==>', JSON.stringify(errorResponse));
         navigation.goBack();
       },
@@ -324,7 +324,13 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleCall(pickUpLocation.phone_number)}>
+                  onPress={() =>
+                    handleCall(
+                      order?.order.is_my_self === 1
+                        ? order?.order.consumer_mobile
+                        : order?.order.mobile,
+                    )
+                  }>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -401,9 +407,11 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
                 <Text style={styles.companyInfo}>
-                  {dropOffLocation.company_name
-                    ? dropOffLocation.company_name
-                    : 'Company Name'}
+                  {order.order
+                    ? order.order.drop_company_name
+                      ? order.order.drop_company_name
+                      : 'Company Name'
+                    : ''}
                 </Text>
                 <Text style={styles.dropInfo}>
                   {dropOffLocation.address}, {dropOffLocation.city},{' '}
@@ -415,7 +423,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleCall(pickUpLocation.phone_number)}>
+                  onPress={() => handleCall(order.order.drop_mobile)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>

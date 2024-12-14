@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   deliveryTime: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,

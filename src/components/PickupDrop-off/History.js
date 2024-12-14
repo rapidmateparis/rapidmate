@@ -9,6 +9,7 @@ import {
   Image,
   Alert,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -37,11 +38,19 @@ const TodayList = ({navigation, searchText}) => {
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
       getOrderList();
+      return ()=>{
+        setOrderList([])
+        setPage(1)
+        setCheckMoreData(true)
+      }
     }, []),
   );
 
@@ -110,10 +119,11 @@ const TodayList = ({navigation, searchText}) => {
 
   const getOrderList = () => {
     setLoading(true);
-    setOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'current',
+      page:page,
+      size:size
     };
     getConsumerViewOrdersList(
       postParams,
@@ -122,8 +132,13 @@ const TodayList = ({navigation, searchText}) => {
         console.log('successResponse ===> f ',JSON.stringify(successResponse))
 
         if (successResponse[0]._success) {
+
+          if(size === successResponse[0]._response.length){
+            setPage(page+1)
+            setCheckMoreData(true)
+          }
           let tempOrderList = successResponse[0]._response;
-          setOrderList(tempOrderList);
+          setOrderList([...orderList, ...tempOrderList]);
         }
         setLoading(false);
       },
@@ -195,6 +210,21 @@ const TodayList = ({navigation, searchText}) => {
     </TouchableOpacity>
   );
 
+  const renderFooter = () => {
+    return (
+      <View style={{ padding: 10 }}>
+        <ActivityIndicator size="small" color="#d8d8d8" />
+      </View>
+    );
+  };
+
+  const handleLoadMoreOnGoingRecord=()=>{
+    if(checkMoreData){
+      getOrderList()
+    }
+  }
+
+
   return (
     <View style={{flex: 1}}>
       <View
@@ -226,7 +256,11 @@ const TodayList = ({navigation, searchText}) => {
             </View>
           </View>
         ) : (
-          <FlatList data={orderList} renderItem={renderCurrentOrderItem} />
+          <FlatList data={orderList} renderItem={renderCurrentOrderItem} 
+          onEndReached={handleLoadMoreOnGoingRecord}
+          onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+          ListFooterComponent={renderFooter} 
+          />
         )}
       </View>
     </View>
@@ -239,11 +273,21 @@ const PastList = ({navigation, searchText}) => {
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
+
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
       getOrderList();
+
+      return ()=>{
+        setPastOrderList([])
+        setPage(1)
+        setCheckMoreData(true)
+      }
     }, []),
   );
 
@@ -258,6 +302,8 @@ const PastList = ({navigation, searchText}) => {
 
   const getOrderListinSearch = searchValue => {
     setLoading(true);
+    setPage(1)
+    setCheckMoreData(true)
     setPastOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
@@ -310,7 +356,6 @@ const PastList = ({navigation, searchText}) => {
 
   const getOrderList = () => {
     setLoading(true);
-    setPastOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'past',
@@ -321,8 +366,14 @@ const PastList = ({navigation, searchText}) => {
       successResponse => {
         console.log('successResponse ===> past ',JSON.stringify(successResponse))
         if (successResponse[0]._success) {
+
+          if(size === successResponse[0]._response.length){
+            setPage(page+1)
+            setCheckMoreData(true)
+          }
+
           let tempOrderList = successResponse[0]._response;
-          setPastOrderList(tempOrderList);
+          setPastOrderList([...pastOrderList, ...tempOrderList]);
         }
         setLoading(false);
       },
@@ -388,8 +439,27 @@ const PastList = ({navigation, searchText}) => {
       </View>
     </TouchableOpacity>
   );
+
+  const renderFooter = () => {
+    return (
+      <View style={{ padding: 10 }}>
+        <ActivityIndicator size="small" color="#d8d8d8" />
+      </View>
+    );
+  };
+
+  const handleLoadMoreOnGoingRecord=()=>{
+    if(checkMoreData){
+      getOrderList()
+    }
+  }
+
+
   return pastOrderList.length != 0 ? (
-    <FlatList data={pastOrderList} renderItem={renderPastOrderItem} />
+    <FlatList data={pastOrderList} renderItem={renderPastOrderItem} 
+    onEndReached={handleLoadMoreOnGoingRecord}
+    onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+    ListFooterComponent={renderFooter} />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View
@@ -538,7 +608,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   deliveryTime: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,

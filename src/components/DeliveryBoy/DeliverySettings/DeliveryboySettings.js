@@ -98,6 +98,15 @@ const DeliveryboySettings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
+            onPress={() => navigation.navigate('DeliveryboyBillingDetails')}
+            style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Billing details</Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity
             onPress={() => navigation.navigate('PickupChangePassword')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Change password</Text>

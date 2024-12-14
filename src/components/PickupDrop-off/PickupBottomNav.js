@@ -23,7 +23,7 @@ import RNExitApp from 'react-native-exit-app';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-import {getViewOrderDetail, updateUserProfile} from '../../data_manager';
+import {getNotificationCount, getViewOrderDetail, updateUserProfile} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 
 const Bottom = createBottomTabNavigator();
@@ -59,9 +59,33 @@ const PickupBottomNav = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
+
+  const getNotificationAllCount = () => {
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        userDetails.userDetails[0].notificationCount
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      },
+      errorResponse => {
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
+
+
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
       console.log('remoteMessage', JSON.stringify(remoteMessage));
+      getNotificationAllCount()
       getViewOrderDetail(
         remoteMessage.data?.orderNumber,
         successResponse => {

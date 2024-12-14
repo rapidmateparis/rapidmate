@@ -47,6 +47,7 @@ const PickupPayment = ({route, navigation}) => {
       ? params.selectedVehiclePrice.toFixed(2)
       : params.selectedVehiclePrice,
   );
+  console.log("dsgdhsgadghsagh", params.userDetails.number)
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
@@ -135,7 +136,27 @@ const PickupPayment = ({route, navigation}) => {
         },
         {
           text: 'Go Home',
-          onPress: () => navigation.navigate('PickupBottomNav'),
+          onPress: () => {
+            setLoading(true);
+            let params = {
+              order_number: orderNumber,
+              status: 'Payment Failed',
+            };
+            console.log('params ===>', JSON.stringify(params));
+
+            orderStatusUpdate(
+              params,
+              successResponse => {
+                setLoading(false);
+                console.log('message===>', JSON.stringify(successResponse));
+                navigation.navigate('PickupBottomNav')
+              },
+              errorResponse => {
+                setLoading(false);
+                console.log('message===>', JSON.stringify(errorResponse));
+              },
+            );
+          },
         },
       ]);
     }
@@ -176,6 +197,7 @@ const PickupPayment = ({route, navigation}) => {
         total_amount: parseFloat(paymentAmount),
         discount: offerDiscount,
         pickup_notes: params.userDetails.pickupNotes,
+        mobile: params.userDetails.number,
         company_name: params.userDetails.company,
         ...scheduleParam,
 
@@ -186,8 +208,10 @@ const PickupPayment = ({route, navigation}) => {
         drop_email: params.drop_details.drop_email,
         drop_company_name: params.drop_details.drop_company_name,
         // order_date: getCurrentDateAndTime()
-        order_date: localToUTC()
+        order_date: localToUTC(),
+        package_photo: params.userDetails.package_photo,
       };
+      
 
       console.log('LOCAL to UTC ==:', localToUTC())      
       if (promoCodeResponse) {
@@ -207,6 +231,7 @@ const PickupPayment = ({route, navigation}) => {
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
           }
+          console.log("requestParams",requestParams)
         },
         errorResponse => {
           setLoading(false);

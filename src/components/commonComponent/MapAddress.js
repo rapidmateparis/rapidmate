@@ -17,8 +17,8 @@ import SavedAddressModal from './SavedAddressModal';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Constants
-const LATITUDE_DELTA = 0.0922; // Adjusted for more zoom
-const ASPECT_RATIO = 0.752;
+const LATITUDE_DELTA = 0.08; // Adjusted for more zoom
+const ASPECT_RATIO = 0.07;
 
 // Custom Marker Components
 const MyCustomMarkerView = () => (
