@@ -198,8 +198,6 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       delivery_type_id: params.delivery_type_id,
       service_type_id: 2,
       vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      pickup_date: localToUTC(params.pickup_date),
-      pickup_time: localToUTC(params.pickup_time),
       pickup_location_id: params.pickup_location_id,
       dropoff_location_id: params.dropoff_location_id,
       is_repeat_mode: params.is_repeat_mode,
@@ -220,11 +218,22 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       repeat_mode: params.repeat_mode,
       repeat_every: params.repeat_every,
       repeat_until: params.repeat_until,
+      // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
+      // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
+
     };
+    
+    if(params.order_date){
+      requestParams={...requestParams,order_date:localToUTC(params.order_date)}
+    }else{
+      requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
+    }
+
     if (params.branches) {
       requestParams.branches = params.branches;
     }
-    console.log('requestParams', requestParams);
+    console.log('requestParams from props ******', params);
+    console.log('requestParams ******', requestParams);
     setLoading(true);
     createEnterpriseOrder(
       requestParams,

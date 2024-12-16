@@ -61,6 +61,14 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   },[vehicleTypeList])
 
 
+  useEffect(()=>{
+    if(selectedOption !== 'Delivery boy with scooter'){
+      setSelectedVehiclePrice(0)
+    }else{
+      selectedVehicle?.km_price && setSelectedVehiclePrice(selectedVehicle.km_price);
+    }
+  },[selectedOption])
+
 
   useEffect(() => {
     setLoading(true);
@@ -137,6 +145,11 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   const disableVehicleType = ()=>{
     return serviceTypeId !== 1 ? true : false
   }
+
+  const disableServiceType =()=>{
+   return route.params.delivery_type_id !== 3
+  }
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -176,6 +189,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Delivery boy without scooter',
@@ -204,6 +218,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Multi-task employee',
@@ -230,6 +245,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Cleaning staff',
@@ -268,8 +284,10 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
             disabled={disableVehicleType()}
             key={index}
             onPress={() => {
-              setSelectedVehicle(vehicle);
-              setSelectedVehiclePrice(vehicle.km_price);
+              setTimeout(()=>{
+                setSelectedVehicle(vehicle);
+                setSelectedVehiclePrice(vehicle.km_price);
+              },500)
             }}
             style={[
               styles.addressCard,
