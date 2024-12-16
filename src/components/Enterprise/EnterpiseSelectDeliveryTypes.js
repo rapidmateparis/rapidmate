@@ -28,9 +28,9 @@ import {useLoader} from '../../utils/loaderContext';
 import {getAllVehicleTypes} from '../../data_manager';
 
 const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState('Delivery boy with scooter');
   const [selectedVehicle, setSelectedVehicle] = useState('');
-  const [serviceTypeId, setServiceTypeId] = useState('');
+  const [serviceTypeId, setServiceTypeId] = useState(1);
 
   const handleOptionSelect = (option, vehicle, id) => {
     setSelectedOption(option);
@@ -50,6 +50,17 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
   };
+
+
+  useEffect(()=>{
+    if(vehicleTypeList?.length > 0){
+    const vehicle = vehicleTypeList.filter(val => val.vehicle_type == 'Cycle')[0]
+    setSelectedVehicle(vehicle)
+    setSelectedVehiclePrice(vehicle.km_price);
+    }
+  },[vehicleTypeList])
+
+
 
   useEffect(() => {
     setLoading(true);
@@ -122,6 +133,10 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     );
   }, []);
 
+
+  const disableVehicleType = ()=>{
+    return serviceTypeId !== 1 ? true : false
+  }
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -156,7 +171,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                   fontFamily: 'Montserrat-Bold',
                 },
               ]}>
-              Delivery boy with scooter
+              Delivery boy with vehicle
             </Text>
           </TouchableOpacity>
 
@@ -184,7 +199,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                   fontFamily: 'Montserrat-Bold',
                 },
               ]}>
-              Delivery boy without scooter
+              Delivery boy without vehicle
             </Text>
           </TouchableOpacity>
 
@@ -250,6 +265,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
 
         {vehicleTypeList.map((vehicle, index) => (
           <TouchableOpacity
+            disabled={disableVehicleType()}
             key={index}
             onPress={() => {
               setSelectedVehicle(vehicle);
@@ -262,6 +278,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 : null,
             ]}>
             <TouchableOpacity
+              disabled={disableVehicleType()}
               onPress={() => toggleModal(vehicle)}
               style={styles.infoIcons}>
               <Image source={require('../../image/info.png')} />
@@ -275,16 +292,17 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 }
                 size={25}
                 color={
+                  disableVehicleType() ? colors.lightGrey :
                   vehicle.vehicle_type === selectedVehicle.vehicle_type
                     ? colors.secondary
                     : colors.text
                 }
               />
-              <Text style={styles.paymentPlateform}>
+              <Text style={[styles.paymentPlateform,disableVehicleType()?{color:colors.lightGrey}:'']}>
                 {vehicle.vehicle_type}
               </Text>
             </View>
-            <Image style={vehicle.vehicleStyle} source={vehicle.image} />
+            <Image style={[vehicle.vehicleStyle,disableVehicleType() ?{tintColor:colors.lightGrey}:[]]}  source={vehicle.image} />
           </TouchableOpacity>
         ))}
         <TouchableOpacity
