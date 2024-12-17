@@ -46,33 +46,51 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
   useFocusEffect(
     useCallback(() => {
+      resetAll()
       getLocationsData();
-      getOnGoingRecords()
+      getOnGoingRecords(1)
       return () => {
         setCurrentOrderList([]);
       };
     }, [filterCriteria]),
   );
 
-  const getOnGoingRecords = ()=>{
+
+  const resetAll=()=>{
+    setCurrentOrderList([]);
+    setPage(1)
+    setCheckMoreData(true)
+    getOnGoingRecords(1)
+  }
+
+  const getOnGoingRecords = (newPage)=>{
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'current',
       orderType: filterCriteria,
-      page:page,
+      page:newPage ?newPage :page,
       size:size
     };
+    console.log('ongoing Rec parm ==== ',postParams)
+
     setLoading(true);
     getDeliveryBoyViewOrdersList(
       postParams,
       null,
       successResponse => {
+        console.log('ongoing Rec parm ==== ',successResponse[0]._response.length)
+
         if(size === successResponse[0]._response.length){
           setPage(page+1)
           setCheckMoreData(true)
+        }else{
+          setCheckMoreData(false)
         }
-
-        setCurrentOrderList([...currentOrderList,...successResponse[0]._response]);
+        if(newPage ===1){
+          setCurrentOrderList([...successResponse[0]._response]);
+        }else{
+          setCurrentOrderList([...currentOrderList,...successResponse[0]._response]);
+        }
         setLoading(false);
       },
       errorResponse => {
@@ -228,7 +246,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
   const handleLoadMoreOnGoingRecord=()=>{
     if(checkMoreData){
-      getOnGoingRecords()
+      getOnGoingRecords(page)
     }
 
   }
@@ -275,20 +293,33 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
   useFocusEffect(
     useCallback(() => {
+      resetAll()
       getLocationsData();
-      getPastRecords()
+      getPastRecords(1)
       return () => {
         setPastOrderList([]);
       };
     }, [filterCriteria]),
   );
 
-  const getPastRecords=()=>{
+  useEffect(()=>{
+    getPastRecords(page)
+  },[page])
+
+
+  const resetAll=()=>{
+    setPastOrderList([]);
+    setPage(1)
+    setCheckMoreData(true)
+    getPastRecords(1)
+  }
+
+  const getPastRecords=(newPage)=>{
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'past',
       orderType: filterCriteria,
-      page:page,
+      page:newPage ? newPage :page,
       size:size
     };
     setLoading(true);
@@ -299,8 +330,15 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         if(size === successResponse[0]._response.length){
           setPage(page+1)
           setCheckMoreData(true)
+        }else{
+          setCheckMoreData(false)
         }
 
+        if(newPage ===1){
+          setPastOrderList([...successResponse[0]._response]);
+        }else{
+          setPastOrderList([...pastOrderList, ...successResponse[0]._response]);
+        }
         setPastOrderList([...pastOrderList, ...successResponse[0]._response]);
         setLoading(false);
       },
@@ -491,7 +529,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
   const handleLoadMorePastRecord=()=>{
     if(checkMoreData){
-      getPastRecords()
+      getPastRecords(page)
     }
   }
 
@@ -570,7 +608,6 @@ const DeliveryboyHistory = ({navigation}) => {
               <MenuOption
                 onSelect={() => {
                   setFilterCriteria('N')
-                  setPage(1)
                 } }
                 customStyles={{
                   optionWrapper:
@@ -588,7 +625,6 @@ const DeliveryboyHistory = ({navigation}) => {
               <MenuOption
                 onSelect={() => {
                   setFilterCriteria('E')
-                  setPage(1)
                   }
                 }
                 customStyles={{
