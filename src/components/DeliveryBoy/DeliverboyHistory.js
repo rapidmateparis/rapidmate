@@ -568,7 +568,10 @@ const DeliveryboyHistory = ({navigation}) => {
             </MenuTrigger>
             <MenuOptions>
               <MenuOption
-                onSelect={() => setFilterCriteria('N')}
+                onSelect={() => {
+                  setFilterCriteria('N')
+                  setPage(1)
+                } }
                 customStyles={{
                   optionWrapper:
                     filterCriteria === 'N' ? styles.selectedOption : null,
@@ -583,7 +586,11 @@ const DeliveryboyHistory = ({navigation}) => {
                 </Text>
               </MenuOption>
               <MenuOption
-                onSelect={() => setFilterCriteria('E')}
+                onSelect={() => {
+                  setFilterCriteria('E')
+                  setPage(1)
+                  }
+                }
                 customStyles={{
                   optionWrapper:
                     filterCriteria === 'E' ? styles.selectedOption : null,
