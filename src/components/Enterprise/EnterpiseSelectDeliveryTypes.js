@@ -204,7 +204,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={ disableServiceType() ? colors.lightGrey : colors.text} />
             )}
             <Text
               style={[
@@ -212,6 +212,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Delivery boy without scooter' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
               Delivery boy without vehicle
             </Text>
@@ -231,7 +232,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={disableServiceType() ? colors.lightGrey :colors.text} />
             )}
             <Text
               style={[
@@ -239,6 +240,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Multi-task employee' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
               Multi-task employee
             </Text>
@@ -258,7 +260,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={disableServiceType() ? colors.lightGrey : colors.text} />
             )}
             <Text
               style={[
@@ -266,6 +268,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Cleaning staff' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
               Cleaning staff
             </Text>
