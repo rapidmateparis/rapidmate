@@ -152,6 +152,8 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
       {orders.map((item, index) => {
+        console.log('item  ===',item)
+        // destination_description
         return (
           <View
             key={index}
@@ -187,15 +189,19 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                 </Text>
               </View>
 
+              {item?.locations?.length > 0 && item?.locations.map((location)=>{
+                return(
               <View style={styles.packageMiddle}>
                 <MaterialIcons name="my-location" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
                   To{' '}
                   <Text style={styles.Location}>
-                    {getLocationAddress(item.dropoff_location)}
+                    {location.destination_description}
                   </Text>
                 </Text>
               </View>
+                )
+              }) }
 
               <View style={styles.footerCard}>
                 <Text
@@ -544,18 +550,16 @@ function EnterpriseHistory({navigation}) {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          if (successResponse[0]._success) {
             if (params.tab_id == 2) {
               setEnterpriseOrderList(
                 successResponse[0]._response.filter(
-                  item => item.slots.length > 0,
+                  item => item.locations.length > 0,
                 ),
               );
             } else {
               setEnterpriseOrderList(successResponse[0]._response);
             }
           }
-        }
       },
       errorResponse => {
         setLoading(false);
