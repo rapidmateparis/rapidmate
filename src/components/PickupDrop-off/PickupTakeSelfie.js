@@ -100,7 +100,7 @@ const PickupTakeSelfie = ({route, navigation}) => {
           profileParams,
           successResponse => {
             console.log('updateUserProfile', successResponse);
-            Alert.alert('Success', '' + successResponse[0]._response, [
+            Alert.alert('Success', 'Your Profile Picture Updated', [
               {
                 text: 'OK',
                 onPress: () => {

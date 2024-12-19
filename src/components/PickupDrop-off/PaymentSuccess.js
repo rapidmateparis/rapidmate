@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
@@ -10,20 +9,36 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 
-const PaymentSuccess = ({navigation,route}) => {
-
+const PaymentSuccess = ({navigation, route}) => {
   const params = route.params;
+
   useEffect(() => {
+    // Disable hardware back button
     const onBackPress = () => {
       return true;
     };
-
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       onBackPress,
     );
-    return () => backHandler.remove();
-  }, []);
+
+    // Automatically navigate after 3 seconds
+    const timer = setTimeout(() => {
+      if (params.serviceTypeId === 1) {
+        navigation.navigate('ScheduleOrderSuccess', {
+          schedule_date_time: params.schedule_date_time,
+          serviceTypeId: params.serviceTypeId,
+        });
+      } else {
+        navigation.navigate('LoaderForDriver');
+      }
+    }, 3000);
+
+    return () => {
+      backHandler.remove();
+      clearTimeout(timer);
+    };
+  }, [navigation, params]);
 
   return (
     <ScrollView
@@ -46,22 +61,6 @@ const PaymentSuccess = ({navigation,route}) => {
           </Text>
         </View>
       </View>
-      <View style={styles.actionBtnCard}>
-        <TouchableOpacity
-          onPress={() =>{ 
-            if(params.serviceTypeId === 1){
-              navigation.navigate('ScheduleOrderSuccess',{
-                schedule_date_time: params.schedule_date_time,
-                serviceTypeId:params.serviceTypeId
-              })
-            }else{
-              navigation.navigate('LoaderForDriver')
-            }
-            }}
-          style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 };
@@ -71,13 +70,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  background: {
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
   },
   container: {
     flex: 1,
@@ -100,45 +92,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     textAlign: 'center',
     paddingHorizontal: 50,
-  },
-  cancelRequest: {
-    color: colors.secondary,
-    fontSize: 14,
-    fontFamily: 'Montserrat-Medium',
-  },
-  requestTouch: {
-    borderWidth: 1,
-    borderColor: colors.secondary,
-    borderRadius: 5,
-    paddingHorizontal: 90,
-    paddingVertical: 10,
-  },
-  logbutton: {
-    width: '40%',
-    borderRadius: 5,
-    padding: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 14,
-    color: colors.text,
-    fontFamily: 'Montserrat-Medium',
-  },
-  actionBtnCard: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-  goHomeBtn: {
-    width: '60%',
-    borderRadius: 5,
-    padding: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.text,
   },
 });
 

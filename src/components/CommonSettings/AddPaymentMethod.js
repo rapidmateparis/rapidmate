@@ -48,7 +48,7 @@ const AddPaymentMethod = ({navigation}) => {
         params,
         successResponse => {
           setLoading(false);
-          Alert.alert('Success', successResponse[0]._response.message, [
+          Alert.alert('Success', 'Payment Method Added Successfully', [
             {text: 'OK', onPress: () => {}},
           ]);
         },
@@ -68,7 +68,7 @@ const AddPaymentMethod = ({navigation}) => {
         params,
         successResponse => {
           setLoading(false);
-          Alert.alert('Success', successResponse[0]._response.message, [
+          Alert.alert('Success', 'Payment Method Added Successfully', [
             {
               text: 'OK',
               onPress: () => {

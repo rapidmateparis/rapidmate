@@ -68,7 +68,7 @@ const NotificationSetting = ({navigation}) => {
         };
         saveUserDetails(updatedDetails);
         saveUserDetailsInAsync(updatedDetails);
-        Alert.alert('Success', '' + successResponse[0]._response, [
+        Alert.alert('Success', 'Changes Applied Successfully', [
           {
             text: 'OK',
             onPress: () => {

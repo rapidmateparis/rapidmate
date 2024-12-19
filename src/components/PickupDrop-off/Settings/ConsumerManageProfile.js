@@ -59,7 +59,7 @@ const ConsumerManageProfile = ({navigation}) => {
         newUserDetails['phone'] = number;
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
         console.log('updateUserProfile response ', successResponse);
-        Alert.alert('Success', 'Profile updates duccessfully', [
+        Alert.alert('Success', 'Profile updates Successfully', [
           {
             text: 'OK',
             onPress: () => {},
