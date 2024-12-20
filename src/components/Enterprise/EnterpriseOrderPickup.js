@@ -14,16 +14,50 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
+import { getLocations } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 
 const {height: screenHeight} = Dimensions.get('window');
+const EnterpriseOrderPickup = ({navigation,route,}) => {
+  const {setLoading} = useLoader();
 
-const EnterpriseOrderPickup = ({navigation}) => {
-  const orderId = '9AS68D7G698GH';
-  const otp = '123456';
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
   const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
+  const [locationList, setLocationList] = useState([]);
+
+  const params = route.params;
+
+  const driverDetails = params?.driverDetails || {}
+
+  const orderId = driverDetails.order.order_number;
+  const otp = driverDetails.order.otp;
+
+  useEffect(()=>{
+    getLocationsData()
+  },[])
+  const getLocationsData = () => {
+    setLoading(true);
+    setLocationList([]);
+    getLocations(
+      null,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setLocationList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setLocationList([]);
+        }
+      },
+    );
+  };
+
 
   const handleCopyOrderId = () => {
     Clipboard.setString(orderId);
@@ -64,6 +98,12 @@ const EnterpriseOrderPickup = ({navigation}) => {
       '0',
     )}`;
   };
+  const getLocationAddress = locationId => {
+    if(!locationList?.length) return ''
+    let result = locationList.filter(location => location.id == locationId);
+    return result[0]?.address;
+  };
+
 
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -125,7 +165,7 @@ const EnterpriseOrderPickup = ({navigation}) => {
               <View style={styles.Delivering}>
                 <Text style={styles.DeliveringText}>Pickup from</Text>
                 <Text style={styles.subAddress}>
-                  1901 Thornridge Cir. Shiloh, California
+                  {getLocationAddress(driverDetails.order.pickup_location)}
                 </Text>
               </View>
               <View>
@@ -152,8 +192,8 @@ const EnterpriseOrderPickup = ({navigation}) => {
                 />
               </View>
               <View style={{width: '48%'}}>
-                <Text style={styles.driverName}>John Doe</Text>
-                <Text style={styles.truckName}>VOLVO FH16 2022</Text>
+                <Text style={styles.driverName}>{driverDetails.deliveryBoy.first_name}{driverDetails.deliveryBoy.last_name}</Text>
+                <Text style={styles.truckName}>{}</Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity style={{marginRight: 10}}>
@@ -166,8 +206,8 @@ const EnterpriseOrderPickup = ({navigation}) => {
               </View>
             </View>
 
-            <TouchableOpacity onPress={() => navigation.navigate('EnterpriseOrderDelivering')} style={styles.trackOrderBtn}>
-              <Text style={styles.trackText}>Track order</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('EnterpriseHome')} style={styles.trackOrderBtn}>
+              <Text style={styles.trackText}>Go To Home</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
