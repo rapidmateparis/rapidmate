@@ -38,8 +38,8 @@ const ScheduleOrderSuccess = ({navigation,route}) => {
         }}>
         <View style={styles.container}>
           <Image
-            style={{width: 100, height: 100}}
-            source={require('../../image/payment_success.png')}
+            style={{width: 150, height: 100}}
+            source={require('../../image/undraw_booking.png')}
           />
           <Text style={styles.text}>Schedule Order Successful!</Text>
           <Text style={styles.subText}>

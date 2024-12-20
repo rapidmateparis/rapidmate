@@ -698,11 +698,12 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '72%',
   },
   cardHeaderValues: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '72%',
+    width: '74%',
   },
   orderFare: {
     width: '70%',
