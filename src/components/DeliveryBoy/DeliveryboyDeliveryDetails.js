@@ -314,9 +314,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       : 'Company Name'
                     : ''}
                 </Text>
-                {pickUpLocation?.address || pickUpLocation?.city || pickUpLocation?.state && <Text style={styles.dropInfo}>
-                  {pickUpLocation?.address || ''}, {pickUpLocation?.city || ''},{' '}
-                  {pickUpLocation?.state || ''}
+                {pickUpLocation?.address && pickUpLocation?.city && pickUpLocation?.state && <Text style={styles.dropInfo}>
+                  {pickUpLocation?.address || ''}{', '}{pickUpLocation?.city || ''}{', '}{pickUpLocation?.state || ''}
                 </Text>}
               </View>
               <View style={styles.contactInfoIcons}>
@@ -413,9 +412,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       : 'Company Name'
                     : ''}
                 </Text>
-                {dropOffLocation?.address || dropOffLocation?.city || dropOffLocation?.state &&<Text style={styles.dropInfo}>
-                  {dropOffLocation?.address || ''}, {dropOffLocation?.city || ''},{' '}
-                  {dropOffLocation?.state || ''}
+                {dropOffLocation?.address && dropOffLocation?.city && dropOffLocation?.state &&<Text style={styles.dropInfo}>
+                  {dropOffLocation?.address || ''}{dropOffLocation?.city || ''}{' '}{dropOffLocation?.state || ''}
                 </Text>}
               </View>
               <View style={styles.contactInfoIcons}>
