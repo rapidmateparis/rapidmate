@@ -50,6 +50,13 @@ const MapAddress = props => {
   const [addressType, setAddressType] = useState();
   const [isModalVisible, setModalVisible] = useState(false);
 
+  const sourceLocation = props.sourceLocation;
+  var sourceLocationText = sourceLocation.address;
+  sourceLocationText += sourceLocation.city ? ', ' + sourceLocation.city : '';
+  sourceLocationText += sourceLocation.state ? ', ' + sourceLocation.state : '';
+  sourceLocationText += sourceLocation.country
+    ? ', ' + sourceLocation.country
+    : '';
   const toggleModal = addressType => {
     setAddressType(addressType);
     setModalVisible(!isModalVisible);
@@ -68,8 +75,11 @@ const MapAddress = props => {
       //   moveToLocation({latitude, longitude});
       // }
       // Example code (without actual location logic)
-      const latitude = 48.85754309772872;
-      const longitude = 2.3513877855537912;
+      // const latitude = 48.85754309772872;
+      // const longitude = 2.3513877855537912;
+      const latitude = parseFloat(sourceLocation.latitude);
+      const longitude = parseFloat(sourceLocation.longitude);
+      setSelectedSourceAddress(sourceLocation)
       setOrigin({latitude, longitude});
       moveToLocation({latitude, longitude});
     } catch (error) {
@@ -128,8 +138,8 @@ const MapAddress = props => {
                 color: colors.black,
               }}
               ref={ref => {
-                if (selectedSourceAddress) {
-                  ref?.setAddressText(selectedSourceAddress);
+                if (sourceLocationText) {
+                  ref?.setAddressText(sourceLocationText);
                 }
               }}
               textInputProps={{

@@ -137,8 +137,8 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
                 : 'Company Name'}
             </Text>
             <Text style={styles.dropInfo}>
-              {pickUpLocation.address}, {pickUpLocation.city},{' '}
-              {pickUpLocation.state}
+              {pickUpLocation?.address || ''}, {pickUpLocation?.city},{' '}
+              {pickUpLocation?.state}
             </Text>
           </View>
         </View>

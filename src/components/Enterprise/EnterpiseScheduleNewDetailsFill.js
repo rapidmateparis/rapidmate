@@ -429,6 +429,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       ) : (
         <View style={{height: 200, position: 'relative'}}>
           <MapAddress
+            sourceLocation={routeParams.sourceBranch}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
             onSourceLocation={onSourceLocation}
             onDestinationLocation={onDestinationLocation}
