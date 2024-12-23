@@ -7,8 +7,9 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Switch,
 } from 'react-native';
-import { FlatList, ActivityIndicator } from 'react-native';
+import {FlatList, ActivityIndicator} from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -29,7 +30,7 @@ import {
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
-import { titleFormat, utcLocal } from '../../utils/common';
+import {titleFormat, utcLocal} from '../../utils/common';
 const Tab = createMaterialTopTabNavigator();
 
 const TodayList = ({navigation, filterCriteria, searchText}) => {
@@ -43,53 +44,57 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
   const [size, setSize] = useState(10);
   const [checkMoreData, setCheckMoreData] = useState(true);
 
-
   useFocusEffect(
     useCallback(() => {
-      resetAll()
+      resetAll();
       getLocationsData();
-      getOnGoingRecords(1)
+      getOnGoingRecords(1);
       return () => {
         setCurrentOrderList([]);
       };
     }, [filterCriteria]),
   );
 
-
-  const resetAll=()=>{
+  const resetAll = () => {
     setCurrentOrderList([]);
-    setPage(1)
-    setCheckMoreData(true)
-    getOnGoingRecords(1)
-  }
+    setPage(1);
+    setCheckMoreData(true);
+    getOnGoingRecords(1);
+  };
 
-  const getOnGoingRecords = (newPage)=>{
+  const getOnGoingRecords = newPage => {
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'current',
       orderType: filterCriteria,
-      page:newPage ?newPage :page,
-      size:size
+      page: newPage ? newPage : page,
+      size: size,
     };
-    console.log('ongoing Rec parm ==== ',postParams)
+    console.log('ongoing Rec parm ==== ', postParams);
 
     setLoading(true);
     getDeliveryBoyViewOrdersList(
       postParams,
       null,
       successResponse => {
-        console.log('ongoing Rec parm ==== ',successResponse[0]._response.length)
+        console.log(
+          'ongoing Rec parm ==== ',
+          successResponse[0]._response.length,
+        );
 
-        if(size === successResponse[0]._response.length){
-          setPage(page+1)
-          setCheckMoreData(true)
-        }else{
-          setCheckMoreData(false)
+        if (size === successResponse[0]._response.length) {
+          setPage(page + 1);
+          setCheckMoreData(true);
+        } else {
+          setCheckMoreData(false);
         }
-        if(newPage ===1){
+        if (newPage === 1) {
           setCurrentOrderList([...successResponse[0]._response]);
-        }else{
-          setCurrentOrderList([...currentOrderList,...successResponse[0]._response]);
+        } else {
+          setCurrentOrderList([
+            ...currentOrderList,
+            ...successResponse[0]._response,
+          ]);
         }
         setLoading(false);
       },
@@ -98,8 +103,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         setLoading(false);
       },
     );
-  }
-
+  };
 
   useEffect(() => {
     if (searchText) {
@@ -184,10 +188,13 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             />
             <Text style={styles.deliveryTime}>
               {item.item.delivery_boy_order_title}{' '}
-              {
-              item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
-              titleFormat(item.item.schedule_date_time || item.item.order_date)
-              :titleFormat(item.item.updated_on)):""}
+              {item.item.is_show_datetime_in_title == 1
+                ? item.item.order_status === 'ORDER_PLACED'
+                  ? titleFormat(
+                      item.item.schedule_date_time || item.item.order_date,
+                    )
+                  : titleFormat(item.item.updated_on)
+                : ''}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
@@ -237,24 +244,24 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
   const renderFooter = () => {
     return (
-      <View style={{ padding: 10 }}>
+      <View style={{padding: 10}}>
         <ActivityIndicator size="small" color="#d8d8d8" />
       </View>
     );
   };
 
-
-  const handleLoadMoreOnGoingRecord=()=>{
-    if(checkMoreData){
-      getOnGoingRecords(page)
+  const handleLoadMoreOnGoingRecord = () => {
+    if (checkMoreData) {
+      getOnGoingRecords(page);
     }
-
-  }
+  };
   return currentOrderList.length != 0 ? (
-    <FlatList data={currentOrderList} renderItem={renderItem} 
-    onEndReached={handleLoadMoreOnGoingRecord}
-    onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
-    ListFooterComponent={renderFooter} 
+    <FlatList
+      data={currentOrderList}
+      renderItem={renderItem}
+      onEndReached={handleLoadMoreOnGoingRecord}
+      onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+      ListFooterComponent={renderFooter}
     />
   ) : (
     <View style={styles.scrollViewContainer}>
@@ -289,54 +296,52 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [checkMoreData, setCheckMoreData] = useState(true);
-  
 
   useFocusEffect(
     useCallback(() => {
-      resetAll()
+      resetAll();
       getLocationsData();
-      getPastRecords(1)
+      getPastRecords(1);
       return () => {
         setPastOrderList([]);
       };
     }, [filterCriteria]),
   );
 
-  useEffect(()=>{
-    getPastRecords(page)
-  },[page])
+  useEffect(() => {
+    getPastRecords(page);
+  }, [page]);
 
-
-  const resetAll=()=>{
+  const resetAll = () => {
     setPastOrderList([]);
-    setPage(1)
-    setCheckMoreData(true)
-    getPastRecords(1)
-  }
+    setPage(1);
+    setCheckMoreData(true);
+    getPastRecords(1);
+  };
 
-  const getPastRecords=(newPage)=>{
+  const getPastRecords = newPage => {
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'past',
       orderType: filterCriteria,
-      page:newPage ? newPage :page,
-      size:size
+      page: newPage ? newPage : page,
+      size: size,
     };
     setLoading(true);
     getDeliveryBoyViewOrdersList(
       postParams,
       null,
       successResponse => {
-        if(size === successResponse[0]._response.length){
-          setPage(page+1)
-          setCheckMoreData(true)
-        }else{
-          setCheckMoreData(false)
+        if (size === successResponse[0]._response.length) {
+          setPage(page + 1);
+          setCheckMoreData(true);
+        } else {
+          setCheckMoreData(false);
         }
 
-        if(newPage ===1){
+        if (newPage === 1) {
           setPastOrderList([...successResponse[0]._response]);
-        }else{
+        } else {
           setPastOrderList([...pastOrderList, ...successResponse[0]._response]);
         }
         setPastOrderList([...pastOrderList, ...successResponse[0]._response]);
@@ -347,8 +352,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         setLoading(false);
       },
     );
-
-  }
+  };
 
   useEffect(() => {
     if (searchText) {
@@ -367,8 +371,8 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
       status: 'past',
       filterCriteria: filterCriteria,
       orderNumber: searchValue,
-      page:page,
-      size:size
+      page: page,
+      size: size,
     };
     getDeliveryBoyViewOrdersListBySearch(
       postParams,
@@ -433,10 +437,13 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             />
             <Text style={styles.deliveryTime}>
               {item.item.delivery_boy_order_title}{' '}
-              {
-              item.item.is_show_datetime_in_title==1? (item.item.order_status === 'ORDER_PLACED' ?
-              titleFormat(item.item.schedule_date_time || item.item.order_date)
-              :titleFormat(item.item.updated_on)):""}
+              {item.item.is_show_datetime_in_title == 1
+                ? item.item.order_status === 'ORDER_PLACED'
+                  ? titleFormat(
+                      item.item.schedule_date_time || item.item.order_date,
+                    )
+                  : titleFormat(item.item.updated_on)
+                : ''}
               {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
@@ -527,27 +534,28 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
     </View>
   );
 
-  const handleLoadMorePastRecord=()=>{
-    if(checkMoreData){
-      getPastRecords(page)
+  const handleLoadMorePastRecord = () => {
+    if (checkMoreData) {
+      getPastRecords(page);
     }
-  }
+  };
 
-  
   const renderFooter = () => {
     return (
-      <View style={{ padding: 10 }}>
+      <View style={{padding: 10}}>
         <ActivityIndicator size="small" color="#d8d8d8" />
       </View>
     );
   };
 
   return pastOrderList.length != 0 ? (
-    <FlatList data={pastOrderList} renderItem={renderItem} 
-    keyExtractor={(item, index) => index.toString()}
-    onEndReached={handleLoadMorePastRecord}
-    onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
-    ListFooterComponent={renderFooter} 
+    <FlatList
+      data={pastOrderList}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => index.toString()}
+      onEndReached={handleLoadMorePastRecord}
+      onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+      ListFooterComponent={renderFooter}
     />
   ) : (
     <View style={styles.scrollViewContainer}>
@@ -590,58 +598,25 @@ const Past = () => {
 };
 const DeliveryboyHistory = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
-  const [index, setIndex] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState('N');
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  // Toggle the switch and update filterCriteria
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => {
+      const newState = !previousState;
+      setFilterCriteria(newState ? 'E' : 'N');
+      return newState;
+    });
+  };
 
   return (
     <View style={{flex: 1}}>
       <View
         style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#fff'}}>
-        {/* Your Search Bar */}
+        {/* Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
-          <Menu>
-            <MenuTrigger>
-              <AntDesign name="filter" size={20} color={colors.secondary} />
-            </MenuTrigger>
-            <MenuOptions>
-              <MenuOption
-                onSelect={() => {
-                  setFilterCriteria('N')
-                } }
-                customStyles={{
-                  optionWrapper:
-                    filterCriteria === 'N' ? styles.selectedOption : null,
-                }}>
-                <Text
-                  style={
-                    filterCriteria === 'N'
-                      ? styles.selectedText
-                      : styles.defaultText
-                  }>
-                  Normal
-                </Text>
-              </MenuOption>
-              <MenuOption
-                onSelect={() => {
-                  setFilterCriteria('E')
-                  }
-                }
-                customStyles={{
-                  optionWrapper:
-                    filterCriteria === 'E' ? styles.selectedOption : null,
-                }}>
-                <Text
-                  style={
-                    filterCriteria === 'E'
-                      ? styles.selectedText
-                      : styles.defaultText
-                  }>
-                  Enterprise
-                </Text>
-              </MenuOption>
-            </MenuOptions>
-          </Menu>
         </View>
         <View style={styles.searchContainer}>
           <AntDesign
@@ -667,8 +642,17 @@ const DeliveryboyHistory = ({navigation}) => {
             />
           )}
         </View>
+      </View>
 
-        {/* End of Search Bar */}
+      <View style={styles.containerSwitch}>
+        <Text style={styles.label}>Show Enterprise Orders</Text>
+        <Switch
+          trackColor={{false: '#767577', true: '#FFC72B'}}
+          thumbColor={isEnabled ? '#f4f3f4' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
       </View>
 
       {/* Tab Navigator */}
@@ -887,6 +871,17 @@ const styles = StyleSheet.create({
   },
   defaultText: {
     color: 'black',
+  },
+  containerSwitch: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.white,
+    paddingHorizontal: 15,
+  },
+  label: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });
 

@@ -251,7 +251,7 @@ const EnterpriseHome = ({navigation}) => {
       </View>
       <View style={styles.barChartCard}>
         <View style={styles.hoursInfoCard}>
-          <Text style={styles.hoursBooked}>Hours booked</Text>
+          <Text style={styles.hoursBooked}>Booking Overview</Text>
           <Text style={styles.hoursNumberCount}>{bookingHour}</Text>
         </View>
         <View style={styles.dropdownCard}>

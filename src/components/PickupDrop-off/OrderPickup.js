@@ -26,12 +26,14 @@ const OrderPickup = ({route, navigation}) => {
   const {placedOrderDetails} = usePlacedOrderDetails();
   const [isCopied, setIsCopied] = useState(false);
   const [otpCopied, setOtpCopied] = useState(false);
+  const [otpDeliveredCopied, setOtpDeliveredCopied] = useState(false);
   const [driverDetails, setDriverDetails] = useState(
     route.params.driverDetails,
   );
   const [locationList, setLocationList] = useState(route.params.locationList);
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
+  const [deliveredOtp, setDeliveredOtp] = useState(placedOrderDetails[0]?.delivered_otp);
   const [currentPosition, setCurrentPosition] = useState(0);
 
   console.log('0', driverDetails);
@@ -81,21 +83,25 @@ const OrderPickup = ({route, navigation}) => {
   }, []);
 
   const handleCopyOrderId = () => {
-    Clipboard.setString(orderId); // Copy orderId to clipboard
+    Clipboard.setString(orderId);
     setIsCopied(true);
-
-    // Optionally reset the icon after a delay
-    setTimeout(() => setIsCopied(false), 2000); // Resets after 2 seconds
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleCopyOtp = () => {
-    Clipboard.setString(otp); // Copy the OTP to the clipboard
-    setOtpCopied(true); // State to trigger the icon change
-
-    // Optionally reset the icon after a delay
+    Clipboard.setString(otp);
+    setOtpCopied(true);
     setTimeout(() => {
-      setOtpCopied(false); // Revert the icon to its original state
-    }, 2000); // Resets after 2 seconds
+      setOtpCopied(false);
+    }, 2000);
+  };
+
+  const handleCopyDeliveredOtp = () => {
+    Clipboard.setString(deliveredOtp);
+    setOtpDeliveredCopied(true);
+    setTimeout(() => {
+      setOtpDeliveredCopied(false);
+    }, 2000);
   };
 
   const getLocationAddress = locationId => {
@@ -159,14 +165,14 @@ const OrderPickup = ({route, navigation}) => {
 
               <View style={styles.textContainer}>
                 <Text style={styles.oderIdText}>Delivered OTP: </Text>
-                <TouchableOpacity onPress={handleCopyOtp}>
-                  <Text style={styles.text}>{otp}</Text>
+                <TouchableOpacity onPress={handleCopyDeliveredOtp}>
+                  <Text style={styles.text}>{deliveredOtp}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleCopyOtp}>
+                <TouchableOpacity onPress={handleCopyDeliveredOtp}>
                   <AntDesign
-                    name={otpCopied ? 'checkcircle' : 'copy1'}
+                    name={otpDeliveredCopied ? 'checkcircle' : 'copy1'}
                     size={18}
-                    color={otpCopied ? '#00C851' : '#FF0058'}
+                    color={otpDeliveredCopied ? '#00C851' : '#FF0058'}
                     style={styles.copyIcon}
                   />
                 </TouchableOpacity>
