@@ -87,6 +87,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
   const [imageViewId, setImageViewId] = useState(null);
 
+  const [isInstantDate, setIsInstantDate] = useState(null);
+
+
   const handleDayPress = day => {
     let updatedSelectedDays;
 
@@ -426,6 +429,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       ) : (
         <View style={{height: 200, position: 'relative'}}>
           <MapAddress
+            sourceLocation={routeParams.sourceBranch}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
             onSourceLocation={onSourceLocation}
             onDestinationLocation={onDestinationLocation}
@@ -537,7 +541,22 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               />
             </View>
 
-            <View style={styles.datetimeCard}>
+            <View>
+              <View style={styles.bookAddress}>
+                <Text style={styles.cardTitle}>Is Instant Date</Text>
+                <TouchableOpacity onPress={()=>setIsInstantDate(isInstantDate ? null :new Date())}>
+                  <MaterialCommunityIcons
+                    name={isInstantDate ? 'toggle-switch' : 'toggle-switch-off'}
+                    size={55}
+                    color={isInstantDate ? '#FFC72B' : '#D3D3D3'}
+                  />
+                </TouchableOpacity>
+              </View>
+            
+            {isInstantDate ?
+            
+            <Text style={styles.pickupDates}>Pickup date :{moment(isInstantDate).format('YYYY-MM-DD')+' '+moment(isInstantDate).format('hh:mm')}</Text>
+            :<View style={styles.datetimeCard}>
               <View style={{width: '50%', marginRight: 8}}>
                 <Text style={styles.pickupDates}>Pickup date</Text>
                 <View style={styles.nameInputDiv}>
@@ -550,6 +569,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     onConfirm={date => {
                       setDateOpen(false);
                       setDate(date);
+                      setTime(date);
                       setPickupDate(moment(date).format('DD/MM/YYYY'));
                     }}
                     onCancel={() => {
@@ -614,6 +634,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   />
                 </View>
               </View>
+            </View>}
+
             </View>
           </View>
         </View>
@@ -1079,8 +1101,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 if (
                   company == '' ||
                   number == '' ||
-                  pickupDate == '' ||
-                  pickupTime == ''
+                  (
+                  !isInstantDate && (pickupDate == '' && pickupTime == '') 
+                  )
                 ) {
                   Alert.alert(
                     'Error Alert',
@@ -1136,8 +1159,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       mobile: number,
                       company_name: company,
                       pickup_notes: pickupNotes,
-                      pickup_date: moment(date).format('YYYY-MM-DD'),
-                      pickup_time: moment(time).format('HH:MM'),
+                      pickup_date: date,
+                      pickup_time: time,
                       is_repeat_mode: promoEmails ? 1 : 0,
                       package_id: orderid,
                       amount: Math.round(
@@ -1151,8 +1174,14 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
+                      order_date: isInstantDate ? moment(isInstantDate).format('YYYY-MM-DD hh:mm'):'',
+                      schedule_date_time: moment(date).format('YYYY-MM-DD')+' '+moment(
+                        time,
+                        ).format('hh:mm'),
                     };
                     console.log(imageViewId);
+                    console.log('Payload  ---------->',params);
+
                     navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
                     Alert.alert(

@@ -28,9 +28,9 @@ import {useLoader} from '../../utils/loaderContext';
 import {getAllVehicleTypes} from '../../data_manager';
 
 const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState('Delivery boy with scooter');
   const [selectedVehicle, setSelectedVehicle] = useState('');
-  const [serviceTypeId, setServiceTypeId] = useState('');
+  const [serviceTypeId, setServiceTypeId] = useState(1);
 
   const handleOptionSelect = (option, vehicle, id) => {
     setSelectedOption(option);
@@ -50,6 +50,25 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
   };
+
+
+  useEffect(()=>{
+    if(vehicleTypeList?.length > 0){
+    const vehicle = vehicleTypeList.filter(val => val.vehicle_type == 'Cycle')[0]
+    setSelectedVehicle(vehicle)
+    setSelectedVehiclePrice(vehicle.km_price);
+    }
+  },[vehicleTypeList])
+
+
+  useEffect(()=>{
+    if(selectedOption !== 'Delivery boy with scooter'){
+      setSelectedVehiclePrice(0)
+    }else{
+      selectedVehicle?.km_price && setSelectedVehiclePrice(selectedVehicle.km_price);
+    }
+  },[selectedOption])
+
 
   useEffect(() => {
     setLoading(true);
@@ -122,6 +141,15 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     );
   }, []);
 
+
+  const disableVehicleType = ()=>{
+    return serviceTypeId !== 1 ? true : false
+  }
+
+  const disableServiceType =()=>{
+   return route.params.delivery_type_id !== 3
+  }
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -156,11 +184,12 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                   fontFamily: 'Montserrat-Bold',
                 },
               ]}>
-              Delivery boy with scooter
+              Delivery boy with vehicle
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Delivery boy without scooter',
@@ -175,7 +204,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={ disableServiceType() ? colors.lightGrey : colors.text} />
             )}
             <Text
               style={[
@@ -183,12 +212,14 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Delivery boy without scooter' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
-              Delivery boy without scooter
+              Delivery boy without vehicle
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Multi-task employee',
@@ -201,7 +232,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={disableServiceType() ? colors.lightGrey :colors.text} />
             )}
             <Text
               style={[
@@ -209,12 +240,14 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Multi-task employee' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
               Multi-task employee
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Cleaning staff',
@@ -227,7 +260,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={disableServiceType() ? colors.lightGrey : colors.text} />
             )}
             <Text
               style={[
@@ -235,6 +268,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Cleaning staff' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
               Cleaning staff
             </Text>
@@ -250,10 +284,13 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
 
         {vehicleTypeList.map((vehicle, index) => (
           <TouchableOpacity
+            disabled={disableVehicleType()}
             key={index}
             onPress={() => {
-              setSelectedVehicle(vehicle);
-              setSelectedVehiclePrice(vehicle.km_price);
+              setTimeout(()=>{
+                setSelectedVehicle(vehicle);
+                setSelectedVehiclePrice(vehicle.km_price);
+              },500)
             }}
             style={[
               styles.addressCard,
@@ -262,6 +299,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 : null,
             ]}>
             <TouchableOpacity
+              disabled={disableVehicleType()}
               onPress={() => toggleModal(vehicle)}
               style={styles.infoIcons}>
               <Image source={require('../../image/info.png')} />
@@ -275,16 +313,17 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 }
                 size={25}
                 color={
+                  disableVehicleType() ? colors.lightGrey :
                   vehicle.vehicle_type === selectedVehicle.vehicle_type
                     ? colors.secondary
                     : colors.text
                 }
               />
-              <Text style={styles.paymentPlateform}>
+              <Text style={[styles.paymentPlateform,disableVehicleType()?{color:colors.lightGrey}:'']}>
                 {vehicle.vehicle_type}
               </Text>
             </View>
-            <Image style={vehicle.vehicleStyle} source={vehicle.image} />
+            <Image style={[vehicle.vehicleStyle,disableVehicleType() ?{tintColor:colors.lightGrey}:[]]}  source={vehicle.image} />
           </TouchableOpacity>
         ))}
         <TouchableOpacity

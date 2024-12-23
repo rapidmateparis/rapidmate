@@ -21,7 +21,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
             <Image style={{width: 212, height: 140,}} source={require('../../image/ScheduleNewDelivery.png')} />
           </View>
           <View style={styles.schedulecard}>
-            <Text style={styles.scheduleTitle}>Schedule New Delivery</Text>
+            <Text style={styles.scheduleTitle}>Create New Delivery</Text>
             <Text style={styles.scheduleSubTitle}>
               Schedule for one time or for multiple hours
             </Text>

@@ -64,18 +64,18 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
 
               <View style={styles.bookedCardInfo}>
                 <View>
-                  <Text style={styles.bookedInfo}>Hours booked</Text>
-                  <Text style={styles.bookedDetails}>{item.bookinghr}</Text>
+                  <Text style={styles.bookedInfo}>Active booking</Text>
+                  <Text style={styles.bookedDetails}>{item.active_order}</Text>
                 </View>
 
                 <View>
-                  <Text style={styles.bookedInfo}>Hours spent</Text>
-                  <Text style={styles.bookedDetails}>{item.spenthr}</Text>
+                  <Text style={styles.bookedInfo}>Scheduled booking</Text>
+                  <Text style={styles.bookedDetails}>{item.schedule_order}</Text>
                 </View>
 
                 <View>
-                  <Text style={styles.bookedInfo}>Bookings</Text>
-                  <Text style={styles.bookedDetails}>{item.bookings}</Text>
+                  <Text style={styles.bookedInfo}>All booking</Text>
+                  <Text style={styles.bookedDetails}>{item.total}</Text>
                 </View>
               </View>
 

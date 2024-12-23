@@ -50,6 +50,8 @@ const DeliveryDetails = ({navigation, route}) => {
   const {userDetails} = useUserDetails();
   const [locations, setLocations] = useState([]);
 
+  const enterpriseDestinationList = route?.params?.orderItem?.locations || []
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -449,7 +451,21 @@ const DeliveryDetails = ({navigation, route}) => {
               {order.company_name && <Text style={styles.companyInfo}>
                 {order.company_name ? order.drop_company_name : ''}
               </Text>}
-              {order.orderLines && order.orderLines.length > 0 ? (
+              {
+              componentType == 'ENTERPRISE' ?
+              <View>
+                {
+                  enterpriseDestinationList.map((location)=>{
+                    return(
+                      <Text style={styles.dropInfo}>
+                        {location?.destination_description || ''}
+                      </Text>
+                    )
+                  })
+                }
+                </View>
+                :
+              order.orderLines && order.orderLines.length > 0 ? (
                 <View>
                   {order.orderLines.map((item, index) => {
                     var branch = locations.filter(
@@ -682,11 +698,12 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '72%',
   },
   cardHeaderValues: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '72%',
+    width: '74%',
   },
   orderFare: {
     width: '70%',

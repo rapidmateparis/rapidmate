@@ -314,10 +314,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       : 'Company Name'
                     : ''}
                 </Text>
-                <Text style={styles.dropInfo}>
-                  {pickUpLocation.address}, {pickUpLocation.city},{' '}
-                  {pickUpLocation.state}
-                </Text>
+                {pickUpLocation?.address && pickUpLocation?.city && pickUpLocation?.state && <Text style={styles.dropInfo}>
+                  {pickUpLocation?.address || ''}{', '}{pickUpLocation?.city || ''}{', '}{pickUpLocation?.state || ''}
+                </Text>}
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
@@ -413,10 +412,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       : 'Company Name'
                     : ''}
                 </Text>
-                <Text style={styles.dropInfo}>
-                  {dropOffLocation.address}, {dropOffLocation.city},{' '}
-                  {dropOffLocation.state}
-                </Text>
+                {dropOffLocation?.address && dropOffLocation?.city && dropOffLocation?.state &&<Text style={styles.dropInfo}>
+                  {dropOffLocation?.address || ''}{dropOffLocation?.city || ''}{' '}{dropOffLocation?.state || ''}
+                </Text>}
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>

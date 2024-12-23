@@ -137,8 +137,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
                 : 'Company Name'}
             </Text>
             <Text style={styles.dropInfo}>
-              {pickUpLocation.address}, {pickUpLocation.city},{' '}
-              {pickUpLocation.state}
+              {pickUpLocation?.address || ''}{', '}{pickUpLocation?.city}{', '}{pickUpLocation?.state}
             </Text>
           </View>
         </View>
@@ -156,7 +155,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
                 : 'Company Name'}
             </Text>
             <Text style={styles.dropInfo}>
-              {dropOffLocation.address}, {dropOffLocation.city},{' '}
+              {dropOffLocation.address}{', '}{dropOffLocation.city}{', '}
               {dropOffLocation.state}
             </Text>
           </View>
