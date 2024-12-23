@@ -38,6 +38,7 @@ const AddDropDetails = ({route, navigation}) => {
   const [packageImageId, setPackageImageId] = useState(null);
   const {setLoading} = useLoader();
   const params = route.params.props;
+  const  component = route?.params?.component ? route?.params?.component : '';
 
   const data = [
     {label: '+91', value: '+91'},
@@ -72,8 +73,11 @@ const AddDropDetails = ({route, navigation}) => {
         drop_company_name: company,
       }
     }
-    navigation.navigate('PickupOrderPreview', {props: includeDropDetails});
-  }
+    if(component === 'ENTERPRISE'){
+      navigation.navigate('EnterprisePickupOrderPriview',  {props: includeDropDetails});
+      }else{
+        navigation.navigate('PickupOrderPreview', {props: includeDropDetails});
+      }  }
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>

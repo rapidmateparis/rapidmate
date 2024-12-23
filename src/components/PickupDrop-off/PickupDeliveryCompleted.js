@@ -12,7 +12,6 @@ import {
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import {downloadInvoiceOrder} from '../../data_manager'
 
 const {height: screenHeight} = Dimensions.get('window');
 

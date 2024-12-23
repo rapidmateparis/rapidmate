@@ -36,7 +36,8 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
   const toggleModal = () => {
     setImageModalVisible(!isImageModalVisible);
   };
-  const params = route.params;
+  const params = route.params?.props ? route.params?.props :route.params;
+
 
   console.log('Image ID:', params.imageViewId);
 
@@ -172,6 +173,50 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
             <Text style={styles.pickupNotes}>{params.pickup_notes}</Text>
           </View>
         </View>
+
+        {params?.drop_details && <View style={styles.pickupCard}>
+          <Text style={styles.pickupDetails}>Drop details</Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>
+                {params.drop_details.drop_first_name +
+                  ' ' +
+                  params.drop_details.drop_last_name}
+              </Text>
+              <Text style={styles.vehicleCapacity}>{params.drop_details.drop_company_name}</Text>
+            </View>
+
+          </View>
+          <View style={styles.pickupinfoCard}>
+            <View style={[styles.pickupManDetails, {width: '60%'}]}>
+              <SimpleLineIcons
+                style={{marginTop: 3}}
+                name="globe"
+                size={12}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>
+                {params.drop_details.drop_email}
+              </Text>
+            </View>
+
+            <View style={styles.pickupManDetails}>
+              <MaterialIcons
+                style={{marginTop: 1}}
+                name="call"
+                size={15}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>+33{params.drop_details.drop_mobile}</Text>
+            </View>
+          </View>
+
+          <View>
+            <Text style={styles.pickupNotes}>{params.drop_details.drop_notes}</Text>
+          </View>
+        </View>}
+
+
 
         <View style={styles.pickupCard}>
           <Text style={styles.vehicleDetails}>Estimated cost</Text>

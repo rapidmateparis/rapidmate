@@ -152,7 +152,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
       {orders.map((item, index) => {
-        console.log('item  ===',item)
+        // console.log('item  ===',item)
         // destination_description
         return (
           <View
