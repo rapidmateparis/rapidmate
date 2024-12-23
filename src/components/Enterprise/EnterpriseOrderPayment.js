@@ -220,6 +220,12 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       repeat_until: params.repeat_until,
       // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
       // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
+      drop_first_name: params.drop_details.drop_first_name,
+      drop_last_name: params.drop_details.drop_last_name,
+      drop_mobile: params.drop_details.drop_mobile,
+      drop_notes: params.drop_details.drop_notes,
+      drop_email: params.drop_details.drop_email,
+      drop_company_name: params.drop_details.drop_company_name,
 
     };
     

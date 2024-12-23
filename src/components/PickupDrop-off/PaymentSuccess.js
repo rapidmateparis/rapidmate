@@ -41,6 +41,23 @@ const PaymentSuccess = ({ navigation, route }) => {
       clearTimeout(timer);
     };
   }, [navigation, params]);
+  
+  useEffect(()=>{
+    setTimeout(() =>{
+      reDirectToNextPage()
+    }, 2000);
+  },[])
+
+  const reDirectToNextPage=()=>{
+    if(params.serviceTypeId === 1){
+      navigation.navigate('ScheduleOrderSuccess',{
+        schedule_date_time: params.schedule_date_time,
+        serviceTypeId:params.serviceTypeId
+      })
+    }else{
+      navigation.navigate('LoaderForDriver')
+    }
+  }
 
   return (
     <ScrollView

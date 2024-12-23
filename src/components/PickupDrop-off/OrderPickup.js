@@ -293,7 +293,9 @@ const OrderPickup = ({route, navigation}) => {
                 //   locationList: route.params.locationList,
                 //   placedOrderDetails: placedOrderDetails[0],
                 // })
-                navigation.navigate('PickupBottomNav');
+                navigation.navigate('DeliveryDetails', {
+                  orderItem: placedOrderDetails[0],
+                });
               }}
               style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>View Order Details</Text>
