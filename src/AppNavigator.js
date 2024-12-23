@@ -2115,7 +2115,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2171,7 +2171,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2199,7 +2199,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2227,7 +2227,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
