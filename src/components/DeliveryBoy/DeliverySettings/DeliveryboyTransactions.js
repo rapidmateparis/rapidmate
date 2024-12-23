@@ -29,7 +29,7 @@ function DeliveryboyTransactions() {
   const {userDetails} = useUserDetails();
   const [transactionList, setTransactionList] = useState([]);
   const [walletBalance, setWalletBalance] = useState();
-  const [activeOption, setActiveOption] = useState('Today');
+  const [activeOption, setActiveOption] = useState('');
   const {setLoading} = useLoader();
 
   const handleOptionClick = option => {

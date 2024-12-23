@@ -25,6 +25,24 @@ const PaymentSuccess = ({navigation,route}) => {
     return () => backHandler.remove();
   }, []);
 
+
+  useEffect(()=>{
+    setTimeout(() =>{
+      reDirectToNextPage()
+    }, 2000);
+  },[])
+
+  const reDirectToNextPage=()=>{
+    if(params.serviceTypeId === 1){
+      navigation.navigate('ScheduleOrderSuccess',{
+        schedule_date_time: params.schedule_date_time,
+        serviceTypeId:params.serviceTypeId
+      })
+    }else{
+      navigation.navigate('LoaderForDriver')
+    }
+  }
+
   return (
     <ScrollView
       style={{width: '100%', height: '100%', backgroundColor: '#FBFAF5'}}
@@ -46,7 +64,7 @@ const PaymentSuccess = ({navigation,route}) => {
           </Text>
         </View>
       </View>
-      <View style={styles.actionBtnCard}>
+      {/* <View style={styles.actionBtnCard}>
         <TouchableOpacity
           onPress={() =>{ 
             if(params.serviceTypeId === 1){
@@ -61,7 +79,7 @@ const PaymentSuccess = ({navigation,route}) => {
           style={styles.goHomeBtn}>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </ScrollView>
   );
 };

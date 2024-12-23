@@ -299,8 +299,11 @@ const DeliveryDetails = ({navigation, route}) => {
   const downloadInvoiceFile = async () => {
     setLoading(true);
     try {
+      const type = componentType == 'ENTERPRISE' ? 'enterprise':
+      componentType == 'DELIVERBOY' ? 'deliveryboy': 'consumer'
+
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderNumber, resolve, reject);
+        downloadInvoiceOrder(orderNumber, type,resolve, reject);
       });
 
       const invoiceData = successResponse;
@@ -331,6 +334,7 @@ const DeliveryDetails = ({navigation, route}) => {
         Alert.alert('Error', 'Failed to save invoice file.');
       }
     } catch (error) {
+      setLoading(true)
       Alert.alert('Error', 'Failed to save invoice file.');
       console.error('File saving error:', error);
     } finally {

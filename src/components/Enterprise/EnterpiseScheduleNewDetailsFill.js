@@ -421,7 +421,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       {deliveryType == 2 ? (
         <View style={{height: 400, position: 'relative'}}>
           <MultpleMapAddress
-            sourceLocation={routeParams.sourceBranch}
+            // sourceLocation={routeParams.sourceBranch}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
             onDestinationLocation={onMultpleDestinationLocation}
           />
@@ -429,7 +429,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       ) : (
         <View style={{height: 200, position: 'relative'}}>
           <MapAddress
-            sourceLocation={routeParams.sourceBranch}
+            // sourceLocation={routeParams.sourceBranch}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
             onSourceLocation={onSourceLocation}
             onDestinationLocation={onDestinationLocation}
@@ -1182,7 +1182,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     console.log(imageViewId);
                     console.log('Payload  ---------->',params);
 
-                    navigation.navigate('EnterprisePickupOrderPriview', params);
+                    navigation.navigate('AddDropDetails', {props: params,component:'ENTERPRISE'});
+                    // navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
                     Alert.alert(
                       'Error Alert',

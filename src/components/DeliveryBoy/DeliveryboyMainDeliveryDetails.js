@@ -38,7 +38,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     setLoading(true);
     try {
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderDetails.order_number, resolve, reject);
+        downloadInvoiceOrder(orderDetails.order_number,'deliveryboy' ,resolve, reject);
       });
 
       const invoiceData = successResponse;

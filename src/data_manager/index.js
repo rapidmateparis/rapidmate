@@ -793,12 +793,13 @@ export const cancelOrderEnterprise = (
 
 export const downloadInvoiceOrder = (
   params,
+  type,
   successCallback,
   errorCallback,
 ) => {
-  console.log('print_data==>', API.orderPickupUrl + '/invoice/' + params);
+  console.log('print_data==>', API.downloadInvoice + params+'/'+type+'?show=true');
   axiosCall(
-    API.orderPickupUrl + '/invoice/' + params,
+    API.downloadInvoice + params+'/'+type+'?show=true',
     HTTPMethod.GET,
     {},
     response => {

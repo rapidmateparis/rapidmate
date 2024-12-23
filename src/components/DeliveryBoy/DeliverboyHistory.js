@@ -423,6 +423,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           onPress={() =>
             navigation.navigate('DeliveryboyMainDeliveryDetails', {
               orderItem: item.item,
+              componentType : 'DELIVERBOY'
             })
           }
           style={styles.packageDetailCard}>
