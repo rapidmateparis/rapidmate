@@ -153,7 +153,9 @@ const MultpleMapAddress = props => {
               disableScroll={true}
               fetchDetails
               ref={ref => {
-                ref?.setAddressText(sourceLocationText);
+                if(sourceLocationText){
+                  ref?.setAddressText(sourceLocationText);
+                }
               }}
               placeholder="Enter pickup address"
               styles={{
@@ -221,7 +223,13 @@ const MultpleMapAddress = props => {
                       moveToLocation(destinationCoordinates);
                       item.destinationCoordinates = destinationCoordinates;
                       item.destinationDescription = data.description;
+                      item.itemIndex = item.itemIndex;
                       setCurrentDestination(item)
+                      const allDestination = [...destinations]
+                      allDestination[index] = {...item,itemIndex:item.itemIndex}
+
+                      setDestinations([...allDestination]);
+
                     }}
                     query={{
                       key: MAPS_API_KEY,
@@ -301,14 +309,18 @@ const MultpleMapAddress = props => {
               );
             }}
             onReady={result => {
+              if(result?.distance && result?.duration){
+              console.log(`Distance: ${result.distance} km`);
+              console.log(`Duration: ${result.duration} min`);
               var curentInstance = [...destinations];
               curentInstance[currentDestination.itemIndex].distance = result.distance;
               curentInstance[currentDestination.itemIndex].duration = result.duration;
               setDestinations(curentInstance)
               onDestinationLocation(
-                currentDestination,
+                curentInstance[currentDestination.itemIndex],
                 currentDestination.itemIndex,
               );
+              }
             }}
           />
         )}
