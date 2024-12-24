@@ -220,24 +220,34 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       repeat_until: params.repeat_until,
       // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
       // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
-      drop_first_name: params.drop_details.drop_first_name,
-      drop_last_name: params.drop_details.drop_last_name,
-      drop_mobile: params.drop_details.drop_mobile,
-      drop_notes: params.drop_details.drop_notes,
-      drop_email: params.drop_details.drop_email,
-      drop_company_name: params.drop_details.drop_company_name,
-
+      is_scheduled_order:params.is_scheduled_order
     };
-    
+
+    if(params?.drop_details){
+      requestParams={...requestParams,
+        drop_first_name: params.drop_details.drop_first_name,
+        drop_last_name: params.drop_details.drop_last_name,
+        drop_mobile: params.drop_details.drop_mobile,
+        drop_notes: params.drop_details.drop_notes,
+        drop_email: params.drop_details.drop_email,
+        drop_company_name: params.drop_details.drop_company_name,
+      }
+    }else if(params?.dropDetails && params?.dropDetails.length > 0){
+      requestParams={...requestParams,
+        branches:params?.dropDetails
+      }
+    }
+
     if(params.order_date){
       requestParams={...requestParams,order_date:localToUTC(params.order_date)}
     }else{
-      requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
+      // requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
+      requestParams={...requestParams,order_date:localToUTC(params.schedule_date_time)}
     }
 
-    if (params.branches) {
-      requestParams.branches = params.branches;
-    }
+    // if (params.branches) {
+    //   requestParams.branches = params.branches;
+    // }
     console.log('requestParams from props ******', params);
     console.log('requestParams ******', requestParams);
     setLoading(true);

@@ -132,6 +132,7 @@ const EnterpriseHome = ({navigation}) => {
     getEnterpriseDashboardInfo(
       url,
       successResponse => {
+        console.log('successResponse ------>',successResponse)
         setLoading(false);
         if (successResponse[0]._response) {
           
@@ -142,13 +143,16 @@ const EnterpriseHome = ({navigation}) => {
             const getList = branchList.map(branch=>{
               return{
                 label : branch.branch_name,
-                value : branch.branch_id,
+                value : branch.id,
               }
             })
             tempdropDownBranches = getList
           }
           if (successResponse[0]._response) {
             setDropdownBranches(tempdropDownBranches);
+            displayChartData(
+              successResponse[0]._response.weekData,
+            );
           }
         }
       },
@@ -298,7 +302,7 @@ const EnterpriseHome = ({navigation}) => {
                 setSelectedDropdownBranch(item);
                 setIsBranchFocus(false);
                 // displayChartData(
-                //   branches.filter(br => br.branch_id == item.value)[0],
+                //   branches.filter(br => br.id == item.value)[0],
                 // );
               }}
             />
@@ -362,17 +366,17 @@ const EnterpriseHome = ({navigation}) => {
                 <View style={styles.bookedCardInfo}>
                   <View>
                     <Text style={styles.bookedInfo}>Active booking</Text>
-                    <Text style={styles.bookedDetails}>{item.active_order}</Text>
+                    <Text style={styles.bookedDetails}>{item.active_order? item.active_order:0}</Text>
                   </View>
 
                   <View>
                     <Text style={styles.bookedInfo}>Scheduled booking</Text>
-                    <Text style={styles.bookedDetails}>{item.schedule_order}</Text>
+                    <Text style={styles.bookedDetails}>{item.schedule_order ? item.schedule_order :0}</Text>
                   </View>
 
                   <View>
                     <Text style={styles.bookedInfo}>All booking</Text>
-                    <Text style={styles.bookedDetails}>{item.total}</Text>
+                    <Text style={styles.bookedDetails}>{item.total ? item.total:0}</Text>
                   </View>
                 </View>
 

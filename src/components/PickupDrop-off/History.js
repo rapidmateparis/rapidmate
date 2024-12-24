@@ -157,6 +157,8 @@ const TodayList = ({navigation, searchText}) => {
           if (size === successResponse[0]._response.length) {
             setPage(page + 1);
             setCheckMoreData(true);
+          }else if(size > successResponse[0]._response.length ){
+            setCheckMoreData(false);
           }
           let tempOrderList = successResponse[0]._response;
           setOrderList([...orderList, ...tempOrderList]);
@@ -244,7 +246,7 @@ const TodayList = ({navigation, searchText}) => {
   const renderFooter = () => {
     return (
       <View style={{padding: 10}}>
-        <ActivityIndicator size="small" color="#d8d8d8" />
+        {/* <ActivityIndicator size="small" color="#d8d8d8" /> */}
       </View>
     );
   };
@@ -403,6 +405,8 @@ const PastList = ({navigation, searchText}) => {
           if (size === successResponse[0]._response.length) {
             setPage(page + 1);
             setCheckMoreData(true);
+          }else if(size > successResponse[0]._response.length ){
+            setCheckMoreData(false);
           }
 
           let tempOrderList = successResponse[0]._response;
@@ -480,7 +484,7 @@ const PastList = ({navigation, searchText}) => {
   const renderFooter = () => {
     return (
       <View style={{padding: 10}}>
-        <ActivityIndicator size="small" color="#d8d8d8" />
+        {/* <ActivityIndicator size="small" color="#d8d8d8" /> */}
       </View>
     );
   };
