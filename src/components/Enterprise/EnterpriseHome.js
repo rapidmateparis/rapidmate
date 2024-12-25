@@ -340,6 +340,8 @@ const EnterpriseHome = ({navigation}) => {
             yAxisLabel=""
             chartConfig={chartConfig}
             verticalLabelRotation={0}
+            showValuesOnTopOfBars = {true}
+            showBarTops = {true}
           />
         </View>
       </View>
