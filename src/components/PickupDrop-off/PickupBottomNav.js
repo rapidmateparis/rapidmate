@@ -20,7 +20,7 @@ import Notifications from './Settings/Notifications';
 import PickupHome from './PickupHome';
 import History from './History';
 import RNExitApp from 'react-native-exit-app';
-import {requestNotificationPermission} from '../../utils/common';
+import {requestNotificationPermission,localizationText} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {getNotificationCount, getViewOrderDetail, updateUserProfile} from '../../data_manager';
@@ -240,7 +240,7 @@ const PickupBottomNav = ({navigation}) => {
           name="Account"
           component={Settings}
           options={{
-            headerTitle: 'Settings',
+            headerTitle: `${localizationText('Common','settings')}`,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,
