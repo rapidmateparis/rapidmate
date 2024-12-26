@@ -3,6 +3,7 @@ import {DATE_FORMAT, apiHost} from './constant';
 import {PermissionsAndroid} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import moment from 'moment-timezone';
+import { useTranslation } from 'react-i18next';
 
 export const formatDate = date => {
   var d = new Date(date),
@@ -331,3 +332,11 @@ export const titleFormat=(date=new Date())=>{
   return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(DATE_FORMAT.titleFormat);
 }
 
+
+export const localizationText=(parentKey,childKey)=>{
+  const {t} = useTranslation()
+  if(parentKey && childKey)
+    return t(`${parentKey}.${childKey}`)
+  else 
+    return t(`${parentKey}`)
+}
