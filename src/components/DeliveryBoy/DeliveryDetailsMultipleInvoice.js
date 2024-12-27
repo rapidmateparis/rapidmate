@@ -28,46 +28,87 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
         </View>
 
         <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/Pickup-Package-Icon.png')}
+          />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup 1 information</Text>
+            <Text style={styles.dropInfo}>Pickup information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
             <Text style={styles.dropInfo}>
               22 Rue de la Liberté, Paris, Île-de-France.
             </Text>
+            <Text style={styles.pickupNotes}>Pickup Notes</Text>
           </View>
         </View>
 
         <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/package-img.png')}
+          />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off 1 information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
             <Text style={styles.dropInfo}>
               22 Rue de la Liberté, Paris, Île-de-France.
             </Text>
+            <Text style={styles.pickupNotes}>Drop Notes</Text>
+            <View style={styles.otpHeadCard}>
+              <Text style={styles.otpTitleText}>Pickup OTP:</Text>
+              <Text style={styles.otpText}>0444</Text>
+            </View>
+            <View style={styles.otpHeadCard}>
+              <Text style={styles.otpTitleText}>Deliverd OTP:</Text>
+              <Text style={styles.otpText}>0333</Text>
+            </View>
           </View>
         </View>
 
         <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup 2 information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
-            <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/package-img.png')}
+          />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off 2 information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
             <Text style={styles.dropInfo}>
               22 Rue de la Liberté, Paris, Île-de-France.
             </Text>
+            <Text style={styles.pickupNotes}>Pickup Notes</Text>
+            <View style={styles.otpHeadCard}>
+              <Text style={styles.otpTitleText}>Pickup OTP:</Text>
+              <Text style={styles.otpText}>0444</Text>
+            </View>
+            <View style={styles.otpHeadCard}>
+              <Text style={styles.otpTitleText}>Deliverd OTP:</Text>
+              <Text style={styles.otpText}>0333</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.invoiceMainCard}>
+          <View>
+            <Image
+              style={{height: 26, width: 26}}
+              source={require('../../image/Big-Package.png')}
+            />
+          </View>
+          <View style={{marginLeft: 10}}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.orderFare}>Package information</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Order ID:</Text>
+              <Text style={styles.value}>327366213217321</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Vehicle:</Text>
+              <Text style={styles.value}>Cycle</Text>
+            </View>
           </View>
         </View>
 
@@ -77,7 +118,7 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare 1</Text>
+              <Text style={styles.orderFare}>Order fare</Text>
               <Text style={styles.totalmoney}>€34.00</Text>
             </View>
 
@@ -110,91 +151,11 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
           </View>
         </View>
 
-        <TouchableOpacity onPress={toggleDetails} activeOpacity={0.8}>
-          <View style={styles.invoiceMainCard}>
-            <View>
-              <Image source={require('../../image/order-fare.png')} />
-            </View>
-            <View style={{marginLeft: 10}}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFare}>Order fare 2</Text>
-                <Text style={styles.totalmoney}>€34.00</Text>
-              </View>
-
-              {showDetails && (
-                <>
-                  <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Order fare</Text>
-                    <Text style={styles.value}>€30.00</Text>
-                  </View>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Waiting</Text>
-                    <Text style={styles.value}>€03.00</Text>
-                  </View>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Platform fee</Text>
-                    <Text style={styles.value}>€01.00</Text>
-                  </View>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Amount charged</Text>
-                    <Text style={styles.value}>€34.00</Text>
-                  </View>
-
-                  <View style={styles.masterCard}>
-                    <Image
-                      source={require('../../image/logos_mastercard.png')}
-                    />
-                    <Text style={styles.paidWith}>Paid with mastercard</Text>
-                  </View>
-                </>
-              )}
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.packageInformationCard}>
-          <Text style={styles.packageTitle}>Package information</Text>
-          <Text style={styles.orderdetails}>
-            Order ID: <Text style={styles.detailsId}>20394</Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Comments:{' '}
-            <Text style={styles.detailsId}>
-              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-              sed.
-            </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Vehicle: <Text style={styles.detailsId}>Pickup truck</Text>
-          </Text>
-        </View>
-
         <TouchableOpacity style={styles.packageInvoiceCard}>
           <View style={styles.invoiceCard}>
             <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
 
-            <Text style={styles.downloadInvoiceText}>Download invoice 1</Text>
-          </View>
-          <View>
-            <Feather
-              style={{marginTop: 5}}
-              name="download"
-              size={20}
-              color="#FF0058"
-            />
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.packageInvoiceCard}>
-          <View style={styles.invoiceCard}>
-            <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-
-            <Text style={styles.downloadInvoiceText}>Download invoice 2</Text>
+            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
           </View>
           <View>
             <Feather
@@ -231,7 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
+    marginVertical: 4,
   },
   companyInfo: {
     fontSize: 14,
@@ -245,7 +206,12 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Add this line
+    justifyContent: 'space-between',
+  },
+  cardHeaderValues: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '74%', 
   },
   orderFare: {
     width: '75%',
@@ -363,6 +329,27 @@ const styles = StyleSheet.create({
   packageManager: {
     width: 30,
     height: 30,
+  },
+  pickupNotes: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#131314',
+  },
+  otpHeadCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
+    width: '76%',
+  },
+  otpTitleText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: '#131314',
+  },
+  otpText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#131314',
   },
 });
 
