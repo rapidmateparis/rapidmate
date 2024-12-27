@@ -122,6 +122,8 @@ const PickupSignup = ({navigation}) => {
               });
               setCountryList(formattedCountryList);
               setCountryCodeList(formattedCountryCodeList);
+              setDropdownValue(formattedCountryCodeList[0].value)
+              setDropdownCountryCodeValue(formattedCountryCodeList[0].label)
             }
           }
         }

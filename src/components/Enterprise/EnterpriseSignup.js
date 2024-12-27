@@ -48,7 +48,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [siret, setSiret] = useState('');
   const [comments, setComments] = useState('');
   const [openDropDown, setOpenDropDown] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState('+33');
+  const [dropdownValue, setDropdownValue] = useState('');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [dropdownStateValue, setDropdownStateValue] = useState(null);
   const [dropdownCityValue, setDropdownCityValue] = useState(null);
@@ -64,6 +64,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
+  const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -81,10 +82,10 @@ const EnterpriseSignup = ({navigation}) => {
     }
   };
 
-  const data = [
-    {label: '+91', value: '+91'},
-    {label: '+33', value: '+33'},
-  ];
+  // const data = [
+  //   {label: '+91', value: '+91'},
+  //   {label: '+33', value: '+33'},
+  // ];
 
   const industryList = [
     {label: 'Restaurant and takeaway', value: 1},
@@ -111,13 +112,23 @@ const EnterpriseSignup = ({navigation}) => {
             } else {
               setMasterCountryList(successResponse[0]._response);
               var formattedCountryList = [];
+              var formattedCountryCodeList = [];
               successResponse[0]._response.forEach(element => {
                 formattedCountryList.push({
                   label: element.country_name,
                   value: element.id,
                 });
+                formattedCountryCodeList.push({
+                  label: "+" + element.phone_code,
+                  value: element.id,
+                });
               });
+
               setCountryList(formattedCountryList);
+              setCountryCodeList(formattedCountryCodeList);
+              setDropdownValue(formattedCountryCodeList[0].value)
+
+
             }
           }
         }
@@ -402,7 +413,7 @@ const EnterpriseSignup = ({navigation}) => {
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
                 <Dropdown
-                  data={data}
+                  data={countryCodeList}
                   search
                   maxHeight={300}
                   itemTextStyle={styles.itemtextStyle}

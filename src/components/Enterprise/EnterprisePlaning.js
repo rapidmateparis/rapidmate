@@ -25,6 +25,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import {useLoader} from '../../utils/loaderContext';
 import {useFocusEffect} from '@react-navigation/native';
+import { titleFormat } from '../../utils/common';
 
 const EnterprisePlanning = ({navigation}) => {
   const getCurrentDate = () => {
@@ -314,7 +315,15 @@ const EnterprisePlanning = ({navigation}) => {
                         source={require('../../image/Big-Package.png')}
                       />
                       <Text style={styles.deliveryTime}>
-                        {item.consumer_order_title}
+                        {item.consumer_order_title}{' '}
+                        {item.is_show_datetime_in_title == 1
+                          ? item.order_status === 'ORDER_PLACED'
+                            ? titleFormat(
+                                item.schedule_date_time ||
+                                  item.order_date,
+                              )
+                            : titleFormat(item.updated_on)
+                          : ''}
                       </Text>
                     </View>
 

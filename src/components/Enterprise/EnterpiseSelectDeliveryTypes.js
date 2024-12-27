@@ -276,9 +276,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
 
           <View style={styles.vehicleTypePrice}>
             <Text style={styles.selectServiceTitle}>Select vehicle type</Text>
-            <Text style={styles.selectedVehiclePrice}>
+            {/* <Text style={styles.selectedVehiclePrice}>
               {selectedVehiclePrice && selectedVehiclePrice.toFixed(2)}
-            </Text>
+            </Text> */}
           </View>
         </View>
 
@@ -297,6 +297,8 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
               vehicle.vehicle_type === selectedVehicle.vehicle_type
                 ? styles.selectedCard
                 : null,
+
+                vehicle.vehicle_type === selectedVehicle.vehicle_type ? {borderColor:colors.secondary} : null
             ]}>
             <TouchableOpacity
               disabled={disableVehicleType()}
@@ -319,9 +321,13 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                     : colors.text
                 }
               />
+              <View style={{flexDirection:"row"}}>
               <Text style={[styles.paymentPlateform,disableVehicleType()?{color:colors.lightGrey}:'']}>
                 {vehicle.vehicle_type}
               </Text>
+
+              {vehicle.vehicle_type === selectedVehicle.vehicle_type && <View style={styles.chargeBatch} ><Text style={styles.chargeBatchTextStyle}>{`€ ${selectedVehiclePrice.toFixed(2)}/km`}</Text></View>}
+              </View>
             </View>
             <Image style={[vehicle.vehicleStyle,disableVehicleType() ?{tintColor:colors.lightGrey}:[]]}  source={vehicle.image} />
           </TouchableOpacity>
@@ -484,6 +490,19 @@ const styles = StyleSheet.create({
   //   height: 62,
   //   resizeMode: 'center'
   // },
+  chargeBatch:{
+    justifyContent:"center",
+    alignItems:"center",
+    borderRadius:20,
+    backgroundColor:'#FBE9EA',
+    paddingHorizontal:8
+  },
+  chargeBatchTextStyle:{
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.secondary,
+  }
+
 });
 
 export default EnterpiseSelectDeliveryTypes;
