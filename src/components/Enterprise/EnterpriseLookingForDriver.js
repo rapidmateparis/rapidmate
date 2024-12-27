@@ -107,7 +107,7 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
           source={require('../../image/Driver-Bg2.png')}
         />
       </View>
-      {params.cancellable == 1 ? (
+      { params?.cancellable && params?.cancellable == 1 ? (
         <TouchableOpacity
           onPress={() => toggleModal()}
           style={styles.requestTouch}>

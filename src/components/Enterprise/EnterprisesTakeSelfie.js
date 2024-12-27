@@ -98,7 +98,7 @@ const EnterprisesTakeSelfie = ({navigation}) => {
             successResponseProfile => {
               console.log('successResponseProfile', successResponseProfile);
               setLoading(false);
-              navigation.navigate('EnterpriseThanksPage');
+              navigation.navigate('EnterpriseManageProfile');
             },
             errorResponseProfile => {
               console.log(
