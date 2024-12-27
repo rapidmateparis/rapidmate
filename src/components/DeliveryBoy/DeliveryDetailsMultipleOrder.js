@@ -125,20 +125,6 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
               <View style={styles.borderShowOff} />
 
               <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Pickup OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Delivered OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
                 <Text style={styles.headingOTP}>Package photo</Text>
                 <TouchableOpacity onPress={() => toggleModal()}>
                   <Image
@@ -243,21 +229,7 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
                 <Text style={styles.headingOTP}>Vehicle:</Text>
                 <Text style={styles.subheadingOTP}>Pickup Truck</Text>
               </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Pickup OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Delivered OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
+              
               <View style={styles.borderShowOff} />
 
               <View style={styles.packageBasicInfo}>
