@@ -314,9 +314,14 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       : 'Company Name'
                     : ''}
                 </Text>
-                {pickUpLocation?.address && pickUpLocation?.city && pickUpLocation?.state && <Text style={styles.dropInfo}>
+                { pickUpLocation ? <Text style={styles.dropInfo}>
                   {pickUpLocation?.address || ''}{', '}{pickUpLocation?.city || ''}{', '}{pickUpLocation?.state || ''}
-                </Text>}
+                 
+                </Text>
+               : order?.pickup_location_id ?
+                    null
+               :null
+              }
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
@@ -362,7 +367,20 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>Package photo</Text>
               <TouchableOpacity onPress={() => toggleModal()}>
-                {route.params.package_photo && (
+                {
+                order?.order?.package_photo ? 
+                  <View>
+                    <TouchableOpacity onPress={() => toggleModal()}>
+                      <Image
+                        style={styles.packagePhoto}
+                        source={{
+                          uri: order.order.package_photo,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                :route.params.package_photo && (
                   <View>
                     <TouchableOpacity onPress={() => toggleModal()}>
                       <Image
@@ -412,7 +430,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       : 'Company Name'
                     : ''}
                 </Text>
-                {dropOffLocation?.address && dropOffLocation?.city && dropOffLocation?.state &&<Text style={styles.dropInfo}>
+                {dropOffLocation &&<Text style={styles.dropInfo}>
                   {dropOffLocation?.address || ''}{dropOffLocation?.city || ''}{' '}{dropOffLocation?.state || ''}
                 </Text>}
               </View>

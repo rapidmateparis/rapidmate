@@ -34,6 +34,7 @@ import {
 import {useStripe} from '@stripe/stripe-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { localToUTC } from '../../utils/common';
+import { API } from '../../utils/constant';
 
 const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
@@ -214,7 +215,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       repeat_dropoff_location_id: '',
       distance: parseFloat(params.distance).toFixed(1),
       total_amount: parseFloat(params.amount),
-      package_photo: 'https://example.com/package.jpg',
+      package_photo: API.imageViewUrl + params.imageId, //'https://example.com/package.jpg',
       repeat_mode: params.repeat_mode,
       repeat_every: params.repeat_every,
       repeat_until: params.repeat_until,

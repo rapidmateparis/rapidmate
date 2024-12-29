@@ -31,6 +31,7 @@ const LoaderForDriver = ({navigation}) => {
 
   const [reTryCount, updateReTryCount] = useState(0);
 
+  const timeout = React.useRef(null);
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -77,13 +78,14 @@ const LoaderForDriver = ({navigation}) => {
           getAllocatedDeliveryBoy(
             params,
             successResponse => {
+              clearTimeout(timeout.current);
               navigation.navigate('OrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
-              setTimeout(()=>{
+              timeout.current = setTimeout(()=>{
                 updateReTryCount(reTryCount+1)
                 if(reTryCount === 5){
                   navigation.navigate('DriverNotAvailable', errorResponse);
