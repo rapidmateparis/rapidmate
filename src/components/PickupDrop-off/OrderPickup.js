@@ -286,7 +286,7 @@ const OrderPickup = ({route, navigation}) => {
               </View>
             </View>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 // navigation.navigate('OrderConfirm', {
                 //   driverDetails: route.params.driverDetails,
@@ -299,7 +299,26 @@ const OrderPickup = ({route, navigation}) => {
               }}
               style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>View Order Details</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
+            <View style={{flexDirection: 'row', paddingVertical: 10,justifyContent:'space-evenly'}}>
+                <TouchableOpacity
+                  style={styles.requestTouch}
+                  onPress={() => {
+                    navigation.navigate('DeliveryDetails', {
+                      orderItem: placedOrderDetails[0],
+                    });
+                  }}>
+                  <Text style={styles.cancelRequest}>View Order Details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.requestTouch}
+                  onPress={() => {
+                    navigation.navigate('PickupBottomNav');
+                  }}>
+                  <Text style={styles.cancelRequest}>Go Home</Text>
+                </TouchableOpacity>
+              </View>
           </View>
         </ImageBackground>
       </View>
@@ -433,6 +452,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  requestTouch: {
+    backgroundColor: colors.primary,
+    borderRadius: 5,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    // marginLeft: 10,
+    marginTop: 10,
   },
 });
 

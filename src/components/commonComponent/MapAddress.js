@@ -118,6 +118,7 @@ const MapAddress = props => {
     if (address) {
       if (addressType == 0) {
         setSelectedSourceAddress(address);
+        setSourceLocationText(address);
       } else {
         setSelectedDistinationAddress(address);
       }

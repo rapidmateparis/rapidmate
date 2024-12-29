@@ -84,7 +84,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     let date = new Date();
     let exe = '.pdf';
     let filename =
-    `invoice_${orderNumber}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
+    `invoice_${orderDetails.order_number}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
     const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
 
     const options = {
@@ -185,10 +185,10 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
                 ? orderDetails.drop_company_name
                 : 'Company Name'}
             </Text>
-            <Text style={styles.dropInfo}>
+            {dropOffLocation &&  dropOffLocation?.address && dropOffLocation.city &&dropOffLocation.state && <Text style={styles.dropInfo}>
               {dropOffLocation.address}{', '}{dropOffLocation.city}{', '}
               {dropOffLocation.state}
-            </Text>
+            </Text>}
           </View>
         </View>
 
