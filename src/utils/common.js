@@ -4,6 +4,7 @@ import {PermissionsAndroid} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
+import Sound from 'react-native-sound'
 
 export const formatDate = date => {
   var d = new Date(date),
@@ -340,3 +341,37 @@ export const localizationText=(parentKey,childKey)=>{
   else 
     return t(`${parentKey}`)
 }
+
+
+
+let soundInstance;
+
+export const playNotificationSound =()=>{
+  soundInstance = new Sound('samplenotification.mp3', Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+
+    console.log('duration in seconds: ' + soundInstance.getDuration() + 'number of channels: ' + soundInstance.getNumberOfChannels());
+    soundInstance.setNumberOfLoops(-1)
+    soundInstance.play((success) => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+
+    
+  });
+}
+
+export const stopNotificationSound = () => {
+  if (soundInstance) {
+    soundInstance.stop(() => {
+      console.log('Sound stopped');
+      soundInstance.release(); // Release the resource
+    });
+  }
+};

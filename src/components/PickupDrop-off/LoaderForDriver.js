@@ -58,7 +58,7 @@ const LoaderForDriver = ({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    if(reTryCount <= 5){
+    if(reTryCount !== null && reTryCount <= 5){
       getLocationsData();
     }
 
@@ -78,6 +78,7 @@ const LoaderForDriver = ({navigation}) => {
           getAllocatedDeliveryBoy(
             params,
             successResponse => {
+              updateReTryCount(null)
               clearTimeout(timeout.current);
               navigation.navigate('OrderPickup', {
                 driverDetails: successResponse[0]._response,
@@ -90,7 +91,7 @@ const LoaderForDriver = ({navigation}) => {
                 if(reTryCount === 5){
                   navigation.navigate('DriverNotAvailable', errorResponse);
                 }
-              },10000)
+              },30000)
               
             },
           );
