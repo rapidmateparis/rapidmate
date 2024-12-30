@@ -84,7 +84,15 @@ const PickupBottomNav = ({navigation}) => {
 
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      console.log('remoteMessage *Consumer*', JSON.stringify(remoteMessage));
+      if(remoteMessage.data?.delivered_otp){
+        saveUserDetails({...userDetails,delivered_otp:remoteMessage.data?.delivered_otp});
+      }
+      
+      if(remoteMessage.data?.progressTypeId){
+        saveUserDetails({...userDetails,progressTypeId:remoteMessage.data?.progressTypeId});
+      }
+      
       getNotificationAllCount()
       getViewOrderDetail(
         remoteMessage.data?.orderNumber,

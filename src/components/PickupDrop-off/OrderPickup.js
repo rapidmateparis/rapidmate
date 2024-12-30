@@ -16,12 +16,14 @@ import StepIndicator from 'react-native-step-indicator';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
+import {usePlacedOrderDetails, useUserDetails} from '../commonComponent/StoreContext';
 import {API} from '../../utils/constant';
 
 const {height: screenHeight} = Dimensions.get('window');
 
 const OrderPickup = ({route, navigation}) => {
+  const {saveUserDetails, userDetails} = useUserDetails();
+
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
   const {placedOrderDetails} = usePlacedOrderDetails();
   const [isCopied, setIsCopied] = useState(false);
@@ -34,6 +36,19 @@ const OrderPickup = ({route, navigation}) => {
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
   const [deliveredOtp, setDeliveredOtp] = useState(placedOrderDetails[0]?.delivered_otp);
+
+
+  useEffect(()=>{
+
+    console.log('progressTypeId ====>',userDetails.progressTypeId)
+    console.log('delivered_otp ====>',userDetails.delivered_otp)
+
+    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId)
+    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp)
+  },[userDetails.progressTypeId,userDetails.delivered_otp])
+
+  
+  
   const [currentPosition, setCurrentPosition] = useState(0);
 
   console.log('0', driverDetails);
@@ -224,8 +239,8 @@ const OrderPickup = ({route, navigation}) => {
                 currentPosition={currentPosition}
                 labels={labels}
                 stepCount={stepCount}
-                onPress={position => setCurrentPosition(position)}
-              />
+                // onPress={position => setCurrentPosition(position)}
+                />
             </View>
 
             <View style={styles.driverCard}>
