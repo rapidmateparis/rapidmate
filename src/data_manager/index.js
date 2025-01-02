@@ -1388,3 +1388,20 @@ export const getDeliveryBoyBillingDetails = (params, successCallback, errorCallb
     },
   );
 };
+
+export const getTaxDetails = (successCallback, errorCallback) => {
+  console.log('URL ',API.vechicleTaxList)
+  axiosCall(
+    API.vechicleTaxList,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+
