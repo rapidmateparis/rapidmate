@@ -174,11 +174,17 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         }}>
         <TouchableOpacity
           onPress={() => {
+          if(item?.item?.locations && item?.item?.locations?.length > 0){
+            navigation.navigate('DeliveryDetailsMultipleOrder',{
+                orderItem: item.item,
+            });
+          }else{
             navigation.navigate('DeliveryboyDeliveryDetails', {
               order_number: item.item.order_number,
               package_photo: item.item.package_photo,
               orderItem: item.item,
             });
+          }
           }}
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
@@ -424,11 +430,19 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('DeliveryboyMainDeliveryDetails', {
-              orderItem: item.item,
-              componentType : 'DELIVERBOY'
-            })
+          onPress={() =>{
+
+            if(item?.item?.locations && item?.item?.locations?.length > 0){
+              navigation.navigate('DeliveryDetailsMultipleInvoice',{
+                  orderItem: item.item,
+              });
+            }else{
+              navigation.navigate('DeliveryboyMainDeliveryDetails', {
+                orderItem: item.item,
+                componentType : 'DELIVERBOY'
+              })
+            }
+          }
           }
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>

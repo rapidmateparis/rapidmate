@@ -98,9 +98,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   };
@@ -130,7 +130,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       setClientSecret(data.client_secret);
       setup(data.client_secret);
     } catch (error) {
-      Alert.alert('Error', error.message);
+      // Alert.alert('Error', error.message);
     }
   };
 
@@ -175,21 +175,21 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   };
 
   const onPayment = async () => {
-    if (selectedOptionIndex == -1) {
-      Alert.alert('Error Alert', 'Please choose a payment method', [
-        {text: 'OK', onPress: () => {}},
-      ]);
-    } else {
+    // if (selectedOptionIndex == -1) {
+    //   Alert.alert('Error Alert', 'Please choose a payment method', [
+    //     {text: 'OK', onPress: () => {}},
+    //   ]);
+    // } else {
       placeEnterpriseOrder();
-    }
+    // }
   };
 
   const placeEnterpriseOrder = async () => {
@@ -338,8 +338,10 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
 
+        {paymentMethod.length > 0 && 
+        <>
         <View>
-          <Text style={styles.selectPaymentMethod}>Credi & Debit Cards</Text>
+          <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
         </View>
 
         <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
@@ -412,6 +414,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             </TouchableOpacity>
           ) : null}
         </View>
+        </>
+        }
 
         <View style={styles.discountCard}>
           <Image

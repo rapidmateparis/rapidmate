@@ -17,12 +17,14 @@ import {
   useUserDetails,
 } from '../commonComponent/StoreContext';
 import {getAllocatedEnterprise, getLocations} from '../../data_manager';
+import { useIsFocused } from '@react-navigation/native';
 
 const EnterpriseLookingForDriver = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
   const params = route.params;
+  const isVisible = useIsFocused();
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -41,12 +43,16 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
           getAllocatedEnterprise(
             params,
             successResponse => {
+
               navigation.navigate('EnterpriseOrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
+              console.log('successResponseerrorReq <========>',JSON.stringify(params))
+              console.log('successResponseerrorResponse <========>',JSON.stringify(errorResponse))
+
               navigation.navigate(
                 'EnterpriseDriverNotAvailable',
                 errorResponse,
@@ -66,8 +72,10 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    getLocationsData();
-  }, []);
+    if(isVisible){
+      getLocationsData();
+    }
+  }, [isVisible]);
 
   return (
     <ScrollView

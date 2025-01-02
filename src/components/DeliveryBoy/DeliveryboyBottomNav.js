@@ -75,10 +75,10 @@ const DeliveryboyBottomNav = ({navigation}) => {
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
       console.log('remoteMessage *Delivery Boy*', JSON.stringify(remoteMessage));
-      playNotificationSound()
       getNotificationAllCount()
 
       if(remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' && remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
+        playNotificationSound()
         setDeliveryBoyAcceptRejectModalModalVisible(true);
         getViewOrderDetail(
           remoteMessage.data?.orderNumber,

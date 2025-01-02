@@ -71,9 +71,9 @@ const EnterprisePlanning = ({navigation}) => {
       },
       errorResponse => {
         setEnterprisePlans([]);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   };
@@ -121,13 +121,15 @@ const EnterprisePlanning = ({navigation}) => {
     getEnterpriseBranch(
       userDetails.userDetails[0].ext_id,
       successResponse => {
+        console.log('successResponse =========>>',JSON.stringify(successResponse))
         setLoading(false);
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
+              // Alert.alert('Error Alert', successResponse[0]._response.name, [
+              //   {text: 'OK', onPress: () => {}},
+              // ]);
+              setEnterpriseBranches([]);
             } else {
               var branches = [];
               for (
@@ -147,9 +149,11 @@ const EnterprisePlanning = ({navigation}) => {
       errorResponse => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        setEnterpriseBranches([]);
+        // Alert.alert('Error Alert*', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
+
       },
     );
   };
@@ -239,6 +243,23 @@ const EnterprisePlanning = ({navigation}) => {
         </View>
       </View>
 
+        {
+          enterpriseBranches.length === 0 &&
+            <View style={styles.noBranchedView}>
+              <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
+              <TouchableOpacity
+                onPress={() =>{navigation.navigate('EnterpriseLocation')}}>
+                <AntDesign name="pluscircle" size={25} color={colors.primary} />
+              </TouchableOpacity>
+            </View>
+        }
+      {
+        enterprisePlans.length === 0 ?
+          <View style={styles.noBranchedView}>
+                  <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Plannings</Text>
+             </View>
+        :
+      
       <View style={{flex: 1}}>
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
           {enterprisePlans.map((item, index) => {
@@ -370,6 +391,7 @@ const EnterprisePlanning = ({navigation}) => {
           })}
         </View>
       </View>
+      }
     </ScrollView>
   );
 };
@@ -530,6 +552,11 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  noBranchedView:{
+    justifyContent:"space-between",paddingHorizontal:16,paddingVertical:8,flexDirection:"row",
+    backgroundColor:'#E5E4E4',
+    alignItems:"center",borderRadius:5,marginVertical:8,marginHorizontal:4
+  }
 });
 
 export default EnterprisePlanning;

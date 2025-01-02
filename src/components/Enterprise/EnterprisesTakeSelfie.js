@@ -96,9 +96,13 @@ const EnterprisesTakeSelfie = ({navigation}) => {
           updateUserProfileEnterprise(
             params,
             successResponseProfile => {
-              console.log('successResponseProfile', successResponseProfile);
+              console.log('successResponseProfile', successResponseProfile,userDetails.userDetails.is_active);
               setLoading(false);
-              navigation.navigate('EnterpriseManageProfile');
+              if(userDetails?.userDetails[0].is_active === 0){
+                navigation.navigate('EnterpriseThanksPage');
+              }else{
+                navigation.navigate('EnterpriseManageProfile');
+              }
             },
             errorResponseProfile => {
               console.log(
