@@ -313,7 +313,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
 
             <View style={{flexDirection: 'row', paddingVertical: 10,justifyContent:'space-evenly'}}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('EnterpriseHome')}
+                onPress={() => navigation.navigate('EnterpriseBottomNav')}
                 style={styles.trackOrderBtn}>
                 <Text style={styles.trackText}>Go To Home</Text>
               </TouchableOpacity>
