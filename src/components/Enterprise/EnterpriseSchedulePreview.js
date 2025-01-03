@@ -30,6 +30,7 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       for (let dayIndex = 0; dayIndex < day.timeslots.length; dayIndex++) {
         const element = day.timeslots[dayIndex];
         slots.push({
+          slot_date:moment(element.slot_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
           day: day.day,
           from_time: moment(element.from_time, 'hh:mm A').format('HH:MM'),
           to_time: moment(element.to_time, 'hh:mm A').format('HH:MM'),
@@ -47,6 +48,9 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       is_same_slot_all_days: 0,
       slots: slots
     };
+
+    console.log('requestParams =======>',requestParams)
+
     setLoading(true);
     createEnterpriseOrder(
       requestParams,

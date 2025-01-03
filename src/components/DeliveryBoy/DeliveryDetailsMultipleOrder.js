@@ -296,10 +296,10 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                     <View style={styles.statusAboutDelivery}>
                       {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
                       <Octicons
-                        name={updateStatus == 'Ready to pickup'|| updateStatus === null ? 'dot-fill' : 'check'}
+                        name={updateStatus == 'Reached'|| updateStatus === null ? 'dot-fill' : 'check'}
                         size={15}
                         color={
-                          updateStatus == 'Ready to pickup' || updateStatus === null? '#D9D9D9' : '#FF0058'
+                          updateStatus == 'Reached' || updateStatus === null? '#D9D9D9' : '#FF0058'
                         }
                       />
                       <Text style={styles.statusInfo}>Reached</Text>

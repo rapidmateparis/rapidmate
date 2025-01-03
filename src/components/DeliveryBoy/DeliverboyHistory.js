@@ -85,7 +85,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         if (size === successResponse[0]._response.length) {
           setPage(page + 1);
           setCheckMoreData(true);
-        } else {
+        } else if(size > successResponse[0]._response.length ){
           setCheckMoreData(false);
         }
         if (newPage === 1) {
@@ -314,9 +314,9 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
     }, [filterCriteria]),
   );
 
-  useEffect(() => {
-    getPastRecords(page);
-  }, [page]);
+  // useEffect(() => {
+  //   getPastRecords(page);
+  // }, [page]);
 
   const resetAll = () => {
     setPastOrderList([]);
@@ -341,7 +341,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         if (size === successResponse[0]._response.length) {
           setPage(page + 1);
           setCheckMoreData(true);
-        } else {
+        } else if(size > successResponse[0]._response.length ){
           setCheckMoreData(false);
         }
 

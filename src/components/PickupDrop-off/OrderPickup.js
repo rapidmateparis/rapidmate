@@ -320,8 +320,11 @@ const OrderPickup = ({route, navigation}) => {
                 <TouchableOpacity
                   style={styles.requestTouch}
                   onPress={() => {
+                    // TODO: Because this screen only show when delivery boy allocated for this order so manually change the id
+                    const changeStatus = {...placedOrderDetails[0],is_delivery_boy_allocated:1}
+
                     navigation.navigate('DeliveryDetails', {
-                      orderItem: placedOrderDetails[0],
+                      orderItem: changeStatus,
                     });
                   }}>
                   <Text style={styles.cancelRequest}>View Order Details</Text>

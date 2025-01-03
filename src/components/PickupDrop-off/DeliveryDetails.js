@@ -53,6 +53,17 @@ const DeliveryDetails = ({navigation, route}) => {
 
   const enterpriseDestinationList = route?.params?.orderItem?.locations || []
 
+  const getTaxAmount = ()=>{
+    const tax = route?.params?.orderItem?.tax ? route?.params?.orderItem?.tax : 0
+    const amount =   order.order_amount ? order.order_amount.toFixed(2) :0
+
+    console.log('amount is ',amount,'and vechile tax is ',tax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(tax)) / 100;
+     return taxAmount? taxAmount.toFixed(2): 0
+  }
+
+
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -449,7 +460,9 @@ const DeliveryDetails = ({navigation, route}) => {
                 <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
-          ) : route.params?.orderItem?.service_type_id === 1 ? null : (
+          ) : route.params?.orderItem?.service_type_id === 1 ? null : 
+          route.params?.orderItem?.is_delivery_boy_allocated === 0 ?
+          (
             <View style={{alignContent: 'flex-end'}}>
               <Button
                 title="Allocate Driver"
@@ -457,7 +470,9 @@ const DeliveryDetails = ({navigation, route}) => {
                 onPress={getDeliveryBoyAllocation}
               />
             </View>
-          )}
+          )
+          : null
+        }
         </View>
         <View style={styles.packageCard}>
           <View style={styles.packageLeftsideCard}>
@@ -607,9 +622,9 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
+              <Text style={styles.orderFareValue}>Tax</Text>
               <Text style={styles.value}>
-                € {order.waiting_fare ? order.waiting_fare.toFixed(2) : '0.00'}
+                € {getTaxAmount()}
               </Text>
             </View>
 
