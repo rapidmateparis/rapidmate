@@ -35,6 +35,7 @@ import {Buffer} from 'buffer';
 import {API} from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import { utcLocal } from '../../utils/common';
 
 const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
@@ -49,6 +50,19 @@ const DeliveryDetails = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
   const [locations, setLocations] = useState([]);
+
+  const enterpriseDestinationList = route?.params?.orderItem?.locations || []
+
+  const getTaxAmount = ()=>{
+    const tax = route?.params?.orderItem?.tax ? route?.params?.orderItem?.tax : 0
+    const amount =   order.order_amount ? order.order_amount.toFixed(2) :0
+
+    console.log('amount is ',amount,'and vechile tax is ',tax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(tax)) / 100;
+     return taxAmount? taxAmount.toFixed(2): 0
+  }
+
+
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -294,41 +308,89 @@ const DeliveryDetails = ({navigation, route}) => {
     }
   };
 
-  const downloadInvoiceFile = async () => {
+
+  const downloadFile = (pdf) => {
     setLoading(true);
+    let date = new Date();
+    let exe = '.pdf';
+    let filename =
+    `invoice_${orderNumber}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
+    const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
+
+    const options = {
+      fromUrl: pdf,
+      toFile: localFile,
+    };
+    console.log('localFile =====>',localFile)
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+          setTimeout(() => {
+            FileViewer.open(localFile);
+          }, 300);
+      })
+      .then(() => {
+        setLoading(false);
+          Linking.openURL(pdf)
+      })
+      .catch(error => {
+        setLoading(false);
+      });
+  };
+
+
+  const openPdfInBrowser = (pdf) => {
+    if (pdf) {
+      Linking.canOpenURL(pdf)
+        .then(canOpen =>
+          canOpen ? Linking.openURL(pdf) : console.error('invalid url url:'),
+        )
+        .catch(err => console.error('An error occurred opening the url:', err));
+    }
+  };
+
+  const downloadInvoiceFile = async () => {
     try {
+      const type = componentType == 'ENTERPRISE' ? 'enterprise':
+      componentType == 'DELIVERBOY' ? 'deliveryboy': 'consumer'
+
+
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderNumber, resolve, reject);
+        downloadInvoiceOrder(orderNumber,type, resolve, reject);
       });
 
-      const invoiceData = successResponse;
-      const filePath =
-        Platform.OS === 'android'
-          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
-          : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
 
-      // Convert binary data to base64
-      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+      const pdf = API.downloadInvoice + orderNumber+'/'+type+'?show=true'
+      downloadFile(pdf)
+      // const invoiceData = successResponse;
+      // const filePath =
+      //   Platform.OS === 'android'
+      //     ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
+      //     : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
+      //     console.log('type ***** type',type,filePath)
 
-      // Write the file to the document directory
-      await RNFS.writeFile(filePath, base64Data, 'base64');
+      // // Convert binary data to base64
+      // const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
 
-      // Verify the file exists
-      const fileExists = await RNFS.exists(filePath);
-      if (fileExists) {
-        Alert.alert('Success', 'Invoice saved successfully.', [
-          {
-            text: 'Open Invoice',
-            onPress: () => {
-              openPDFWithNativeViewer(filePath);
-            },
-          },
-        ]);
-        console.log('Invoice saved to: ', filePath);
-      } else {
-        Alert.alert('Error', 'Failed to save invoice file.');
-      }
+      // // Write the file to the document directory
+      // await RNFS.writeFile(filePath, base64Data, 'base64');
+
+      // // Verify the file exists
+      // const fileExists = await RNFS.exists(invoiceData);
+      // if (fileExists) {
+      //   Alert.alert('Success', 'Invoice saved successfully.', [
+      //     {
+      //       text: 'Open Invoice',
+      //       onPress: () => {
+      //         openPDFWithNativeViewer(filePath);
+      //       },
+      //     },
+      //   ]);
+      //   console.log('Invoice saved to: ', filePath);
+      // } else {
+      //   Alert.alert('Error', 'Failed to save invoice file.');
+      // }
     } catch (error) {
+      setLoading(false)
       Alert.alert('Error', 'Failed to save invoice file.');
       console.error('File saving error:', error);
     } finally {
@@ -398,7 +460,9 @@ const DeliveryDetails = ({navigation, route}) => {
                 <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
-          ) : route.params?.orderItem?.service_type_id === 1 ? null : (
+          ) : route.params?.orderItem?.service_type_id === 1 ? null : 
+          route.params?.orderItem?.is_delivery_boy_allocated === 0 ?
+          (
             <View style={{alignContent: 'flex-end'}}>
               <Button
                 title="Allocate Driver"
@@ -406,62 +470,90 @@ const DeliveryDetails = ({navigation, route}) => {
                 onPress={getDeliveryBoyAllocation}
               />
             </View>
-          )}
+          )
+          : null
+        }
         </View>
         <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/Pickup-Package-Icon.png')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup information</Text>
-            <Text style={styles.companyInfo}>
-              {order.company_name ? order.company_name : 'Company Name'}
-            </Text>
+          <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/Pickup-Package-Icon.png')}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text style={styles.dropInfo}>Pickup information</Text>
+              {order.company_name && <Text style={styles.companyInfo}>
+                {order.company_name ? order.company_name : ''}
+              </Text>}
 
-            <View>
-              <Text style={styles.dropInfo}>
-                {sourceAddress.address}, {sourceAddress.city},{' '}
-                {sourceAddress.state}
-              </Text>
-            </View>
-            <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
-          </View>
-        </View>
-        <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/package-img.png')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>
-              {order.company_name ? order.drop_company_name : 'Company Name'}
-            </Text>
-            {order.orderLines && order.orderLines.length > 0 ? (
-              <View>
-                {order.orderLines.map((item, index) => {
-                  var branch = locations.filter(
-                    i => i.id == item.dropoff_location,
-                  );
-                  return (
-                    <Text style={styles.dropInfo}>
-                      {branch[0] && branch[0].address},{' '}
-                      {branch[0] && branch[0].city},{' '}
-                      {branch[0] && branch[0].state}
-                    </Text>
-                  );
-                })}
-              </View>
-            ) : (
               <View>
                 <Text style={styles.dropInfo}>
-                  {destinationAddress.address}, {destinationAddress.city},{' '}
-                  {destinationAddress.state}
+                  {sourceAddress.address}, {sourceAddress.city},{' '}
+                  {sourceAddress.state}
                 </Text>
               </View>
-            )}
-            <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+              <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
+            </View>
+          </View>
+
+          {order.package_photo && <Image
+            style={styles.driverImage}
+            source={{
+              uri:
+                API.viewImageUrl + order.package_photo,
+            }}
+          />}
+        </View>
+        <View style={styles.packageCard}>
+        <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/package-img.png')}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text style={styles.dropInfo}>Drop off information</Text>
+              {order.company_name && <Text style={styles.companyInfo}>
+                {order.company_name ? order.drop_company_name : ''}
+              </Text>}
+              {
+              componentType == 'ENTERPRISE' ?
+              <View>
+                {
+                  enterpriseDestinationList.map((location)=>{
+                    return(
+                      <Text style={styles.dropInfo}>
+                        {location?.destination_description || ''}
+                      </Text>
+                    )
+                  })
+                }
+                </View>
+                :
+              order.orderLines && order.orderLines.length > 0 ? (
+                <View>
+                  {order.orderLines.map((item, index) => {
+                    var branch = locations.filter(
+                      i => i.id == item.dropoff_location,
+                    );
+                    return (
+                      <Text style={styles.dropInfo}>
+                        {branch[0] && branch[0].address},{' '}
+                        {branch[0] && branch[0].city},{' '}
+                        {branch[0] && branch[0].state}
+                      </Text>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View>
+                  <Text style={styles.dropInfo}>
+                    {destinationAddress.address}, {destinationAddress.city},{' '}
+                    {destinationAddress.state}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+            </View>
           </View>
         </View>
 
@@ -480,6 +572,10 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeaderValues}>
               <Text style={styles.orderFareValue}>Order ID:</Text>
               <Text style={styles.value}>{order.order_number}</Text>
+            </View>
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Order Date:</Text>
+              <Text style={styles.value}>{utcLocal(order.order_date)}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
@@ -526,9 +622,9 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
+              <Text style={styles.orderFareValue}>Tax</Text>
               <Text style={styles.value}>
-                € {order.waiting_fare ? order.waiting_fare.toFixed(2) : '0.00'}
+                € {getTaxAmount()}
               </Text>
             </View>
 
@@ -612,6 +708,8 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   packageCard: {
+    justifyContent:'space-between',
+    alignItems:'center',
     flexDirection: 'row',
     backgroundColor: colors.white,
     padding: 10,
@@ -627,6 +725,12 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 7,
   },
+
+  packageLeftsideCard:{
+    flexDirection:"row",
+    flex:0.7
+  },
+
   driverImage: {
     width: 40,
     height: 40,
@@ -662,11 +766,12 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '72%',
   },
   cardHeaderValues: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '72%',
+    width: '74%',
   },
   orderFare: {
     width: '70%',

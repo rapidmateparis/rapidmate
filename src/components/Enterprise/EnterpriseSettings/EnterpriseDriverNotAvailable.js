@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import {colors} from '../../../colors';
 
-const EnterpriseDriverNotAvailable = ({navigation}) => {
+const EnterpriseDriverNotAvailable = ({route,navigation}) => {
+  const params = route.params;
+
   return (
     <ImageBackground
       style={styles.background}
@@ -39,7 +41,9 @@ const EnterpriseDriverNotAvailable = ({navigation}) => {
           <TouchableOpacity
             style={styles.requestTouch}
             onPress={() => {
-              navigation.navigate('EnterpriseLookingForDriver');
+              navigation.navigate('EnterpriseLookingForDriver',{
+                cancellable:params?.cancellable
+              });
             }}>
             <Text style={styles.cancelRequest}>Try Again</Text>
           </TouchableOpacity>

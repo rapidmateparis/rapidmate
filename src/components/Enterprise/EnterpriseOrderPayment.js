@@ -34,6 +34,7 @@ import {
 import {useStripe} from '@stripe/stripe-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { localToUTC } from '../../utils/common';
+import { API } from '../../utils/constant';
 
 const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
@@ -97,9 +98,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   };
@@ -129,7 +130,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       setClientSecret(data.client_secret);
       setup(data.client_secret);
     } catch (error) {
-      Alert.alert('Error', error.message);
+      // Alert.alert('Error', error.message);
     }
   };
 
@@ -174,21 +175,21 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   };
 
   const onPayment = async () => {
-    if (selectedOptionIndex == -1) {
-      Alert.alert('Error Alert', 'Please choose a payment method', [
-        {text: 'OK', onPress: () => {}},
-      ]);
-    } else {
+    // if (selectedOptionIndex == -1) {
+    //   Alert.alert('Error Alert', 'Please choose a payment method', [
+    //     {text: 'OK', onPress: () => {}},
+    //   ]);
+    // } else {
       placeEnterpriseOrder();
-    }
+    // }
   };
 
   const placeEnterpriseOrder = async () => {
@@ -198,8 +199,6 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       delivery_type_id: params.delivery_type_id,
       service_type_id: 2,
       vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      pickup_date: localToUTC(params.pickup_date),
-      pickup_time: localToUTC(params.pickup_time),
       pickup_location_id: params.pickup_location_id,
       dropoff_location_id: params.dropoff_location_id,
       is_repeat_mode: params.is_repeat_mode,
@@ -216,15 +215,42 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       repeat_dropoff_location_id: '',
       distance: parseFloat(params.distance).toFixed(1),
       total_amount: parseFloat(params.amount),
-      package_photo: 'https://example.com/package.jpg',
+      package_photo: API.imageViewUrl + params.imageId, //'https://example.com/package.jpg',
       repeat_mode: params.repeat_mode,
       repeat_every: params.repeat_every,
       repeat_until: params.repeat_until,
+      // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
+      // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
+      is_scheduled_order:params.is_scheduled_order
     };
-    if (params.branches) {
-      requestParams.branches = params.branches;
+
+    if(params?.drop_details){
+      requestParams={...requestParams,
+        drop_first_name: params.drop_details.drop_first_name,
+        drop_last_name: params.drop_details.drop_last_name,
+        drop_mobile: params.drop_details.drop_mobile,
+        drop_notes: params.drop_details.drop_notes,
+        drop_email: params.drop_details.drop_email,
+        drop_company_name: params.drop_details.drop_company_name,
+      }
+    }else if(params?.dropDetails && params?.dropDetails.length > 0){
+      requestParams={...requestParams,
+        branches:params?.dropDetails
+      }
     }
-    console.log('requestParams', requestParams);
+
+    if(params.order_date){
+      requestParams={...requestParams,order_date:localToUTC(params.order_date)}
+    }else{
+      // requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
+      requestParams={...requestParams,order_date:localToUTC(params.schedule_date_time)}
+    }
+
+    // if (params.branches) {
+    //   requestParams.branches = params.branches;
+    // }
+    console.log('requestParams from props ******', params);
+    console.log('requestParams ******', requestParams);
     setLoading(true);
     createEnterpriseOrder(
       requestParams,
@@ -312,8 +338,10 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
 
+        {paymentMethod.length > 0 && 
+        <>
         <View>
-          <Text style={styles.selectPaymentMethod}>Credi & Debit Cards</Text>
+          <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
         </View>
 
         <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
@@ -386,6 +414,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             </TouchableOpacity>
           ) : null}
         </View>
+        </>
+        }
 
         <View style={styles.discountCard}>
           <Image

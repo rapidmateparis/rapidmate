@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -28,8 +28,35 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
   const [endDateText, setEndDateText] = useState('');
 
   const [days, setDays] = useState([]);
-
+  const [timeSlotIndex, setTimeSlotIndex] = useState(null);
+  const [copiedValue, setCopiedValue] = useState([]);
+  
   const params = route.params;
+
+
+
+  useEffect(()=>{
+    const newEndDate =  new Date().setDate(new Date().getDate()+14)
+    setEndDate(moment(newEndDate).toDate())
+    const sDate = moment(startDate).format('DD/MM/YYYY')
+    const eDate = moment(newEndDate).format('DD/MM/YYYY')
+    createSchedule(sDate,eDate)
+  },[])
+
+console.log('my dates === >',days)
+  useEffect(()=>{
+    let updateDays = [...days]
+
+    updateDays = updateDays.map((dates)=>{return{...dates,timeslots:[
+      {
+        slot_date:dates.formattedDate,
+        day: dates.day,
+        from_time: '',
+        to_time: ''
+      }
+    ]}})
+    setDays([...updateDays])
+  },[days.length])
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
@@ -76,17 +103,19 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
     setDays(dates);
   };
 
-  const handleAddTimeSlot = index => {
+  const handleAddTimeSlot = (index,day,formattedDate) => {
+
+
+    console.log('')
+
+    const defaultValue= {
+      slot_date:formattedDate,
+      day: day,
+      from_time: '',
+      to_time: ''
+    }
     var curentInstance = [...days];
-    var timeSlot = {};
-    timeSlot.fromTimeText = curentInstance[index].fromTimeText;
-    timeSlot.toTimeText = curentInstance[index].toTimeText;
-    curentInstance[index].fromTimeText = '';
-    curentInstance[index].toTimeText = '';
-    curentInstance[index].timeslots = [
-      ...curentInstance[index].timeslots,
-      timeSlot,
-    ];
+    curentInstance[index].timeslots.push(defaultValue)
     setDays(curentInstance);
   };
 
@@ -118,7 +147,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
               />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="12/06/2024"
+                placeholder={moment(startDate).format('DD/MM/YYYY')}
                 placeholderTextColor="#999"
                 value={startDateText}
                 editable={false}
@@ -157,7 +186,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
               />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="12/06/2024"
+                placeholder={moment(endDate).format('DD/MM/YYYY')}
                 placeholderTextColor="#999"
                 value={endDateText}
                 editable={false}
@@ -213,11 +242,20 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
 
                     {item.isChecked ? (
                       <View style={styles.bothActionBtn}>
-                        <TouchableOpacity style={styles.enabledPasteBt}>
+                        <TouchableOpacity style={styles.enabledPasteBt} onPress={()=>{
+                          if(copiedValue.length > 0){
+                            var curentInstance = [...days];
+                            curentInstance[index].timeslots = [...copiedValue]
+                            setDays(curentInstance);
+                            setCopiedValue([])
+                          }
+                        }}>
                           <Text style={styles.enabledPasteText}>Paste</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.copyCardBt}>
+                        <TouchableOpacity style={styles.copyCardBt} 
+                        onPress={()=>setCopiedValue(item.timeslots)}
+                        >
                           <Text style={styles.enabledPasteText}>Copy</Text>
                         </TouchableOpacity>
                       </View>
@@ -234,56 +272,33 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                     )}
                   </View>
 
-                  <View style={styles.selectTimeCard}>
-                    <View style={styles.textInputDiv}>
                       <DatePicker
                         modal
                         open={item.fromTimeOpen}
                         date={
-                          item.fromTimeText
-                            ? moment(item.fromTimeText, 'hh:mm A').toDate()
+                          item.toTimeText
+                            ? moment(item.toTimeText, 'hh:mm A').toDate()
                             : new Date()
                         }
                         mode="time"
                         onConfirm={date => {
                           var curentInstance = [...days];
                           curentInstance[index].fromTimeOpen = false;
-                          curentInstance[index].fromTimeText =
+
+                          curentInstance[index].timeslots[timeSlotIndex].from_time =
                             moment(date).format('hh:mm A');
                           setDays(curentInstance);
+                          setTimeSlotIndex(null)
                         }}
                         onCancel={() => {
+                          setTimeSlotIndex(null)
                           var curentInstance = [...days];
                           curentInstance[index].fromTimeOpen = false;
                           setDays(curentInstance);
                         }}
                       />
-                      <TextInput
-                        style={styles.loginput}
-                        placeholder="From HH:MM"
-                        placeholderTextColor="#999"
-                        value={item.fromTimeText}
-                        editable={false}
-                      />
-                      <TouchableOpacity disabled={!item.isChecked}>
-                        <MaterialCommunityIcons
-                          name="clock-time-four"
-                          size={20}
-                          color={item.isChecked ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
-                          style={{marginTop: 15}}
-                          onPress={() => {
-                            if (item.isChecked) {
-                              var curentInstance = [...days];
-                              curentInstance[index].fromTimeOpen = true;
-                              setDays(curentInstance);
-                            }
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
 
-                    <View style={styles.textInputDiv}>
-                      <DatePicker
+<DatePicker
                         modal
                         open={item.toTimeOpen}
                         date={
@@ -295,7 +310,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                         onConfirm={date => {
                           var curentInstance = [...days];
                           curentInstance[index].toTimeOpen = false;
-                          curentInstance[index].toTimeText =
+                          curentInstance[index].timeslots[timeSlotIndex].to_time = 
                             moment(date).format('hh:mm A');
                           setDays(curentInstance);
                         }}
@@ -305,13 +320,47 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                           setDays(curentInstance);
                         }}
                       />
-                      <TextInput
-                        style={styles.loginput}
-                        placeholder="To HH:MM"
-                        placeholderTextColor="#999"
-                        value={item.toTimeText}
-                        editable={false}
-                      />
+                  {item.timeslots.map((slot, timeSlotIndex) => {
+                    return(
+                    <View key={timeSlotIndex} style={styles.selectTimeCard}>
+                      <View style={styles.textInputDiv}>
+
+                        <TextInput
+                          style={styles.loginput}
+                          placeholder="From HH:MM"
+                          placeholderTextColor="#999"
+                          value={slot.from_time}
+                          editable={false}
+                        />
+                         <TouchableOpacity disabled={!item.isChecked}
+                          onPress={() => {
+                            // if (item.isChecked) {
+                              var curentInstance = [...days];
+                              setTimeSlotIndex(timeSlotIndex)
+                              curentInstance[index].fromTimeOpen = true;
+                              setDays(curentInstance);
+                            // }
+                          }}
+                         >
+                        <MaterialCommunityIcons
+                          name="clock-time-four"
+                          size={20}
+                          color={item.isChecked ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
+                          style={{marginTop: 15}}
+                         
+                        />
+                      </TouchableOpacity>
+                      </View>
+
+                      <View style={styles.textInputDiv}>
+                        <TextInput
+                          style={styles.loginput}
+                          placeholder="To HH:MM"
+                          placeholderTextColor="#999"
+                          value={slot.to_time}
+                          editable={false}
+                        />
+
                       <TouchableOpacity disabled={!item.isChecked}>
                         <MaterialCommunityIcons
                           name="clock-time-four"
@@ -320,6 +369,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                           style={{marginTop: 15}}
                           onPress={() => {
                             if (item.isChecked) {
+                              setTimeSlotIndex(timeSlotIndex)
                               var curentInstance = [...days];
                               curentInstance[index].toTimeOpen = true;
                               setDays(curentInstance);
@@ -327,72 +377,30 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                           }}
                         />
                       </TouchableOpacity>
-                    </View>
-
-                    <TouchableOpacity
-                      style={[
-                        styles.plusNewCardDisabled,
-                        item.isChecked
-                          ? styles.plusNewCardEnabled
-                          : styles.plusNewCardDisabled,
-                      ]}
-                      onPress={() => {
-                        if (
-                          item.isChecked &&
-                          item.toTimeText != '' &&
-                          item.fromTimeText != ''
-                        ) {
-                          handleAddTimeSlot(index);
-                        }
-                      }}>
-                      <AntDesign
-                        name="plus"
-                        size={20}
-                        color="#000"
-                        style={{marginTop: 15}}
-                      />
-                    </TouchableOpacity>
-                  </View>
-
-                  {item.timeslots.map((slot, timeSlotIndex) => (
-                    <View key={timeSlotIndex} style={styles.selectTimeCard}>
-                      <View style={styles.textInputDiv}>
-                        <TextInput
-                          style={styles.loginput}
-                          placeholder="From HH:MM"
-                          placeholderTextColor="#999"
-                          value={slot.fromTimeText}
-                          editable={false}
-                        />
-                        <TouchableOpacity>
-                          <MaterialCommunityIcons
-                            name="clock-time-four"
-                            size={20}
-                            color="#D4D4D4"
-                            style={{marginTop: 15}}
-                          />
-                        </TouchableOpacity>
                       </View>
 
-                      <View style={styles.textInputDiv}>
-                        <TextInput
-                          style={styles.loginput}
-                          placeholder="To HH:MM"
-                          placeholderTextColor="#999"
-                          value={slot.toTimeText}
-                          editable={false}
-                        />
-                        <TouchableOpacity>
-                          <MaterialCommunityIcons
-                            name="clock-time-four"
-                            size={20}
-                            color="#D4D4D4"
-                            style={{marginTop: 15}}
-                          />
-                        </TouchableOpacity>
-                      </View>
-
-                      <TouchableOpacity
+                      {
+                        timeSlotIndex === 0 ?
+                         <TouchableOpacity
+                         style={[
+                           styles.plusNewCardDisabled,
+                           item.isChecked
+                             ? styles.plusNewCardEnabled
+                             : styles.plusNewCardDisabled,
+                         ]}
+                         onPress={() => {
+                             handleAddTimeSlot(index,item.day,item.formattedDate);
+                         }}>
+                         <AntDesign
+                           name="plus"
+                           size={20}
+                           color="#000"
+                           style={{marginTop: 15}}
+                         />
+                       </TouchableOpacity>
+                       :
+                        
+                        <TouchableOpacity
                         style={styles.deleteCard}
                         onPress={() => {
                           var curentInstance = [...days];
@@ -407,9 +415,10 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                           color="#FF0058"
                           style={{marginTop: 15}}
                         />
-                      </TouchableOpacity>
+                      </TouchableOpacity>}
                     </View>
-                  ))}
+                  )}
+                  )}
                 </View>
                 <View style={styles.borderShowOff} />
               </View>

@@ -18,6 +18,7 @@ import {getEnterpriseBranch} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import { useIsFocused } from '@react-navigation/native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const EnterpriseLocation = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -34,9 +35,9 @@ const EnterpriseLocation = ({navigation}) => {
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
+              // Alert.alert('Error Alert', successResponse[0]._response.name, [
+              //   {text: 'OK', onPress: () => {}},
+              // ]);
             } else {
               var branches = [];
               for (
@@ -56,9 +57,9 @@ const EnterpriseLocation = ({navigation}) => {
       errorResponse => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   }, [isVisible]);
@@ -89,7 +90,24 @@ const EnterpriseLocation = ({navigation}) => {
 
   return (
     <View style={{flex: 1, paddingHorizontal: 15}}>
-      <FlatList data={enterpriseBranches} renderItem={renderItem} />
+{/* <TouchableOpacity
+                onPress={() =>{navigation.navigate('EnterpriseBottomNav')}}>
+              <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
+                </TouchableOpacity> */}
+            
+        {
+          enterpriseBranches.length === 0 ?
+            <View style={styles.noBranchedView}>
+              {/* <TouchableOpacity
+                onPress={() =>{navigation.navigate('EnterpriseBottomNav')}}> */}
+              <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
+                {/* </TouchableOpacity> */}
+            </View>
+            :
+          <FlatList data={enterpriseBranches} renderItem={renderItem} />
+        }
+
+      
     </View>
   );
 };
@@ -168,6 +186,18 @@ const styles = StyleSheet.create({
     width: 35,
     height: 30,
   },
+  noBranchedView:{
+    justifyContent:"space-between",paddingHorizontal:16,paddingVertical:8,flexDirection:"row",
+    backgroundColor:'#E5E4E4',
+    alignItems:"center",borderRadius:5,marginVertical:8,marginHorizontal:4
+  },
+  colorWiseText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+    marginHorizontal: 8,
+  },
+
 });
 
 export default EnterpriseLocation;

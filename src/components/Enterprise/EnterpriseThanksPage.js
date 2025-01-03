@@ -13,8 +13,14 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNRestart from 'react-native-restart';
 
 const EnterpriseThanksPage = ({navigation}) => {
+  const clearAsyncStorage = async () => {
+    await AsyncStorage.clear();
+    RNRestart.restart();
+  };
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5'}}
@@ -39,7 +45,10 @@ const EnterpriseThanksPage = ({navigation}) => {
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('EnterpriseBottomNav')}
+        onPress={() => {
+          // navigation.navigate('EnterpriseBottomNav')
+          navigation.popToTop()
+        }}
         style={[styles.logbutton, {backgroundColor: colors.primary}]}>
         <Text style={styles.buttonText}>Ok</Text>
       </TouchableOpacity>

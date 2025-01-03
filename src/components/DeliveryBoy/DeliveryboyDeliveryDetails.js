@@ -54,6 +54,8 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [isOTP, setIsOTP] = useState();
 
+  console.log('order', order);
+
   const handleOrderRequest = value => {
     let params = {
       delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
@@ -63,12 +65,10 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     orderRequestAction(
       params,
       successResponse => {
-        navigation.navigate('Home');
         console.log('successResponse==>', JSON.stringify(successResponse));
         navigation.goBack();
       },
       errorResponse => {
-        navigation.navigate('Home');
         console.log('errorResponse==>', JSON.stringify(errorResponse));
         navigation.goBack();
       },
@@ -314,17 +314,27 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       : 'Company Name'
                     : ''}
                 </Text>
-                <Text style={styles.dropInfo}>
-                  {pickUpLocation.address}, {pickUpLocation.city},{' '}
-                  {pickUpLocation.state}
+                { pickUpLocation ? <Text style={styles.dropInfo}>
+                  {pickUpLocation?.address || ''}{', '}{pickUpLocation?.city || ''}{', '}{pickUpLocation?.state || ''}
+                 
                 </Text>
+               : order?.pickup_location_id ?
+                    null
+               :null
+              }
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleCall(pickUpLocation.phone_number)}>
+                  onPress={() =>
+                    handleCall(
+                      order?.order.is_my_self === 1
+                        ? order?.order.consumer_mobile
+                        : order?.order.mobile,
+                    )
+                  }>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -357,7 +367,20 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.packageBasicInfo}>
               <Text style={styles.headingOTP}>Package photo</Text>
               <TouchableOpacity onPress={() => toggleModal()}>
-                {route.params.package_photo && (
+                {
+                order?.order?.package_photo ? 
+                  <View>
+                    <TouchableOpacity onPress={() => toggleModal()}>
+                      <Image
+                        style={styles.packagePhoto}
+                        source={{
+                          uri: order.order.package_photo,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                :route.params.package_photo && (
                   <View>
                     <TouchableOpacity onPress={() => toggleModal()}>
                       <Image
@@ -401,21 +424,22 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
                 <Text style={styles.companyInfo}>
-                  {dropOffLocation.company_name
-                    ? dropOffLocation.company_name
-                    : 'Company Name'}
+                  {order.order
+                    ? order.order.drop_company_name
+                      ? order.order.drop_company_name
+                      : 'Company Name'
+                    : ''}
                 </Text>
-                <Text style={styles.dropInfo}>
-                  {dropOffLocation.address}, {dropOffLocation.city},{' '}
-                  {dropOffLocation.state}
-                </Text>
+                {dropOffLocation &&<Text style={styles.dropInfo}>
+                  {dropOffLocation?.address || ''}{dropOffLocation?.city || ''}{' '}{dropOffLocation?.state || ''}
+                </Text>}
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleCall(pickUpLocation.phone_number)}>
+                  onPress={() => handleCall(order.order.drop_mobile)}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>

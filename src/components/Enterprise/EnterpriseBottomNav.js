@@ -25,6 +25,7 @@ import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {
+  getNotificationCount,
   getViewEnterpriseOrderDetail,
   updateUserProfile,
 } from '../../data_manager';
@@ -34,7 +35,7 @@ import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRe
 
 const Bottom = createBottomTabNavigator();
 const EnterpriseBottomNav = ({navigation}) => {
-  const {userDetails} = useUserDetails();
+  const {userDetails,saveUserDetails} = useUserDetails();
   const {setLoading} = useLoader();
   const [
     isDeliveryBoyAcceptRejectModalModalVisible,
@@ -104,8 +105,31 @@ const EnterpriseBottomNav = ({navigation}) => {
     );
   };
 
+
+  const getNotificationAllCount = () => {
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        userDetails.userDetails[0].notificationCount
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      },
+      errorResponse => {
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
+
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
+      getNotificationAllCount()
       setDeliveryBoyAcceptRejectModalModalVisible(true);
       console.log('remoteMessage', JSON.stringify(remoteMessage));
       getViewEnterpriseOrderDetail(

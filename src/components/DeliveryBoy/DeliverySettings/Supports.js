@@ -27,7 +27,7 @@ const Supports = () => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}>
         <TouchableOpacity
-          onPress={() => handleOptionSelect(option)}
+         onPress={() => navigation.goBack()}
           style={styles.addressCard}>
           <Image source={iconSource} style={styles.cardImage} />
           <View style={{flex: 1}}>

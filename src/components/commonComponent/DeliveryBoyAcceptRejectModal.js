@@ -21,30 +21,9 @@ function DeliveryBoyAcceptRejectModal({
   setDeliveryBoyAcceptRejectModalModalVisible,
   deliveryBoyAcceptRejectMessage,
 }) {
-  const [timeLeft, setTimeLeft] = useState(240);
   const translateXAccept = useSharedValue(0);
   const translateXReject = useSharedValue(0);
   const {locationData} = useLocationData();
-
-  // Countdown timer logic
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(prevTime => prevTime - 1);
-      }, 1000);
-
-      return () => clearInterval(timer); // Clear timer on component unmount or when countdown reaches 0
-    }
-  }, [timeLeft]);
-
-  // Format time in HH:MM:SS
-  const formatTime = seconds => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(
-      remainingSeconds,
-    ).padStart(2, '0')}`;
-  };
 
   const toggleModal = () => {
     setDeliveryBoyAcceptRejectModalModalVisible(
@@ -134,15 +113,11 @@ function DeliveryBoyAcceptRejectModal({
               />
               <Text style={styles.maintext}>New delivery request!</Text>
               <Text style={styles.subText}>
-                Accept or reject in:{' '}
-                <Text style={styles.boldSubText}>{formatTime(timeLeft)}</Text>
-              </Text>
-              <Text style={styles.subText}>
                 Estimated cost:{' '}
                 <Text
                   style={
                     styles.boldSubText
-                  }>{`€${deliveryBoyAcceptRejectMessage?.order?.amount}`}</Text>
+                  }>{`€${deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount}`}</Text>
               </Text>
               <Text style={styles.subText}>
                 Total distance:{' '}

@@ -22,15 +22,18 @@ import {
   getLocations,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import { useIsFocused } from '@react-navigation/native';
 
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
+  const isVisible = useIsFocused();
 
   const [reTryCount, updateReTryCount] = useState(0);
 
+  const timeout = React.useRef(null);
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -57,11 +60,11 @@ const LoaderForDriver = ({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    if(reTryCount <= 5){
+    if(isVisible && reTryCount !== null && reTryCount <= 5){
       getLocationsData();
     }
 
-  }, [reTryCount]);
+  }, [reTryCount,isVisible]);
 
 
   const getLocationsData = () => {
@@ -77,18 +80,20 @@ const LoaderForDriver = ({navigation}) => {
           getAllocatedDeliveryBoy(
             params,
             successResponse => {
+              updateReTryCount(null)
+              clearTimeout(timeout.current);
               navigation.navigate('OrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
-              setTimeout(()=>{
+              timeout.current = setTimeout(()=>{
                 updateReTryCount(reTryCount+1)
                 if(reTryCount === 5){
                   navigation.navigate('DriverNotAvailable', errorResponse);
                 }
-              },10000)
+              },30000)
               
             },
           );

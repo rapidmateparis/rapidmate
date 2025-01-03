@@ -37,7 +37,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [number, setNumber] = useState('');
   const [siret, setSiret] = useState('');
   const [openDropDown, setOpenDropDown] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState('+91');
+  const [dropdownValue, setDropdownValue] = useState('');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [dropdownStateValue, setDropdownStateValue] = useState(null);
   const [dropdownCityValue, setDropdownCityValue] = useState(null);
@@ -53,6 +53,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
+  const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -80,13 +81,22 @@ const DeliveryBoySignup = ({navigation}) => {
             } else {
               setMasterCountryList(successResponse[0]._response);
               var formattedCountryList = [];
+              var formattedCountryCodeList = [];
+
               successResponse[0]._response.forEach(element => {
                 formattedCountryList.push({
                   label: element.country_name,
                   value: element.id,
                 });
+                formattedCountryCodeList.push({
+                  label: "+" + element.phone_code,
+                  value: element.id,
+                });
               });
               setCountryList(formattedCountryList);
+              setCountryCodeList(formattedCountryCodeList);
+              setDropdownValue(formattedCountryCodeList[0].value)
+
             }
           }
         }
@@ -386,7 +396,7 @@ const DeliveryBoySignup = ({navigation}) => {
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
                 <Dropdown
-                  data={data}
+                  data={countryCodeList}
                   search
                   maxHeight={300}
                   itemTextStyle={styles.itemtextStyle}

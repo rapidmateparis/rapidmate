@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Dimensions,
 } from 'react-native';
 import {colors} from '../../../colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,6 +18,8 @@ import {
 } from '../../commonComponent/StoreContext';
 import {updateUserProfile} from '../../../data_manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { height: screenHeight } = Dimensions.get('window');
 
 const DeliveryPreferance = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState({});
@@ -77,7 +80,7 @@ const DeliveryPreferance = ({navigation}) => {
             {...userDetails.userDetails[0], work_type_id: selectedOption.id},
           ],
         });
-        Alert.alert('Success', '' + successResponse[0]._response, [
+        Alert.alert('Success', 'Delivery preferance updated successfully', [
           {
             text: 'OK',
             onPress: () => {
@@ -191,6 +194,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 15,
+    minHeight: screenHeight,
     paddingTop: 10,
     backgroundColor: '#fff',
   },

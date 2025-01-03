@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,67 +7,237 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Linking,
+  Alert,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
+import { useLoader } from '../../utils/loaderContext';
+import { downloadInvoiceOrder, getLocationById } from '../../data_manager';
+import { API } from '../../utils/constant';
+import RNFS from 'react-native-fs';
+import FileViewer from 'react-native-file-viewer';
 
-const DeliveryDetailsMultipleInvoice = ({navigation}) => {
+const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [orderDetails,setOrderDetails]=useState({})
+
+  const {setLoading} = useLoader();
+  const [pickUpLocation, setPickUpLocation] = useState({});
+  const [dropOffLocation, setDropOffLocation] = useState({});
+
+
+  useEffect(()=>{
+   if(route?.params?.orderItem){
+    setOrderDetails(route?.params?.orderItem)
+   }else{
+    setOrderDetails({})
+   }
+
+  },[])
+
+  useEffect(() => {
+    getLocationInfoById(orderDetails.pickup_location_id, 0);
+    getLocationInfoById(orderDetails.dropoff_location_id, 1);
+  }, []);
+
+  const getLocationInfoById = async (locationId, locationType) => {
+    setLoading(true);
+    getLocationById(
+      locationId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          locationType == 0
+            ? setPickUpLocation(successResponse[0]._response[0])
+            : setDropOffLocation(successResponse[0]._response[0]);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
   };
 
+  const downloadInvoiceFile = async () => {
+    setLoading(true);
+    try {
+      const successResponse = await new Promise((resolve, reject) => {
+        downloadInvoiceOrder(orderDetails.order_number,'deliveryboy', resolve, reject);
+      });
+
+      const pdf = API.downloadInvoice + orderDetails.order_number+'/'+'deliveryboy'+'?show=true'
+      downloadFile(pdf)
+      // const invoiceData = successResponse;
+      // const filePath =
+      //   Platform.OS === 'android'
+      //     ? `${RNFS.ExternalDirectoryPath}/invoice_${orderDetails.order_number}.pdf`
+      //     : `${RNFS.DocumentDirectoryPath}/invoice_${orderDetails.order_number}.pdf`;
+
+      // // Convert binary data to base64
+      // const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+
+      // // Write the file to the document directory
+      // await RNFS.writeFile(filePath, base64Data, 'base64');
+
+      // // Verify the file exists
+      // const fileExists = await RNFS.exists(filePath);
+      // if (fileExists) {
+      //   Alert.alert('Success', 'Invoice saved successfully.', [
+      //     {
+      //       text: 'Open Invoice',
+      //       onPress: () => {
+      //         openPDFWithNativeViewer(filePath);
+      //       },
+      //     },
+      //   ]);
+      //   console.log('Invoice saved to: ', filePath);
+      // } else {
+      //   Alert.alert('Error', 'Failed to save invoice file.');
+      // }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save invoice file.');
+      console.error('File saving error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const downloadFile = (pdf) => {
+    setLoading(true);
+    let date = new Date();
+    let exe = '.pdf';
+    let filename =
+    `invoice_${orderDetails.order_number}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
+    const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
+
+    const options = {
+      fromUrl: pdf,
+      toFile: localFile,
+    };
+
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+          setTimeout(() => {
+            FileViewer.open(localFile);
+          }, 300);
+      })
+      .then(() => {
+        setLoading(false);
+          Linking.openURL(pdf)
+      })
+      .catch(error => {
+        setLoading(false);
+      });
+  };
+
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails />
+          <MapDeliveryDetails 
+          addressData={{
+            sourceAddress: pickUpLocation,
+            destinationAddress: dropOffLocation,
+          }}
+          />
         </View>
 
         <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/Pickup-Package-Icon.png')}
+          />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup 1 information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
-            <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
-            </Text>
+            <Text style={styles.dropInfo}>Pickup information</Text>
+            <Text style={styles.companyInfo}>{orderDetails.company_name}</Text>
+            <Text style={styles.dropInfo}>{orderDetails.address}</Text>
+            <Text style={styles.pickupNotes}>{orderDetails.pickup_notes}</Text>
           </View>
         </View>
 
-        <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off 1 information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
-            <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
-            </Text>
-          </View>
-        </View>
+        {
+          orderDetails?.locations && orderDetails?.locations.map((location,index)=>{
+            return(
+              <View style={styles.packageCard} key={index}>
+                <Image
+                  style={styles.packageManager}
+                  source={require('../../image/package-img.png')}
+                />
+                <View style={{marginLeft: 10}}>
+                  <Text style={styles.dropInfo}>{`Drop off ${index+1} information`}</Text>
+                  <Text style={styles.companyInfo}>{location.drop_company_name}</Text>
+                  <Text style={styles.dropInfo}>{location.destination_description}</Text>
+                  <Text style={styles.pickupNotes}>{location.drop_notes}</Text>
+                  <View style={styles.otpHeadCard}>
+                    <Text style={styles.otpTitleText}>Pickup OTP:</Text>
+                    <Text style={styles.otpText}>{location.otp}</Text>
+                  </View>
+                  <View style={styles.otpHeadCard}>
+                    <Text style={styles.otpTitleText}>Deliverd OTP:</Text>
+                    <Text style={styles.otpText}>{location.delivered_otp}</Text>
+                  </View>
+                </View>
+              </View>
+            )
+          })
+          
+          }
 
-        <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/Pickup-Package-Icon.png')} />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup 2 information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
-            <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.packageCard}>
-          <Image style={styles.packageManager} source={require('../../image/package-img.png')} />
+        {/* <View style={styles.packageCard}>
+          <Image
+            style={styles.packageManager}
+            source={require('../../image/package-img.png')}
+          />
           <View style={{marginLeft: 10}}>
             <Text style={styles.dropInfo}>Drop off 2 information</Text>
             <Text style={styles.companyInfo}>Company Name</Text>
             <Text style={styles.dropInfo}>
               22 Rue de la Liberté, Paris, Île-de-France.
             </Text>
+            <Text style={styles.pickupNotes}>Pickup Notes</Text>
+            <View style={styles.otpHeadCard}>
+              <Text style={styles.otpTitleText}>Pickup OTP:</Text>
+              <Text style={styles.otpText}>0444</Text>
+            </View>
+            <View style={styles.otpHeadCard}>
+              <Text style={styles.otpTitleText}>Deliverd OTP:</Text>
+              <Text style={styles.otpText}>0333</Text>
+            </View>
+          </View>
+        </View> */}
+
+        <View style={styles.invoiceMainCard}>
+          <View>
+            <Image
+              style={{height: 26, width: 26}}
+              source={require('../../image/Big-Package.png')}
+            />
+          </View>
+          <View style={{marginLeft: 10}}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.orderFare}>Package information</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Order ID:</Text>
+              <Text style={styles.value}>{orderDetails.order_number}</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Vehicle:</Text>
+              <Text style={styles.value}>{orderDetails.vehicle_type}</Text>
+            </View>
           </View>
         </View>
 
@@ -77,124 +247,66 @@ const DeliveryDetailsMultipleInvoice = ({navigation}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare 1</Text>
-              <Text style={styles.totalmoney}>€34.00</Text>
+              <Text style={styles.orderFare}>Order fare</Text>
+              <Text style={styles.totalmoney}>€{orderDetails.amount}</Text>
             </View>
 
-            <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
+            <Text style={styles.travel}>
+            Travelled{' '}
+              {orderDetails.distance
+                ? orderDetails.distance.toFixed(2)
+                : '0.00'}{' '}
+              km in{' '}
+              {orderDetails.total_duration ? orderDetails.total_duration : '00'}
+            </Text>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Order fare</Text>
-              <Text style={styles.value}>€30.00</Text>
+              <Text style={styles.value}>
+              €{' '}
+                {orderDetails.order_amount
+                  ? orderDetails.order_amount.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>€03.00</Text>
+              <Text style={styles.value}>
+              €{' '}
+                {orderDetails.waiting_fare
+                  ? orderDetails.waiting_fare.toFixed(2)
+                  : '0.00'}
+              </Text>
             </View>
 
-            <View style={styles.cardHeader}>
+            {/* <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Platform fee</Text>
               <Text style={styles.value}>€01.00</Text>
-            </View>
+            </View> */}
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Amount charged</Text>
-              <Text style={styles.value}>€34.00</Text>
+              <Text style={styles.value}>
+              €{' '}
+                {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
+              </Text>
             </View>
 
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
-              <Text style={styles.paidWith}>Paid with mastercard</Text>
+              <Text style={styles.paidWith}>Paid with {orderDetails.paid_with ? orderDetails.paid_with : ''}</Text>
             </View>
           </View>
         </View>
 
-        <TouchableOpacity onPress={toggleDetails} activeOpacity={0.8}>
-          <View style={styles.invoiceMainCard}>
-            <View>
-              <Image source={require('../../image/order-fare.png')} />
-            </View>
-            <View style={{marginLeft: 10}}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFare}>Order fare 2</Text>
-                <Text style={styles.totalmoney}>€34.00</Text>
-              </View>
-
-              {showDetails && (
-                <>
-                  <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Order fare</Text>
-                    <Text style={styles.value}>€30.00</Text>
-                  </View>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Waiting</Text>
-                    <Text style={styles.value}>€03.00</Text>
-                  </View>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Platform fee</Text>
-                    <Text style={styles.value}>€01.00</Text>
-                  </View>
-
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.orderFareValue}>Amount charged</Text>
-                    <Text style={styles.value}>€34.00</Text>
-                  </View>
-
-                  <View style={styles.masterCard}>
-                    <Image
-                      source={require('../../image/logos_mastercard.png')}
-                    />
-                    <Text style={styles.paidWith}>Paid with mastercard</Text>
-                  </View>
-                </>
-              )}
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.packageInformationCard}>
-          <Text style={styles.packageTitle}>Package information</Text>
-          <Text style={styles.orderdetails}>
-            Order ID: <Text style={styles.detailsId}>20394</Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Comments:{' '}
-            <Text style={styles.detailsId}>
-              Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-              sed.
-            </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Vehicle: <Text style={styles.detailsId}>Pickup truck</Text>
-          </Text>
-        </View>
-
-        <TouchableOpacity style={styles.packageInvoiceCard}>
+        <TouchableOpacity style={styles.packageInvoiceCard}
+        onPress={downloadInvoiceFile}
+        >
           <View style={styles.invoiceCard}>
             <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
 
-            <Text style={styles.downloadInvoiceText}>Download invoice 1</Text>
-          </View>
-          <View>
-            <Feather
-              style={{marginTop: 5}}
-              name="download"
-              size={20}
-              color="#FF0058"
-            />
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.packageInvoiceCard}>
-          <View style={styles.invoiceCard}>
-            <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-
-            <Text style={styles.downloadInvoiceText}>Download invoice 2</Text>
+            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
           </View>
           <View>
             <Feather
@@ -231,7 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
+    marginVertical: 4,
   },
   companyInfo: {
     fontSize: 14,
@@ -245,7 +357,12 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Add this line
+    justifyContent: 'space-between',
+  },
+  cardHeaderValues: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '74%', 
   },
   orderFare: {
     width: '75%',
@@ -363,6 +480,27 @@ const styles = StyleSheet.create({
   packageManager: {
     width: 30,
     height: 30,
+  },
+  pickupNotes: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#131314',
+  },
+  otpHeadCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
+    width: '76%',
+  },
+  otpTitleText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: '#131314',
+  },
+  otpText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#131314',
   },
 });
 

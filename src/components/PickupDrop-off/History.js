@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback, useState} from 'react';
+import React, {useEffect, useCallback, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   Image,
   Alert,
   FlatList,
+  ActivityIndicator,
+  Animated,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -25,8 +27,8 @@ import {RefreshControl} from 'react-native-gesture-handler';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
-import { color } from 'react-native-reanimated';
-import { titleFormat, utcLocal } from '../../utils/common';
+import {color} from 'react-native-reanimated';
+import {titleFormat, utcLocal} from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -37,11 +39,40 @@ const TodayList = ({navigation, searchText}) => {
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(1)).current; 
+
+  useEffect(() => {
+    const blinkingAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 0, // Fade out
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1, // Fade in
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    blinkingAnimation.start();
+
+    return () => blinkingAnimation.stop();
+  }, [fadeAnim]);
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
       getOrderList();
+      return () => {
+        setOrderList([]);
+        setPage(1);
+        setCheckMoreData(true);
+      };
     }, []),
   );
 
@@ -65,7 +96,7 @@ const TodayList = ({navigation, searchText}) => {
     getConsumerViewOrdersListBySearch(
       postParams,
       successResponse => {
-        console.log('successResponse ===> f ',JSON.stringify(successResponse))
+        console.log('successResponse ===> f ', JSON.stringify(successResponse));
 
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
@@ -110,20 +141,27 @@ const TodayList = ({navigation, searchText}) => {
 
   const getOrderList = () => {
     setLoading(true);
-    setOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'current',
+      page: page,
+      size: size,
     };
     getConsumerViewOrdersList(
       postParams,
       null,
       successResponse => {
-        console.log('successResponse ===> f ',JSON.stringify(successResponse))
+        console.log('successResponse ===> f ', JSON.stringify(successResponse));
 
         if (successResponse[0]._success) {
+          if (size === successResponse[0]._response.length) {
+            setPage(page + 1);
+            setCheckMoreData(true);
+          }else if(size > successResponse[0]._response.length ){
+            setCheckMoreData(false);
+          }
           let tempOrderList = successResponse[0]._response;
-          setOrderList(tempOrderList);
+          setOrderList([...orderList, ...tempOrderList]);
         }
         setLoading(false);
       },
@@ -151,10 +189,14 @@ const TodayList = ({navigation, searchText}) => {
           {moment(currentOrderItem.item.delivery_date).format('MMM DD, YYYY')}{' '}
           at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')} */}
           {currentOrderItem.item.consumer_order_title}{' '}
-          {
-          currentOrderItem.item.is_show_datetime_in_title==1? (currentOrderItem.item.order_status === 'ORDER_PLACED' ?
-          titleFormat(currentOrderItem.item.schedule_date_time || currentOrderItem.item.order_date)
-          :titleFormat(currentOrderItem.item.updated_on)):""}
+          {currentOrderItem.item.is_show_datetime_in_title == 1
+            ? currentOrderItem.item.order_status === 'ORDER_PLACED'
+              ? titleFormat(
+                  currentOrderItem.item.schedule_date_time ||
+                    currentOrderItem.item.order_date,
+                )
+              : titleFormat(currentOrderItem.item.updated_on)
+            : ''}
         </Text>
       </View>
 
@@ -180,6 +222,12 @@ const TodayList = ({navigation, searchText}) => {
 
       <View style={styles.borderShow}></View>
 
+      <View style={{display: 'flex', alignItems: "flex-start", marginBottom: 5,}}>
+        <Animated.Text style={[styles.orderActive, {opacity: fadeAnim}]}>
+          Active
+        </Animated.Text>
+      </View>
+
       <View style={styles.footerCard}>
         <Text style={styles.orderId}>
           Order ID: {currentOrderItem.item.order_number}
@@ -194,6 +242,20 @@ const TodayList = ({navigation, searchText}) => {
       </View>
     </TouchableOpacity>
   );
+
+  const renderFooter = () => {
+    return (
+      <View style={{padding: 10}}>
+        {/* <ActivityIndicator size="small" color="#d8d8d8" /> */}
+      </View>
+    );
+  };
+
+  const handleLoadMoreOnGoingRecord = () => {
+    if (checkMoreData) {
+      getOrderList();
+    }
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -226,7 +288,13 @@ const TodayList = ({navigation, searchText}) => {
             </View>
           </View>
         ) : (
-          <FlatList data={orderList} renderItem={renderCurrentOrderItem} />
+          <FlatList
+            data={orderList}
+            renderItem={renderCurrentOrderItem}
+            onEndReached={handleLoadMoreOnGoingRecord}
+            onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+            ListFooterComponent={renderFooter}
+          />
         )}
       </View>
     </View>
@@ -239,11 +307,20 @@ const PastList = ({navigation, searchText}) => {
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
       getOrderList();
+
+      return () => {
+        setPastOrderList([]);
+        setPage(1);
+        setCheckMoreData(true);
+      };
     }, []),
   );
 
@@ -258,6 +335,8 @@ const PastList = ({navigation, searchText}) => {
 
   const getOrderListinSearch = searchValue => {
     setLoading(true);
+    setPage(1);
+    setCheckMoreData(true);
     setPastOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
@@ -310,7 +389,6 @@ const PastList = ({navigation, searchText}) => {
 
   const getOrderList = () => {
     setLoading(true);
-    setPastOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'past',
@@ -319,10 +397,20 @@ const PastList = ({navigation, searchText}) => {
       postParams,
       null,
       successResponse => {
-        console.log('successResponse ===> past ',JSON.stringify(successResponse))
+        console.log(
+          'successResponse ===> past ',
+          JSON.stringify(successResponse),
+        );
         if (successResponse[0]._success) {
+          if (size === successResponse[0]._response.length) {
+            setPage(page + 1);
+            setCheckMoreData(true);
+          }else if(size > successResponse[0]._response.length ){
+            setCheckMoreData(false);
+          }
+
           let tempOrderList = successResponse[0]._response;
-          setPastOrderList(tempOrderList);
+          setPastOrderList([...pastOrderList, ...tempOrderList]);
         }
         setLoading(false);
       },
@@ -347,10 +435,14 @@ const PastList = ({navigation, searchText}) => {
         />
         <Text style={styles.deliveryTime}>
           {pastOrderItem.item.consumer_order_title}{' '}
-          {
-          pastOrderItem.item.is_show_datetime_in_title==1? (pastOrderItem.item.order_status === 'ORDER_PLACED' ?
-          titleFormat(pastOrderItem.item.schedule_date_time || pastOrderItem.item.order_date)
-          :titleFormat(pastOrderItem.item.updated_on)):""}
+          {pastOrderItem.item.is_show_datetime_in_title == 1
+            ? pastOrderItem.item.order_status === 'ORDER_PLACED'
+              ? titleFormat(
+                  pastOrderItem.item.schedule_date_time ||
+                    pastOrderItem.item.order_date,
+                )
+              : titleFormat(pastOrderItem.item.updated_on)
+            : ''}
           {/* Delivered on{' '}
           {moment(pastOrderItem.item.delivery_date).format(
             'MMM DD, YYYY',
@@ -388,8 +480,29 @@ const PastList = ({navigation, searchText}) => {
       </View>
     </TouchableOpacity>
   );
+
+  const renderFooter = () => {
+    return (
+      <View style={{padding: 10}}>
+        {/* <ActivityIndicator size="small" color="#d8d8d8" /> */}
+      </View>
+    );
+  };
+
+  const handleLoadMoreOnGoingRecord = () => {
+    if (checkMoreData) {
+      getOrderList();
+    }
+  };
+
   return pastOrderList.length != 0 ? (
-    <FlatList data={pastOrderList} renderItem={renderPastOrderItem} />
+    <FlatList
+      data={pastOrderList}
+      renderItem={renderPastOrderItem}
+      onEndReached={handleLoadMoreOnGoingRecord}
+      onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+      ListFooterComponent={renderFooter}
+    />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View
@@ -538,7 +651,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   deliveryTime: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,
@@ -617,6 +730,14 @@ const styles = StyleSheet.create({
   packageManage: {
     width: 25,
     height: 25,
+  },
+  orderActive: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    borderRadius: 10,
+    padding: 5,
+    color: '#27AE60',
+    backgroundColor: '#27AE6012',
   },
 });
 
