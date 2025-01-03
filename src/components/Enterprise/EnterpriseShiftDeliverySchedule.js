@@ -34,11 +34,22 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
   const params = route.params;
 
 
+
+  useEffect(()=>{
+    const newEndDate =  new Date().setDate(new Date().getDate()+14)
+    setEndDate(moment(newEndDate).toDate())
+    const sDate = moment(startDate).format('DD/MM/YYYY')
+    const eDate = moment(newEndDate).format('DD/MM/YYYY')
+    createSchedule(sDate,eDate)
+  },[])
+
+console.log('my dates === >',days)
   useEffect(()=>{
     let updateDays = [...days]
 
     updateDays = updateDays.map((dates)=>{return{...dates,timeslots:[
       {
+        slot_date:dates.formattedDate,
         day: dates.day,
         from_time: '',
         to_time: ''
@@ -92,9 +103,13 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
     setDays(dates);
   };
 
-  const handleAddTimeSlot = (index,day) => {
+  const handleAddTimeSlot = (index,day,formattedDate) => {
+
+
+    console.log('')
 
     const defaultValue= {
+      slot_date:formattedDate,
       day: day,
       from_time: '',
       to_time: ''
@@ -132,7 +147,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
               />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="12/06/2024"
+                placeholder={moment(startDate).format('DD/MM/YYYY')}
                 placeholderTextColor="#999"
                 value={startDateText}
                 editable={false}
@@ -171,7 +186,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
               />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="12/06/2024"
+                placeholder={moment(endDate).format('DD/MM/YYYY')}
                 placeholderTextColor="#999"
                 value={endDateText}
                 editable={false}
@@ -374,7 +389,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                              : styles.plusNewCardDisabled,
                          ]}
                          onPress={() => {
-                             handleAddTimeSlot(index,item.day);
+                             handleAddTimeSlot(index,item.day,item.formattedDate);
                          }}>
                          <AntDesign
                            name="plus"

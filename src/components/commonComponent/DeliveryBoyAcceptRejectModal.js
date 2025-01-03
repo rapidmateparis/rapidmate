@@ -117,7 +117,7 @@ function DeliveryBoyAcceptRejectModal({
                 <Text
                   style={
                     styles.boldSubText
-                  }>{`€${deliveryBoyAcceptRejectMessage?.order?.amount}`}</Text>
+                  }>{`€${deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount}`}</Text>
               </Text>
               <Text style={styles.subText}>
                 Total distance:{' '}

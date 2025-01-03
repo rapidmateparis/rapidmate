@@ -319,7 +319,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => navigation.navigate('EnterpriseHome')}
+                onPress={() => navigation.navigate('EnterpriseBottomNav')}
                 style={styles.trackOrderBtn}>
                 <Text style={styles.trackText}>View Order Detail</Text>
               </TouchableOpacity>

@@ -22,12 +22,14 @@ import {
   getLocations,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import { useIsFocused } from '@react-navigation/native';
 
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
+  const isVisible = useIsFocused();
 
   const [reTryCount, updateReTryCount] = useState(0);
 
@@ -58,11 +60,11 @@ const LoaderForDriver = ({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    if(reTryCount !== null && reTryCount <= 5){
+    if(isVisible && reTryCount !== null && reTryCount <= 5){
       getLocationsData();
     }
 
-  }, [reTryCount]);
+  }, [reTryCount,isVisible]);
 
 
   const getLocationsData = () => {

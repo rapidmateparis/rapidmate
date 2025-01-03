@@ -55,16 +55,28 @@ const PickupPayment = ({route, navigation}) => {
     placePickUpOrder();
   };
 
+  const getTaxAmount = ()=>{
+    const amount =   typeof params.selectedVehiclePrice === 'number'
+      ? params.selectedVehiclePrice.toFixed(2)
+      : parseFloat(params.selectedVehiclePrice)
+    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+     return taxAmount? taxAmount.toFixed(2): 0
+  }
+
+
   useEffect(()=>{
 
    const amount =   typeof params.selectedVehiclePrice === 'number'
       ? params.selectedVehiclePrice.toFixed(2)
       : parseFloat(params.selectedVehiclePrice)
-    
-     const taxAmount =  (amount * vechicleTax) / 100;
-     const total_Amount = amount+taxAmount
-     setTotalAmount(total_Amount.toFixed(2))
-     setPaymentAmount(total_Amount.toFixed(2))
+    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+     const total_Amount = parseFloat(amount)+taxAmount
+     if(total_Amount){
+      setTotalAmount(total_Amount.toFixed(2))
+      setPaymentAmount(total_Amount.toFixed(2))
+     }
   },[vechicleTax])
 
   function calculateFinalPrice(originalPrice, discountPercentage) {
@@ -214,6 +226,7 @@ const PickupPayment = ({route, navigation}) => {
           ? params.destinationLocationId
           : 2,
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+        total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
         total_amount: parseFloat(paymentAmount),
         discount: offerDiscount,
         pickup_notes: params.userDetails.pickupNotes,
@@ -252,7 +265,7 @@ const PickupPayment = ({route, navigation}) => {
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
           }
-          console.log("requestParams",requestParams)
+          console.log("requestParams===",requestParams)
         },
         errorResponse => {
           setLoading(false);
@@ -407,8 +420,8 @@ const PickupPayment = ({route, navigation}) => {
             <Text style={styles.totalAmount}>€ {params.selectedVehiclePrice}</Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Tax</Text>
-            <Text style={styles.totalAmount}>€ {vechicleTax}</Text>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Tax {vechicleTax}%</Text>
+            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
