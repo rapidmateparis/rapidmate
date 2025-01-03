@@ -46,6 +46,8 @@ const PickupOrderPreview = ({route, navigation}) => {
     finalPrice = params.selectedVehiclePrice;
   }
 
+  console.log("<===params===>", params)
+
   const pickupOrderRequest = () => {
     navigation.navigate('PickupPayment', {props: params});
   };
@@ -165,6 +167,48 @@ const PickupOrderPreview = ({route, navigation}) => {
           </View>
         </View>
 
+
+        <View style={styles.pickupCard}>
+          <Text style={styles.pickupDetails}>Drop details</Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>{params.drop_details.drop_first_name}</Text>
+              <Text style={styles.vehicleCapacity}>
+                {params.drop_details.drop_company_name}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.pickupinfoCard}>
+            <View style={[styles.pickupManDetails, {width: '60%'}]}>
+              <SimpleLineIcons
+                style={{marginTop: 3}}
+                name="globe"
+                size={12}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>{params.drop_details.drop_email}</Text>
+            </View>
+
+            <View style={styles.pickupManDetails}>
+              <MaterialIcons
+                style={{marginTop: 1}}
+                name="call"
+                size={15}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>
+                {params.drop_details.drop_mobile}
+              </Text>
+            </View>
+          </View>
+
+          <View>
+            <Text style={styles.pickupNotes}>
+              {params.drop_details.drop_notes}
+            </Text>
+          </View>
+        </View>
+
         <View style={styles.pickupCard}>
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
           <View style={styles.semiTruckDetails}>
@@ -199,6 +243,7 @@ const PickupOrderPreview = ({route, navigation}) => {
             value={toggleCheckBox}
             onValueChange={newValue => setToggleCheckBox(newValue)}
             style={{alignSelf: 'center'}}
+            tintColors={{true: '#FFC72B', false: '#999'}}
           />
           <Text style={styles.checkboxText}>
             Save these addresses for later
@@ -253,7 +298,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   vehicleName: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
@@ -349,7 +394,6 @@ const styles = StyleSheet.create({
   },
   locationAddress: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   TextAddress: {
     fontSize: 14,

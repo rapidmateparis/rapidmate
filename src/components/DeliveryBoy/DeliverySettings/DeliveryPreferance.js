@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Dimensions,
 } from 'react-native';
 import {colors} from '../../../colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,6 +18,8 @@ import {
 } from '../../commonComponent/StoreContext';
 import {updateUserProfile} from '../../../data_manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { height: screenHeight } = Dimensions.get('window');
 
 const DeliveryPreferance = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState({});
@@ -77,7 +80,7 @@ const DeliveryPreferance = ({navigation}) => {
             {...userDetails.userDetails[0], work_type_id: selectedOption.id},
           ],
         });
-        Alert.alert('Success', '' + successResponse[0]._response, [
+        Alert.alert('Success', 'Delivery preferance updated successfully', [
           {
             text: 'OK',
             onPress: () => {
@@ -98,7 +101,7 @@ const DeliveryPreferance = ({navigation}) => {
         <Text style={[styles.logInText, {color: colors.text}]}>
           Select how would you like to work?
         </Text>
-        <View style={{marginTop: 35}}>
+        <View style={{marginTop: 20}}>
           {deliveryPreferenceList.map(item => (
             <TouchableOpacity
               style={styles.profileCard}
@@ -191,6 +194,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 15,
+    minHeight: screenHeight,
     paddingTop: 10,
     backgroundColor: '#fff',
   },
@@ -217,7 +221,7 @@ const styles = StyleSheet.create({
     width: '65%',
   },
   roleText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
   },
@@ -227,25 +231,25 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '20%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 150,
+    marginBottom: 30,
   },
   profileCard: {
     marginBottom: 10,
   },
   disabledButton: {
     width: '100%',
-    marginTop: '20%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FCF9EA',
-    marginBottom: 150,
+    marginBottom: 30,
   },
   roleTypeText: {
     fontSize: 18,

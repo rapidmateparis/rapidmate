@@ -1,0 +1,17 @@
+{
+    "Common":{
+        "settings":"Settings",
+        "manageYourProfile":"Manage Your Profile",
+        "addressBook":"Address book",
+        "paymentMethods":"Payment methods",
+        "wallet":"Wallet",
+        "billingDetails":"Billing details",
+        "changePassword":"Change password",
+        "notifications":"Notifications",
+        "language":"Language",
+        "help":"Help",
+        "aboutUs":"About us",
+        "faqs":"FAQs",
+        "logout":"Logout"
+    }
+}

@@ -45,9 +45,13 @@ const EnterprisesSettins = ({navigation}) => {
             )}
           </View>
           <View style={{marginLeft: 15}}>
-            <Text style={styles.username}>Company Name</Text>
+            <Text style={styles.username}>
+              {userDetails.userDetails[0].first_name +
+                ' ' +
+                userDetails.userDetails[0].last_name}
+            </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('EnterprisesTakeSelfie')}
+              onPress={() => navigation.navigate('EnterpriseManageProfile')}
               style={styles.goprofile}>
               <Text style={styles.manageProfile}>Manage your profile</Text>
               <AntDesign name="right" size={13} color="#000000" />
@@ -71,6 +75,15 @@ const EnterprisesSettins = ({navigation}) => {
             onPress={() => navigation.navigate('EnterpriseLocation')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Manage company locations</Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('EnterpriseManageAds')}
+            style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Manage Ads</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>

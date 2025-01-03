@@ -11,14 +11,16 @@ import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
 import Notifications from '../PickupDrop-off/Settings/Notifications';
 import RNExitApp from 'react-native-exit-app';
 import messaging from '@react-native-firebase/messaging';
-import {getLocations, getViewOrderDetail} from '../../data_manager';
+import {getLocations, getNotificationCount, getViewOrderDetail} from '../../data_manager';
 import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
 import {useLoader} from '../../utils/loaderContext';
-import {useLocationData} from '../commonComponent/StoreContext';
+import {useLocationData, useUserDetails} from '../commonComponent/StoreContext';
+import { playNotificationSound, stopNotificationSound } from '../../utils/common';
 
 const Bottom = createBottomTabNavigator();
 
 const DeliveryboyBottomNav = ({navigation}) => {
+  const {userDetails,saveUserDetails} = useUserDetails();
   const [
     isDeliveryBoyAcceptRejectModalModalVisible,
     setDeliveryBoyAcceptRejectModalModalVisible,
@@ -45,26 +47,65 @@ const DeliveryboyBottomNav = ({navigation}) => {
     );
   }, []);
 
+
+  const getNotificationAllCount = () => {
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        userDetails.userDetails[0].notificationCount
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
+
+
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      setDeliveryBoyAcceptRejectModalModalVisible(true);
-      console.log('remoteMessage', JSON.stringify(remoteMessage));
-      getViewOrderDetail(
-        remoteMessage.data?.orderNumber,
-        successResponse => {
-          setLoading(false);
-          if (successResponse[0]._success) {
-            setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          console.log('orderDetail==>errorResponse', errorResponse[0]);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
+      console.log('remoteMessage *Delivery Boy*', JSON.stringify(remoteMessage));
+      getNotificationAllCount()
+
+      if(remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' && remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
+        playNotificationSound()
+        setDeliveryBoyAcceptRejectModalModalVisible(true);
+        getViewOrderDetail(
+          remoteMessage.data?.orderNumber,
+          successResponse => {
+            setLoading(false);
+            if (successResponse[0]._success) {
+              setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+              setTimeout(()=>{
+                stopNotificationSound()
+                setDeliveryBoyAcceptRejectModalModalVisible(false);
+              },30000)
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  stopNotificationSound()
+                  setDeliveryBoyAcceptRejectModalModalVisible(false);
+                },
+              },
+            ]);
+          },
+        );
+      }
     });
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Background Msg!!!!', JSON.stringify(remoteMessage));
@@ -205,9 +246,10 @@ const DeliveryboyBottomNav = ({navigation}) => {
         isDeliveryBoyAcceptRejectModalModalVisible={
           isDeliveryBoyAcceptRejectModalModalVisible
         }
-        setDeliveryBoyAcceptRejectModalModalVisible={
-          setDeliveryBoyAcceptRejectModalModalVisible
-        }
+        setDeliveryBoyAcceptRejectModalModalVisible={(flag)=>{
+          stopNotificationSound()
+          setDeliveryBoyAcceptRejectModalModalVisible(flag)
+        }}
         deliveryBoyAcceptRejectMessage={deliveryBoyAcceptRejectMessage}
       />
     </>

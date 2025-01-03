@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
 import {colors} from '../../colors';
 
-function EnterpriseOrderCancellationModal({setModalVisible, isModalVisible}) {
+function EnterpriseOrderCancellationModal({setModalVisible, isModalVisible, submitCancelOrder}) {
   const [selectedReason, setSelectedReason] = useState(null);
   const navigation = useNavigation(); // Initialize navigation using useNavigation hook
 
@@ -17,20 +17,30 @@ function EnterpriseOrderCancellationModal({setModalVisible, isModalVisible}) {
     setSelectedReason(reason);
   };
 
-  const renderReason = reason => {
-    const isSelected = selectedReason === reason;
+  const renderReason = cancelItem => {
+    const isSelected = selectedReason?.id === cancelItem.id;
     return (
       <TouchableOpacity
-        key={reason}
+        key={cancelItem.id}
         style={[styles.reasonItem, isSelected && styles.selectedReason]}
-        onPress={() => handleReasonSelect(reason)}>
+        onPress={() => handleReasonSelect(cancelItem)}>
         {!isSelected && <View style={styles.circle} />}
         {isSelected && (
           <AntDesign name="checkcircle" size={20} color={colors.primary} />
         )}
-        <Text style={styles.CancellationReasonText}>{reason}</Text>
+        <Text style={styles.CancellationReasonText}>{cancelItem.reason}</Text>
       </TouchableOpacity>
     );
+  };
+
+  const handleSubmit = () => {
+    if (selectedReason) {
+      // Perform any additional operations before navigation, if needed
+      toggleModal(); // Optionally close the modal
+      navigation.navigate('EnterpriseOrderCancelled'); // Navigate to the EnterpriseOrderCancelled screen
+    } else {
+      Alert.alert('Selection Required', 'Please select a cancellation reason.');
+    }
   };
 
   return (
@@ -45,16 +55,14 @@ function EnterpriseOrderCancellationModal({setModalVisible, isModalVisible}) {
           </View>
           <View style={styles.CancellationReasonCard}>
             {[
-              'Change of plans',
-              'I want to change delivery time',
-              'Incorrect address or information',
-              'Found another person',
-              'It is taking too long',
+              {id: 1, reason: 'Change of plans'},
+              {id: 2, reason: 'I want to change delivery time'},
+              {id: 3, reason: 'Incorrect address or information'},
+              {id: 4, reason: 'Found another person'},
+              {id: 5, reason: 'It is taking too long'},
             ].map(reason => renderReason(reason))}
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseOrderCancelled')}
-            style={styles.buttonCard}>
+          <TouchableOpacity onPress={handleSubmit} style={styles.buttonCard}>
             <Text style={styles.okButton}>Submit</Text>
           </TouchableOpacity>
         </View>
@@ -121,6 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingVertical: 12,
     textAlign: 'center',
+    color: colors.white, // Ensure text is visible on button
   },
   CancellationReasonCard: {
     padding: 20,

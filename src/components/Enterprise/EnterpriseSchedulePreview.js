@@ -16,6 +16,7 @@ import {createEnterpriseOrder} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
+import { localToUTC } from '../../utils/common';
 
 const DeliveryScheduleDetails = ({route, navigation}) => {
   const params = route.params;
@@ -29,9 +30,10 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       for (let dayIndex = 0; dayIndex < day.timeslots.length; dayIndex++) {
         const element = day.timeslots[dayIndex];
         slots.push({
+          slot_date:moment(element.slot_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
           day: day.day,
-          from_time: moment(element.fromTimeText, 'hh:mm A').format('HH:MM'),
-          to_time: moment(element.toTimeText, 'hh:mm A').format('HH:MM'),
+          from_time: moment(element.from_time, 'hh:mm A').format('HH:MM'),
+          to_time: moment(element.to_time, 'hh:mm A').format('HH:MM'),
         });
       }
     }
@@ -41,11 +43,14 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       delivery_type_id: params.delivery_type_id,
       service_type_id: params.service_type_id,
       vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      shift_from_date: params.schedule.startDate,
-      shift_tp_date: params.schedule.endDate,
+      shift_from_date: localToUTC(moment(params.schedule.startDate,'DD/MM/YYYY').toDate()),
+      shift_tp_date: localToUTC(moment(params.schedule.endDate,'DD/MM/YYYY').toDate()),
       is_same_slot_all_days: 0,
       slots: slots
     };
+
+    console.log('requestParams =======>',requestParams)
+
     setLoading(true);
     createEnterpriseOrder(
       requestParams,
@@ -94,11 +99,11 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
                   return (
                     <View key={timeSlotIndex} style={styles.startTimeCard}>
                       <Text style={styles.startTime}>
-                        {timeSlot.fromTimeText}
+                        {timeSlot.from_time}
                       </Text>
                       <View style={styles.borderShowoff} />
                       <Text style={styles.startTime}>
-                        {timeSlot.toTimeText}
+                        {timeSlot.to_time}
                       </Text>
                     </View>
                   );

@@ -70,7 +70,7 @@ const AddPickupdetails = ({route, navigation}) => {
     {label: '+33', value: '+33'},
   ];
 
-  const uploadImage = async (packageImage) => {
+  const uploadImage = async packageImage => {
     var photo = {
       uri: packageImage?.data?.uri,
       type: packageImage?.data?.type,
@@ -87,7 +87,7 @@ const AddPickupdetails = ({route, navigation}) => {
           'print_data==>successResponseuploadDocumentsApi',
           '' + JSON.parse(successResponse).id,
         );
-        setPackageImageId(JSON.parse(successResponse).id)
+        setPackageImageId(JSON.parse(successResponse).id);
       },
       errorResponse => {
         console.log(
@@ -95,7 +95,7 @@ const AddPickupdetails = ({route, navigation}) => {
           '' + errorResponse,
         );
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
       },
@@ -125,7 +125,7 @@ const AddPickupdetails = ({route, navigation}) => {
         console.log('print_data===>', imageData);
         setPhotoFileName(getFileName(imageData.data.uri));
         setPackageImage(imageData);
-        uploadImage();
+        uploadImage(imageData);
       }
     } catch (error) {
       // Handle errors here
@@ -197,7 +197,7 @@ const AddPickupdetails = ({route, navigation}) => {
         userDetails.package_photo = packageImageId;
       }
       route.params.userDetails = userDetails;
-      navigation.navigate('PickupOrderPreview', {props: route.params});
+      navigation.navigate('AddDropDetails', {props: route.params});
     }
   };
 
@@ -210,10 +210,20 @@ const AddPickupdetails = ({route, navigation}) => {
               radioButtons={radioButtons}
               onPress={setSelectedId}
               selectedId={selectedId}
-              labelStyle={{color: colors.text}}
+              labelStyle={{
+                color: colors.text,
+                fontSize: 16,
+                fontWeight: 'bold',
+                marginHorizontal: 10,
+              }}
               containerStyle={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
+                padding: 10,
+                borderWidth: 1,
+                borderColor: '#ccc',
+                borderRadius: 10,
+                backgroundColor: colors.background,
               }}
             />
           </View>
@@ -222,6 +232,7 @@ const AddPickupdetails = ({route, navigation}) => {
               <Text style={styles.textlable}>First name*</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={name}
                 onChangeText={text => setName(text)}
@@ -232,6 +243,7 @@ const AddPickupdetails = ({route, navigation}) => {
               <Text style={styles.textlable}>Last name*</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={lastname}
                 onChangeText={text => setLastname(text)}
@@ -242,6 +254,7 @@ const AddPickupdetails = ({route, navigation}) => {
             <Text style={styles.textlable}>Company</Text>
             <TextInput
               style={styles.inputTextStyle}
+              placeholderTextColor="#999"
               placeholder="Type here"
               value={company}
               onChangeText={text => setCompany(text)}
@@ -251,6 +264,7 @@ const AddPickupdetails = ({route, navigation}) => {
             <Text style={styles.textlable}>Email*</Text>
             <TextInput
               style={styles.inputTextStyle}
+              placeholderTextColor="#999"
               placeholder="Type here"
               value={email}
               onChangeText={text => setEmail(text)}
@@ -265,6 +279,10 @@ const AddPickupdetails = ({route, navigation}) => {
                     data={data}
                     search
                     maxHeight={300}
+                    itemTextStyle={styles.itemtextStyle}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
                     labelField="label"
                     valueField="value"
                     placeholder={!isFocus ? '+33' : '...'}
@@ -326,6 +344,7 @@ const AddPickupdetails = ({route, navigation}) => {
             <Text style={styles.textlable}>Package ID*</Text>
             <TextInput
               style={styles.inputTextStyle}
+              placeholderTextColor="#999"
               placeholder="Type here"
               value={orderid}
               onChangeText={text => setOrderid(text)}
@@ -336,7 +355,8 @@ const AddPickupdetails = ({route, navigation}) => {
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
-              numberOfLines={4} // Set the number of lines you want to display initially
+              numberOfLines={4}
+              placeholderTextColor="#999"
               placeholder="Type here"
               textAlignVertical="top"
               value={pickupNotes}
@@ -537,6 +557,22 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     paddingRight: 5,
     borderColor: '#2C30331A',
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

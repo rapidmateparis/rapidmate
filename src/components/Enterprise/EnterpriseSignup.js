@@ -7,7 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  Alert
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -48,7 +48,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [siret, setSiret] = useState('');
   const [comments, setComments] = useState('');
   const [openDropDown, setOpenDropDown] = useState(false);
-  const [dropdownValue, setDropdownValue] = useState('+33');
+  const [dropdownValue, setDropdownValue] = useState('');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [dropdownStateValue, setDropdownStateValue] = useState(null);
   const [dropdownCityValue, setDropdownCityValue] = useState(null);
@@ -64,6 +64,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
+  const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -81,10 +82,10 @@ const EnterpriseSignup = ({navigation}) => {
     }
   };
 
-  const data = [
-    {label: '+91', value: '+91'},
-    {label: '+33', value: '+33'},
-  ];
+  // const data = [
+  //   {label: '+91', value: '+91'},
+  //   {label: '+33', value: '+33'},
+  // ];
 
   const industryList = [
     {label: 'Restaurant and takeaway', value: 1},
@@ -111,13 +112,23 @@ const EnterpriseSignup = ({navigation}) => {
             } else {
               setMasterCountryList(successResponse[0]._response);
               var formattedCountryList = [];
+              var formattedCountryCodeList = [];
               successResponse[0]._response.forEach(element => {
                 formattedCountryList.push({
                   label: element.country_name,
                   value: element.id,
                 });
+                formattedCountryCodeList.push({
+                  label: "+" + element.phone_code,
+                  value: element.id,
+                });
               });
+
               setCountryList(formattedCountryList);
+              setCountryCodeList(formattedCountryCodeList);
+              setDropdownValue(formattedCountryCodeList[0].value)
+
+
             }
           }
         }
@@ -249,7 +260,7 @@ const EnterpriseSignup = ({navigation}) => {
           firstName: name,
           lastName: lastname,
           companyName: companyName,
-          deliveryMonthHours: deliveries + 'hours',
+          deliveryMonthHours: deliveries,
           description: comments,
           industryId: dropdownIndustryValue.toString(),
           city: dropdownCityValue.toString(),
@@ -402,11 +413,13 @@ const EnterpriseSignup = ({navigation}) => {
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
                 <Dropdown
-                  data={data}
+                  data={countryCodeList}
                   search
                   maxHeight={300}
-                  itemTextStyle={{color: colors.text}}
-                  selectedTextStyle={{color: colors.text}}
+                  itemTextStyle={styles.itemtextStyle}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? '+33' : '...'}
@@ -455,8 +468,10 @@ const EnterpriseSignup = ({navigation}) => {
               data={industryList}
               search
               maxHeight={500}
-              itemTextStyle={{color: colors.text}}
-              selectedTextStyle={{color: colors.text}}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Industry' : '...'}
@@ -500,8 +515,10 @@ const EnterpriseSignup = ({navigation}) => {
               data={countryList}
               search
               maxHeight={300}
-              itemTextStyle={{color: colors.text}}
-              selectedTextStyle={{color: colors.text}}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Country' : '...'}
@@ -559,8 +576,10 @@ const EnterpriseSignup = ({navigation}) => {
                 data={stateList}
                 search
                 maxHeight={300}
-                itemTextStyle={{color: colors.text}}
-                selectedTextStyle={{color: colors.text}}
+                itemTextStyle={styles.itemtextStyle}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Ain' : '...'}
@@ -597,8 +616,10 @@ const EnterpriseSignup = ({navigation}) => {
                 data={cityList}
                 search
                 maxHeight={300}
-                itemTextStyle={{color: colors.text}}
-                selectedTextStyle={{color: colors.text}}
+                itemTextStyle={styles.itemtextStyle}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'ambérieu-e...' : '...'}
@@ -652,7 +673,7 @@ const EnterpriseSignup = ({navigation}) => {
               value={toggleCheckBoxFirst}
               onValueChange={newValue => setToggleCheckBoxFirst(newValue)}
               style={{alignSelf: 'flex-start'}}
-              tintColors={{true: '#FFC72B', false: '#000000'}}
+              tintColors={{true: '#FFC72B', false: '#999'}}
             />
             <Text style={styles.checkboxText}>
               By checking this box, I authorise Rapidmate to use my information
@@ -667,7 +688,7 @@ const EnterpriseSignup = ({navigation}) => {
               value={toggleCheckBoxSecond}
               onValueChange={newValue => setToggleCheckBoxSecond(newValue)}
               style={{alignSelf: 'flex-start'}}
-              tintColors={{true: '#FFC72B', false: '#000000'}}
+              tintColors={{true: '#FFC72B', false: '#999'}}
             />
             <View>
               <TouchableOpacity>
@@ -780,7 +801,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 10,
     color: colors.text,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
   },
   accountType: {
     fontFamily: 'Montserrat-Regular',
@@ -934,6 +955,22 @@ const styles = StyleSheet.create({
   OtherImage: {
     width: 14.8,
     height: 14.8,
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

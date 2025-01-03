@@ -18,6 +18,7 @@ import {getEnterpriseBranch} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import { useIsFocused } from '@react-navigation/native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const EnterpriseLocation = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -34,9 +35,9 @@ const EnterpriseLocation = ({navigation}) => {
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
+              // Alert.alert('Error Alert', successResponse[0]._response.name, [
+              //   {text: 'OK', onPress: () => {}},
+              // ]);
             } else {
               var branches = [];
               for (
@@ -56,19 +57,15 @@ const EnterpriseLocation = ({navigation}) => {
       errorResponse => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   }, [isVisible]);
 
   const renderItem = ({item,index}) => (
     <View>
-      {/* <View pointerEvents="none" style={{width: '100%', height: 120}}>
-        <MapDeliveryDetails />
-      </View> */}
-
       <View style={styles.addressCard}>
         <Image
           style={styles.companyImga}
@@ -83,7 +80,9 @@ const EnterpriseLocation = ({navigation}) => {
           </View>
         </View>
         <TouchableOpacity>
-          <FontAwesome6 name="pencil" size={20} color="#000" />
+          <FontAwesome6 onPress={()=>{
+            navigation.navigate('EnterpriseAddNewLocation',{location:item})
+          }} name="pencil" size={20} color="#000" />
         </TouchableOpacity>
       </View>
     </View>
@@ -91,7 +90,24 @@ const EnterpriseLocation = ({navigation}) => {
 
   return (
     <View style={{flex: 1, paddingHorizontal: 15}}>
-      <FlatList data={enterpriseBranches} renderItem={renderItem} />
+{/* <TouchableOpacity
+                onPress={() =>{navigation.navigate('EnterpriseBottomNav')}}>
+              <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
+                </TouchableOpacity> */}
+            
+        {
+          enterpriseBranches.length === 0 ?
+            <View style={styles.noBranchedView}>
+              {/* <TouchableOpacity
+                onPress={() =>{navigation.navigate('EnterpriseBottomNav')}}> */}
+              <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
+                {/* </TouchableOpacity> */}
+            </View>
+            :
+          <FlatList data={enterpriseBranches} renderItem={renderItem} />
+        }
+
+      
     </View>
   );
 };
@@ -129,8 +145,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.white,
     padding: 13,
-    borderBottomRightRadius: 8,
-    borderBottomLeftRadius: 8,
+    borderRadius: 8,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
       width: 0,
@@ -139,7 +154,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5, // for Android
-    marginBottom: 7,
+    marginVertical: 10,
   },
   cardTitle: {
     fontSize: 14,
@@ -155,7 +170,7 @@ const styles = StyleSheet.create({
   },
   locationCard: {
     flexDirection: 'row',
-    alignItems: 'center',
+    marginTop: 5,
   },
   franchiseLocations: {
     fontSize: 14,
@@ -168,9 +183,21 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   companyImga: {
-    width: 30,
+    width: 35,
     height: 30,
   },
+  noBranchedView:{
+    justifyContent:"space-between",paddingHorizontal:16,paddingVertical:8,flexDirection:"row",
+    backgroundColor:'#E5E4E4',
+    alignItems:"center",borderRadius:5,marginVertical:8,marginHorizontal:4
+  },
+  colorWiseText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.text,
+    marginHorizontal: 8,
+  },
+
 });
 
 export default EnterpriseLocation;

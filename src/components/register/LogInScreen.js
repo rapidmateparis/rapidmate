@@ -78,6 +78,10 @@ const LogInScreen = ({navigation}) => {
     await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
   };
 
+  const saveRapidTokenInAsync = async rapidToken => {
+    await AsyncStorage.setItem('rapidToken', rapidToken);
+  };
+
   const handleLogin = async () => {
     const isValid = validateForm();
 
@@ -113,6 +117,7 @@ const LogInScreen = ({navigation}) => {
                 ]);
               } else {
                 saveUserDetails({
+                  rapidToken : successResponse[0]._response.rapid_token,
                   userInfo: successResponse[0]._response.user?.idToken?.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
@@ -126,23 +131,33 @@ const LogInScreen = ({navigation}) => {
                   successResponse[0]._response.user_profile[0].role ==
                   'DELIVERY_BOY'
                 ) {
-                  navigation.navigate('DeliveryboyBottomNav');
+                  if (
+                    successResponse[0]._response.user_profile[0].is_active == 0
+                  ) {
+                    navigation.navigate('DeliveryboyThanksPage');
+                  } else {
+                    navigation.navigate('DeliveryboyBottomNav');
+                  }
                 } else {
-                  navigation.navigate('EnterpriseBottomNav');
+                  if (
+                    successResponse[0]._response.user_profile[0].is_active == 0
+                  ) {
+                    navigation.navigate('EnterpriseThanksPage');
+                  } else {
+                    navigation.navigate('EnterpriseBottomNav');
+                  }
                 }
-                console.log(
-                  'successResponse[0]._response.user_profile',
-                  successResponse[0]._response.user_profile,
-                );
                 saveUserDetailsInAsync({
+                  rapidToken : successResponse[0]._response.rapid_token,
                   userInfo: successResponse[0]._response.user.idToken.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
+                saveRapidTokenInAsync(successResponse[0]._response.rapid_token);
               }
             }
           } else {
             setLoading(false);
-            Alert.alert('Error Alert', "Invalid credentials", [
+            Alert.alert('Error Alert', 'Invalid credentials', [
               {text: 'OK', onPress: () => {}},
             ]);
           }
@@ -191,7 +206,6 @@ const LogInScreen = ({navigation}) => {
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                 placeholder="Password"
                 placeholderTextColor="#999"
-                maxLength={10}
                 secureTextEntry={!passwordVisible} // Use the secureTextEntry prop based on passwordVisible state
                 value={password}
                 onChangeText={text => setPassword(text)}
@@ -280,7 +294,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   signUpContainer: {
-    marginTop: '80%',
+    marginTop: '50%',
     alignItems: 'center',
   },
   signUpText: {

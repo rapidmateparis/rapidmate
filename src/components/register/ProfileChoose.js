@@ -35,7 +35,7 @@ const ProfileChoose = ({navigation}) => {
           <Text style={styles.loginAccessText}>
             Before creating your profile, please select your role on this app.
           </Text>
-          <View style={{marginTop: 35}}>
+          <View style={{marginTop: 30}}>
             <TouchableOpacity
               style={styles.profileCard}
               onPress={() => handleOptionSelect('Enterprise')}>
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   },
   logbutton: {
     width: '100%',
-    marginTop: '30%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     width: '100%',
-    marginTop: '30%',
+    marginTop: 40,
     borderRadius: 5,
     padding: 13,
     alignItems: 'center',

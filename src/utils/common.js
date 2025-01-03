@@ -1,7 +1,10 @@
 import axios from 'axios';
-import {apiHost} from './constant';
+import {DATE_FORMAT, apiHost} from './constant';
 import {PermissionsAndroid} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import moment from 'moment-timezone';
+import { useTranslation } from 'react-i18next';
+import Sound from 'react-native-sound'
 
 export const formatDate = date => {
   var d = new Date(date),
@@ -315,3 +318,60 @@ export const handleImageLibraryLaunchFunction = () => {
 // };
 
 // https://www.youtube.com/watch?v=8opgD2Ooi9w
+
+
+
+export const localToUTC=(date=new Date(),timezone,format='YYYY-MM-DD HH:mm:ss')=>{
+  return moment.tz(date,timezone || Intl.DateTimeFormat().resolvedOptions().timeZone).utc().format(format)
+}
+
+export const utcLocal=(date=new Date(),format='YYYY-MM-DD HH:mm:ss')=>{
+  return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(format);
+}
+
+export const titleFormat=(date=new Date())=>{
+  return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(DATE_FORMAT.titleFormat);
+}
+
+
+export const localizationText=(parentKey,childKey)=>{
+  const {t} = useTranslation()
+  if(parentKey && childKey)
+    return t(`${parentKey}.${childKey}`)
+  else 
+    return t(`${parentKey}`)
+}
+
+
+
+let soundInstance;
+
+export const playNotificationSound =()=>{
+  soundInstance = new Sound('samplenotification.mp3', Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+
+    console.log('duration in seconds: ' + soundInstance.getDuration() + 'number of channels: ' + soundInstance.getNumberOfChannels());
+    soundInstance.setNumberOfLoops(-1)
+    soundInstance.play((success) => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+
+    
+  });
+}
+
+export const stopNotificationSound = () => {
+  if (soundInstance) {
+    soundInstance.stop(() => {
+      console.log('Sound stopped');
+      soundInstance.release(); // Release the resource
+    });
+  }
+};

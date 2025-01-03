@@ -2,16 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
   ImageBackground,
   Alert,
+  BackHandler,
 } from 'react-native';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
 import {
@@ -24,16 +22,50 @@ import {
   getLocations,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import { useIsFocused } from '@react-navigation/native';
 
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
+  const isVisible = useIsFocused();
+
+  const [reTryCount, updateReTryCount] = useState(0);
+
+  const timeout = React.useRef(null);
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
   };
+
+  useEffect(() => {
+    const onBackPress = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getLocationsData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    if(isVisible && reTryCount !== null && reTryCount <= 5){
+      getLocationsData();
+    }
+
+  }, [reTryCount,isVisible]);
+
 
   const getLocationsData = () => {
     getLocations(
@@ -48,16 +80,21 @@ const LoaderForDriver = ({navigation}) => {
           getAllocatedDeliveryBoy(
             params,
             successResponse => {
+              updateReTryCount(null)
+              clearTimeout(timeout.current);
               navigation.navigate('OrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
-              navigation.navigate('DriverNotAvailable', errorResponse);
-              Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-                {text: 'OK', onPress: () => {}},
-              ]);
+              timeout.current = setTimeout(()=>{
+                updateReTryCount(reTryCount+1)
+                if(reTryCount === 5){
+                  navigation.navigate('DriverNotAvailable', errorResponse);
+                }
+              },30000)
+              
             },
           );
         }
@@ -71,10 +108,6 @@ const LoaderForDriver = ({navigation}) => {
       },
     );
   };
-
-  useEffect(() => {
-    getLocationsData();
-  }, []);
 
   const submitCancelOrder = selectedReason => {
     setLoading(true);
@@ -198,7 +231,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 90,
     paddingVertical: 10,
-    marginTop: '20%',
+    marginTop: 20,
   },
 });
 

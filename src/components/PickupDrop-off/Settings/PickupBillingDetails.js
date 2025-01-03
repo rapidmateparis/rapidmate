@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,46 +6,228 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import {Dropdown} from 'react-native-element-dropdown';
+import {
+  addConsumerBillingDetails,
+  getCityList,
+  getConsumerBillingDetails,
+  getCountryList,
+  getStateList,
+} from '../../../data_manager';
+import {useLoader} from '../../../utils/loaderContext';
+import {useUserDetails} from '../../commonComponent/StoreContext';
 
 const PickupBillingDetails = ({navigation}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [accountType, setAccountType] = useState(null);
-  const [name, setName] = useState(null);
+  const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [address, setAddress] = useState(null);
-  const [city, setCity] = useState(null);
-  const [country, setCountry] = useState(null);
   const [postalcode, setPostalCode] = useState(null);
   const [dninumber, setDNINumber] = useState(null);
+  const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
+
+  const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
+  const [dropdownStateValue, setDropdownStateValue] = useState(null);
+  const [dropdownCityValue, setDropdownCityValue] = useState(null);
+
+  const [masterCountryList, setMasterCountryList] = useState(null);
+  const [countryList, setCountryList] = useState([]);
+  const [masterStateList, setMasterStateList] = useState(null);
+  const [masterCityList, setMasterCityList] = useState(null);
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
+  const [billingDetails, setBillingDetails] = useState({});
 
   const account = [
-    {label: 'Individual', value: 'Individual'},
-    {label: 'Company', value: 'Company'},
+    {label: 'Individual', value: 1},
+    {label: 'Company', value: 2},
   ];
 
-  const citydata = [
-    {label: 'Noida', value: 'Noida'},
-    {label: 'Delhi', value: 'Delhi'},
-  ];
+  useEffect(() => {
+    getCountryList(
+      {},
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCountryList(successResponse[0]._response);
+              var formattedCountryList = [];
+              successResponse[0]._response.forEach(element => {
+                formattedCountryList.push({
+                  label: element.country_name,
+                  value: element.id,
+                });
+              });
+              setCountryList(formattedCountryList);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
 
-  const countrydata = [
-    {label: 'India', value: 'India'},
-    {label: 'France', value: 'France'},
-  ];
+    getStateList(
+      {},
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterStateList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+
+    getCityList(
+      null,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                {text: 'OK', onPress: () => {}},
+              ]);
+            } else {
+              setMasterCityList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+
+    getConsumerBillingDetails(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        let resultResponse = successResponse[0]._response;
+        setFirstName(resultResponse.first_name);
+        setLastName(resultResponse.last_name);
+        setAddress(resultResponse.address);
+        setDropdownCountryValue(resultResponse.country_id);
+        setDropdownStateValue(resultResponse.state_id);
+        setDropdownCityValue(resultResponse.city_id);
+        setPostalCode(resultResponse.postal_code);
+        setDNINumber(resultResponse.dni_number);
+        setAccountType(resultResponse.account_type);
+        setBillingDetails(resultResponse);
+      },
+      errorResponse => {
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
+
+  useEffect(()=>{
+    if(masterStateList?.length > 0){
+    var formattedStateList = [];
+      masterStateList.forEach(element => {
+        if (billingDetails.country_id == element.country_id) {
+          formattedStateList.push({
+            label: element.state_name,
+            value: element.id,
+          });
+        }
+      });
+      setStateList(formattedStateList);
+    }
+
+    if(masterCityList?.length > 0){
+      var formattedCityList = [];
+        masterCityList.forEach(element => {
+          if (billingDetails.state_id == element.state_id) {
+            formattedCityList.push({
+              label: element.city_name,
+              value: element.id,
+            });
+          }
+        });
+        setCityList(formattedCityList);
+      }
+  },[billingDetails,masterCityList,masterStateList])
+
+  const submitBillingDetails = () => {
+    let params = {
+      consumer_ext_id: userDetails.userDetails[0].ext_id,
+      first_name: firstName,
+      last_name: lastName,
+      address: address,
+      city_id: dropdownCityValue.toString(),
+      state_id: dropdownStateValue.toString(),
+      country_id: dropdownCountryValue.toString(),
+      dni_number: dninumber,
+      postal_code: postalcode,
+      account_type:accountType
+    };
+
+    addConsumerBillingDetails(
+      params,
+      successResponse => {
+        Alert.alert('Success', 'Billing details updated successfully', [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ]);
+      },
+      errorResponse => {
+        console.log('errorResponse', JSON.stringify(errorResponse))
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
 
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{paddingHorizontal: 15, marginVertical: 15,}}>
         <View>
           <Text style={styles.label}>Account</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={account}
+              itemTextStyle={styles.itemtextStyle}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -53,7 +235,7 @@ const PickupBillingDetails = ({navigation}) => {
               maxHeight={300}
               labelField="label"
               valueField="value"
-              placeholder={!isFocus ? 'Individual' : '...'}
+              placeholder={'Individual'}
               searchPlaceholder="Search.."
               value={accountType}
               onFocus={() => setIsFocus(true)}
@@ -85,8 +267,8 @@ const PickupBillingDetails = ({navigation}) => {
               style={styles.loginput}
               placeholder="Type here.."
               placeholderTextColor="#999"
-              value={name}
-              onChangeText={text => setName(text)}
+              value={firstName}
+              onChangeText={text => setFirstName(text)}
             />
           </View>
 
@@ -114,10 +296,11 @@ const PickupBillingDetails = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={styles.label}>City</Text>
+          <Text style={styles.label}>Country</Text>
           <View style={styles.containerCountry}>
             <Dropdown
-              data={citydata}
+              data={countryList}
+              itemTextStyle={styles.itemtextStyle}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -127,22 +310,68 @@ const PickupBillingDetails = ({navigation}) => {
               valueField="value"
               placeholder={!isFocus ? 'Select' : '...'}
               searchPlaceholder="Search.."
-              value={city}
+              value={dropdownCountryValue}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={item => {
-                setCity(item.value);
+                setDropdownCountryValue(item.value);
                 setIsFocus(false);
+                var formattedStateList = [];
+                masterStateList.forEach(element => {
+                  if (item.value == element.country_id) {
+                    formattedStateList.push({
+                      label: element.state_name,
+                      value: element.id,
+                    });
+                  }
+                });
+                setStateList(formattedStateList);
+              }}
+            />
+          </View>
+        </View>
+        <View>
+          <Text style={styles.label}>State</Text>
+          <View style={styles.containerCountry}>
+            <Dropdown
+              data={stateList}
+              search
+              maxHeight={300}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Ain' : '...'}
+              searchPlaceholder="Search.."
+              value={dropdownStateValue}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setDropdownStateValue(item.value);
+                setIsFocus(false);
+                var formattedCityList = [];
+                masterCityList.forEach(element => {
+                  if (item.value == element.state_id) {
+                    formattedCityList.push({
+                      label: element.city_name,
+                      value: element.id,
+                    });
+                  }
+                });
+                setCityList(formattedCityList);
               }}
             />
           </View>
         </View>
 
         <View>
-          <Text style={styles.label}>Country</Text>
+          <Text style={styles.label}>City</Text>
           <View style={styles.containerCountry}>
             <Dropdown
-              data={countrydata}
+              data={cityList}
+              itemTextStyle={styles.itemtextStyle}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -152,11 +381,11 @@ const PickupBillingDetails = ({navigation}) => {
               valueField="value"
               placeholder={!isFocus ? 'Select' : '...'}
               searchPlaceholder="Search.."
-              value={country}
+              value={dropdownCityValue}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={item => {
-                setCountry(item.value);
+                setDropdownCityValue(item.value);
                 setIsFocus(false);
               }}
             />
@@ -170,6 +399,7 @@ const PickupBillingDetails = ({navigation}) => {
             placeholder="Type here.."
             placeholderTextColor="#999"
             value={postalcode}
+            maxLength={5}
             onChangeText={text => setPostalCode(text)}
           />
         </View>
@@ -186,7 +416,7 @@ const PickupBillingDetails = ({navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('')}
+          onPress={submitBillingDetails}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
@@ -254,6 +484,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 15,
     width: '100%',
+    color: colors.black,
     fontFamily: 'Montserrat-Regular',
     borderWidth: 1,
     borderRadius: 5,
@@ -266,6 +497,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     width: '95%',
     fontFamily: 'Montserrat-Regular',
+    color: colors.black,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#2C303336',
@@ -274,21 +506,6 @@ const styles = StyleSheet.create({
   nameInputDiv: {
     width: '50%',
     marginBottom: 15,
-  },
-  inputSearchStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
-  },
-  placeholderStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
-  },
-  selectedTextStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: colors.text,
   },
   logbutton: {
     width: '100%',
@@ -302,6 +519,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

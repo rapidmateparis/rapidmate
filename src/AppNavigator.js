@@ -115,6 +115,17 @@ import messaging from '@react-native-firebase/messaging';
 import DriverNotAvailable from './components/PickupDrop-off/DriverNotAvailable';
 import Supports from './components/DeliveryBoy/DeliverySettings/Supports';
 import DeliveryboyHistory from './components/DeliveryBoy/DeliverboyHistory';
+import PickupBillingDetails from './components/PickupDrop-off/Settings/PickupBillingDetails';
+import ConsumerManageProfile from './components/PickupDrop-off/Settings/ConsumerManageProfile';
+import EnterpriseManageProfile from './components/Enterprise/EnterpriseSettings/EnterpriseManageProfile';
+import DeliveryboyManageProfile from './components/DeliveryBoy/DeliverySettings/DeliveryboyManageProfile';
+import EnterpriseDriverNotAvailable from './components/Enterprise/EnterpriseSettings/EnterpriseDriverNotAvailable';
+import AddDropDetails from './components/PickupDrop-off/AddDropDetails';
+import WithdrawPayment from './components/PickupDrop-off/Settings/WithdrawPayment';
+import WithdrawAmountTransfered from './components/PickupDrop-off/Settings/WithdrawAmountTransfered';
+import ScheduleOrderSuccess from './components/PickupDrop-off/ScheduleOrderSuccess';
+import DeliveryboyBillingDetails from './components/DeliveryBoy/DeliverySettings/DeliveryboyBillingDetails';
+import EnterpriseAddMultpleDropDetails from './components/Enterprise/EnterpriseAddMultpleDropDetails';
 
 const Stack = createStackNavigator();
 
@@ -245,6 +256,39 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                 })}
+              />
+              <Stack.Screen
+                name="WithdrawPayment"
+                component={WithdrawPayment}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Withdraw',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="WithdrawAmountTransfered"
+                component={WithdrawAmountTransfered}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="LogInScreen"
@@ -419,6 +463,34 @@ const AppNavigator = () => {
                 })}
               />
               <Stack.Screen
+                name="AddDropDetails"
+                component={AddDropDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Add drop details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
                 name="PickupOrderPreview"
                 component={PickupOrderPreview}
                 options={({navigation}) => ({
@@ -449,18 +521,8 @@ const AppNavigator = () => {
               <Stack.Screen
                 name="OrderPickup"
                 component={OrderPickup}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
+                options={() => ({
+                  headerLeft: null,
                   headerTitle: 'Order Confirmed',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
@@ -518,6 +580,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: 'Payment Success',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="ScheduleOrderSuccess"
+                component={ScheduleOrderSuccess}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Schedule Order Success',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1062,13 +1152,6 @@ const AppNavigator = () => {
                           color={colors.text}
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity style={{paddingRight: 10}}>
-                        <Feather
-                          name="download"
-                          size={25}
-                          color={colors.text}
-                        />
-                      </TouchableOpacity>
                     </View>
                   ),
                 })}
@@ -1434,6 +1517,34 @@ const AppNavigator = () => {
                 options={{headerShown: false}}
               />
               <Stack.Screen
+                name="DeliveryboyManageProfile"
+                component={DeliveryboyManageProfile}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Manage Profile',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
                 name="DeliveryboySetAvailability"
                 component={DeliveryboySetAvailability}
                 options={({navigation}) => ({
@@ -1481,6 +1592,34 @@ const AppNavigator = () => {
                 component={DeliveryPackageScheduleRequest}
                 options={{headerShown: false}}
               />
+              <Stack.Screen
+                name="DeliveryboyBillingDetails"
+                component={DeliveryboyBillingDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Billing Details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
               {/* Enterprises Start Here  */}
               <Stack.Screen
                 name="EnterprisesTakeSelfie"
@@ -1509,6 +1648,11 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                 })}
+              />
+              <Stack.Screen
+                name="EnterpriseDriverNotAvailable"
+                component={EnterpriseDriverNotAvailable}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="EnterpriseSignup"
@@ -1595,6 +1739,62 @@ const AppNavigator = () => {
                 })}
               />
               <Stack.Screen
+                name="ConsumerManageProfile"
+                component={ConsumerManageProfile}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Manage profile',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="PickupBillingDetails"
+                component={PickupBillingDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Billing Details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
                 name="EnterpriseLocation"
                 component={EnterpriseLocation}
                 options={({navigation}) => ({
@@ -1647,6 +1847,34 @@ const AppNavigator = () => {
                       </TouchableOpacity>
                     </View>
                   ),
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseManageProfile"
+                component={EnterpriseManageProfile}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Manage profile',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
                 })}
               />
               <Stack.Screen
@@ -1888,7 +2116,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1944,7 +2172,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1972,7 +2200,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2000,7 +2228,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: 'Create New Delivery',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2205,6 +2433,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: 'Payment',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseAddMultpleDropDetails"
+                component={EnterpriseAddMultpleDropDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Add Drop Details',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

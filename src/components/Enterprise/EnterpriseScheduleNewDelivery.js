@@ -21,7 +21,7 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
             <Image style={{width: 212, height: 140,}} source={require('../../image/ScheduleNewDelivery.png')} />
           </View>
           <View style={styles.schedulecard}>
-            <Text style={styles.scheduleTitle}>Schedule New Delivery</Text>
+            <Text style={styles.scheduleTitle}>Create New Delivery</Text>
             <Text style={styles.scheduleSubTitle}>
               Schedule for one time or for multiple hours
             </Text>
@@ -395,8 +395,8 @@ const styles = StyleSheet.create({
   },
   schedulecard: {
     paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 80,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   franchiseSubTitle: {
     fontSize: 12,

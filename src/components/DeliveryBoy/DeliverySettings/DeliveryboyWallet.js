@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,14 +8,38 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../../../colors';
+import {getDeliveryBoyWallet} from '../../../data_manager';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import {useLoader} from '../../../utils/loaderContext';
 
 const DeliveryboyWallet = ({navigation}) => {
-    
+  const [walletAmount, setWalletAmount] = useState();
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+
+  useEffect(() => {
+    setLoading(true);
+    getDeliveryBoyWallet(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        setWalletAmount(successResponse[0]._response.balance);
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }, []);
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -31,16 +55,17 @@ const DeliveryboyWallet = ({navigation}) => {
               />
             </View>
             <View>
-              <Text style={styles.dollerSymbol}>
-                $
-                <Text style={styles.amount}>
-                  250<Text style={styles.moneyDot}>.85</Text>
-                </Text>
-              </Text>
+              <Text style={styles.dollerSymbol}>{`€ ${
+                walletAmount ? walletAmount : ''
+              }`}</Text>
               <Text style={styles.walletBalance}>Wallet balance</Text>
             </View>
             <View style={styles.actionCard}>
-              <TouchableOpacity style={styles.actionsBt}>
+              <TouchableOpacity
+                style={styles.actionsBt}
+                onPress={() => {
+                  navigation.navigate('WithdrawPayment');
+                }}>
                 <Text style={styles.btnText}>Withdraw</Text>
               </TouchableOpacity>
 
@@ -63,7 +88,7 @@ const DeliveryboyWallet = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <Image source={require('../../../image/paypal-icon.png')} />
-          <View style={{marginLeft: 5, flex: 1,}}>
+          <View style={{marginLeft: 5, flex: 1}}>
             <Text style={styles.paymentPlateform}>PayPal</Text>
             <Text style={styles.mailId}>username@email.com</Text>
           </View>
@@ -74,7 +99,7 @@ const DeliveryboyWallet = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <Image source={require('../../../image/logos_mastercard.png')} />
-          <View style={{marginLeft: 5, flex: 1,}}>
+          <View style={{marginLeft: 5, flex: 1}}>
             <Text style={styles.paymentPlateform}>Axis Bank</Text>
             <Text style={styles.mailId}>**** **** **** 1234</Text>
           </View>
@@ -84,8 +109,10 @@ const DeliveryboyWallet = ({navigation}) => {
         </View>
 
         <View style={styles.securePayment}>
-        <FontAwesome name="shield" size={15} color="#1D1617" />
-        <Text style={styles.paymentInfo}>Your payment information is secure</Text>
+          <FontAwesome name="shield" size={15} color="#1D1617" />
+          <Text style={styles.paymentInfo}>
+            Your payment information is secure
+          </Text>
         </View>
       </View>
     </ScrollView>
@@ -200,7 +227,7 @@ const styles = StyleSheet.create({
   mailId: {
     color: '#131314',
     fontSize: 10,
-    fontFamily: 'Montserrat-Regular',  
+    fontFamily: 'Montserrat-Regular',
   },
   securePayment: {
     flexDirection: 'row',
@@ -209,10 +236,10 @@ const styles = StyleSheet.create({
     marginTop: '55%',
   },
   paymentInfo: {
-     color: '#1D1617',
-     fontSize: 12,
-     fontFamily: 'Montserrat-Medium', 
-     marginLeft: 5,
+    color: '#1D1617',
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    marginLeft: 5,
   },
 });
 

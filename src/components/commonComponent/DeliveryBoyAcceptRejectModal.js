@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -73,28 +73,36 @@ function DeliveryBoyAcceptRejectModal({
   };
 
   const handleOrderRequest = value => {
+    console.log('deliveryBoyAcceptRejectMessage ======>',deliveryBoyAcceptRejectMessage)
     let params = {
       delivery_boy_ext_id: deliveryBoyAcceptRejectMessage?.deliveryBoy?.ext_id,
       order_number: deliveryBoyAcceptRejectMessage?.order?.order_number,
+      amount: deliveryBoyAcceptRejectMessage?.order?.amount,
+      distance: deliveryBoyAcceptRejectMessage?.order?.distance,
       status: value ? 'Accepted' : 'Rejected',
     };
     orderRequestAction(
       params,
       successResponse => {
+
+        // navigation.navigate('DeliveryboyDeliveryDetails', {
+        //   order_number: deliveryBoyAcceptRejectMessage.order.order_number,
+        //   package_photo: deliveryBoyAcceptRejectMessage.order.package_photo,
+        //   orderItem: deliveryBoyAcceptRejectMessage.order,
+        // });
+        // TODO go to delivery details 
         console.log('successResponse==>', JSON.stringify(successResponse));
+        toggleModal();
       },
       errorResponse => {
         console.log('errorResponse==>', JSON.stringify(errorResponse));
+        toggleModal();
       },
     );
   };
 
   return (
     <Modal isVisible={isDeliveryBoyAcceptRejectModalModalVisible}>
-      {console.log(
-        'deliveryBoyAcceptRejectMessage===>',
-        deliveryBoyAcceptRejectMessage?.order?.order_number,
-      )}
       <GestureHandlerRootView>
         <View style={styles.modalContent}>
           <View style={styles.imageContainer}>
@@ -105,9 +113,24 @@ function DeliveryBoyAcceptRejectModal({
               />
               <Text style={styles.maintext}>New delivery request!</Text>
               <Text style={styles.subText}>
-                There is a new delivery request on your route, you can accept
-                they request also{' '}
-                {`\n\n ${deliveryBoyAcceptRejectMessage?.order?.order_number}`}
+                Estimated cost:{' '}
+                <Text
+                  style={
+                    styles.boldSubText
+                  }>{`€${deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount}`}</Text>
+              </Text>
+              <Text style={styles.subText}>
+                Total distance:{' '}
+                <Text
+                  style={
+                    styles.boldSubText
+                  }>{`${deliveryBoyAcceptRejectMessage?.order?.distance}Km`}</Text>
+              </Text>
+              <Text style={styles.subText}>
+                Order Number:{' '}
+                <Text style={styles.boldSubText}>
+                  {deliveryBoyAcceptRejectMessage?.order?.order_number}
+                </Text>
               </Text>
             </View>
             <View style={styles.addressCard}>
@@ -200,23 +223,22 @@ function DeliveryBoyAcceptRejectModal({
 
 const styles = StyleSheet.create({
   swipeAcceptContainer: {
-    height: 60,
+    height: 50,
     backgroundColor:
       'background: linear-gradient(90deg, rgba(39, 174, 96, 0.12) 30.26%, rgba(39, 174, 96, 0.04) 80.04%);',
     borderRadius: 30,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 30,
-    margin: 10,
+    marginHorizontal: 10,
+    marginTop: 20,
   },
   swipeRejectContainer: {
-    height: 60,
+    height: 50,
     backgroundColor:
       'background: linear-gradient(90deg, rgba(186, 26, 26, 0.12) 30.26%, rgba(186, 26, 26, 0.04) 80.04%);',
     borderRadius: 30,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 30,
     margin: 10,
   },
   background: {
@@ -230,11 +252,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingTop: 50,
   },
   text: {
     color: '#555',
-    fontSize: 18,
+    fontSize: 14,
     fontFamily: 'Montserrat-Regular',
     paddingLeft: 30,
   },
@@ -256,7 +277,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: colors.white,
-    height: '90%',
+    height: '95%',
     width: '100%',
     borderRadius: 15,
   },
@@ -288,12 +309,12 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 15,
   },
   loaderMap: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
   },
   subText: {
     color: colors.text,
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Montserrat-Regular',
     textAlign: 'center',
   },
@@ -346,18 +367,11 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 20,
     fontFamily: 'Montserrat-SemiBold',
-    marginTop: 20,
     marginBottom: 5,
     textAlign: 'center',
   },
-  subText: {
-    color: colors.text,
-    fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
-    textAlign: 'center',
-  },
-  timerCount: {
-    color: colors.text,
+  boldSubText: {
+    color: colors.secondary,
     fontSize: 14,
     fontFamily: 'Montserrat-Bold',
   },

@@ -20,23 +20,15 @@ import Notifications from './Settings/Notifications';
 import PickupHome from './PickupHome';
 import History from './History';
 import RNExitApp from 'react-native-exit-app';
-import {requestNotificationPermission} from '../../utils/common';
+import {requestNotificationPermission,localizationText} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-import {getViewOrderDetail, updateUserProfile} from '../../data_manager';
+import {getNotificationCount, getViewOrderDetail, updateUserProfile} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
-import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
-import {set} from 'react-native-reanimated';
 
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
-  const [
-    isDeliveryBoyAcceptRejectModalModalVisible,
-    setDeliveryBoyAcceptRejectModalModalVisible,
-  ] = useState(false);
-  const [deliveryBoyAcceptRejectMessage, setDeliveryBoyAcceptRejectMessage] =
-    useState();
 
   useEffect(() => {
     const onBackPress = () => {
@@ -67,15 +59,46 @@ const PickupBottomNav = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
+
+  const getNotificationAllCount = () => {
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        userDetails.userDetails[0].notificationCount
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      },
+      errorResponse => {
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
+
+
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      setDeliveryBoyAcceptRejectModalModalVisible(true);
-      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      console.log('remoteMessage *Consumer*', JSON.stringify(remoteMessage));
+      if(remoteMessage.data?.delivered_otp){
+        saveUserDetails({...userDetails,delivered_otp:remoteMessage.data?.delivered_otp});
+      }
+      
+      if(remoteMessage.data?.progressTypeId){
+        saveUserDetails({...userDetails,progressTypeId:remoteMessage.data?.progressTypeId});
+      }
+      
+      getNotificationAllCount()
       getViewOrderDetail(
         remoteMessage.data?.orderNumber,
         successResponse => {
           if (successResponse[0]._success) {
-            setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
+            // setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
           }
         },
         errorResponse => {
@@ -192,7 +215,7 @@ const PickupBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="PickupAddress"
-          name="Requst"
+          name="Requsts"
           component={PickupAddress}
           options={{
             headerShown: false,
@@ -225,7 +248,7 @@ const PickupBottomNav = ({navigation}) => {
           name="Account"
           component={Settings}
           options={{
-            headerTitle: 'Settings',
+            headerTitle: `${localizationText('Common','settings')}`,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,
@@ -247,16 +270,6 @@ const PickupBottomNav = ({navigation}) => {
           }}
         />
       </Bottom.Navigator>
-
-      <DeliveryBoyAcceptRejectModal
-        isDeliveryBoyAcceptRejectModalModalVisible={
-          isDeliveryBoyAcceptRejectModalModalVisible
-        }
-        setDeliveryBoyAcceptRejectModalModalVisible={
-          setDeliveryBoyAcceptRejectModalModalVisible
-        }
-        deliveryBoyAcceptRejectMessage={deliveryBoyAcceptRejectMessage}
-      />
     </>
   );
 };

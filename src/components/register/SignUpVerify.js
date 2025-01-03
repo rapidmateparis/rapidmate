@@ -23,7 +23,7 @@ import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 
 const SignUpVerify = ({route, navigation}) => {
-  const {saveUserDetails} = useUserDetails();
+  const {saveUserDetails, userDetails} = useUserDetails();
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
   const [code, setCode] = useState('');
   const {setLoading} = useLoader();
@@ -41,7 +41,7 @@ const SignUpVerify = ({route, navigation}) => {
         setFcmToken(fcmToken);
       }
     }
-    onSignIn();
+    // onSignIn();
   }, []);
 
   async function onSignIn() {
@@ -88,6 +88,7 @@ const SignUpVerify = ({route, navigation}) => {
                 if (successResponse[0]._success) {
                   console.log(successResponse[0]._response);
                   saveUserDetails({
+                    rapidToken : successResponse[0]._response.rapid_token,
                     userInfo: successResponse[0]._response.user.idToken.payload,
                     userDetails: successResponse[0]._response.user_profile,
                   });

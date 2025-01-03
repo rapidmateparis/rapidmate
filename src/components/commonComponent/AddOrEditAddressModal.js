@@ -11,6 +11,7 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dropdown} from 'react-native-element-dropdown';
+import { ScrollView } from 'react-native-gesture-handler';
 
 function AddOrEditAddressModal({
   modalVisible,
@@ -60,7 +61,7 @@ function AddOrEditAddressModal({
   return (
     <View style={{flex: 1}}>
       <Modal isVisible={modalVisible}>
-        <View style={styles.modalContent}>
+        <ScrollView style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerTitle}>
               {addressId == 0 ? 'Add new address' : 'Edit address'}
@@ -75,6 +76,7 @@ function AddOrEditAddressModal({
               <Text style={styles.textlable}>Address</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={address}
                 onChangeText={text => setAddress(text)}
@@ -85,6 +87,7 @@ function AddOrEditAddressModal({
                 <Text style={styles.textlable}>First name*</Text>
                 <TextInput
                   style={styles.inputTextStyle}
+                  placeholderTextColor="#999"
                   placeholder="Type here"
                   value={name}
                   onChangeText={text => setName(text)}
@@ -95,6 +98,7 @@ function AddOrEditAddressModal({
                 <Text style={styles.textlable}>Last name</Text>
                 <TextInput
                   style={styles.inputTextStyle}
+                  placeholderTextColor="#999"
                   placeholder="Type here"
                   value={lastname}
                   onChangeText={text => setLastname(text)}
@@ -105,6 +109,7 @@ function AddOrEditAddressModal({
               <Text style={styles.textlable}>Company</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={company}
                 onChangeText={text => setCompany(text)}
@@ -119,6 +124,10 @@ function AddOrEditAddressModal({
                       data={data}
                       search
                       maxHeight={300}
+                      itemTextStyle={styles.itemtextStyle}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
                       labelField="label"
                       valueField="value"
                       placeholder={!isFocus ? '+33' : '...'}
@@ -157,6 +166,7 @@ function AddOrEditAddressModal({
               <Text style={styles.textlable}>Email</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={email}
                 onChangeText={text => setEmail(text)}
@@ -167,7 +177,8 @@ function AddOrEditAddressModal({
               <TextInput
                 style={styles.inputTextStyle}
                 multiline={true}
-                numberOfLines={4} // Set the number of lines you want to display initially
+                placeholderTextColor="#999"
+                numberOfLines={4} 
                 placeholder="Type here"
                 textAlignVertical="top"
                 value={comments}
@@ -213,7 +224,7 @@ function AddOrEditAddressModal({
               <Text style={styles.okButton}>Save</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     </View>
   );
@@ -268,7 +279,7 @@ const styles = StyleSheet.create({
   saveBTn: {
     width: '45%',
     borderRadius: 8,
-    padding: 15,
+    padding: 12,
     backgroundColor: colors.primary,
   },
   CancellationReasonCard: {
@@ -287,7 +298,7 @@ const styles = StyleSheet.create({
   },
   logFormView: {
     backgroundColor: '#fff',
-    padding: 15,
+    paddingHorizontal: 15,
   },
   textInputDiv: {
     flexDirection: 'row',
@@ -313,7 +324,7 @@ const styles = StyleSheet.create({
   logbutton: {
     width: '45%',
     borderRadius: 8,
-    padding: 15,
+    padding: 12,
     borderWidth: 1,
     borderColor: '#BA1A1A',
   },
@@ -398,15 +409,17 @@ const styles = StyleSheet.create({
   textlable: {
     fontFamily: 'Montserrat-SemiBold',
     marginBottom: 7,
-    marginTop: 10,
+    marginTop: 7,
     fontSize: 12,
     color: colors.text,
   },
   inputTextStyle: {
     borderWidth: 1,
     borderColor: '#ccc',
+    color: colors.text,
     borderRadius: 5,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
   },
@@ -420,6 +433,22 @@ const styles = StyleSheet.create({
     borderColor: '#ccc', // Color of the dots
     borderStyle: 'dashed',
     width: '100%', // Full width of the border
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

@@ -19,6 +19,8 @@ import {
   addPayment,
   checkPromoCode,
   createPickupOrder,
+  getTaxDetails,
+  orderStatusUpdate,
 } from '../../data_manager';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
@@ -30,6 +32,7 @@ import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 import {debounce} from 'lodash';
+import { localToUTC } from '../../utils/common';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -40,18 +43,56 @@ const PickupPayment = ({route, navigation}) => {
   const [orderResponse, setOrderResponse] = useState();
   const [promoCode, setPromoCode] = useState('');
   const params = route.params.props;
-  const [totalAmount, setTotalAmount] = useState(
-    typeof params.selectedVehiclePrice === 'number'
-      ? params.selectedVehiclePrice.toFixed(2)
-      : params.selectedVehiclePrice,
-  );
+  const [totalAmount, setTotalAmount] = useState(0);
+  console.log("dsgdhsgadghsagh", params.userDetails.number)
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
+  const [offerDiscount, setOfferDiscount] = useState(params.paymentDiscount);
+  const [vechicleTax, setVechicleTax] = useState(20);
 
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  const getTaxAmount = ()=>{
+    const amount =   typeof params.selectedVehiclePrice === 'number'
+      ? params.selectedVehiclePrice.toFixed(2)
+      : parseFloat(params.selectedVehiclePrice)
+    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+     return taxAmount? taxAmount.toFixed(2): 0
+  }
+
+
+  useEffect(()=>{
+
+   const amount =   typeof params.selectedVehiclePrice === 'number'
+      ? params.selectedVehiclePrice.toFixed(2)
+      : parseFloat(params.selectedVehiclePrice)
+    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+     const total_Amount = parseFloat(amount)+taxAmount
+     if(total_Amount){
+      setTotalAmount(total_Amount.toFixed(2))
+      setPaymentAmount(total_Amount.toFixed(2))
+     }
+  },[vechicleTax])
+
+  function calculateFinalPrice(originalPrice, discountPercentage) {
+    console.log(originalPrice, discountPercentage);
+    const discount = (originalPrice * discountPercentage) / 100;
+    const finalPrice = originalPrice - discount;
+    console.log(finalPrice);
+    return finalPrice.toFixed(2);
+  }
+
+  useEffect(() => {
+    {
+      offerDiscount > 0 &&
+        setPaymentAmount(calculateFinalPrice(paymentAmount, offerDiscount));
+    }
+  }, []);
 
   useEffect(() => {
     if (orderNumber) {
@@ -60,6 +101,16 @@ const PickupPayment = ({route, navigation}) => {
   }, [orderNumber]);
 
   useEffect(() => {}, [orderResponse]);
+  useEffect(() => {
+    getTaxDetails((success)=>{
+      if(success[0]._response[0].tax_value){
+        setVechicleTax(parseFloat(success[0]._response[0].tax_value))
+      }
+    },
+    (error)=>{
+      console.log('error ====== ===== ',error)
+    })
+  }, []);
 
   const createPaymentIntent = async () => {
     try {
@@ -115,16 +166,54 @@ const PickupPayment = ({route, navigation}) => {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: 'Go Home', onPress: () => navigation.navigate('PickupBottomNav')},
+        {
+          text: 'Go Home',
+          onPress: () => {
+            setLoading(true);
+            let params = {
+              order_number: orderNumber,
+              status: 'Payment Failed',
+            };
+            console.log('params ===>', JSON.stringify(params));
+
+            orderStatusUpdate(
+              params,
+              successResponse => {
+                setLoading(false);
+                console.log('message===>', JSON.stringify(successResponse));
+                navigation.navigate('PickupBottomNav')
+              },
+              errorResponse => {
+                setLoading(false);
+                console.log('message===>', JSON.stringify(errorResponse));
+              },
+            );
+          },
+        },
       ]);
     }
   };
 
+
+  const getCurrentDateAndTime =()=>{ // return format like YYYY-MM-DD HH:mm:ss
+    const currentDate = new Date()
+    const date = currentDate.getDate() > 9 ? currentDate.getDate() :'0'+currentDate.getDate()
+    const month = currentDate.getMonth()+1  > 9 ? currentDate.getMonth()+1 :'0'+currentDate.getMonth()+1
+    const year = currentDate.getFullYear()
+
+    const hour = currentDate.getHours() > 9 ? currentDate.getHours() :'0'+currentDate.getHours()
+    const min = currentDate.getMinutes() > 9 ? currentDate.getMinutes() :'0'+currentDate.getMinutes()
+    const sec = currentDate.getSeconds() > 9 ? currentDate.getSeconds() :'0'+currentDate.getSeconds()
+
+    return `${year}-${month}-${date} ${hour}:${min}:${sec}`
+
+  }
+
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
       console.log('params.schedule_date_time', params.schedule_date_time);
-      if (params.serviceTypeId == 2) {
-        var scheduleParam = {schedule_date_time: params.schedule_date_time};
+      if (params.serviceTypeId == 1) {
+        var scheduleParam = {schedule_date_time: localToUTC(params.schedule_date_time)};
       }
       let requestParams = {
         consumer_ext_id: userDetails.userDetails[0].ext_id,
@@ -137,10 +226,28 @@ const PickupPayment = ({route, navigation}) => {
           ? params.destinationLocationId
           : 2,
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+        total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
         total_amount: parseFloat(paymentAmount),
+        discount: offerDiscount,
+        pickup_notes: params.userDetails.pickupNotes,
+        mobile: params.userDetails.number,
+        company_name: params.userDetails.company,
         ...scheduleParam,
-      };
 
+        drop_first_name: params.drop_details.drop_first_name,
+        drop_last_name: params.drop_details.drop_last_name,
+        drop_mobile: params.drop_details.drop_mobile,
+        drop_notes: params.drop_details.drop_notes,
+        drop_email: params.drop_details.drop_email,
+        drop_company_name: params.drop_details.drop_company_name,
+        // order_date: getCurrentDateAndTime()
+        order_date: localToUTC(),
+        package_photo: params.userDetails.package_photo,
+        tax_value:vechicleTax
+      };
+      
+
+      console.log('LOCAL to UTC ==:', localToUTC())      
       if (promoCodeResponse) {
         requestParams.promo_code = promoCodeResponse.promoCode;
         requestParams.promo_value = promoCodeResponse.discount;
@@ -158,6 +265,7 @@ const PickupPayment = ({route, navigation}) => {
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
           }
+          console.log("requestParams===",requestParams)
         },
         errorResponse => {
           setLoading(false);
@@ -185,13 +293,33 @@ const PickupPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('PaymentSuccess');
+          navigation.navigate('PaymentSuccess',{
+            schedule_date_time: params.schedule_date_time,
+            serviceTypeId:params.serviceTypeId
+          });
         }
       },
       errorResponse => {
-        setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
-          {text: 'OK', onPress: () => {}},
+        Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+          {
+            text: 'OK',
+            onPress: () => {
+              let params = {
+                order_number: orderNumber,
+                status: 'Payment Failed',
+              };
+              orderStatusUpdate(
+                params,
+                successResponse => {
+                  console.log('message===>', JSON.stringify(successResponse));
+                },
+                errorResponse => {
+                  setLoading(false);
+                  console.log('message===>', JSON.stringify(errorResponse));
+                },
+              );
+            },
+          },
         ]);
       },
     );
@@ -267,14 +395,20 @@ const PickupPayment = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          <View style={[styles.distanceTime, {marginVertical: 15}]}>
+          <View style={[styles.distanceTime, {marginVertical: 3}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From{' '}
+              From:{' '}
               {params.sourceLocation.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : ''}{' '}
-              to{' '}
+            </Text>
+          </View>
+
+          <View style={styles.distanceTime}>
+            <EvilIcons name="location" size={18} color="#606060" />
+            <Text style={styles.vehicleCapacity}>
+              To:{' '}
               {params.destinationLocation.destinationDescription
                 ? params.destinationLocation.destinationDescription
                 : ''}
@@ -282,30 +416,64 @@ const PickupPayment = ({route, navigation}) => {
           </View>
 
           <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Amount</Text>
+            <Text style={styles.totalAmount}>€ {params.selectedVehiclePrice}</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Tax {vechicleTax}%</Text>
+            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
             <Text style={styles.totalAmount}>€ {totalAmount}</Text>
           </View>
         </View>
 
-        <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor: promoCodeResponse
+                ? colors.lightGrey
+                : colors.white,
+            },
+          ]}>
           <Image source={require('../../image/ticket-discount.png')} />
           <TextInput
             style={styles.input}
             placeholder="Promo code"
             placeholderTextColor="#999"
+            editable={promoCodeResponse ? false : true}
             onChangeText={text => setPromoCode(text)}
           />
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.secondary,
-              paddingHorizontal: 20,
-              paddingVertical: 13,
-              borderTopRightRadius: 10,
-              borderBottomEndRadius: 10,
-            }}
-            onPress={applyPromoCode}>
-            <AntDesign name="check" size={20} color="#fff" />
-          </TouchableOpacity>
+          {promoCodeResponse ? (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={() => {
+                setPromoCodeResponse(null);
+                setPaymentAmount(totalAmount);
+              }}>
+              <AntDesign name="close" size={20} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={applyPromoCode}>
+              <AntDesign name="check" size={20} color="#fff" />
+            </TouchableOpacity>
+          )}
         </View>
         {promoCodeResponse && (
           <Text
@@ -313,7 +481,7 @@ const PickupPayment = ({route, navigation}) => {
               styles.discountInfo,
               {fontSize: 16, alignSelf: 'flex-end'},
             ]}>
-            Discount: {promoCodeResponse.discount}
+            Discount: € {promoCodeResponse.discount}
           </Text>
         )}
 
@@ -330,6 +498,21 @@ const PickupPayment = ({route, navigation}) => {
             20% off on city bank credit card!
           </Text>
         </View>
+
+        {offerDiscount > 0 && (
+          <View style={styles.discountCard}>
+            <Image
+              style={{marginRight: 20}}
+              source={require('../../image/Group.png')}
+            />
+            <Text style={styles.discountInfo}>
+              {offerDiscount}% off on{' '}
+              {params.serviceTypeId == 2
+                ? 'Schedule Order'
+                : 'Pickup&Drop Order'}
+            </Text>
+          </View>
+        )}
 
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>
@@ -444,7 +627,7 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   totalAmount: {
     fontSize: 12,
@@ -505,7 +688,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '50%',
+    marginTop: 100,
+    marginBottom: 20,
   },
   PayText: {
     backgroundColor: '#FFFFFF',

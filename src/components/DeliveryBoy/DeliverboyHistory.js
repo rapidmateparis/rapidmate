@@ -7,56 +7,139 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Switch,
 } from 'react-native';
+import {FlatList, ActivityIndicator} from 'react-native';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useFocusEffect} from '@react-navigation/native';
-import {getDeliveryBoyViewOrdersList, getLocations} from '../../data_manager';
+import {
+  getDeliveryBoyViewOrdersList,
+  getDeliveryBoyViewOrdersListBySearch,
+  getLocations,
+} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
-import {FlatList} from 'react-native-gesture-handler';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
-
+import {titleFormat, utcLocal} from '../../utils/common';
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = ({navigation}) => {
-  const [searchText, setSearchText] = useState('');
+const TodayList = ({navigation, filterCriteria, searchText}) => {
   const [index, setIndex] = useState(0);
   const [currentOrderList, setCurrentOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
+  const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
+      resetAll();
       getLocationsData();
-      let postParams = {
-        extentedId: userDetails.userDetails[0].ext_id,
-        status: 'current',
-      };
-      setLoading(true);
-      getDeliveryBoyViewOrdersList(
-        postParams,
-        null,
-        successResponse => {
-          console.log('ordr', successResponse[0]._response);
-          setCurrentOrderList(successResponse[0]._response);
-          setLoading(false);
-        },
-        errorResponse => {
-          console.log(errorResponse);
-          setLoading(false);
-        },
-      );
-
+      getOnGoingRecords(1);
       return () => {
         setCurrentOrderList([]);
       };
-    }, []),
+    }, [filterCriteria]),
   );
+
+  const resetAll = () => {
+    setCurrentOrderList([]);
+    setPage(1);
+    setCheckMoreData(true);
+    getOnGoingRecords(1);
+  };
+
+  const getOnGoingRecords = newPage => {
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+      orderType: filterCriteria,
+      page: newPage ? newPage : page,
+      size: size,
+    };
+    console.log('ongoing Rec parm ==== ', postParams);
+
+    setLoading(true);
+    getDeliveryBoyViewOrdersList(
+      postParams,
+      null,
+      successResponse => {
+        console.log(
+          'ongoing Rec parm ==== ',
+          successResponse[0]._response.length,
+        );
+
+        if (size === successResponse[0]._response.length) {
+          setPage(page + 1);
+          setCheckMoreData(true);
+        } else if(size > successResponse[0]._response.length ){
+          setCheckMoreData(false);
+        }
+        if (newPage === 1) {
+          setCurrentOrderList([...successResponse[0]._response]);
+        } else {
+          setCurrentOrderList([
+            ...currentOrderList,
+            ...successResponse[0]._response,
+          ]);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        console.log(errorResponse);
+        setLoading(false);
+      },
+    );
+  };
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setCurrentOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+      filterCriteria: filterCriteria,
+      orderNumber: searchValue,
+    };
+    getDeliveryBoyViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setCurrentOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setCurrentOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -90,11 +173,19 @@ const TodayList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() =>
+          onPress={() => {
+          if(item?.item?.locations && item?.item?.locations?.length > 0){
+            navigation.navigate('DeliveryDetailsMultipleOrder',{
+                orderItem: item.item,
+            });
+          }else{
             navigation.navigate('DeliveryboyDeliveryDetails', {
               order_number: item.item.order_number,
-            })
+              package_photo: item.item.package_photo,
+              orderItem: item.item,
+            });
           }
+          }}
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -102,10 +193,18 @@ const TodayList = ({navigation}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              Scheduled on{' '}
+              {item.item.delivery_boy_order_title}{' '}
+              {item.item.is_show_datetime_in_title == 1
+                ? item.item.order_status === 'ORDER_PLACED'
+                  ? titleFormat(
+                      item.item.schedule_date_time || item.item.order_date,
+                    )
+                  : titleFormat(item.item.updated_on)
+                : ''}
+              {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
-              )}
+              )} */}
             </Text>
           </View>
 
@@ -140,7 +239,8 @@ const TodayList = ({navigation}) => {
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
             <Text style={styles.valueMoney}>
-              €{item.item.amount ? item.item.amount : '34.00'}
+              €
+              {item.item.amount ? Number(item.item.amount).toFixed(2) : '34.00'}
             </Text>
           </View>
         </TouchableOpacity>
@@ -148,8 +248,27 @@ const TodayList = ({navigation}) => {
     </View>
   );
 
+  const renderFooter = () => {
+    return (
+      <View style={{padding: 10}}>
+        <ActivityIndicator size="small" color="#d8d8d8" />
+      </View>
+    );
+  };
+
+  const handleLoadMoreOnGoingRecord = () => {
+    if (checkMoreData) {
+      getOnGoingRecords(page);
+    }
+  };
   return currentOrderList.length != 0 ? (
-    <FlatList data={currentOrderList} renderItem={renderItem} />
+    <FlatList
+      data={currentOrderList}
+      renderItem={renderItem}
+      onEndReached={handleLoadMoreOnGoingRecord}
+      onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+      ListFooterComponent={renderFooter}
+    />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View
@@ -174,38 +293,110 @@ const TodayList = ({navigation}) => {
   );
 };
 
-const PastList = ({navigation}) => {
+const PastList = ({navigation, filterCriteria, searchText}) => {
   const [pastOrderList, setPastOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
   const {setLoading} = useLoader();
+  const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
+      resetAll();
       getLocationsData();
-      let postParams = {
-        extentedId: userDetails.userDetails[0].ext_id,
-        status: 'past',
-      };
-      setLoading(true);
-      getDeliveryBoyViewOrdersList(
-        postParams,
-        null,
-        successResponse => {
-          setPastOrderList(successResponse[0]._response);
-          setLoading(false);
-        },
-        errorResponse => {
-          console.log(errorResponse);
-          setLoading(false);
-        },
-      );
-
+      getPastRecords(1);
       return () => {
         setPastOrderList([]);
       };
-    }, []),
+    }, [filterCriteria]),
   );
+
+  // useEffect(() => {
+  //   getPastRecords(page);
+  // }, [page]);
+
+  const resetAll = () => {
+    setPastOrderList([]);
+    setPage(1);
+    setCheckMoreData(true);
+    getPastRecords(1);
+  };
+
+  const getPastRecords = newPage => {
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+      orderType: filterCriteria,
+      page: newPage ? newPage : page,
+      size: size,
+    };
+    setLoading(true);
+    getDeliveryBoyViewOrdersList(
+      postParams,
+      null,
+      successResponse => {
+        if (size === successResponse[0]._response.length) {
+          setPage(page + 1);
+          setCheckMoreData(true);
+        } else if(size > successResponse[0]._response.length ){
+          setCheckMoreData(false);
+        }
+
+        if (newPage === 1) {
+          setPastOrderList([...successResponse[0]._response]);
+        } else {
+          setPastOrderList([...pastOrderList, ...successResponse[0]._response]);
+        }
+        setPastOrderList([...pastOrderList, ...successResponse[0]._response]);
+        setLoading(false);
+      },
+      errorResponse => {
+        console.log(errorResponse);
+        setLoading(false);
+      },
+    );
+  };
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setPastOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+      filterCriteria: filterCriteria,
+      orderNumber: searchValue,
+      page: page,
+      size: size,
+    };
+    getDeliveryBoyViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setPastOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setPastOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLocationList([]);
@@ -239,7 +430,20 @@ const PastList = ({navigation}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyMainDeliveryDetails')}
+          onPress={() =>{
+
+            if(item?.item?.locations && item?.item?.locations?.length > 0){
+              navigation.navigate('DeliveryDetailsMultipleInvoice',{
+                  orderItem: item.item,
+              });
+            }else{
+              navigation.navigate('DeliveryboyMainDeliveryDetails', {
+                orderItem: item.item,
+                componentType : 'DELIVERBOY'
+              })
+            }
+          }
+          }
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
@@ -247,10 +451,18 @@ const PastList = ({navigation}) => {
               source={require('../../image/Big-Package.png')}
             />
             <Text style={styles.deliveryTime}>
-              Scheduled on{' '}
+              {item.item.delivery_boy_order_title}{' '}
+              {item.item.is_show_datetime_in_title == 1
+                ? item.item.order_status === 'ORDER_PLACED'
+                  ? titleFormat(
+                      item.item.schedule_date_time || item.item.order_date,
+                    )
+                  : titleFormat(item.item.updated_on)
+                : ''}
+              {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
-              )}
+              )} */}
             </Text>
           </View>
 
@@ -284,11 +496,11 @@ const PastList = ({navigation}) => {
 
           <View style={styles.footerCard}>
             <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
+            <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
           </View>
         </TouchableOpacity>
 
-        <View style={styles.packageDetailCard}>
+        {/* <View style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
               style={{width: 25, height: 25}}
@@ -332,248 +544,34 @@ const PastList = ({navigation}) => {
             <Text style={styles.orderId}>For National Inc.</Text>
             <Text style={styles.valueMoney}>€34.00</Text>
           </View>
-        </View>
-
-        {/* <TouchableOpacity
-          onPress={() => navigation.navigate('NewDeliveryPackageRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryDetailsMultipleOrder')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyShiftDetails')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryboyShiftStaredRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryPackageRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DeliveryPackageScheduleRequest')}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-
-            <Text style={styles.deliveryTime}>
-              Delivered on Apr 19, 2024 at 11:30 AM
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From <Text style={styles.Location}>North Street, ABC</Text>
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>Order ID: 98237469</Text>
-            <Text style={styles.orderId}>For National Inc.</Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity> */}
+        </View> */}
       </View>
     </View>
   );
 
+  const handleLoadMorePastRecord = () => {
+    if (checkMoreData) {
+      getPastRecords(page);
+    }
+  };
+
+  const renderFooter = () => {
+    return (
+      <View style={{padding: 10}}>
+        <ActivityIndicator size="small" color="#d8d8d8" />
+      </View>
+    );
+  };
+
   return pastOrderList.length != 0 ? (
-    <FlatList data={pastOrderList} renderItem={renderItem} />
+    <FlatList
+      data={pastOrderList}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => index.toString()}
+      onEndReached={handleLoadMorePastRecord}
+      onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+      ListFooterComponent={renderFooter}
+    />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View
@@ -615,18 +613,25 @@ const Past = () => {
 };
 const DeliveryboyHistory = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
-  const [index, setIndex] = useState(0);
+  const [filterCriteria, setFilterCriteria] = useState('N');
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  // Toggle the switch and update filterCriteria
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => {
+      const newState = !previousState;
+      setFilterCriteria(newState ? 'E' : 'N');
+      return newState;
+    });
+  };
 
   return (
     <View style={{flex: 1}}>
       <View
         style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#fff'}}>
-        {/* Your Search Bar */}
+        {/* Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
-          <TouchableOpacity>
-            <AntDesign name="filter" size={20} color={colors.secondary} />
-          </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
           <AntDesign
@@ -637,13 +642,32 @@ const DeliveryboyHistory = ({navigation}) => {
           />
           <TextInput
             style={styles.searchinput}
+            placeholderTextColor="#999"
             placeholder="Search your deliveries"
             value={searchText}
             onChangeText={setSearchText}
           />
+          {searchText && (
+            <AntDesign
+              name="close"
+              size={20}
+              color="#000"
+              style={styles.searchIcon}
+              onPress={() => setSearchText('')}
+            />
+          )}
         </View>
+      </View>
 
-        {/* End of Search Bar */}
+      <View style={styles.containerSwitch}>
+        <Text style={styles.label}>Show Enterprise Orders</Text>
+        <Switch
+          trackColor={{false: '#767577', true: '#FFC72B'}}
+          thumbColor={isEnabled ? '#f4f3f4' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
       </View>
 
       {/* Tab Navigator */}
@@ -656,10 +680,22 @@ const DeliveryboyHistory = ({navigation}) => {
           tabBarStyle: [{display: 'flex', backgroundColor: '#fff'}],
         }}>
         <Tab.Screen name="Ongoing">
-          {() => <TodayList navigation={navigation} />}
+          {() => (
+            <TodayList
+              navigation={navigation}
+              filterCriteria={filterCriteria}
+              searchText={searchText}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="Past">
-          {() => <PastList navigation={navigation} />}
+          {() => (
+            <PastList
+              navigation={navigation}
+              filterCriteria={filterCriteria}
+              searchText={searchText}
+            />
+          )}
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}
@@ -692,6 +728,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   searchinput: {
+    color: colors.text,
     flex: 1,
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',
@@ -722,7 +759,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   deliveryTime: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,
@@ -839,6 +876,27 @@ const styles = StyleSheet.create({
   packageManage: {
     width: 25,
     height: 25,
+  },
+  selectedOption: {
+    backgroundColor: '#d3d3d3',
+  },
+  selectedText: {
+    color: colors.secondary,
+    fontWeight: 'bold',
+  },
+  defaultText: {
+    color: 'black',
+  },
+  containerSwitch: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.white,
+    paddingHorizontal: 15,
+  },
+  label: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });
 

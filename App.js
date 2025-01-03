@@ -3,9 +3,9 @@ import AppNavigator from './src/AppNavigator';
 import {StoreContext} from './src/components/commonComponent/StoreContext';
 import {NetworkProvider} from './src/utils/networkContext';
 import {StripeProvider} from '@stripe/stripe-react-native';
-
+import {MenuProvider} from 'react-native-popup-menu';
+import './src/localization/localizationUtils'
 const App = () => {
-  
   return (
     <StripeProvider
       publishableKey="pk_test_51PgiLhLF5J4TIxENPZOMh8xWRpEsBxheEx01qB576p0vUZ9R0iTbzBFz0QvnVaoCZUwJu39xkym38z6nfNmEgUMX00SSmS6l7e"
@@ -14,7 +14,9 @@ const App = () => {
     >
       <StoreContext>
         <NetworkProvider>
-          <AppNavigator />
+          <MenuProvider>
+            <AppNavigator />
+          </MenuProvider>
         </NetworkProvider>
       </StoreContext>
     </StripeProvider>

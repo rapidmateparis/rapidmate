@@ -1,0 +1,17 @@
+{
+    "Common":{
+        "settings":"सेटिंग्स",
+        "manageYourProfile":"अपना प्रोफ़ाइल प्रबंधित करें",
+        "addressBook":"पता पुस्तिका",
+        "paymentMethods":"भुगतान विधियाँ",
+        "wallet":"बटुआ",
+        "billingDetails":"बिलिंग विवरण",
+        "changePassword":"पासवर्ड बदलें",
+        "notifications":"सूचनाएं",
+        "language":"भाषा",
+        "help":"मदद",
+        "aboutUs":"हमारे बारे में",
+        "faqs":"पूछे जाने वाले प्रश्न",
+        "logout":"लॉग आउट"
+    }
+}

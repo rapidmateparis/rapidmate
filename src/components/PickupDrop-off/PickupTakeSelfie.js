@@ -24,7 +24,7 @@ const PickupTakeSelfie = ({route, navigation}) => {
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
-  const {userDetails} = useUserDetails();
+  const {userDetails,saveUserDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -86,6 +86,10 @@ const PickupTakeSelfie = ({route, navigation}) => {
           'print_data==>successResponseuploadDocumentsApi',
           '' + JSON.parse(successResponse).id,
         );
+        const newUserDetails = userDetails.userDetails[0]
+        newUserDetails['profile_pic']=JSON.parse(successResponse).id
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+
         let profileParams = {
           ext_id: userDetails.userDetails[0].ext_id,
           profile_pic: JSON.parse(successResponse).id,
@@ -122,8 +126,6 @@ const PickupTakeSelfie = ({route, navigation}) => {
       },
     );
   };
-
-  console.log('userDetails', userDetails.userDetails[0].role);
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>

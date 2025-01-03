@@ -2,43 +2,40 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
-  Alert,
 } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MapLiveTracking from '../commonComponent/MapLiveTracking';
 import {colors} from '../../colors';
 import {
   useServiceTypeDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
-import {getServiceTypeApi} from '../../data_manager';
+import {getNotificationCount, getServiceTypeApi} from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 
 const PickupHome = ({navigation}) => {
-  const {userDetails} = useUserDetails();
+  const {userDetails,saveUserDetails} = useUserDetails();
   const {serviceTypeDetails, saveServiceTypeDetails} = useServiceTypeDetails();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+  const {setLoading} = useLoader();
 
   useEffect(() => {
     getServiceTypeApi(
       null,
       successResponse => {
-        console.log('getServiceTypeApi', successResponse[0]._response);
+        console.log('getServiceTypeApi===>', successResponse[0]._response);
         saveServiceTypeDetails(successResponse[0]._response);
       },
       errorResponse => {
         console.log('errorResponse', errorResponse);
       },
     );
+    getNotificationAllCount()
   }, []);
 
   const togglePushNotifications = () => {
@@ -47,6 +44,36 @@ const PickupHome = ({navigation}) => {
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
+  };
+
+  const getScheduledServiceDetails =()=>{
+   return serviceTypeDetails.find((service=>service.service_name === 'Scheduled'))
+  }
+
+  const getNonScheduledServiceDetails =()=>{
+    return serviceTypeDetails.find((service=>service.service_name !== 'Scheduled'))
+   }
+
+   const getNotificationAllCount = () => {
+    setLoading(true);
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
   };
 
   return (
@@ -67,16 +94,23 @@ const PickupHome = ({navigation}) => {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() => {
+              const newUserDetails = userDetails.userDetails[0]
+              newUserDetails['notificationCount']=0
+              saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+              navigation.navigate('Notifications')}}>
             <EvilIcons name="bell" size={40} color="#000" />
-          </TouchableOpacity> 
+            {userDetails.userDetails[0].notificationCount > 0 && <View style={styles.notificationCountStyle}>
+              <Text style={styles.notificationCountText}>{userDetails.userDetails[0].notificationCount}</Text>
+            </View>}
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
             });
           }}>
           <View style={styles.pickcard}>
@@ -97,7 +131,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[0] : [],
+              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
             });
           }}>
           <View>
@@ -118,7 +152,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
             });
           }}>
           <View style={styles.pickcard}>
@@ -139,7 +173,7 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickupPack}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? serviceTypeDetails[1] : [],
+              pickupService: serviceTypeDetails ? getScheduledServiceDetails() : [], //
             });
           }}>
           <View style={styles.packingCardImgas}>
@@ -159,7 +193,11 @@ const PickupHome = ({navigation}) => {
                 size={15}
                 color="#FF0058"
               />
-              <Text style={styles.discountPercentage}>15% OFF</Text>
+              {serviceTypeDetails && (
+                <Text style={styles.discountPercentage}>
+                  {serviceTypeDetails[0]?.discount}% OFF
+                </Text>
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -292,7 +330,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   packageRequst: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
@@ -322,7 +360,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   pickcard: {
-    width: '65%',
+    width: '60%',
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
@@ -358,6 +396,21 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
   },
+  notificationCountStyle:{
+    position:'absolute',
+    right:0,
+    backgroundColor:'red',
+    borderRadius:50,
+    height:16, 
+    width:16,
+    justifyContent:'center',
+    alignItems:'center' 
+  },
+  notificationCountText:{
+    color:'#FFFFFF',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
+  }
 });
 
 export default PickupHome;

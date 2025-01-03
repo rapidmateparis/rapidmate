@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -22,12 +22,15 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localToUTC,
 } from '../../utils/common';
 import MapAddress from '../commonComponent/MapAddress';
 import {useLoader} from '../../utils/loaderContext';
-import {getLocationId} from '../../data_manager';
+import {getLocationId, uploadDocumentsApi} from '../../data_manager';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import MultpleMapAddress from '../commonComponent/MultipleMapAddress';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [pickupAddress, setPickupAddress] = useState('');
@@ -69,6 +72,24 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [selectedWeekDay, setSelectedWeekDay] = useState(null);
 
+  const [destinationBranches, setDestinationBranches] = useState([]);
+  const [multipleDestinationAmount, setMultipleDestinationAmount] = useState(0);
+  const [multipleDestinationDistance, setMultipleDestinationDistance] =
+    useState(0);
+  const [multipleDestinationHours, setMultipleDestinationHours] = useState(0);
+
+  const [mapViewHeight, setMapViewHeight] = useState(200);
+
+  const routeParams = route.params;
+  const deliveryType = route.params.delivery_type_id;
+
+  const {userDetails} = useUserDetails();
+
+  const [imageViewId, setImageViewId] = useState(null);
+
+  const [isInstantDate, setIsInstantDate] = useState(null);
+
+
   const handleDayPress = day => {
     let updatedSelectedDays;
 
@@ -89,14 +110,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const repeatType = [
-    {label: 'Week', value: 'Week'},
-  ];
+  const repeatType = [{label: 'Week', value: 'Week'}];
 
-  const weeklyDay = [
-    {label: 'Day', value: 'Day'},
-  ];
-
+  const weeklyDay = [{label: 'Day', value: 'Day'}];
 
   const monthValue1 = [
     {label: 'First', value: 'First'},
@@ -176,6 +192,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       let cameraData = await handleCameraLaunchFunction();
       if (cameraData.status == 'success') {
         setPhotoFileName(getFileName(cameraData.data.uri));
+        uploadImage(cameraData);
       }
     } catch (error) {
       // Handle errors here
@@ -188,6 +205,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       let imageData = await handleImageLibraryLaunchFunction();
       if (imageData.status == 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
+        uploadImage(imageData);
       }
     } catch (error) {
       // Handle errors here
@@ -203,9 +221,132 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     return fileName.length > 35 ? '...' + fileName : fileName;
   };
 
+  const uploadImage = async image => {
+    if (image != null) {
+      var photo = {
+        uri: image.data.uri,
+        type: image.data.type,
+        name: image.data.fileName,
+      };
+      const formdata = new FormData();
+      formdata.append('file', photo);
+      setLoading(true);
+      uploadDocumentsApi(
+        formdata,
+        successResponse => {
+          setLoading(false);
+          setImageViewId(JSON.parse(successResponse).id);
+        },
+        errorResponse => {
+          console.log(
+            'print_data==>errorResponseuploadDocumentsApi',
+            '' + errorResponse,
+          );
+          setLoading(false);
+          Alert.alert('Error Alert', '' + errorResponse, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      Alert.alert('Error Alert', 'Please choose a picture', [
+        {text: 'OK', onPress: () => {}},
+      ]);
+    }
+  };
+
   const onFetchDistanceAndTime = value => {
     console.log('onFetchDistanceAndTime', value);
     setDistanceTime(value);
+  };
+
+  useEffect(() => {
+    setNumber(userDetails.userDetails[0].phone.substring(3));
+    setCompany(userDetails.userDetails[0].company_name);
+    if (deliveryType == 2) {
+      onBranchSourceLocation(routeParams.sourceBranch);
+    }
+  }, []);
+
+  const onBranchSourceLocation = location => {
+    let locationParams = {
+      location_name: location.branch_name ? location.branch_name : '',
+      address: location.address ? location.address : '',
+      city: location.city ? location.city : '',
+      state: location.state ? location.state : '',
+      country: location.country ? location.country : '',
+      postal_code: location.postal_code ? location.postal_code : '',
+      latitude: location.latitude,
+      longitude: location.longitude,
+    };
+    location.sourceDescription =
+      locationParams.address +
+      ', ' +
+      locationParams.city +
+      ', ' +
+      locationParams.country;
+    setSourceLocation(location);
+    setLoading(true);
+    getLocationId(
+      locationParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          setLoading(false);
+          setSourceLocationId(successResponse[0]._response.location_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const onMultpleDestinationLocation = locations => {
+    var branches = [];
+    var totalAmount = 0;
+    var totalDistance = 0;
+    var totalHours = 0;
+    locations.forEach(element => {
+        if(element.destinationDescription && element?.distance){
+        var currentElement = {};
+        currentElement.distance = element.distance.toFixed(2);
+        totalDistance = totalDistance + element.distance;
+        currentElement.total_hours = element.duration.toFixed(2);
+        totalHours = totalHours + element.duration;
+        currentElement.to_latitude = element.destinationCoordinates.latitude;
+        currentElement.to_longitude = element.destinationCoordinates.longitude;
+        currentElement.amount = Math.round(
+          route.params.vehicle_type.base_price +
+            route.params.vehicle_type.km_price * element.distance,
+        ).toFixed(2);
+        totalAmount =
+          totalAmount +
+          Math.round(
+            route.params.vehicle_type.base_price +
+              route.params.vehicle_type.km_price * element.distance,
+          );
+        currentElement.delivery_date = moment(localToUTC(new Date())).format('YYYY-MM-DD');
+        currentElement.destinationDescription = element.destinationDescription;
+        branches.push(currentElement);
+      }
+    });
+    console.log('distance', totalDistance);
+    console.log('hours', totalHours);
+    if (branches.length > 0) {
+      setDestinationBranches(branches);
+      onFetchDistanceAndTime({
+        distance: branches[0].distance,
+        time: branches[0].total_hours,
+      });
+      setDestinationLocation(locations[0]);
+      setDestinationLocationId(locations[0].locationId);
+      setMultipleDestinationAmount(totalAmount);
+      setMultipleDestinationHours(totalHours);
+      setMultipleDestinationDistance(totalDistance);
+    }
   };
 
   const onSourceLocation = location => {
@@ -273,22 +414,39 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{height: 200, position: 'relative'}}>
-        <MapAddress
-          onFetchDistanceAndTime={onFetchDistanceAndTime}
-          onSourceLocation={onSourceLocation}
-          onDestinationLocation={onDestinationLocation}
-        />
-      </View>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled={true}
+      style={{flex: 1}}>
+      {deliveryType == 2 ? (
+        <View style={{height: 400, position: 'relative'}}>
+          <MultpleMapAddress
+            sourceLocation={routeParams.sourceBranch}
+            onFetchDistanceAndTime={onFetchDistanceAndTime}
+            onDestinationLocation={(location)=>{
+              onMultpleDestinationLocation(location)}
+            }
+          />
+        </View>
+      ) : (
+        <View style={{height: 200, position: 'relative'}}>
+          <MapAddress
+            // sourceLocation={routeParams.sourceBranch}
+            onFetchDistanceAndTime={onFetchDistanceAndTime}
+            onSourceLocation={onSourceLocation}
+            onDestinationLocation={onDestinationLocation}
+          />
+        </View>
+      )}
 
-      <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+      <View style={{width: '100%', backgroundColor: '#FBFAF5'}}>
         <View style={{paddingHorizontal: 15, paddingTop: 8}}>
           <View>
             <View style={{flex: 1}}>
               <Text style={styles.textlable}>Company</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={company}
                 onChangeText={text => setCompany(text)}
@@ -303,6 +461,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     <Dropdown
                       data={numberData}
                       search
+                      itemTextStyle={styles.itemtextStyle}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
                       inputSearchStyle={styles.inputSearchStyle}
@@ -356,7 +515,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <Text style={styles.packagePhoto}>Package photo</Text>
                 <View style={styles.packagePhotoPath}>
                   <Text style={styles.packagePhotoText}>{photoFileName}</Text>
-                  <MaterialCommunityIcons name="close" color="#000" size={13} />
                 </View>
               </View>
             </TouchableOpacity>
@@ -365,6 +523,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               <Text style={styles.textlable}>Package ID</Text>
               <TextInput
                 style={styles.inputTextStyle}
+                placeholderTextColor="#999"
                 placeholder="Type here"
                 value={orderid}
                 onChangeText={text => setOrderid(text)}
@@ -375,6 +534,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               <TextInput
                 style={styles.inputTextStyle}
                 multiline={true}
+                placeholderTextColor="#999"
                 numberOfLines={4} // Set the number of lines you want to display initially
                 placeholder="Type here"
                 textAlignVertical="top"
@@ -383,7 +543,22 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               />
             </View>
 
-            <View style={styles.datetimeCard}>
+            <View>
+              <View style={styles.bookAddress}>
+                <Text style={styles.cardTitle}>Is Instant Date</Text>
+                <TouchableOpacity onPress={()=>setIsInstantDate(isInstantDate ? null :new Date())}>
+                  <MaterialCommunityIcons
+                    name={isInstantDate ? 'toggle-switch' : 'toggle-switch-off'}
+                    size={55}
+                    color={isInstantDate ? '#FFC72B' : '#D3D3D3'}
+                  />
+                </TouchableOpacity>
+              </View>
+            
+            {isInstantDate ?
+            
+            <Text style={styles.pickupDates}>Pickup date :{moment(isInstantDate).format('YYYY-MM-DD')+' '+moment(isInstantDate).format('hh:mm')}</Text>
+            :<View style={styles.datetimeCard}>
               <View style={{width: '50%', marginRight: 8}}>
                 <Text style={styles.pickupDates}>Pickup date</Text>
                 <View style={styles.nameInputDiv}>
@@ -392,9 +567,11 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateOpen}
                     date={date}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateOpen(false);
                       setDate(date);
+                      setTime(date);
                       setPickupDate(moment(date).format('DD/MM/YYYY'));
                     }}
                     onCancel={() => {
@@ -459,6 +636,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   />
                 </View>
               </View>
+            </View>}
+
             </View>
           </View>
         </View>
@@ -496,9 +675,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  setSelectedRepeatType('Day')
-                  setRepeatOrder('Weekly')
-                } }
+                  setSelectedRepeatType('Day');
+                  setRepeatOrder('Weekly');
+                }}
                 style={styles.datesCards}>
                 <FontAwesome
                   name={
@@ -566,6 +745,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       open={dateUntilOpen}
                       date={untilDate}
                       mode="date"
+                      minimumDate={new Date()}
                       onConfirm={date => {
                         setDateUntilOpen(false);
                         setUntilDate(date);
@@ -665,6 +845,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateUntilOpen}
                     date={untilDate}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateUntilOpen(false);
                       setUntilDate(date);
@@ -784,6 +965,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     open={dateUntilOpen}
                     date={untilDate}
                     mode="date"
+                    minimumDate={new Date()}
                     onConfirm={date => {
                       setDateUntilOpen(false);
                       setUntilDate(date);
@@ -918,40 +1100,103 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           <View>
             <TouchableOpacity
               onPress={() => {
-                if (sourceLocationId && destinationLocationId) {
-                  let params = {
-                    ...route.params,
-                    delivery_type_id: 'One time delivery',
-                    distanceTime: distanceTime,
-                    pickup_location: sourceLocation,
-                    dropoff_location: destinationLocation,
-                    pickup_location_id: sourceLocationId,
-                    dropoff_location_id: destinationLocationId,
-                    mobile: number,
-                    company_name: company,
-                    package_note: pickupNotes,
-                    pickup_date: moment(date).format('YYYY-MM-DD'),
-                    pickup_time: moment(time).format('HH:MM'),
-                    is_repeat_mode: promoEmails ? 1 : 0,
-                    package_id: orderid,
-                    amount: Math.round(
-                      route.params.vehicle_type.base_price +
-                        route.params.vehicle_type.km_price *
-                          distanceTime.distance,
-                    ).toFixed(2),
-                    distance: distanceTime.distance.toFixed(2),
-                    time: distanceTime.time.toFixed(0),
-                    repeat_mode: repeatOrder,
-                    repeat_every: selectedRepeatEvery,
-                    repeat_until: moment(untilDate).format('YYYY-MM-DD'),
-                  };
-                  navigation.navigate('EnterprisePickupOrderPriview', params);
-                } else {
+                if (
+                  company == '' ||
+                  number == '' ||
+                  (
+                  !isInstantDate && (pickupDate == '' && pickupTime == '') 
+                  )
+                ) {
                   Alert.alert(
                     'Error Alert',
-                    'Please choose pickup and drop location',
+                    'Please fill the required fields.',
                     [{text: 'OK', onPress: () => {}}],
                   );
+                  return;
+                }
+                if (deliveryType == 2) {
+                  if (sourceLocationId && destinationBranches.length > 0) {
+                    let params = {
+                      ...route.params,
+                      delivery_type_id: deliveryType,
+                      distanceTime: distanceTime,
+                      pickup_location: sourceLocation,
+                      dropoff_location: destinationLocation,
+                      pickup_location_id: sourceLocationId,
+                      dropoff_location_id: destinationLocationId,
+                      mobile: number,
+                      company_name: company,
+                      pickup_notes: pickupNotes,
+                      pickup_date: moment(date).format('YYYY-MM-DD'),
+                      pickup_time: moment(time).format('HH:MM'),
+                      is_repeat_mode: promoEmails ? 1 : 0,
+                      package_id: orderid,
+                      amount: multipleDestinationAmount.toFixed(2),
+                      branches: destinationBranches,
+                      distance: multipleDestinationDistance.toFixed(2),
+                      time: multipleDestinationHours.toFixed(2),
+                      repeat_mode: repeatOrder,
+                      repeat_every: selectedRepeatEvery,
+                      repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                      imageId: imageViewId,
+                      is_scheduled_order: isInstantDate ? 0 :1
+                    };
+                    // navigation.navigate('AddDropDetails', {props: params,component:'ENTERPRISE'});
+                    navigation.navigate('EnterpriseAddMultpleDropDetails', {props: params,component:'ENTERPRISE'});
+                    // navigation.navigate('EnterprisePickupOrderPriview', params);
+                  } else {
+                    Alert.alert(
+                      'Error Alert',
+                      'Please choose pickup and drop location',
+                      [{text: 'OK', onPress: () => {}}],
+                    );
+                  }
+                } else {
+                  if (sourceLocationId && destinationLocationId) {
+                    let params = {
+                      ...route.params,
+                      delivery_type_id: deliveryType,
+                      distanceTime: distanceTime,
+                      pickup_location: sourceLocation,
+                      dropoff_location: destinationLocation,
+                      pickup_location_id: sourceLocationId,
+                      dropoff_location_id: destinationLocationId,
+                      mobile: number,
+                      company_name: company,
+                      pickup_notes: pickupNotes,
+                      pickup_date: date,
+                      pickup_time: time,
+                      is_repeat_mode: promoEmails ? 1 : 0,
+                      package_id: orderid,
+                      amount: Math.round(
+                        route.params.vehicle_type.base_price +
+                          route.params.vehicle_type.km_price *
+                            distanceTime.distance,
+                      ).toFixed(2),
+                      distance: distanceTime.distance.toFixed(2),
+                      time: distanceTime.time.toFixed(0),
+                      repeat_mode: repeatOrder,
+                      repeat_every: selectedRepeatEvery,
+                      repeat_until: moment(untilDate).format('YYYY-MM-DD'),
+                      imageId: imageViewId,
+                      order_date: isInstantDate ? moment(isInstantDate).format('YYYY-MM-DD hh:mm'):'',
+                      schedule_date_time: moment(date).format('YYYY-MM-DD')+' '+moment(
+                        time,
+                        ).format('hh:mm'),
+                      is_scheduled_order: isInstantDate ? 0 :1
+                    };
+                    console.log(imageViewId);
+                    console.log('Payload  ---------->',params);
+
+                    navigation.navigate('AddDropDetails', {props: params,component:'ENTERPRISE'});
+                    // navigation.navigate('EnterprisePickupOrderPriview', params);
+                  } else {
+                    Alert.alert(
+                      'Error Alert',
+                      'Please choose pickup and drop location',
+                      [{text: 'OK', onPress: () => {}}],
+                    );
+                  }
                 }
               }}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
@@ -967,8 +1212,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           handleImageLibraryLaunch={handleImageLibraryLaunch}
         />
         {/* -------------- Modal --------------------- */}
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -1551,21 +1796,6 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     paddingHorizontal: 2,
   },
-  placeholderStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  selectedTextStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
-  inputSearchStyle: {
-    fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: colors.text,
-  },
   input: {
     flex: 1,
     fontSize: 15,
@@ -1607,6 +1837,22 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     paddingRight: 5,
     borderColor: '#2C30331A',
+  },
+  placeholderStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
   },
 });
 

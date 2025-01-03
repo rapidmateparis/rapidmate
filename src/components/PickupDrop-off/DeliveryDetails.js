@@ -11,6 +11,7 @@ import {
   Platform,
   PermissionsAndroid,
   Linking,
+  Button,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
@@ -18,9 +19,13 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {
   cancelOrderConsumer,
+  cancelOrderEnterprise,
   downloadInvoiceOrder,
+  getAllocatedDeliveryBoy,
   getAVehicleByTypeId,
   getLocationById,
+  getLocations,
+  getViewEnterpriseOrderDetail,
   getViewOrderDetail,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
@@ -29,23 +34,41 @@ import RNFS from 'react-native-fs';
 import {Buffer} from 'buffer';
 import {API} from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
-import messaging from '@react-native-firebase/messaging';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import { utcLocal } from '../../utils/common';
 
-const DeliveryDetails = ({route, navigation}) => {
+const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
-  const orderNumber = route.params.order_number;
-  const [order, serOrder] = useState({});
+  const orderNumber = route.params?.orderItem?.order_number;
+  const componentType = route.params?.componentType;
+  const [order, setOrder] = useState({});
   const [deliveryboy, setDeliveryboy] = useState({});
+  const [vehicle, setVehicle] = useState({});
+  const [sourceAddress, setSourceAddress] = useState({});
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
+  const {userDetails} = useUserDetails();
+  const [locations, setLocations] = useState([]);
+
+  const enterpriseDestinationList = route?.params?.orderItem?.locations || []
+
+  const getTaxAmount = ()=>{
+    const tax = route?.params?.orderItem?.tax ? route?.params?.orderItem?.tax : 0
+    const amount =   order.order_amount ? order.order_amount.toFixed(2) :0
+
+    console.log('amount is ',amount,'and vechile tax is ',tax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(tax)) / 100;
+     return taxAmount? taxAmount.toFixed(2): 0
+  }
+
+
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   useEffect(async () => {
-    orderDetail();
     const requestCameraPermission = async () => {
       const granted = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
@@ -70,17 +93,31 @@ const DeliveryDetails = ({route, navigation}) => {
     }
   }, []);
 
-  const orderDetail = async () => {
+  useEffect(() => {
+    if (componentType == 'ENTERPRISE') {
+      enterpriseOrderDetail();
+    } else {
+      orderDetail();
+    }
+  }, []);
+
+  useEffect(() => {}, [locations]);
+
+  const enterpriseOrderDetail = () => {
     setLoading(true);
-    getViewOrderDetail(
+    getViewEnterpriseOrderDetail(
       orderNumber,
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          serOrder(successResponse[0]._response.order);
+          let data = successResponse[0]._response.order;
+          if (data.orderLines && data.orderLines.length > 0) {
+            getAllLocations();
+          }
+          setOrder(data);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
           getDestinationAddress(
-            successResponse[0]._response.order.dropoff_location_id,
+            successResponse[0]._response.order.dropoff_location,
           );
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
         }
@@ -88,6 +125,57 @@ const DeliveryDetails = ({route, navigation}) => {
       errorResponse => {
         setLoading(false);
         console.log('orderDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const orderDetail = () => {
+    setLoading(true);
+    getViewOrderDetail(
+      orderNumber,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setOrder(successResponse[0]._response.order);
+          setDeliveryboy(successResponse[0]._response.deliveryBoy);
+          if (successResponse[0]._response.vehicle) {
+            setVehicle(successResponse[0]._response.vehicle);
+          }
+          getDestinationAddress(
+            successResponse[0]._response.order.dropoff_location_id,
+          );
+          getSourceAddress(
+            successResponse[0]._response.order.pickup_location_id,
+          );
+          vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('orderDetail==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getAllLocations = async () => {
+    setLoading(true);
+    getLocations(
+      null,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setLocations(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('locations==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -103,6 +191,26 @@ const DeliveryDetails = ({route, navigation}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           setDestinationAddress(successResponse[0]._response[0]);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('destination==>errorResponse', errorResponse[0]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  };
+
+  const getSourceAddress = async locationId => {
+    setLoading(true);
+    getLocationById(
+      locationId,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          setSourceAddress(successResponse[0]._response[0]);
         }
       },
       errorResponse => {
@@ -142,21 +250,48 @@ const DeliveryDetails = ({route, navigation}) => {
       cancel_reason_id: selectedReason.id,
       cancel_reason: selectedReason.reason,
     };
-    cancelOrderConsumer(
-      params,
-      successResponse => {
-        setLoading(false);
-        console.log(
-          'order_cancel===>successResponse',
-          '' + JSON.stringify(successResponse),
-        );
-        navigation.navigate('PickupOrderCancelled');
-      },
-      errorResponse => {
-        setLoading(false);
-        console.log('order_cancel===>errorResponse', '' + errorResponse);
-      },
-    );
+    if (componentType == 'ENTERPRISE') {
+      // navigation.navigate('EnterpriseOrderCancelled');
+      cancelOrderEnterprise(
+        params,
+        successResponse => {
+          setLoading(false);
+          console.log(
+            'enterprise_order_cancel===>successResponse',
+            '' + JSON.stringify(successResponse),
+          );
+          navigation.navigate('EnterpriseOrderCancelled');
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log(
+            'enterprise_order_cancel===>errorResponse',
+            '' + errorResponse,
+          );
+          Alert.alert('Success', errorResponse[0]._errors.message, [
+            {
+              text: 'Okay',
+            },
+          ]);
+        },
+      );
+    } else {
+      cancelOrderConsumer(
+        params,
+        successResponse => {
+          setLoading(false);
+          console.log(
+            'order_cancel===>successResponse',
+            '' + JSON.stringify(successResponse),
+          );
+          navigation.navigate('PickupOrderCancelled');
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log('order_cancel===>errorResponse', '' + errorResponse);
+        },
+      );
+    }
   };
 
   const openPDFWithNativeViewer = async filePath => {
@@ -173,41 +308,89 @@ const DeliveryDetails = ({route, navigation}) => {
     }
   };
 
-  const downloadInvoiceFile = async () => {
+
+  const downloadFile = (pdf) => {
     setLoading(true);
+    let date = new Date();
+    let exe = '.pdf';
+    let filename =
+    `invoice_${orderNumber}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
+    const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
+
+    const options = {
+      fromUrl: pdf,
+      toFile: localFile,
+    };
+    console.log('localFile =====>',localFile)
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+          setTimeout(() => {
+            FileViewer.open(localFile);
+          }, 300);
+      })
+      .then(() => {
+        setLoading(false);
+          Linking.openURL(pdf)
+      })
+      .catch(error => {
+        setLoading(false);
+      });
+  };
+
+
+  const openPdfInBrowser = (pdf) => {
+    if (pdf) {
+      Linking.canOpenURL(pdf)
+        .then(canOpen =>
+          canOpen ? Linking.openURL(pdf) : console.error('invalid url url:'),
+        )
+        .catch(err => console.error('An error occurred opening the url:', err));
+    }
+  };
+
+  const downloadInvoiceFile = async () => {
     try {
+      const type = componentType == 'ENTERPRISE' ? 'enterprise':
+      componentType == 'DELIVERBOY' ? 'deliveryboy': 'consumer'
+
+
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderNumber, resolve, reject);
+        downloadInvoiceOrder(orderNumber,type, resolve, reject);
       });
 
-      const invoiceData = successResponse;
-      const filePath =
-        Platform.OS === 'android'
-          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
-          : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
 
-      // Convert binary data to base64
-      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+      const pdf = API.downloadInvoice + orderNumber+'/'+type+'?show=true'
+      downloadFile(pdf)
+      // const invoiceData = successResponse;
+      // const filePath =
+      //   Platform.OS === 'android'
+      //     ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
+      //     : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
+      //     console.log('type ***** type',type,filePath)
 
-      // Write the file to the document directory
-      await RNFS.writeFile(filePath, base64Data, 'base64');
+      // // Convert binary data to base64
+      // const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
 
-      // Verify the file exists
-      const fileExists = await RNFS.exists(filePath);
-      if (fileExists) {
-        Alert.alert('Success', 'Invoice saved successfully.', [
-          {
-            text: 'Open Invoice',
-            onPress: () => {
-              openPDFWithNativeViewer(filePath);
-            },
-          },
-        ]);
-        console.log('Invoice saved to: ', filePath);
-      } else {
-        Alert.alert('Error', 'Failed to save invoice file.');
-      }
+      // // Write the file to the document directory
+      // await RNFS.writeFile(filePath, base64Data, 'base64');
+
+      // // Verify the file exists
+      // const fileExists = await RNFS.exists(invoiceData);
+      // if (fileExists) {
+      //   Alert.alert('Success', 'Invoice saved successfully.', [
+      //     {
+      //       text: 'Open Invoice',
+      //       onPress: () => {
+      //         openPDFWithNativeViewer(filePath);
+      //       },
+      //     },
+      //   ]);
+      //   console.log('Invoice saved to: ', filePath);
+      // } else {
+      //   Alert.alert('Error', 'Failed to save invoice file.');
+      // }
     } catch (error) {
+      setLoading(false)
       Alert.alert('Error', 'Failed to save invoice file.');
       console.error('File saving error:', error);
     } finally {
@@ -215,40 +398,202 @@ const DeliveryDetails = ({route, navigation}) => {
     }
   };
 
+  const getDeliveryBoyAllocation = () => {
+    const params = {
+      userRole: userDetails?.userDetails[0]?.role,
+      orderNumber: orderNumber,
+    };
+    getAllocatedDeliveryBoy(
+      params,
+      successResponse => {
+        Alert.alert('Success', successResponse[0]._response.message, [
+          {
+            text: 'Okay',
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ]);
+      },
+      errorResponse => {
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {
+            text: 'Okay',
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ]);
+      },
+    );
+  };
+
   return (
     <ScrollView
-      style={{width: '100%', backgroundColor: '#FBFAF5', marginBottom: 20}}>
+      style={{
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#FBFAF5',
+        marginBottom: 20,
+      }}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails />
-        </View>
-        <View style={styles.driverCard}>
-          <Image
-            style={styles.driverImga}
-            source={{
-              uri: API.viewImageUrl + deliveryboy?.profile_pic,
+          <MapDeliveryDetails
+            addressData={{
+              sourceAddress: sourceAddress,
+              destinationAddress: destinationAddress,
             }}
           />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
-            <Text style={styles.truckInfo}>VOLVO FH16 2022</Text>
+        </View>
+
+        <View>
+          {route.params?.orderItem?.is_delivery_boy_allocated === 1 ? (
+            <View style={styles.driverCard}>
+              <Image
+                style={styles.driverImage}
+                source={{
+                  uri: API.viewImageUrl + deliveryboy?.profile_pic,
+                }}
+              />
+              <View style={{marginLeft: 10}}>
+                <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
+                <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
+              </View>
+            </View>
+          ) : route.params?.orderItem?.service_type_id === 1 ? null : 
+          route.params?.orderItem?.is_delivery_boy_allocated === 0 ?
+          (
+            <View style={{alignContent: 'flex-end'}}>
+              <Button
+                title="Allocate Driver"
+                color={colors.primary}
+                onPress={getDeliveryBoyAllocation}
+              />
+            </View>
+          )
+          : null
+        }
+        </View>
+        <View style={styles.packageCard}>
+          <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/Pickup-Package-Icon.png')}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text style={styles.dropInfo}>Pickup information</Text>
+              {order.company_name && <Text style={styles.companyInfo}>
+                {order.company_name ? order.company_name : ''}
+              </Text>}
+
+              <View>
+                <Text style={styles.dropInfo}>
+                  {sourceAddress.address}, {sourceAddress.city},{' '}
+                  {sourceAddress.state}
+                </Text>
+              </View>
+              <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
+            </View>
+          </View>
+
+          {order.package_photo && <Image
+            style={styles.driverImage}
+            source={{
+              uri:
+                API.viewImageUrl + order.package_photo,
+            }}
+          />}
+        </View>
+        <View style={styles.packageCard}>
+        <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/package-img.png')}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text style={styles.dropInfo}>Drop off information</Text>
+              {order.company_name && <Text style={styles.companyInfo}>
+                {order.company_name ? order.drop_company_name : ''}
+              </Text>}
+              {
+              componentType == 'ENTERPRISE' ?
+              <View>
+                {
+                  enterpriseDestinationList.map((location)=>{
+                    return(
+                      <Text style={styles.dropInfo}>
+                        {location?.destination_description || ''}
+                      </Text>
+                    )
+                  })
+                }
+                </View>
+                :
+              order.orderLines && order.orderLines.length > 0 ? (
+                <View>
+                  {order.orderLines.map((item, index) => {
+                    var branch = locations.filter(
+                      i => i.id == item.dropoff_location,
+                    );
+                    return (
+                      <Text style={styles.dropInfo}>
+                        {branch[0] && branch[0].address},{' '}
+                        {branch[0] && branch[0].city},{' '}
+                        {branch[0] && branch[0].state}
+                      </Text>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View>
+                  <Text style={styles.dropInfo}>
+                    {destinationAddress.address}, {destinationAddress.city},{' '}
+                    {destinationAddress.state}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/package-img.png')}
-          />
+        <View style={styles.invoiceMainCard}>
+          <View>
+            <Image
+              style={{height: 26, width: 26}}
+              source={require('../../image/Big-Package.png')}
+            />
+          </View>
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>
-              {order.company_name ? order.company_name : ''}
-            </Text>
-            <Text style={styles.dropInfo}>
-              {destinationAddress.address}, {destinationAddress.city},{' '}
-              {destinationAddress.state}
-            </Text>
+            <View style={styles.cardHeader}>
+              <Text style={styles.orderFare}>Package information</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Order ID:</Text>
+              <Text style={styles.value}>{order.order_number}</Text>
+            </View>
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Order Date:</Text>
+              <Text style={styles.value}>{utcLocal(order.order_date)}</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Vehicle:</Text>
+              <Text style={styles.value}>{vehicleType.vehicle_type}</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Pickup OTP:</Text>
+              <Text style={styles.value}>{route.params?.orderItem?.otp}</Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>Delivered OTP:</Text>
+              <Text style={styles.value}>
+                {route.params?.orderItem?.delivered_otp}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -260,92 +605,79 @@ const DeliveryDetails = ({route, navigation}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>Order fare</Text>
               <Text style={styles.totalmoney}>
-                €{order.amount ? order.amount.toFixed(2) : '0.00'}
+                € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
             <Text style={styles.travel}>
               Travelled {order.distance ? order.distance.toFixed(2) : '0.00'} km
-              in 32 mins
+              in {order.total_duration ? order.total_duration : '00'}
             </Text>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Order fare</Text>
               <Text style={styles.value}>
-                €
-                {order.delivery_boy_amount
-                  ? order.delivery_boy_amount.toFixed(2)
-                  : '0.00'}
+                € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>€0.00</Text>
+              <Text style={styles.orderFareValue}>Tax</Text>
+              <Text style={styles.value}>
+                € {getTaxAmount()}
+              </Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Platform fee</Text>
+              <Text style={styles.orderFareValue}>Promo</Text>
               <Text style={styles.value}>
-                €
-                {order.commission_amount
-                  ? order.commission_amount.toFixed(2)
-                  : '0.00'}
+                {order.promo_value ? order.promo_value : '0'}
               </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Amount charged</Text>
               <Text style={styles.value}>
-                €{order.amount ? order.amount.toFixed(2) : '0.00'}
+                € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
-              <Text style={styles.paidWith}>Paid with mastercard</Text>
+              <Text style={styles.paidWith}>
+                Paid with {order.paid_with ? order.paid_with : ''}
+              </Text>
             </View>
           </View>
         </View>
 
-        <View style={styles.packageInformationCard}>
-          <Text style={styles.packageTitle}>Package information</Text>
-          <Text style={styles.orderdetails}>
-            Order ID:<Text style={styles.detailsId}> {order.order_number}</Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Comments:
-            <Text style={styles.detailsId}>{order.pickup_notes}</Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Vehicle:
-            <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.packageInvoiceCard}
-          onPress={downloadInvoiceFile}>
-          <View style={styles.invoiceCard}>
-            <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
-          </View>
-          <View>
-            <Feather
-              style={{marginTop: 5}}
-              name="download"
-              size={20}
-              color="#FF0058"
-            />
-          </View>
-        </TouchableOpacity>
+        {route?.params?.orderItem?.order_status === 'COMPLETED' && (
+          <TouchableOpacity
+            style={styles.packageInvoiceCard}
+            onPress={downloadInvoiceFile}>
+            <View style={styles.invoiceCard}>
+              <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
+              <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+            </View>
+            <View>
+              <Feather
+                style={{marginTop: 5}}
+                name="download"
+                size={20}
+                color="#FF0058"
+              />
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
 
-      <TouchableOpacity
-        onPress={() => toggleModal()}
-        style={styles.requestTouch}>
-        <Text style={styles.cancelRequest}>Cancel request</Text>
-      </TouchableOpacity>
+      {order.is_enable_cancel_request == 1 ? (
+        <TouchableOpacity
+          onPress={() => toggleModal()}
+          style={styles.requestTouch}>
+          <Text style={styles.cancelRequest}>Cancel request</Text>
+        </TouchableOpacity>
+      ) : null}
 
       {/* CancellationModal Modal  */}
       <CancellationModal
@@ -376,6 +708,8 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   packageCard: {
+    justifyContent:'space-between',
+    alignItems:'center',
     flexDirection: 'row',
     backgroundColor: colors.white,
     padding: 10,
@@ -391,7 +725,13 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 7,
   },
-  driverImga: {
+
+  packageLeftsideCard:{
+    flexDirection:"row",
+    flex:0.7
+  },
+
+  driverImage: {
     width: 40,
     height: 40,
     borderRadius: 30,
@@ -410,12 +750,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   companyInfo: {
     fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
+    marginBottom: 5,
   },
   companyAddress: {
     fontSize: 12,
@@ -424,10 +765,16 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Add this line
+    justifyContent: 'space-between',
+    width: '72%',
+  },
+  cardHeaderValues: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '74%',
   },
   orderFare: {
-    width: '75%',
+    width: '70%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
@@ -558,6 +905,16 @@ const styles = StyleSheet.create({
     width: '60%',
     paddingVertical: 10,
     alignSelf: 'center',
+  },
+  okButtonText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.white,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    width: 200,
+    textAlign: 'center',
   },
 });
 

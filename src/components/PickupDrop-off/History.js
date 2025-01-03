@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback, useState} from 'react';
+import React, {useEffect, useCallback, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   Image,
   Alert,
   FlatList,
+  ActivityIndicator,
+  Animated,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -16,28 +18,100 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../colors';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useLoader} from '../../utils/loaderContext';
-import {getConsumerViewOrdersList, getLocations} from '../../data_manager';
+import {
+  getConsumerViewOrdersList,
+  getConsumerViewOrdersListBySearch,
+  getLocations,
+} from '../../data_manager';
 import {RefreshControl} from 'react-native-gesture-handler';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
+import {color} from 'react-native-reanimated';
+import {titleFormat, utcLocal} from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = navigation => {
-  const [searchText, setSearchText] = useState('');
+const TodayList = ({navigation, searchText}) => {
   const [index, setIndex] = useState(0);
   const {setLoading} = useLoader();
   const [orderList, setOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
+  const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(1)).current; 
+
+  useEffect(() => {
+    const blinkingAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 0, // Fade out
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1, // Fade in
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    blinkingAnimation.start();
+
+    return () => blinkingAnimation.stop();
+  }, [fadeAnim]);
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
       getOrderList();
+      return () => {
+        setOrderList([]);
+        setPage(1);
+        setCheckMoreData(true);
+      };
     }, []),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'current',
+      orderNumber: searchValue,
+    };
+    getConsumerViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        console.log('successResponse ===> f ', JSON.stringify(successResponse));
+
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLoading(true);
@@ -67,19 +141,27 @@ const TodayList = navigation => {
 
   const getOrderList = () => {
     setLoading(true);
-    setOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'current',
+      page: page,
+      size: size,
     };
     getConsumerViewOrdersList(
       postParams,
       null,
       successResponse => {
+        console.log('successResponse ===> f ', JSON.stringify(successResponse));
+
         if (successResponse[0]._success) {
+          if (size === successResponse[0]._response.length) {
+            setPage(page + 1);
+            setCheckMoreData(true);
+          }else if(size > successResponse[0]._response.length ){
+            setCheckMoreData(false);
+          }
           let tempOrderList = successResponse[0]._response;
-          console.log('tempOrderList', tempOrderList);
-          setOrderList(tempOrderList);
+          setOrderList([...orderList, ...tempOrderList]);
         }
         setLoading(false);
       },
@@ -89,11 +171,11 @@ const TodayList = navigation => {
     );
   };
 
-  const renderItem = ({item}) => (
+  const renderCurrentOrderItem = currentOrderItem => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigation.navigate('DeliveryDetails', {
-          order_number: item.order_number,
+        navigation.navigate('DeliveryDetails', {
+          orderItem: currentOrderItem.item,
         });
       }}
       style={styles.packageDetailCard}>
@@ -103,8 +185,18 @@ const TodayList = navigation => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at{' '}
-          {moment(item.delivery_date).format('hh:mm A')}
+          {/* Delivered on{' '}
+          {moment(currentOrderItem.item.delivery_date).format('MMM DD, YYYY')}{' '}
+          at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')} */}
+          {currentOrderItem.item.consumer_order_title}{' '}
+          {currentOrderItem.item.is_show_datetime_in_title == 1
+            ? currentOrderItem.item.order_status === 'ORDER_PLACED'
+              ? titleFormat(
+                  currentOrderItem.item.schedule_date_time ||
+                    currentOrderItem.item.order_date,
+                )
+              : titleFormat(currentOrderItem.item.updated_on)
+            : ''}
         </Text>
       </View>
 
@@ -113,7 +205,7 @@ const TodayList = navigation => {
         <Text style={styles.fromLocation}>
           From{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.pickup_location_id)}
+            {getLocationAddress(currentOrderItem.item.pickup_location_id)}
           </Text>
         </Text>
       </View>
@@ -123,25 +215,47 @@ const TodayList = navigation => {
         <Text style={styles.fromLocation}>
           To{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.dropoff_location_id)}
+            {getLocationAddress(currentOrderItem.item.dropoff_location_id)}
           </Text>
         </Text>
       </View>
 
       <View style={styles.borderShow}></View>
 
+      <View style={{display: 'flex', alignItems: "flex-start", marginBottom: 5,}}>
+        <Animated.Text style={[styles.orderActive, {opacity: fadeAnim}]}>
+          Active
+        </Animated.Text>
+      </View>
+
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>
+          Order ID: {currentOrderItem.item.order_number}
+        </Text>
         <Text style={styles.valueMoney}>
           {`€ ${
-            typeof item.amount === 'number'
-              ? item.amount.toFixed(2)
-              : item.amount
+            typeof currentOrderItem.item.amount === 'number'
+              ? currentOrderItem.item.amount.toFixed(2)
+              : currentOrderItem.item.amount
           }`}
         </Text>
       </View>
     </TouchableOpacity>
   );
+
+  const renderFooter = () => {
+    return (
+      <View style={{padding: 10}}>
+        {/* <ActivityIndicator size="small" color="#d8d8d8" /> */}
+      </View>
+    );
+  };
+
+  const handleLoadMoreOnGoingRecord = () => {
+    if (checkMoreData) {
+      getOrderList();
+    }
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -174,25 +288,78 @@ const TodayList = navigation => {
             </View>
           </View>
         ) : (
-          <FlatList data={orderList} renderItem={renderItem} />
+          <FlatList
+            data={orderList}
+            renderItem={renderCurrentOrderItem}
+            onEndReached={handleLoadMoreOnGoingRecord}
+            onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+            ListFooterComponent={renderFooter}
+          />
         )}
       </View>
     </View>
   );
 };
 
-const PastList = ({navigation}) => {
+const PastList = ({navigation, searchText}) => {
   const {setLoading} = useLoader();
   const [pastOrderList, setPastOrderList] = useState([]);
   const {userDetails} = useUserDetails();
   const [locationList, setLocationList] = useState([]);
+  const timeout = React.useRef(null);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [checkMoreData, setCheckMoreData] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
       getLocationsData();
       getOrderList();
+
+      return () => {
+        setPastOrderList([]);
+        setPage(1);
+        setCheckMoreData(true);
+      };
     }, []),
   );
+
+  useEffect(() => {
+    if (searchText) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => {
+        getOrderListinSearch(searchText);
+      }, 2000);
+    }
+  }, [searchText]);
+
+  const getOrderListinSearch = searchValue => {
+    setLoading(true);
+    setPage(1);
+    setCheckMoreData(true);
+    setPastOrderList([]);
+    let postParams = {
+      extentedId: userDetails.userDetails[0].ext_id,
+      status: 'past',
+      orderNumber: searchValue,
+    };
+    getConsumerViewOrdersListBySearch(
+      postParams,
+      successResponse => {
+        if (successResponse[0]._success) {
+          let tempOrderList = successResponse[0]._response;
+          setPastOrderList(tempOrderList);
+        }
+        setLoading(false);
+      },
+      errorResponse => {
+        setLoading(false);
+        if (errorResponse[0]._errors.message) {
+          setPastOrderList([]);
+        }
+      },
+    );
+  };
 
   const getLocationsData = () => {
     setLoading(true);
@@ -222,7 +389,6 @@ const PastList = ({navigation}) => {
 
   const getOrderList = () => {
     setLoading(true);
-    setPastOrderList([]);
     let postParams = {
       extentedId: userDetails.userDetails[0].ext_id,
       status: 'past',
@@ -231,10 +397,20 @@ const PastList = ({navigation}) => {
       postParams,
       null,
       successResponse => {
+        console.log(
+          'successResponse ===> past ',
+          JSON.stringify(successResponse),
+        );
         if (successResponse[0]._success) {
+          if (size === successResponse[0]._response.length) {
+            setPage(page + 1);
+            setCheckMoreData(true);
+          }else if(size > successResponse[0]._response.length ){
+            setCheckMoreData(false);
+          }
+
           let tempOrderList = successResponse[0]._response;
-          console.log('tempOrderList', tempOrderList);
-          setPastOrderList(tempOrderList);
+          setPastOrderList([...pastOrderList, ...tempOrderList]);
         }
         setLoading(false);
       },
@@ -244,9 +420,13 @@ const PastList = ({navigation}) => {
     );
   };
 
-  const renderItem = ({item}) => (
+  const renderPastOrderItem = pastOrderItem => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('DeliveryDetails')}
+      onPress={() => {
+        navigation.navigate('DeliveryDetails', {
+          orderItem: pastOrderItem.item,
+        });
+      }}
       style={styles.packageDetailCard}>
       <View style={styles.packageHeader}>
         <Image
@@ -254,8 +434,19 @@ const PastList = ({navigation}) => {
           source={require('../../image/Big-Package.png')}
         />
         <Text style={styles.deliveryTime}>
-          Delivered on {moment(item.delivery_date).format('MMM DD, YYYY')} at{' '}
-          {moment(item.delivery_date).format('hh:mm A')}
+          {pastOrderItem.item.consumer_order_title}{' '}
+          {pastOrderItem.item.is_show_datetime_in_title == 1
+            ? pastOrderItem.item.order_status === 'ORDER_PLACED'
+              ? titleFormat(
+                  pastOrderItem.item.schedule_date_time ||
+                    pastOrderItem.item.order_date,
+                )
+              : titleFormat(pastOrderItem.item.updated_on)
+            : ''}
+          {/* Delivered on{' '}
+          {moment(pastOrderItem.item.delivery_date).format(
+            'MMM DD, YYYY',
+          )} at {moment(pastOrderItem.item.delivery_date).format('hh:mm A')} */}
         </Text>
       </View>
 
@@ -264,7 +455,7 @@ const PastList = ({navigation}) => {
         <Text style={styles.fromLocation}>
           From{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.pickup_location_id)}{' '}
+            {getLocationAddress(pastOrderItem.item.pickup_location_id)}{' '}
           </Text>
         </Text>
       </View>
@@ -274,7 +465,7 @@ const PastList = ({navigation}) => {
         <Text style={styles.fromLocation}>
           To{' '}
           <Text style={styles.Location}>
-            {getLocationAddress(item.dropoff_location_id)}
+            {getLocationAddress(pastOrderItem.item.dropoff_location_id)}
           </Text>
         </Text>
       </View>
@@ -282,13 +473,36 @@ const PastList = ({navigation}) => {
       <View style={styles.borderShow}></View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
-        <Text style={styles.valueMoney}>€{item.amount}</Text>
+        <Text style={styles.orderId}>
+          Order ID: {pastOrderItem.item.order_number}
+        </Text>
+        <Text style={styles.valueMoney}>€{pastOrderItem.item.amount}</Text>
       </View>
     </TouchableOpacity>
   );
+
+  const renderFooter = () => {
+    return (
+      <View style={{padding: 10}}>
+        {/* <ActivityIndicator size="small" color="#d8d8d8" /> */}
+      </View>
+    );
+  };
+
+  const handleLoadMoreOnGoingRecord = () => {
+    if (checkMoreData) {
+      getOrderList();
+    }
+  };
+
   return pastOrderList.length != 0 ? (
-    <FlatList data={pastOrderList} renderItem={renderItem} />
+    <FlatList
+      data={pastOrderList}
+      renderItem={renderPastOrderItem}
+      onEndReached={handleLoadMoreOnGoingRecord}
+      onEndReachedThreshold={0.5} // Trigger when 50% of the end is visible
+      ListFooterComponent={renderFooter}
+    />
   ) : (
     <View style={styles.scrollViewContainer}>
       <View
@@ -313,22 +527,6 @@ const PastList = ({navigation}) => {
   );
 };
 
-const Ongoing = navigation => {
-  return (
-    <View style={{flex: 1}}>
-      <TodayList navigation={navigation} />
-    </View>
-  );
-};
-
-const Past = () => {
-  return (
-    <View style={{flex: 1}}>
-      <PastList />
-    </View>
-  );
-};
-
 function History({navigation}) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
@@ -345,7 +543,7 @@ function History({navigation}) {
         <View style={styles.header}>
           <Text style={styles.headerText}>History</Text>
           <TouchableOpacity>
-            <AntDesign name="filter" size={30} color={colors.secondary} />
+            <AntDesign name="filter" size={25} color={colors.secondary} />
           </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
@@ -357,10 +555,20 @@ function History({navigation}) {
           />
           <TextInput
             style={styles.searchinput}
+            placeholderTextColor="#999"
             placeholder="Search your deliveries"
             value={searchText}
             onChangeText={setSearchText}
           />
+          {searchText && (
+            <AntDesign
+              name="close"
+              size={20}
+              color="#000"
+              style={styles.searchIcon}
+              onPress={() => setSearchText('')}
+            />
+          )}
         </View>
 
         {/* End of Search Bar */}
@@ -376,10 +584,10 @@ function History({navigation}) {
           tabBarStyle: {backgroundColor: '#fff'},
         }}>
         <Tab.Screen name="Ongoing">
-          {() => <TodayList navigation={navigation} />}
+          {() => <TodayList navigation={navigation} searchText={searchText} />}
         </Tab.Screen>
         <Tab.Screen name="Past">
-          {() => <PastList navigation={navigation} />}
+          {() => <PastList navigation={navigation} searchText={searchText} />}
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}
@@ -412,6 +620,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   searchinput: {
+    color: colors.text,
     flex: 1,
     fontSize: 14,
     fontFamily: 'Montserrat-Regular',
@@ -442,7 +651,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   deliveryTime: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,
@@ -521,6 +730,14 @@ const styles = StyleSheet.create({
   packageManage: {
     width: 25,
     height: 25,
+  },
+  orderActive: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    borderRadius: 10,
+    padding: 5,
+    color: '#27AE60',
+    backgroundColor: '#27AE6012',
   },
 });
 

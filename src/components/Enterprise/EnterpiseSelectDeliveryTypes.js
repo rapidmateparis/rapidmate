@@ -18,6 +18,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import BicycleImage from '../../image/Cycle-Right1x.png';
 import MotorbikeImage from '../../image/Scooter-Right1x.png';
 import CarImage from '../../image/Car-Right1x.png';
+import PartnerImage from '../../image/Partner-Right1x.png';
 import miniTruckImage from '../../image/Van-Right1x.png';
 import MiniVanImage from '../../image/Pickup-Right1x.png';
 import SemiTruckImage from '../../image/Truck-Right1x.png';
@@ -27,9 +28,9 @@ import {useLoader} from '../../utils/loaderContext';
 import {getAllVehicleTypes} from '../../data_manager';
 
 const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState('Delivery boy with scooter');
   const [selectedVehicle, setSelectedVehicle] = useState('');
-  const [serviceTypeId, setServiceTypeId] = useState('');
+  const [serviceTypeId, setServiceTypeId] = useState(1);
 
   const handleOptionSelect = (option, vehicle, id) => {
     setSelectedOption(option);
@@ -50,6 +51,25 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     setModalVisible(!isModalVisible);
   };
 
+
+  useEffect(()=>{
+    if(vehicleTypeList?.length > 0){
+    const vehicle = vehicleTypeList.filter(val => val.vehicle_type == 'Cycle')[0]
+    setSelectedVehicle(vehicle)
+    setSelectedVehiclePrice(vehicle.km_price);
+    }
+  },[vehicleTypeList])
+
+
+  useEffect(()=>{
+    if(selectedOption !== 'Delivery boy with scooter'){
+      setSelectedVehiclePrice(0)
+    }else{
+      selectedVehicle?.km_price && setSelectedVehiclePrice(selectedVehicle.km_price);
+    }
+  },[selectedOption])
+
+
   useEffect(() => {
     setLoading(true);
     getAllVehicleTypes(
@@ -57,7 +77,59 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
       successResponse => {
         if (successResponse[0]._success) {
           setLoading(false);
-          setVehicleTypeList(successResponse[0]._response);
+
+          // Map images to the vehicle types
+          const vehicleDataWithImages = successResponse[0]._response.map(
+            vehicle => {
+              let image;
+              let vehicleStyle; // Declare a variable for the vehicle style
+
+              switch (vehicle.vehicle_type) {
+                case 'Cycle':
+                  image = BicycleImage;
+                  vehicleStyle = styles.cycle;
+                  break;
+                case 'Scooter':
+                  image = MotorbikeImage;
+                  vehicleStyle = styles.scooter;
+                  break;
+                case 'Car':
+                  image = CarImage;
+                  vehicleStyle = styles.car;
+                  break;
+                case 'Partner':
+                  image = PartnerImage;
+                  vehicleStyle = styles.partner;
+                  break;
+                case 'Pickup':
+                  image = MiniVanImage;
+                  vehicleStyle = styles.pickup;
+                  break;
+                case 'Van':
+                  image = miniTruckImage;
+                  vehicleStyle = styles.van;
+                  break;
+                case 'Truck':
+                  image = SemiTruckImage;
+                  vehicleStyle = styles.truck;
+                  break;
+                case 'Other':
+                  image = PackageImage;
+                  vehicleStyle = styles.package;
+                  break;
+                default: // Fallback if no image is available
+                  console.log(
+                    `No image found for vehicle type: ${vehicle.vehicle_type}`,
+                  );
+                  image = null;
+                  vehicleStyle = styles.default; // Assign a default style if needed
+              }
+
+              return {...vehicle, image, vehicleStyle}; // Include the image and style in the returned object
+            },
+          );
+
+          setVehicleTypeList(vehicleDataWithImages); // Update the state with the new list
         }
       },
       errorResponse => {
@@ -68,6 +140,15 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
       },
     );
   }, []);
+
+
+  const disableVehicleType = ()=>{
+    return serviceTypeId !== 1 ? true : false
+  }
+
+  const disableServiceType =()=>{
+   return route.params.delivery_type_id !== 3
+  }
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -103,11 +184,12 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                   fontFamily: 'Montserrat-Bold',
                 },
               ]}>
-              Delivery boy with scooter
+              Delivery boy with vehicle
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Delivery boy without scooter',
@@ -122,7 +204,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={ disableServiceType() ? colors.lightGrey : colors.text} />
             )}
             <Text
               style={[
@@ -130,12 +212,14 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Delivery boy without scooter' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
-              Delivery boy without scooter
+              Delivery boy without vehicle
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Multi-task employee',
@@ -148,7 +232,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={disableServiceType() ? colors.lightGrey :colors.text} />
             )}
             <Text
               style={[
@@ -156,12 +240,14 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Multi-task employee' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
               Multi-task employee
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            disabled={disableServiceType()}
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Cleaning staff',
@@ -174,7 +260,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 color={colors.secondary}
               />
             ) : (
-              <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              <FontAwesome name="circle-thin" size={25} color={disableServiceType() ? colors.lightGrey : colors.text} />
             )}
             <Text
               style={[
@@ -182,6 +268,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 selectedOption === 'Cleaning staff' && {
                   fontFamily: 'Montserrat-Bold',
                 },
+                disableServiceType() ? {color:colors.lightGrey}:{}
               ]}>
               Cleaning staff
             </Text>
@@ -189,28 +276,32 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
 
           <View style={styles.vehicleTypePrice}>
             <Text style={styles.selectServiceTitle}>Select vehicle type</Text>
-            {selectedVehiclePrice && (
-              <Text style={styles.selectedVehiclePrice}>
-                {selectedVehiclePrice}
-              </Text>
-            )}
+            {/* <Text style={styles.selectedVehiclePrice}>
+              {selectedVehiclePrice && selectedVehiclePrice.toFixed(2)}
+            </Text> */}
           </View>
         </View>
 
         {vehicleTypeList.map((vehicle, index) => (
           <TouchableOpacity
+            disabled={disableVehicleType()}
             key={index}
             onPress={() => {
-              setSelectedVehicle(vehicle);
-              setSelectedVehiclePrice(vehicle.km_price);
+              setTimeout(()=>{
+                setSelectedVehicle(vehicle);
+                setSelectedVehiclePrice(vehicle.km_price);
+              },500)
             }}
             style={[
               styles.addressCard,
               vehicle.vehicle_type === selectedVehicle.vehicle_type
                 ? styles.selectedCard
                 : null,
+
+                vehicle.vehicle_type === selectedVehicle.vehicle_type ? {borderColor:colors.secondary} : null
             ]}>
             <TouchableOpacity
+              disabled={disableVehicleType()}
               onPress={() => toggleModal(vehicle)}
               style={styles.infoIcons}>
               <Image source={require('../../image/info.png')} />
@@ -224,16 +315,21 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 }
                 size={25}
                 color={
+                  disableVehicleType() ? colors.lightGrey :
                   vehicle.vehicle_type === selectedVehicle.vehicle_type
                     ? colors.secondary
                     : colors.text
                 }
               />
-              <Text style={styles.paymentPlateform}>
+              <View style={{flexDirection:"row"}}>
+              <Text style={[styles.paymentPlateform,disableVehicleType()?{color:colors.lightGrey}:'']}>
                 {vehicle.vehicle_type}
               </Text>
+
+              {vehicle.vehicle_type === selectedVehicle.vehicle_type && <View style={styles.chargeBatch} ><Text style={styles.chargeBatchTextStyle}>{`€ ${selectedVehiclePrice.toFixed(2)}/km`}</Text></View>}
+              </View>
             </View>
-            <Image style={vehicle.style} source={vehicle.image} />
+            <Image style={[vehicle.vehicleStyle,disableVehicleType() ?{tintColor:colors.lightGrey}:[]]}  source={vehicle.image} />
           </TouchableOpacity>
         ))}
         <TouchableOpacity
@@ -355,6 +451,10 @@ const styles = StyleSheet.create({
     width: 41,
     height: 17,
   },
+  partner: {
+    width: 67,
+    height: 27,
+  },
   van: {
     width: 48,
     height: 22,
@@ -386,6 +486,23 @@ const styles = StyleSheet.create({
     right: -11,
     padding: 10,
   },
+  // vehicleImages: {
+  //   height: 62,
+  //   resizeMode: 'center'
+  // },
+  chargeBatch:{
+    justifyContent:"center",
+    alignItems:"center",
+    borderRadius:20,
+    backgroundColor:'#FBE9EA',
+    paddingHorizontal:8
+  },
+  chargeBatchTextStyle:{
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.secondary,
+  }
+
 });
 
 export default EnterpiseSelectDeliveryTypes;

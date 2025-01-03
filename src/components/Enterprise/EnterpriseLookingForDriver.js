@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
-  Alert
+  Alert,
 } from 'react-native';
 import {colors} from '../../colors';
 import EnterpriseOrderCancellationModal from '../commonComponent/EnterpriseOrderCancellationModal';
@@ -16,13 +16,15 @@ import {
   usePlacedOrderDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
-import {getAllocatedDeliveryBoy, getLocations} from '../../data_manager';
+import {getAllocatedEnterprise, getLocations} from '../../data_manager';
+import { useIsFocused } from '@react-navigation/native';
 
-const EnterpriseLookingForDriver = ({navigation}) => {
+const EnterpriseLookingForDriver = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
-  
+  const params = route.params;
+  const isVisible = useIsFocused();
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -38,19 +40,23 @@ const EnterpriseLookingForDriver = ({navigation}) => {
             userRole: userDetails?.userDetails[0]?.role,
             orderNumber: placedOrderDetails[0]?.order_number,
           };
-          getAllocatedDeliveryBoy(
+          getAllocatedEnterprise(
             params,
             successResponse => {
-              navigation.navigate('OrderPickup', {
+
+              navigation.navigate('EnterpriseOrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
-              console.log('getProfile===>errorResponse', errorResponse);
-              Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-                {text: 'OK', onPress: () => {}},
-              ]);
+              console.log('successResponseerrorReq <========>',JSON.stringify(params))
+              console.log('successResponseerrorResponse <========>',JSON.stringify(errorResponse))
+
+              navigation.navigate(
+                'EnterpriseDriverNotAvailable',
+                errorResponse,
+              );
             },
           );
         }
@@ -66,8 +72,10 @@ const EnterpriseLookingForDriver = ({navigation}) => {
   };
 
   useEffect(() => {
-    getLocationsData();
-  }, []);
+    if(isVisible){
+      getLocationsData();
+    }
+  }, [isVisible]);
 
   return (
     <ScrollView
@@ -107,11 +115,13 @@ const EnterpriseLookingForDriver = ({navigation}) => {
           source={require('../../image/Driver-Bg2.png')}
         />
       </View>
-      <TouchableOpacity
-        onPress={() => toggleModal()}
-        style={styles.requestTouch}>
-        <Text style={styles.cancelRequest}>Cancel request</Text>
-      </TouchableOpacity>
+      { params?.cancellable && params?.cancellable == 1 ? (
+        <TouchableOpacity
+          onPress={() => toggleModal()}
+          style={styles.requestTouch}>
+          <Text style={styles.cancelRequest}>Cancel request</Text>
+        </TouchableOpacity>
+      ) : null}
 
       {/* CancellationModal Modal  */}
       <EnterpriseOrderCancellationModal
@@ -166,7 +176,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 90,
     paddingVertical: 10,
-    marginTop: '20%',
+    marginTop: 20,
   },
 });
 

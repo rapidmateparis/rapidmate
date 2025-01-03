@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import {
   LineChart,
@@ -21,16 +22,55 @@ import {Dropdown} from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dimensions} from 'react-native';
-import { useUserDetails } from '../commonComponent/StoreContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
+import {getEnterpriseDashboardInfo, getNotificationCount} from '../../data_manager';
+import {useFocusEffect} from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
+  const dropdownData2 = [
+    {label: 'All', value: 'all'},
+    {label: 'Today', value: 'today'},
+    {label: 'This week', value: 'week'},
+    {label: 'This month', value: 'month'},
+    {label: 'This year', value: 'year'},
+  ];
+
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
-  const [dropdownStreet, setDropdownStreet] = useState(null);
-  const [dropdownWeek, setDropdownWeek] = useState(null);
+  const [selectedDropdownBranch, setSelectedDropdownBranch] = useState({});
+  const [dropdownWeek, setDropdownWeek] = useState(dropdownData2[0]);
+  const [dropdownBranches, setDropdownBranches] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
+  const [isBranchFocus, setIsBranchFocus] = useState(false);
+  const [isWeekFocus, setIsWeekFocus] = useState(false);
   const {saveUserDetails, userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [bookingHour, setBookingHour] = useState(0);
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [
+      {
+        data: [],
+      },
+    ],
+  });
+  const [branches, setBranches] = useState([]);
+
+  useEffect(()=>{
+    if(selectedDropdownBranch?.value){
+      getEnterpriseDashboardAllInfo(selectedDropdownBranch.value)
+    }else if(dropdownWeek?.value){
+      getEnterpriseDashboardAllInfo()
+    }
+  },[selectedDropdownBranch,dropdownWeek])
+
+
+  useEffect(()=>{
+    getNotificationAllCount()
+  },[])
 
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
@@ -38,25 +78,6 @@ const EnterpriseHome = ({navigation}) => {
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
-  };
-
-  const dropdownData1 = [
-    {label: 'North Street Franchise', value: 'North Street Franchise'},
-    {label: 'South Street Franchise', value: 'South Street Franchise'},
-  ];
-
-  const dropdownData2 = [
-    {label: 'This week', value: 'This week'},
-    {label: 'This Month', value: 'This Month'},
-  ];
-
-  const data = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [
-      {
-        data: [0, 2, 4, 6, 8, 10, 12],
-      },
-    ],
   };
 
   const chartConfig = {
@@ -74,6 +95,100 @@ const EnterpriseHome = ({navigation}) => {
     marginVertical: 8,
     borderRadius: 16,
   };
+
+  const displayChartData = branch => {
+    const days = branch.map((day)=>day.month)
+    const hours = branch.map((day)=>day.count)
+
+    const data = {
+      labels: days,
+      datasets: [
+        {
+          data: hours,
+        },
+      ],
+    };
+    setChartData(data);
+    setBookingHour(branch.bookinghr);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getEnterpriseDashboardAllInfo()
+    }, []),
+  );
+
+  const getEnterpriseDashboardAllInfo =(branchId)=>{
+    setLoading(true);
+    let url = userDetails.userDetails[0].ext_id
+    if(branchId && dropdownWeek?.value){
+      url = url+'?branch='+branchId+'&type='+dropdownWeek?.value
+    }else if(branchId){
+      url = url+'?branch='+branchId
+    }else if(dropdownWeek?.value){
+      url = url+'?type='+dropdownWeek?.value
+    }
+
+    getEnterpriseDashboardInfo(
+      url,
+      successResponse => {
+        console.log('successResponse ------>',successResponse)
+        setLoading(false);
+        if (successResponse[0]._response) {
+          
+          setDashboardData(successResponse[0]._response);
+          var tempdropDownBranches = [];
+          if(successResponse[0]?._response?.branchOverviewData && successResponse[0]?._response?.branchOverviewData.length > 0){
+            const branchList = successResponse[0]?._response?.branchOverviewData
+            const getList = branchList.map(branch=>{
+              return{
+                label : branch.branch_name,
+                value : branch.id,
+              }
+            })
+            tempdropDownBranches = getList
+          }
+          if (successResponse[0]._response) {
+            setDropdownBranches(tempdropDownBranches);
+            displayChartData(
+              successResponse[0]._response.weekData,
+            );
+          }
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }
+
+
+
+  const getNotificationAllCount = () => {
+    setLoading(true);
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -93,8 +208,16 @@ const EnterpriseHome = ({navigation}) => {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() =>{ 
+                const newUserDetails = userDetails.userDetails[0]
+                newUserDetails['notificationCount']=0
+                saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+                navigation.navigate('Notifications')
+              }}>
             <EvilIcons name="bell" size={40} color="#000" />
+            {userDetails.userDetails[0].notificationCount > 0 && <View style={styles.notificationCountStyle}>
+              <Text style={styles.notificationCountText}>{userDetails.userDetails[0].notificationCount}</Text>
+            </View>}
           </TouchableOpacity>
         </View>
 
@@ -106,7 +229,13 @@ const EnterpriseHome = ({navigation}) => {
                 <Image source={require('../../image/Info-Cricle.png')} />
               </TouchableOpacity>
             </View>
-            <Text style={styles.bookingsInfo}>08</Text>
+            <Text style={styles.bookingsInfo}>
+              {dashboardData &&
+                (dashboardData?.overviewData?.active_order < 10 &&
+                dashboardData?.overviewData?.active_order > 0
+                  ? '0' + dashboardData?.overviewData?.active_order
+                  : dashboardData?.overviewData?.active_order)}
+            </Text>
           </View>
 
           <View style={styles.informatinMainCard}>
@@ -116,7 +245,13 @@ const EnterpriseHome = ({navigation}) => {
                 <Image source={require('../../image/Info-Cricle.png')} />
               </TouchableOpacity>
             </View>
-            <Text style={styles.bookingsInfo}>52</Text>
+            <Text style={styles.bookingsInfo}>
+              {dashboardData &&
+                (dashboardData?.overviewData?.schedule_order < 10 &&
+                dashboardData?.overviewData?.schedule_order > 0
+                  ? '0' + dashboardData?.overviewData?.schedule_order
+                  : dashboardData?.overviewData?.schedule_order)}
+            </Text>
           </View>
 
           <View style={styles.informatinMainCard}>
@@ -128,65 +263,85 @@ const EnterpriseHome = ({navigation}) => {
                 <Image source={require('../../image/Info-Cricle.png')} />
               </TouchableOpacity>
             </View>
-            <Text style={styles.bookingsInfo}>362</Text>
+            <Text style={styles.bookingsInfo}>
+              {' '}
+              {dashboardData &&
+                (dashboardData?.overviewData?.total_order < 10 &&
+                dashboardData?.overviewData?.total_order > 0
+                  ? '0' + dashboardData?.overviewData?.total_order
+                  : dashboardData?.overviewData?.total_order)}
+            </Text>
           </View>
         </View>
       </View>
       <View style={styles.barChartCard}>
         <View style={styles.hoursInfoCard}>
-          <Text style={styles.hoursBooked}>Hours booked</Text>
-          <Text style={styles.hoursNumberCount}>32</Text>
+          <Text style={styles.hoursBooked}>Booking Overview</Text>
+          <Text style={styles.hoursNumberCount}>{bookingHour}</Text>
         </View>
         <View style={styles.dropdownCard}>
           <View style={styles.containerCountryFirst}>
             <Dropdown
-              data={dropdownData1}
+              data={dropdownBranches}
               search
               maxHeight={300}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               labelField="label"
               valueField="value"
-              placeholder={!isFocus ? 'North Street Franchise' : '...'}
+              placeholder={
+                !isBranchFocus ? selectedDropdownBranch?.label : '...'
+              }
               searchPlaceholder="Search.."
-              value={dropdownStreet}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
+              value={selectedDropdownBranch}
+              onFocus={() => setIsBranchFocus(true)}
+              onBlur={() => setIsBranchFocus(false)}
               onChange={item => {
-                setDropdownStreet(item.value);
-                setIsFocus(false);
+                setSelectedDropdownBranch(item);
+                setIsBranchFocus(false);
+                // displayChartData(
+                //   branches.filter(br => br.id == item.value)[0],
+                // );
               }}
-              placeholderStyle={styles.placeholderStyle}
             />
           </View>
 
           <View style={styles.containerCountrySecond}>
             <Dropdown
               data={dropdownData2}
+              itemTextStyle={styles.itemtextStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
               search
               maxHeight={300}
               labelField="label"
               valueField="value"
-              placeholder={!isFocus ? 'This Week' : '...'}
+              placeholder={!isWeekFocus ? 'This Week' : '...'}
               searchPlaceholder="Search.."
               value={dropdownWeek}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
+              onFocus={() => setIsWeekFocus(true)}
+              onBlur={() => setIsWeekFocus(false)}
               onChange={item => {
-                setDropdownWeek(item.value);
-                setIsFocus(false);
+                setDropdownWeek(item);
+                setIsWeekFocus(false);
               }}
-              placeholderStyle={styles.placeholderStyle}
             />
           </View>
         </View>
         <View>
           <BarChart
             style={graphStyle}
-            data={data}
+            data={chartData}
             width={screenWidth}
             height={220}
             yAxisLabel=""
             chartConfig={chartConfig}
             verticalLabelRotation={0}
+            showValuesOnTopOfBars = {true}
+            showBarTops = {true}
           />
         </View>
       </View>
@@ -194,74 +349,55 @@ const EnterpriseHome = ({navigation}) => {
         <View style={styles.recentlyInfo}>
           <Text style={styles.deliveryRecently}>Company locations</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseCompanyLocations')}>
+            onPress={() => navigation.navigate('EnterpriseCompanyLocations',{branches:dashboardData?.branchOverviewData?.length > 0 ? dashboardData?.branchOverviewData : []})}>
             <Text style={styles.seAllText}>See All</Text>
           </TouchableOpacity>
         </View>
+        {dashboardData?.branchOverviewData?.length > 0 && dashboardData?.branchOverviewData.map((item, index) => {
+          if(index < 5 ){
+            return (
+              <View key={index} style={styles.franchiseCard}>
+                <View style={styles.franchiseCardHeader}>
+                  <Image
+                    style={styles.companyImga}
+                    source={require('../../image/home.png')}
+                  />
+                  <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
+                </View>
 
-        <View style={styles.franchiseCard}>
-          <View style={styles.franchiseCardHeader}>
-            <Image
-              style={styles.companyImga}
-              source={require('../../image/home.png')}
-            />
-            <Text style={styles.franchiseStreet}>North Street Franchise</Text>
-          </View>
+                <View style={styles.bookedCardInfo}>
+                  <View>
+                    <Text style={styles.bookedInfo}>Active booking</Text>
+                    <Text style={styles.bookedDetails}>{item.active_order? item.active_order:0}</Text>
+                  </View>
 
-          <View style={styles.bookedCardInfo}>
-            <View>
-              <Text style={styles.bookedInfo}>Hours booked</Text>
-              <Text style={styles.bookedDetails}>05</Text>
-            </View>
+                  <View>
+                    <Text style={styles.bookedInfo}>Scheduled booking</Text>
+                    <Text style={styles.bookedDetails}>{item.schedule_order ? item.schedule_order :0}</Text>
+                  </View>
 
-            <View>
-              <Text style={styles.bookedInfo}>Hours spent</Text>
-              <Text style={styles.bookedDetails}>03</Text>
-            </View>
+                  <View>
+                    <Text style={styles.bookedInfo}>All booking</Text>
+                    <Text style={styles.bookedDetails}>{item.total ? item.total:0}</Text>
+                  </View>
+                </View>
 
-            <View>
-              <Text style={styles.bookedInfo}>Bookings</Text>
-              <Text style={styles.bookedDetails}>04</Text>
-            </View>
-          </View>
-
-          <View style={styles.companyLocation}>
-            <EvilIcons name="location" size={22} color="#000" />
-            <Text style={styles.locationAddress}>North Street, ABC</Text>
-          </View>
-        </View>
-
-        <View style={styles.franchiseCard}>
-          <View style={styles.franchiseCardHeader}>
-            <Image
-              style={styles.companyImga}
-              source={require('../../image/home.png')}
-            />
-            <Text style={styles.franchiseStreet}>West Street Franchise</Text>
-          </View>
-
-          <View style={styles.bookedCardInfo}>
-            <View>
-              <Text style={styles.bookedInfo}>Hours booked</Text>
-              <Text style={styles.bookedDetails}>08</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Hours spent</Text>
-              <Text style={styles.bookedDetails}>02</Text>
-            </View>
-
-            <View>
-              <Text style={styles.bookedInfo}>Bookings</Text>
-              <Text style={styles.bookedDetails}>05</Text>
-            </View>
-          </View>
-
-          <View style={styles.companyLocation}>
-            <EvilIcons name="location" size={22} color="#000" />
-            <Text style={styles.locationAddress}>West Street, ABC</Text>
-          </View>
-        </View>
+                <View style={styles.companyLocation}>
+                  <EvilIcons name="location" size={22} color="#000" />
+                  <Text style={styles.locationAddress}>
+                    {item.address +
+                      ', ' +
+                      item.city +
+                      ', ' +
+                      item.state +
+                      ', ' +
+                      item.country}
+                  </Text>
+                </View>
+              </View>
+            );
+          }
+        })}
       </View>
     </ScrollView>
   );
@@ -608,10 +744,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   placeholderStyle: {
+    color: '#999',
     fontSize: 12,
-    color: colors.text,
-    fontFamily: 'Montserrat-Regular',
   },
+  selectedTextStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  inputSearchStyle: {
+    color: '#999',
+    fontSize: 12,
+  },
+  itemtextStyle: {
+    color: colors.text,
+    fontSize: 12,
+  },
+  notificationCountStyle:{
+    position:'absolute',
+    right:0,
+    backgroundColor:'red',
+    borderRadius:50,
+    height:16, 
+    width:16,
+    justifyContent:'center',
+    alignItems:'center' 
+  },
+  notificationCountText:{
+    color:'#FFFFFF',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
+  }
+
 });
 
 export default EnterpriseHome;

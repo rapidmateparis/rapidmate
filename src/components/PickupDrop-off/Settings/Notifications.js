@@ -87,7 +87,6 @@ const Notifications = ({navigation}) => {
 
   const renderItem = notificationItem => (
     <View style={styles.historyCard}>
-      {console.log('notificationItem', notificationItem.item.item)}
       <Image source={require('../../../image/bell-icon.png')} />
       <View style={styles.deliveryDetails}>
         <Text style={styles.deliveryStatus}>
@@ -110,9 +109,9 @@ const Notifications = ({navigation}) => {
   );
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
+    <View style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
-        <View>
+        <View style={{marginTop: 10,}}>
           <SectionList
             sections={notificationList}
             renderItem={renderItem}
@@ -124,7 +123,7 @@ const Notifications = ({navigation}) => {
           />
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

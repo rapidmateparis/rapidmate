@@ -422,6 +422,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     fontSize: 12,
+    color: colors.text,
     padding: 10,
     fontFamily: 'Montserrat-Regular',
   },

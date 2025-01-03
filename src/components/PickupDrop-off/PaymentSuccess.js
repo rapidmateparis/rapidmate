@@ -1,45 +1,84 @@
-import React, {useState} from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
-  ImageBackground,
+  BackHandler,
 } from 'react-native';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 
-const PaymentSuccess = ({navigation}) => {
+const PaymentSuccess = ({ navigation, route }) => {
+  const params = route.params;
+
+  useEffect(() => {
+    // Disable back button
+    const onBackPress = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+
+    // Automatic navigation after 3 seconds
+    const timer = setTimeout(() => {
+      if (params.serviceTypeId === 1) {
+        navigation.navigate('ScheduleOrderSuccess', {
+          schedule_date_time: params.schedule_date_time,
+          serviceTypeId: params.serviceTypeId,
+        });
+      } else {
+        navigation.navigate('LoaderForDriver');
+      }
+    }, 2000);
+
+    // Cleanup on unmount
+    return () => {
+      backHandler.remove();
+      clearTimeout(timer);
+    };
+  }, [navigation, params]);
+  
+  useEffect(()=>{
+    setTimeout(() =>{
+      reDirectToNextPage()
+    }, 2000);
+  },[])
+
+  const reDirectToNextPage=()=>{
+    if(params.serviceTypeId === 1){
+      navigation.navigate('ScheduleOrderSuccess',{
+        schedule_date_time: params.schedule_date_time,
+        serviceTypeId:params.serviceTypeId
+      })
+    }else{
+      navigation.navigate('LoaderForDriver')
+    }
+  }
+
   return (
     <ScrollView
-      style={{width: '100%', height: '100%', backgroundColor: '#FBFAF5'}}
+      style={{ width: '100%', height: '100%', backgroundColor: '#FBFAF5' }}
       contentContainerStyle={styles.scrollViewContainer}>
       <View
         style={{
           width: 350,
           height: 500,
           position: 'relative',
-          marginVertical: 30,
         }}>
         <View style={styles.container}>
           <Image
-            style={{width:100,height:100}}
+            style={{ width: 100, height: 100 }}
             source={require('../../image/payment_success.png')}
           />
           <Text style={styles.text}>Payment Successful!</Text>
           <Text style={styles.subText}>
-          Your payment was successful, let’s look for a delivery boy now...
+            Your payment was successful, let’s look for a delivery boy now...
           </Text>
         </View>
-      </View>
-      <View style={styles.actionBtnCard}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('LoaderForDriver')}
-          style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );

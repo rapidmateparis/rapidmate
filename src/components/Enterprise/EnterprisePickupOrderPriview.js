@@ -26,6 +26,7 @@ import BigTruckImage from '../../image/Big-Package.png';
 import {useLoader} from '../../utils/loaderContext';
 import {createEnterpriseOrder} from '../../data_manager';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
+import {API} from '../../utils/constant';
 
 const EnterprisePickupOrderPriview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -35,7 +36,11 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
   const toggleModal = () => {
     setImageModalVisible(!isImageModalVisible);
   };
-  const params = route.params;
+  const params = route.params?.props?.props ? route.params?.props?.props   :   route.params?.props ? route.params?.props :route.params;
+  const dropDetails  = route.params?.props?.branches ? route.params?.props?.branches   :   [];
+
+
+  console.log('Image ID:', params.imageViewId);
 
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
@@ -48,16 +53,16 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
       case 4:
         return PartnerImage;
       case 5:
-        return VanImage;
-      case 6:
         return PickupImage;
+      case 6:
+        return VanImage;
       case 7:
         return TruckImage;
       default:
         return BigTruckImage;
     }
   };
-
+console.log('params -------0 ',params)
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -69,12 +74,26 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
             </Text>
           </View>
           <View style={styles.borderDummy}></View>
-          <View style={styles.locationAddress}>
-            <MaterialIcons name="my-location" size={18} color="#000000" />
-            <Text style={styles.TextAddress}>
-              {params.dropoff_location.destinationDescription}
-            </Text>
-          </View>
+          {params.delivery_type_id == 2 ? (
+            params.branches.map((item, index) => {
+              return (
+                <View style={[styles.locationAddress, {marginVertical: 7}]}>
+                  <MaterialIcons name="my-location" size={18} color="#000000" />
+                  <Text style={styles.TextAddress}>
+                    {item.destinationDescription}
+                  </Text>
+                </View>
+              );
+            })
+          ) : (
+            <View style={styles.locationAddress}>
+              <MaterialIcons name="my-location" size={18} color="#000000" />
+              <Text style={styles.TextAddress}>
+                {params.dropoff_location.destinationDescription}
+              </Text>
+            </View>
+          )}
+
           <View style={styles.borderShowOff}></View>
         </View>
         <View style={styles.pickupCard}>
@@ -111,16 +130,21 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
               </Text>
               <Text style={styles.vehicleCapacity}>{params.company_name}</Text>
             </View>
-
             <View>
               <TouchableOpacity onPress={() => toggleModal()}>
-                <Image
-                  style={styles.packagePhoto}
-                  source={require('../../image/PackagePhoto.png')}
-                />
+                {params.imageId ? (
+                  <Image
+                    style={styles.packagePhoto}
+                    source={{uri: API.imageViewUrl + params.imageId}}
+                  />
+                ) : (
+                  <Image
+                    style={styles.packagePhoto}
+                    source={require('../../image/PackagePhoto.png')}
+                  />
+                )}
               </TouchableOpacity>
             </View>
-
           </View>
           <View style={styles.pickupinfoCard}>
             <View style={[styles.pickupManDetails, {width: '60%'}]}>
@@ -147,9 +171,104 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           </View>
 
           <View>
-            <Text style={styles.pickupNotes}>{params.package_note}</Text>
+            <Text style={styles.pickupNotes}>{params.pickup_notes}</Text>
           </View>
         </View>
+
+        {params?.drop_details ? <View style={styles.pickupCard}>
+          <Text style={styles.pickupDetails}>Drop details</Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>
+                {params.drop_details.drop_first_name +
+                  ' ' +
+                  params.drop_details.drop_last_name}
+              </Text>
+              <Text style={styles.vehicleCapacity}>{params.drop_details.drop_company_name}</Text>
+            </View>
+
+          </View>
+          <View style={styles.pickupinfoCard}>
+            <View style={[styles.pickupManDetails, {width: '60%'}]}>
+              <SimpleLineIcons
+                style={{marginTop: 3}}
+                name="globe"
+                size={12}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>
+                {params.drop_details.drop_email}
+              </Text>
+            </View>
+
+            <View style={styles.pickupManDetails}>
+              <MaterialIcons
+                style={{marginTop: 1}}
+                name="call"
+                size={15}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>+33{params.drop_details.drop_mobile}</Text>
+            </View>
+          </View>
+
+          <View>
+            <Text style={styles.pickupNotes}>{params.drop_details.drop_notes}</Text>
+          </View>
+        </View>:
+        
+        dropDetails.length> 0 ?
+        dropDetails.map((drop,index)=>{
+          return(
+            <View style={styles.pickupCard}>
+          <Text style={styles.pickupDetails}>Drop {index+1} details</Text>
+          <View style={styles.packageBasicInfo}>
+            <View>
+              <Text style={styles.vehicleName}>
+                {drop.drop_first_name +
+                  ' ' +
+                  drop.drop_last_name}
+              </Text>
+              <Text style={styles.vehicleCapacity}>{drop.drop_company_name}</Text>
+            </View>
+
+          </View>
+          <View style={styles.pickupinfoCard}>
+            <View style={[styles.pickupManDetails, {width: '60%'}]}>
+              <SimpleLineIcons
+                style={{marginTop: 3}}
+                name="globe"
+                size={12}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>
+                {drop.drop_email}
+              </Text>
+            </View>
+
+            <View style={styles.pickupManDetails}>
+              <MaterialIcons
+                style={{marginTop: 1}}
+                name="call"
+                size={15}
+                color="#000000"
+              />
+              <Text style={styles.contactInfo}>+33{drop.drop_mobile}</Text>
+            </View>
+          </View>
+
+          <View>
+            <Text style={styles.pickupNotes}>{drop.drop_notes}</Text>
+          </View>
+        </View>
+          )
+        })
+        : null
+        
+        
+        }
+
+
 
         <View style={styles.pickupCard}>
           <Text style={styles.vehicleDetails}>Estimated cost</Text>
@@ -185,6 +304,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
             value={toggleCheckBox}
             onValueChange={newValue => setToggleCheckBox(newValue)}
             style={{alignSelf: 'center'}}
+            tintColors={{true: '#FFC72B', false: '#999'}}
           />
           <Text style={styles.checkboxText}>
             Save these addresses for later
@@ -192,7 +312,14 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterpriseOrderPayment',{...params})}
+          onPress={() =>{
+            if(dropDetails?.length > 0){
+              navigation.navigate('EnterpriseOrderPayment', {...params,dropDetails})
+            }else{
+              navigation.navigate('EnterpriseOrderPayment', {...params})
+            }
+          }
+          }
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
           <Text style={styles.buttonText}>Proceed to payment</Text>
         </TouchableOpacity>
@@ -201,6 +328,11 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
         setImageModalVisible={setImageModalVisible}
+        previewImage={
+          params.imageId
+            ? params.imageId
+            : null
+        }
       />
     </ScrollView>
   );

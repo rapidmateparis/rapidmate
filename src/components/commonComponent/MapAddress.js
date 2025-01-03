@@ -13,11 +13,12 @@ import {
 } from '../commonComponent/StoreContext';
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
+import SavedAddressModal from './SavedAddressModal';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Constants
-const LATITUDE_DELTA = 0.0922; // Adjusted for more zoom
-const ASPECT_RATIO = 0.752;
+const LATITUDE_DELTA = 0.08; // Adjusted for more zoom
+const ASPECT_RATIO = 0.07;
 
 // Custom Marker Components
 const MyCustomMarkerView = () => (
@@ -43,6 +44,32 @@ const MapAddress = props => {
   const [destination, setDestination] = useState(null);
   const [time, setTime] = useState(0);
   const [distance, setDistance] = useState(0);
+  const [selectedSourceAddress, setSelectedSourceAddress] = useState();
+  const [selectedDistinationAddress, setSelectedDistinationAddress] =
+    useState();
+  const [addressType, setAddressType] = useState();
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const sourceLocation = props.sourceLocation;
+
+  const [sourceLocationText, setSourceLocationText] = useState('');
+  useEffect(()=>{
+    if(sourceLocation?.address &&  sourceLocation?.city && sourceLocation?.state &&sourceLocation?.country){
+      var sourceLocationTextVal = sourceLocation?.address;
+      sourceLocationTextVal += sourceLocation?.city ? ', ' + sourceLocation.city : '';
+      sourceLocationTextVal += sourceLocation?.state ? ', ' + sourceLocation.state : '';
+      sourceLocationTextVal += sourceLocation?.country
+        ? ', ' + sourceLocation?.country
+        : '';
+        sourceLocationTextVal &&  setSourceLocationText(sourceLocationTextVal)
+      }
+    
+  },[sourceLocation])
+
+  const toggleModal = addressType => {
+    setAddressType(addressType);
+    setModalVisible(!isModalVisible);
+  };
 
   useEffect(() => {
     getLiveLocation();
@@ -50,15 +77,18 @@ const MapAddress = props => {
 
   const getLiveLocation = async () => {
     try {
-      const locationPermissionDenied = await locationPermission();
-      if (locationPermissionDenied) {
-        const {latitude, longitude} = await getCurrentLocation();
-        setOrigin({latitude, longitude});
-        moveToLocation({latitude, longitude});
-      }
+      // const locationPermissionDenied = await locationPermission();
+      // if (locationPermissionDenied) {
+      //   const {latitude, longitude} = await getCurrentLocation();
+      //   setOrigin({latitude, longitude});
+      //   moveToLocation({latitude, longitude});
+      // }
       // Example code (without actual location logic)
-      const latitude = 48.85754309772872;
-      const longitude = 2.3513877855537912;
+      // const latitude = 48.85754309772872;
+      // const longitude = 2.3513877855537912;
+      const latitude = sourceLocation?.latitude ? parseFloat(sourceLocation.latitude) : 48.85754309772872;
+      const longitude = sourceLocation?.longitude ?  parseFloat(sourceLocation.longitude) : 2.3513877855537912;
+      sourceLocation && setSelectedSourceAddress(sourceLocation)
       setOrigin({latitude, longitude});
       moveToLocation({latitude, longitude});
     } catch (error) {
@@ -83,6 +113,18 @@ const MapAddress = props => {
     props.onFetchDistanceAndTime({distance: d, time: t});
   };
 
+  const onSelectedAddress = address => {
+    console.log('address', address, addressType);
+    if (address) {
+      if (addressType == 0) {
+        setSelectedSourceAddress(address);
+        setSourceLocationText(address);
+      } else {
+        setSelectedDistinationAddress(address);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* GooglePlacesAutocomplete */}
@@ -105,9 +147,19 @@ const MapAddress = props => {
                 description: {color: colors.black},
                 color: colors.black,
               }}
+              ref={ref => {
+                if (sourceLocationText) {
+                  ref?.setAddressText(sourceLocationText);
+                }
+              }}
               textInputProps={{
                 placeholderTextColor: colors.lightGrey,
                 returnKeyType: 'search',
+                onChangeText: text => {
+                  if (text) {
+                    setSelectedSourceAddress(null);
+                  }
+                },
               }}
               onPress={(data, details = null) => {
                 const originCoordinates = {
@@ -126,6 +178,13 @@ const MapAddress = props => {
                 language: 'en',
               }}
               onFail={() => console.error('Error')}
+            />
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="favorite-outline"
+              size={18}
+              color="#000000"
+              onPress={() => toggleModal(0)}
             />
           </View>
 
@@ -147,9 +206,19 @@ const MapAddress = props => {
                 description: {color: colors.black},
                 color: colors.black,
               }}
+              ref={ref => {
+                if (selectedDistinationAddress) {
+                  ref?.setAddressText(selectedDistinationAddress);
+                }
+              }}
               textInputProps={{
                 placeholderTextColor: colors.lightGrey,
                 returnKeyType: 'search',
+                onChangeText: text => {
+                  if (text) {
+                    setSelectedDistinationAddress(null);
+                  }
+                },
               }}
               onPress={(data, details = null) => {
                 const destinationCoordinates = {
@@ -168,6 +237,13 @@ const MapAddress = props => {
                 language: 'en',
               }}
               onFail={() => console.error('Error')}
+            />
+            <MaterialIcons
+              style={{marginTop: 15}}
+              name="favorite-outline"
+              size={18}
+              color="#000000"
+              onPress={() => toggleModal(1)}
             />
           </View>
           <View style={styles.borderShowOff}></View>
@@ -228,6 +304,11 @@ const MapAddress = props => {
           />
         )}
       </MapView>
+      <SavedAddressModal
+        isModalVisible={isModalVisible}
+        setModalVisible={setModalVisible}
+        selectedAddress={onSelectedAddress}
+      />
     </View>
   );
 };

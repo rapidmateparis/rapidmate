@@ -23,7 +23,6 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
-  const deliveryType = route.params.delivery_type_id;
 
   useEffect(() => {
     getEnterpriseBranch(
@@ -68,6 +67,7 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
         navigation.navigate('EnterpiseSelectDeliveryTypes', {
           ...route.params,
           branch_id: item.item.id,
+          sourceBranch: item.item
         })
       }>
       <View style={styles.franchiseCard}>
@@ -88,38 +88,6 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
     </TouchableOpacity>
   );
 
-  const renderItemSelectable = ({item, index}) => (
-    <TouchableOpacity
-      onPress={() => {
-        const branches = [...enterpriseBranches];
-        branches[index].isSelected = !branches[index].isSelected;
-        setEnterpriseBranches(branches);
-      }}>
-      <View style={styles.franchiseCard}>
-        <View style={{marginRight: 10}}>
-          <FontAwesome
-            name={item.isSelected ? 'dot-circle-o' : 'circle-thin'}
-            size={25}
-            color={item.isSelected ? colors.secondary : colors.text}
-          />
-        </View>
-        <Image
-          style={{width: 30, height: 30}}
-          source={require('../../image/home.png')}
-        />
-        <View style={styles.franchiseCardHeader}>
-          <Text style={styles.franchiseStreet}>{item.address}</Text>
-          <View style={styles.locationCard}>
-            <EvilIcons name="location" size={22} color="#000" />
-            <Text style={styles.franchiseSubTitle}>
-              {item.city}, {item.state}, {item.country}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
   return (
     <View
       style={{
@@ -131,31 +99,8 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
       }}>
       <FlatList
         data={enterpriseBranches}
-        renderItem={deliveryType == 1 || deliveryType == 3 ? renderItem : renderItemSelectable}
+        renderItem={renderItem}
       />
-      {deliveryType == 2 ? (
-        <TouchableOpacity
-          onPress={() => {
-            var selectedBranches = enterpriseBranches.filter(
-              data => data.isSelected,
-            );
-
-            if (selectedBranches.length == 0) {
-              Alert.alert('Error Alert', 'Select any branch', [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else {
-              navigation.navigate('EnterpiseSelectDeliveryTypes', {
-                ...route.params,
-                branch_id: selectedBranches[0].id,
-                branches: selectedBranches,
-              });
-            }
-          }}
-          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      ) : null}
     </View>
   );
 };

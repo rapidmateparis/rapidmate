@@ -25,12 +25,16 @@ import {
   addPayment,
   createEnterpriseOrder,
   createPickupOrder,
+  getEnterprisePaymentMethod,
 } from '../../data_manager';
 import {
   usePlacedOrderDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
 import {useStripe} from '@stripe/stripe-react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { localToUTC } from '../../utils/common';
+import { API } from '../../utils/constant';
 
 const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
@@ -41,6 +45,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const [clientSecret, setClientSecret] = useState(null);
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
   const {userDetails} = useUserDetails();
+  const [paymentMethod, setPaymentMethod] = useState([]);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
 
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
@@ -65,9 +71,39 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
 
   useEffect(() => {
     if (orderNumber) {
-      createPaymentIntent();
+      if (selectedOptionIndex != 99) {
+        createPaymentIntent();
+      } else {
+        navigation.navigate('EnterpriseLookingForDriver', {
+          cancellable: orderResponse.is_enable_cancel_request,
+        });
+      }
     }
   }, [orderNumber]);
+
+  useEffect(() => {
+    console.log(userDetails.userDetails[0]);
+    getPaymentMethod();
+  }, []);
+
+  const getPaymentMethod = () => {
+    setLoading(true);
+    getEnterprisePaymentMethod(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._response.length > 0) {
+          setPaymentMethod(successResponse[0]._response);
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
+      },
+    );
+  };
 
   const createPaymentIntent = async () => {
     try {
@@ -94,7 +130,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       setClientSecret(data.client_secret);
       setup(data.client_secret);
     } catch (error) {
-      Alert.alert('Error', error.message);
+      // Alert.alert('Error', error.message);
     }
   };
 
@@ -132,31 +168,37 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('EnterpriseLookingForDriver');
+          navigation.navigate('EnterpriseLookingForDriver', {
+            cancellable: orderResponse.is_enable_cancel_request,
+          });
         }
       },
       errorResponse => {
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        // Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        //   {text: 'OK', onPress: () => {}},
+        // ]);
       },
     );
   };
 
   const onPayment = async () => {
-    placeEnterpriseOrder();
+    // if (selectedOptionIndex == -1) {
+    //   Alert.alert('Error Alert', 'Please choose a payment method', [
+    //     {text: 'OK', onPress: () => {}},
+    //   ]);
+    // } else {
+      placeEnterpriseOrder();
+    // }
   };
 
   const placeEnterpriseOrder = async () => {
     let requestParams = {
       enterprise_ext_id: userDetails.userDetails[0].ext_id,
       branch_id: params.branch_id,
-      delivery_type_id: 1,
+      delivery_type_id: params.delivery_type_id,
       service_type_id: 2,
       vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      pickup_date: params.pickup_date,
-      pickup_time: params.pickup_time,
       pickup_location_id: params.pickup_location_id,
       dropoff_location_id: params.dropoff_location_id,
       is_repeat_mode: params.is_repeat_mode,
@@ -168,17 +210,47 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       email: userDetails.userDetails[0].email,
       mobile: params.mobile,
       package_id: params.package_id,
-      package_note: params.package_note,
+      pickup_notes: params.pickup_notes,
       is_same_dropoff_location: 0,
       repeat_dropoff_location_id: '',
       distance: parseFloat(params.distance).toFixed(1),
       total_amount: parseFloat(params.amount),
-      package_photo: 'https://example.com/package.jpg',
+      package_photo: API.imageViewUrl + params.imageId, //'https://example.com/package.jpg',
       repeat_mode: params.repeat_mode,
       repeat_every: params.repeat_every,
       repeat_until: params.repeat_until,
+      // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
+      // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
+      is_scheduled_order:params.is_scheduled_order
     };
-    console.log('requestParams', requestParams);
+
+    if(params?.drop_details){
+      requestParams={...requestParams,
+        drop_first_name: params.drop_details.drop_first_name,
+        drop_last_name: params.drop_details.drop_last_name,
+        drop_mobile: params.drop_details.drop_mobile,
+        drop_notes: params.drop_details.drop_notes,
+        drop_email: params.drop_details.drop_email,
+        drop_company_name: params.drop_details.drop_company_name,
+      }
+    }else if(params?.dropDetails && params?.dropDetails.length > 0){
+      requestParams={...requestParams,
+        branches:params?.dropDetails
+      }
+    }
+
+    if(params.order_date){
+      requestParams={...requestParams,order_date:localToUTC(params.order_date)}
+    }else{
+      // requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
+      requestParams={...requestParams,order_date:localToUTC(params.schedule_date_time)}
+    }
+
+    // if (params.branches) {
+    //   requestParams.branches = params.branches;
+    // }
+    console.log('requestParams from props ******', params);
+    console.log('requestParams ******', requestParams);
     setLoading(true);
     createEnterpriseOrder(
       requestParams,
@@ -186,7 +258,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         if (successResponse[0]._success) {
           console.log('createEnterpriseOrder', successResponse[0]._response);
           savePlacedOrderDetails(successResponse[0]._response);
-          setOrderResponse(successResponse[0]._response);
+          setOrderResponse(successResponse[0]._response[0]);
           setLoading(false);
           setOrderNumber(successResponse[0]._response[0].order_number);
         }
@@ -208,7 +280,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           <View style={styles.semiTruckDetails}>
             <View style={{marginRight: 15}}>
               <Image
-                style={{width: 90, height: 70}}
+                style={[styles.vehicleImage, {width: 100, height: 100}]}
                 source={getVechicleImage(params.vehicle_type.vehicle_type_id)}
               />
             </View>
@@ -225,10 +297,17 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          <View style={[styles.distanceTime, {marginVertical: 15}]}>
+          <View style={styles.distanceTime}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From {params.pickup_location.sourceDescription}
+              From - {params.pickup_location.sourceDescription}
+            </Text>
+          </View>
+
+          <View style={styles.distanceTime}>
+            <EvilIcons name="location" size={18} color="#606060" />
+            <Text style={styles.vehicleCapacity}>
+              To - {params.dropoff_location.destinationDescription}
             </Text>
           </View>
 
@@ -259,9 +338,84 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
 
+        {paymentMethod.length > 0 && 
+        <>
         <View>
-          <Text style={styles.selectPaymentMethod}>Credi & Debit Cards</Text>
+          <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
         </View>
+
+        <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
+          {paymentMethod.map((item, index) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  setSelectedOptionIndex(index);
+                }}
+                style={{
+                  flexDirection: 'row',
+                  padding: 15,
+                  width: '100%',
+                  justifyContent: 'space-between',
+                }}>
+                <View style={{flexDirection: 'row'}}>
+                  <Image
+                    style={{marginRight: 20}}
+                    source={require('../../image/logos_mastercard.png')}
+                  />
+                  <Text style={[styles.selectPaymentMethod, {marginRight: 10}]}>
+                    {item.card_holder_name}
+                  </Text>
+                  <Text style={styles.selectPaymentMethod}>
+                    {item.card_number}
+                  </Text>
+                </View>
+
+                {selectedOptionIndex == index ? (
+                  <FontAwesome
+                    name="dot-circle-o"
+                    size={25}
+                    color={colors.secondary}
+                  />
+                ) : (
+                  <FontAwesome
+                    name="circle-thin"
+                    size={25}
+                    color={colors.text}
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+          {userDetails.userDetails[0].is_pay_later == 1 ? (
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedOptionIndex(99);
+              }}
+              style={{
+                flexDirection: 'row',
+                padding: 15,
+                width: '100%',
+                justifyContent: 'space-between',
+              }}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.selectPaymentMethod}>Pay Later</Text>
+              </View>
+
+              {selectedOptionIndex == 99 ? (
+                <FontAwesome
+                  name="dot-circle-o"
+                  size={25}
+                  color={colors.secondary}
+                />
+              ) : (
+                <FontAwesome name="circle-thin" size={25} color={colors.text} />
+              )}
+            </TouchableOpacity>
+          ) : null}
+        </View>
+        </>
+        }
 
         <View style={styles.discountCard}>
           <Image
@@ -388,7 +542,6 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   totalAmount: {
     fontSize: 12,
@@ -433,7 +586,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 15,
+    marginVertical: 10,
   },
   discountInfo: {
     color: colors.secondary,
@@ -449,7 +602,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '50%',
+    marginTop: 50,
+    marginBottom: 20,
   },
   PayText: {
     backgroundColor: '#FFFFFF',
@@ -465,6 +619,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
+  },
+  vehicleImage: {
+    height: 62,
+    resizeMode: 'center',
   },
 });
 

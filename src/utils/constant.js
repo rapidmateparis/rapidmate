@@ -23,8 +23,8 @@ export const HTTPMethod = {
 
 export const PORT = {
   qa: '3009',
-  uat: '3000',
-  prod: '3008',
+  uat: '3041',
+  prod: '3906',
 };
 
 export const BASE_URL = `http://16.171.224.246:${PORT.qa}/api/`;
@@ -52,6 +52,7 @@ export const API = {
   cityList: BASE_URL + 'city',
   vehicles: BASE_URL + 'vehicles',
   viewDeliveryBoyOrderUrl: BASE_URL + 'order/deliveryboy/',
+  viewDeliveryBoyDashboardOrderUrl: BASE_URL + 'order/deliveryboy/dashboard/',
   viewConsumerOrderUrl: BASE_URL + 'order/consumer/',
   payment: BASE_URL + 'payment',
   documentsUpload: BASE_URL + 'documents/upload',
@@ -61,6 +62,7 @@ export const API = {
   viewImageUrl: BASE_URL + 'documents/view/',
   lookupDataUrl: BASE_URL + 'lookup',
   getAllocatedDeliveryBoy: BASE_URL + 'order/allocated/details?o=',
+  getAllocatedEnterprise: BASE_URL + 'enterprise/order/allocated/details?o=',
   viewOrderDetail: BASE_URL + 'order/view/',
   enterprisebranch: BASE_URL + 'enterprisebranch/get/',
   enterpriseOrder: BASE_URL + 'enterprise/order/',
@@ -78,8 +80,45 @@ export const API = {
   getFaqListUrl: BASE_URL + 'faq',
   enterprisebranchCreate: BASE_URL + 'enterprisebranch',
   cancelOrderUrl: BASE_URL + 'order/cancel',
+  cancelOrderEnterpriseUrl: BASE_URL + 'enterprise/order/cancel',
   deliveryBoyPlanningSetupDateList: BASE_URL + 'order/deliveryboy/plan/list',
   checkPromoCodeUrl: BASE_URL + 'promocode/check',
-  orderRequestActionUrl: BASE_URL + 'order/request',
+  orderRequestActionUrl: BASE_URL + 'order/deliveryboy/request/action',
   paymentCancelRequestUrl: BASE_URL + 'payment/update',
+  enterpriseOrdersUrl: BASE_URL + 'enterprise/order/getbyext/',
+  viewEnterpriseOrderDetail: BASE_URL + 'enterprise/order/view/',
+  getDeliveryBoyWalletUrl: BASE_URL + 'deliveryboy/wallet/balance/',
+  getDeliveryBoyTransactionUrl: BASE_URL + 'deliveryboy/wallet/transaction/',
+  orderStatusUpdateUrl: BASE_URL + 'order/update/status',
+  consumerWalletUrl: BASE_URL + 'consumer/wallet/balance/',
+  consumerPaymentMethodUrl: BASE_URL + 'consumer/paymentmethod',
+  consumerBillingDetailsUrl: BASE_URL + 'consumer/billing/address/update',
+  getconsumerBillingDetailsUrl: BASE_URL + 'consumer/billing/address/get/',
+  enterprisePlanSearch: BASE_URL + 'enterprise/order/plan/search',
+  changePasswordUrl: BASE_URL + 'authuser/changepassword',
+  enterpriseDashboardUrl: BASE_URL + 'enterprise/dashboard/',
+  imageViewUrl: BASE_URL + 'documents/view/',
+  getEnterpriseAddressListUrl: BASE_URL + 'enterprise/address/list/',
+  createEnterpriseAddressUrl: BASE_URL + 'enterprise/address/create',
+  addressBookUpdateEnterpriseUrl: BASE_URL + 'enterprise/address/update',
+  addressBookDeleteEnterpriseUrl: BASE_URL + 'enterprise/address/delete/',
+  enterprisePaymentMethod:
+    BASE_URL + 'enterprise/paymentmethod/getpaymentcard/',
+  verifyOrderOTP: BASE_URL + 'order/otp/verify',
+  verifyOrderDeliveryOTP: BASE_URL + 'order/delivered/otp/verify',
+  enterprisePaymentMethodUrl: BASE_URL + 'enterprise/paymentmethod',
+  searchOrder: BASE_URL + 'enterprise/order/search',
+  calendarPlanDate: BASE_URL + 'order/deliveryboy/plan/calendar/data/',
+
+  notificationCount:BASE_URL + 'notification/count/',
+
+  deliveryBoyBillingAddressUpdate:BASE_URL + 'deliveryboy/billing/address/update/',
+  deliveryBoyBillingAddressGet: BASE_URL + 'deliveryboy/billing/address/get/',
+  downloadInvoice: BASE_URL + 'admin/invoice/view/',
+  vechicleTaxList: BASE_URL + 'vehicletypes/tax/list',
+
 };
+
+export const DATE_FORMAT ={
+  titleFormat:'MMM DD, YYYY [at] hh:mm A'
+}
