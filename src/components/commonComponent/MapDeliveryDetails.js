@@ -110,19 +110,19 @@ export default function MapDeliveryDetails(probs = null) {
   useEffect(() => {
     if (probs?.addressData) {
       setOrigin({
-        latitude: probs.addressData.sourceAddress.latitude
+        latitude: probs?.addressData?.sourceAddress?.latitude
           ? parseFloat(probs.addressData.sourceAddress.latitude)
           : 48.85754309772872,
-        longitude: probs.addressData.sourceAddress.longitude
+        longitude: probs?.addressData?.sourceAddress?.longitude
           ? parseFloat(probs.addressData.sourceAddress.longitude)
           : 2.3513877855537912,
       });
 
       setDestination({
-        latitude: probs.addressData.destinationAddress.latitude
+        latitude: probs?.addressData?.destinationAddress?.latitude
           ? parseFloat(probs.addressData.destinationAddress.latitude)
           : 48.86020382046169,
-        longitude: probs.addressData.destinationAddress.longitude
+        longitude: probs?.addressData?.destinationAddress?.longitude
           ? parseFloat(probs.addressData.destinationAddress.longitude)
           : 2.3565536180821782,
       });
@@ -131,18 +131,18 @@ export default function MapDeliveryDetails(probs = null) {
 
   const polylineCoordinates = [
     {
-      latitude: probs.addressData.sourceAddress.latitude
+      latitude: probs?.addressData?.sourceAddress?.latitude
         ? parseFloat(probs.addressData.sourceAddress.latitude)
         : 48.85754309772872,
-      longitude: probs.addressData.sourceAddress.longitude
+      longitude: probs?.addressData?.sourceAddress?.longitude
         ? parseFloat(probs.addressData.sourceAddress.longitude)
         : 2.3513877855537912,
     },
     {
-      latitude: probs.addressData.destinationAddress.latitude
+      latitude: probs?.addressData?.destinationAddress?.latitude
         ? parseFloat(probs.addressData.destinationAddress.latitude)
         : 48.86020382046169,
-      longitude: probs.addressData.destinationAddress.longitude
+      longitude: probs?.addressData?.destinationAddress?.longitude
         ? parseFloat(probs.addressData.destinationAddress.longitude)
         : 2.3565536180821782,
     },
@@ -154,10 +154,10 @@ export default function MapDeliveryDetails(probs = null) {
       title: 'My Location',
       description: 'I am here',
       coordinate: {
-        latitude: probs.addressData.sourceAddress.latitude
+        latitude: probs?.addressData?.sourceAddress?.latitude
           ? parseFloat(probs.addressData.sourceAddress.latitude)
           : 48.85754309772872,
-        longitude: probs.addressData.sourceAddress.longitude
+        longitude: probs?.addressData?.sourceAddress?.longitude
           ? parseFloat(probs.addressData.sourceAddress.longitude)
           : 2.3513877855537912,
       },
@@ -172,10 +172,10 @@ export default function MapDeliveryDetails(probs = null) {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={{
-          latitude: probs.addressData.sourceAddress.latitude
+          latitude: probs?.addressData?.sourceAddress?.latitude
             ? parseFloat(probs.addressData.sourceAddress.latitude)
             : 48.85754309772872,
-          longitude: probs.addressData.sourceAddress.longitude
+          longitude: probs?.addressData?.sourceAddress?.longitude
             ? parseFloat(probs.addressData.sourceAddress.longitude)
             : 2.3513877855537912,
           latitudeDelta: 0.08,
@@ -197,10 +197,10 @@ export default function MapDeliveryDetails(probs = null) {
         {/* Flag Marker */}
         <Marker
           coordinate={{
-            latitude: probs.addressData.destinationAddress.latitude
+            latitude: probs?.addressData?.destinationAddress?.latitude
               ? parseFloat(probs.addressData.destinationAddress.latitude)
               : 48.86020382046169,
-            longitude: probs.addressData.destinationAddress.longitude
+            longitude: probs?.addressData?.destinationAddress?.longitude
               ? parseFloat(probs.addressData.destinationAddress.longitude)
               : 2.3565536180821782,
           }}>

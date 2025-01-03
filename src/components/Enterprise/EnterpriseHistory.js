@@ -27,7 +27,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import EnterpriseShiftFillter from './EnterpriseShiftFillter';
 import {useFocusEffect} from '@react-navigation/native';
-import { localToUTC } from '../../utils/common';
+import { localToUTC, titleFormat } from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -75,7 +75,15 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
                   source={require('../../image/package-medium-icon.png')}
                 />
                 <Text style={styles.deliveryTime}>
-                  {item.consumer_order_title}
+                  {item.consumer_order_title}{' '}
+                  {item.is_show_datetime_in_title == 1
+                    ? item.order_status === 'ORDER_PLACED'
+                      ? titleFormat(
+                          item.schedule_date_time ||
+                            item.order_date,
+                        )
+                      : titleFormat(item.updated_on)
+                    : ''}
                 </Text>
               </View>
 
@@ -152,7 +160,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
       {orders.map((item, index) => {
-        console.log('item  ===',item)
+        // console.log('item  ===',item)
         // destination_description
         return (
           <View
@@ -175,7 +183,15 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                   source={require('../../image/package-medium-icon.png')}
                 />
                 <Text style={styles.deliveryTime}>
-                  {item.consumer_order_title}
+                  {item.consumer_order_title}{' '}
+                  {item.is_show_datetime_in_title == 1
+                    ? item.order_status === 'ORDER_PLACED'
+                      ? titleFormat(
+                          item.schedule_date_time ||
+                            item.order_date,
+                        )
+                      : titleFormat(item.updated_on)
+                    : ''}
                 </Text>
               </View>
 
@@ -390,7 +406,15 @@ const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
                   source={require('../../image/package-medium-icon.png')}
                 />
                 <Text style={styles.deliveryTime}>
-                  {item.consumer_order_title}
+                  {item.consumer_order_title}{' '}
+                  {item.is_show_datetime_in_title == 1
+                    ? item.order_status === 'ORDER_PLACED'
+                      ? titleFormat(
+                          item.schedule_date_time ||
+                            item.order_date,
+                        )
+                      : titleFormat(item.updated_on)
+                    : ''}
                 </Text>
               </View>
 
@@ -527,6 +551,7 @@ function EnterpriseHistory({navigation}) {
     getLocations(
       null,
       successResponse => {
+        console.log('list of all location ',successResponse[0])
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setLocationList(tempOrderList);
@@ -548,6 +573,7 @@ function EnterpriseHistory({navigation}) {
     searchOrderApi(
       params,
       successResponse => {
+        console.log('one time responce ===>',JSON.stringify(successResponse))
         setLoading(false);
         if (successResponse[0]._success) {
             if (params.tab_id == 2) {

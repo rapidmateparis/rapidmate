@@ -19,6 +19,7 @@ import {
   addPayment,
   checkPromoCode,
   createPickupOrder,
+  getTaxDetails,
   orderStatusUpdate,
 } from '../../data_manager';
 import BicycleImage from '../../image/Bicycle.png';
@@ -42,20 +43,41 @@ const PickupPayment = ({route, navigation}) => {
   const [orderResponse, setOrderResponse] = useState();
   const [promoCode, setPromoCode] = useState('');
   const params = route.params.props;
-  const [totalAmount, setTotalAmount] = useState(
-    typeof params.selectedVehiclePrice === 'number'
-      ? params.selectedVehiclePrice.toFixed(2)
-      : params.selectedVehiclePrice,
-  );
+  const [totalAmount, setTotalAmount] = useState(0);
   console.log("dsgdhsgadghsagh", params.userDetails.number)
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
   const [offerDiscount, setOfferDiscount] = useState(params.paymentDiscount);
+  const [vechicleTax, setVechicleTax] = useState(20);
 
   const onPayment = async () => {
     placePickUpOrder();
   };
+
+  const getTaxAmount = ()=>{
+    const amount =   typeof params.selectedVehiclePrice === 'number'
+      ? params.selectedVehiclePrice.toFixed(2)
+      : parseFloat(params.selectedVehiclePrice)
+    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+     return taxAmount? taxAmount.toFixed(2): 0
+  }
+
+
+  useEffect(()=>{
+
+   const amount =   typeof params.selectedVehiclePrice === 'number'
+      ? params.selectedVehiclePrice.toFixed(2)
+      : parseFloat(params.selectedVehiclePrice)
+    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+     const total_Amount = parseFloat(amount)+taxAmount
+     if(total_Amount){
+      setTotalAmount(total_Amount.toFixed(2))
+      setPaymentAmount(total_Amount.toFixed(2))
+     }
+  },[vechicleTax])
 
   function calculateFinalPrice(originalPrice, discountPercentage) {
     console.log(originalPrice, discountPercentage);
@@ -79,6 +101,16 @@ const PickupPayment = ({route, navigation}) => {
   }, [orderNumber]);
 
   useEffect(() => {}, [orderResponse]);
+  useEffect(() => {
+    getTaxDetails((success)=>{
+      if(success[0]._response[0].tax_value){
+        setVechicleTax(parseFloat(success[0]._response[0].tax_value))
+      }
+    },
+    (error)=>{
+      console.log('error ====== ===== ',error)
+    })
+  }, []);
 
   const createPaymentIntent = async () => {
     try {
@@ -194,6 +226,7 @@ const PickupPayment = ({route, navigation}) => {
           ? params.destinationLocationId
           : 2,
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+        total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
         total_amount: parseFloat(paymentAmount),
         discount: offerDiscount,
         pickup_notes: params.userDetails.pickupNotes,
@@ -210,6 +243,7 @@ const PickupPayment = ({route, navigation}) => {
         // order_date: getCurrentDateAndTime()
         order_date: localToUTC(),
         package_photo: params.userDetails.package_photo,
+        tax_value:vechicleTax
       };
       
 
@@ -231,7 +265,7 @@ const PickupPayment = ({route, navigation}) => {
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
           }
-          console.log("requestParams",requestParams)
+          console.log("requestParams===",requestParams)
         },
         errorResponse => {
           setLoading(false);
@@ -381,6 +415,14 @@ const PickupPayment = ({route, navigation}) => {
             </Text>
           </View>
 
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Amount</Text>
+            <Text style={styles.totalAmount}>€ {params.selectedVehiclePrice}</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Tax {vechicleTax}%</Text>
+            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
+          </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
             <Text style={styles.totalAmount}>€ {totalAmount}</Text>

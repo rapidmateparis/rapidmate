@@ -29,10 +29,18 @@ import {useFocusEffect} from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
+  const dropdownData2 = [
+    {label: 'All', value: 'all'},
+    {label: 'Today', value: 'today'},
+    {label: 'This week', value: 'week'},
+    {label: 'This month', value: 'month'},
+    {label: 'This year', value: 'year'},
+  ];
+
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
   const [selectedDropdownBranch, setSelectedDropdownBranch] = useState({});
-  const [dropdownWeek, setDropdownWeek] = useState(null);
+  const [dropdownWeek, setDropdownWeek] = useState(dropdownData2[0]);
   const [dropdownBranches, setDropdownBranches] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
   const [isBranchFocus, setIsBranchFocus] = useState(false);
@@ -51,6 +59,14 @@ const EnterpriseHome = ({navigation}) => {
   });
   const [branches, setBranches] = useState([]);
 
+  useEffect(()=>{
+    if(selectedDropdownBranch?.value){
+      getEnterpriseDashboardAllInfo(selectedDropdownBranch.value)
+    }else if(dropdownWeek?.value){
+      getEnterpriseDashboardAllInfo()
+    }
+  },[selectedDropdownBranch,dropdownWeek])
+
 
   useEffect(()=>{
     getNotificationAllCount()
@@ -63,13 +79,6 @@ const EnterpriseHome = ({navigation}) => {
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
   };
-
-  const dropdownData2 = [
-    {label: 'Today', value: 'Today'},
-    {label: 'This week', value: 'This week'},
-    {label: 'This month', value: 'This month'},
-    {label: 'This year', value: 'This year'},
-  ];
 
   const chartConfig = {
     backgroundGradientFrom: '#1E2923',
@@ -105,42 +114,58 @@ const EnterpriseHome = ({navigation}) => {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
-      getEnterpriseDashboardInfo(
-        userDetails.userDetails[0].ext_id,
-        successResponse => {
-          setLoading(false);
-          if (successResponse[0]._response) {
-            setDashboardData(successResponse[0]._response);
-            setBranches(successResponse[0]._response);
-            var tempdropDownBranches = [];
-            // successResponse[0]._response[0].dashboard.branch.forEach(
-            //   element => {
-            //     var item = {};
-            //     item.label = element.branch_name;
-            //     item.value = element.branch_id;
-            //     tempdropDownBranches.push(item);
-            //   },
-            // );
-            if (successResponse[0]._response) {
-              setDropdownBranches(tempdropDownBranches);
-              setSelectedDropdownBranch(tempdropDownBranches[0]);
-              setDropdownWeek(dropdownData2[0]);
-              displayChartData(
-                successResponse[0]._response.weekData,
-              );
-            }
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
+      getEnterpriseDashboardAllInfo()
     }, []),
   );
+
+  const getEnterpriseDashboardAllInfo =(branchId)=>{
+    setLoading(true);
+    let url = userDetails.userDetails[0].ext_id
+    if(branchId && dropdownWeek?.value){
+      url = url+'?branch='+branchId+'&type='+dropdownWeek?.value
+    }else if(branchId){
+      url = url+'?branch='+branchId
+    }else if(dropdownWeek?.value){
+      url = url+'?type='+dropdownWeek?.value
+    }
+
+    getEnterpriseDashboardInfo(
+      url,
+      successResponse => {
+        console.log('successResponse ------>',successResponse)
+        setLoading(false);
+        if (successResponse[0]._response) {
+          
+          setDashboardData(successResponse[0]._response);
+          var tempdropDownBranches = [];
+          if(successResponse[0]?._response?.branchOverviewData && successResponse[0]?._response?.branchOverviewData.length > 0){
+            const branchList = successResponse[0]?._response?.branchOverviewData
+            const getList = branchList.map(branch=>{
+              return{
+                label : branch.branch_name,
+                value : branch.id,
+              }
+            })
+            tempdropDownBranches = getList
+          }
+          if (successResponse[0]._response) {
+            setDropdownBranches(tempdropDownBranches);
+            displayChartData(
+              successResponse[0]._response.weekData,
+            );
+          }
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }
+
+
 
   const getNotificationAllCount = () => {
     setLoading(true);
@@ -276,9 +301,9 @@ const EnterpriseHome = ({navigation}) => {
               onChange={item => {
                 setSelectedDropdownBranch(item);
                 setIsBranchFocus(false);
-                displayChartData(
-                  branches.filter(br => br.branch_id == item.value)[0],
-                );
+                // displayChartData(
+                //   branches.filter(br => br.id == item.value)[0],
+                // );
               }}
             />
           </View>
@@ -300,7 +325,7 @@ const EnterpriseHome = ({navigation}) => {
               onFocus={() => setIsWeekFocus(true)}
               onBlur={() => setIsWeekFocus(false)}
               onChange={item => {
-                setDropdownWeek(item.value);
+                setDropdownWeek(item);
                 setIsWeekFocus(false);
               }}
             />
@@ -315,6 +340,8 @@ const EnterpriseHome = ({navigation}) => {
             yAxisLabel=""
             chartConfig={chartConfig}
             verticalLabelRotation={0}
+            showValuesOnTopOfBars = {true}
+            showBarTops = {true}
           />
         </View>
       </View>
@@ -327,47 +354,49 @@ const EnterpriseHome = ({navigation}) => {
           </TouchableOpacity>
         </View>
         {dashboardData?.branchOverviewData?.length > 0 && dashboardData?.branchOverviewData.map((item, index) => {
-          return (
-            <View key={index} style={styles.franchiseCard}>
-              <View style={styles.franchiseCardHeader}>
-                <Image
-                  style={styles.companyImga}
-                  source={require('../../image/home.png')}
-                />
-                <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
-              </View>
-
-              <View style={styles.bookedCardInfo}>
-                <View>
-                  <Text style={styles.bookedInfo}>Active booking</Text>
-                  <Text style={styles.bookedDetails}>{item.active_order}</Text>
+          if(index < 5 ){
+            return (
+              <View key={index} style={styles.franchiseCard}>
+                <View style={styles.franchiseCardHeader}>
+                  <Image
+                    style={styles.companyImga}
+                    source={require('../../image/home.png')}
+                  />
+                  <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>Scheduled booking</Text>
-                  <Text style={styles.bookedDetails}>{item.schedule_order}</Text>
+                <View style={styles.bookedCardInfo}>
+                  <View>
+                    <Text style={styles.bookedInfo}>Active booking</Text>
+                    <Text style={styles.bookedDetails}>{item.active_order? item.active_order:0}</Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>Scheduled booking</Text>
+                    <Text style={styles.bookedDetails}>{item.schedule_order ? item.schedule_order :0}</Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>All booking</Text>
+                    <Text style={styles.bookedDetails}>{item.total ? item.total:0}</Text>
+                  </View>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>All booking</Text>
-                  <Text style={styles.bookedDetails}>{item.total}</Text>
+                <View style={styles.companyLocation}>
+                  <EvilIcons name="location" size={22} color="#000" />
+                  <Text style={styles.locationAddress}>
+                    {item.address +
+                      ', ' +
+                      item.city +
+                      ', ' +
+                      item.state +
+                      ', ' +
+                      item.country}
+                  </Text>
                 </View>
               </View>
-
-              <View style={styles.companyLocation}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.locationAddress}>
-                  {item.address +
-                    ', ' +
-                    item.city +
-                    ', ' +
-                    item.state +
-                    ', ' +
-                    item.country}
-                </Text>
-              </View>
-            </View>
-          );
+            );
+          }
         })}
       </View>
     </ScrollView>

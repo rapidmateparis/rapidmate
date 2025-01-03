@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -14,22 +15,139 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 import DeliveryboySubmitOTPModal from '../commonComponent/DeliveryboySubmitOTPModal';
+import { useUserDetails } from '../commonComponent/StoreContext';
+import { orderOPTVerify, orderOPTVerifyForDelivery, orderStatusUpdate } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
 
-const DeliveryDetailsMultipleOrder = ({navigation}) => {
+const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
   const [delivered, setDelivered] = useState(false);
-
   const handleMarkAsDelivered = () => {
     setDelivered(true);
   };
+  const {setLoading} = useLoader();
 
   const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [isOTPModalVisible, setOTPModalVisible] = useState(false);
+  const {userDetails} = useUserDetails();
+
+  const [isOTP, setIsOTP] = useState();
+  const [lineId, setLineId] = useState(null);
+
+  
   const toggleModal = () => {
     setImageModalVisible(!isImageModalVisible);
   };
   const toggleModalOTP = () => {
     setOTPModalVisible(!isOTPModalVisible);
   };
+
+  const [orderDetails,setOrderDetails]=useState({})
+  
+  useEffect(()=>{
+
+    // route.params.orderItem.next_action_status,
+   if(route?.params?.orderItem){
+    setOrderDetails(route?.params?.orderItem)
+   }else{
+    setOrderDetails({})
+   }
+
+  },[])
+
+  const validateOtp = otpValue => {
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+      order_number: orderDetails.order_number,
+      otp: otpValue,
+      line_id:lineId
+    };
+    console.log('print_data==<<<<', isOTP, otpValue,params);
+    if (isOTP) {
+      orderOPTVerify(
+        params,
+        successResponse => {
+          console.log('successResponse==<<<<', successResponse);
+
+          setLineId(null)
+          Alert.alert('Success', 'Status updated successfully', [
+            {
+              text: 'OK',
+              onPress: () => {
+                toggleModalOTP();
+                navigation.goBack();
+              },
+            },
+          ]);
+        },
+        errorResponse => {
+          setLineId(null)
+          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } else {
+      orderOPTVerifyForDelivery(
+        params,
+        successResponse => {
+          setLineId(null)
+          const data = successResponse[0]._response.next_action_status;
+          Alert.alert('Success', 'Delivered OPT verified successfully', [
+            {
+              text: 'OK',
+              onPress: () => {
+                toggleModalOTP();
+                navigation.goBack();
+                // setUpdateStatus(data);
+              },
+            },
+          ]);
+        },
+        errorResponse => {
+          setLineId(null)
+          Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    }
+  };
+
+  
+  const handleStatusUpdated = (updateStatus,location) => {
+    if (updateStatus == 'Enter OTP') {
+      setLineId(location.id)
+      toggleModalOTP();
+      setIsOTP(true);
+    } else if (updateStatus == 'Enter Delivered OTP') {
+      setLineId(location.id)
+      toggleModalOTP();
+      setIsOTP(false);
+    } else {
+      setLoading(true);
+      let params = {
+        order_number: location.order_number,
+        status: updateStatus,
+        line_id:location.id
+      };
+      orderStatusUpdate(
+        params,
+        successResponse => {
+          setLoading(false);
+          navigation.goBack();
+          // setUpdateStatus(successResponse[0]._response.next_action_status);
+        },
+        errorResponse => {
+          setLoading(false);
+          console.log('message===>', JSON.stringify(errorResponse));
+          // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          //   {text: 'OK', onPress: () => {}},
+          // ]);
+        },
+      );
+    }
+  };
+
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -53,9 +171,9 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
-                <Text style={styles.companyInfo}>Company Name</Text>
-                <Text style={styles.dropInfo}>
-                  22 Rue de la Liberté, Paris, Île-de-France.
+                <Text style={styles.companyInfo}>{orderDetails.company_name}</Text>
+                <Text style={styles.dropInfo}>{orderDetails.address}
+                  {/* 22 Rue de la Liberté, Paris, Île-de-France. */}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
@@ -72,15 +190,153 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
 
             <View>
               <Text style={styles.headingOTP}>Pickup notes</Text>
-              <Text style={styles.dropInfo}>
-                Lorem ipsum dolor sit amet conse ctetur. Ridiculus nunc platea
-                sed.
-              </Text>
+              <Text style={styles.dropInfo}>{orderDetails.pickup_notes}</Text>
             </View>
           </View>
         </View>
+        
+        {
+          orderDetails?.locations && orderDetails?.locations.map((location,index)=>{
+            const updateStatus = location.next_action_status
+            console.log('updateStatus ====>',updateStatus)
+            return(
+              <View key={index}>
+                <View style={styles.packageCard}>
+                  <View style={{width: '10%'}}>
+                    <Image
+                      style={styles.packageManager}
+                      source={require('../../image/package-img.png')}
+                    />
+                  </View>
+                  <View style={{marginLeft: 5, width: '89%'}}>
+                    <View style={styles.pickupCardHeader}>
+                      <Text style={styles.dropInfo}>{`Drop off ${index+1} information`}</Text>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('DeliveryDetailsMultipleInvoice')
+                        }>
+                        <Image source={require('../../image/Track-Icon.png')} />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.companyInfosmain}>
+                      <View style={{width: '65%'}}>
+                        <Text style={styles.companyInfo}>{location.drop_company_name}</Text>
+                        <Text style={styles.dropInfo}>{location.destination_description}</Text>
+                      </View>
+                      <View style={styles.contactInfoIcons}>
+                        <TouchableOpacity style={{marginRight: 10}}>
+                          <Image source={require('../../image/chat-icon.png')} />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                          <Image source={require('../../image/call-icon.png')} />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
 
-        <View>
+                    <View style={styles.borderShowOff} />
+
+                    <View style={styles.packageBasicInfo}>
+                      <Text style={styles.headingOTP}>Vehicle:</Text>
+                      <Text style={styles.subheadingOTP}>{orderDetails.vehicle_type}</Text>
+                    </View>
+
+                    <View style={styles.borderShowOff} />
+
+                    <View style={styles.packageBasicInfo}>
+                      <Text style={styles.headingOTP}>Package photo</Text>
+                      <TouchableOpacity onPress={() => toggleModal()}>
+                        {
+                         orderDetails?.package_photo ?
+                          <Image
+                            style={styles.packagePhoto}
+                            source={{
+                              uri: orderDetails?.package_photo,
+                            }}
+                          />
+                          :
+                          <Image
+                          style={styles.packagePhoto}
+                          source={require('../../image/PackagePhoto.png')}
+                        />}
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.borderShowOff} />
+
+                    <View>
+                      <Text style={styles.headingOTP}>Drop notes</Text>
+                      <Text style={styles.dropInfo}>{location?.drop_notes}</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.deliveryStatusCard}>
+                  <View style={styles.deliveryinfo}>
+                    <View style={styles.statusAboutDelivery}>
+                      {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
+                      {/* <Octicons
+                        name={ 'dot-fill'}
+                        size={15}
+                        color={
+                          '#D9D9D9'
+                        }
+                      /> */}
+                      
+                      <Octicons
+                        name={updateStatus == 'Ready to pickup' || updateStatus === null ? 'dot-fill' : 'check'}
+                        size={15}
+                        color={
+                          updateStatus == 'Ready to pickup' || updateStatus === null ? '#D9D9D9' : '#FF0058'
+                        }
+                      />
+                      <Text style={styles.statusInfo}>Going to Pickupd</Text>
+                    </View>
+                    <View style={styles.borderStyle} />
+
+                    <View style={styles.statusAboutDelivery}>
+                      {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
+                      <Octicons
+                        name={updateStatus == 'Reached'|| updateStatus === null ? 'dot-fill' : 'check'}
+                        size={15}
+                        color={
+                          updateStatus == 'Reached' || updateStatus === null? '#D9D9D9' : '#FF0058'
+                        }
+                      />
+                      <Text style={styles.statusInfo}>Reached</Text>
+                    </View>
+                    <View style={styles.borderStyle} />
+
+                    <View style={styles.statusAboutDelivery}>
+                        <Octicons
+                          name={updateStatus == 'Completed' ? 'check' : 'dot-fill'}
+                          size={15}
+                          color={updateStatus == 'Completed' ? '#FF0058' : '#D9D9D9'}
+                        />
+                      <Text style={styles.statusInfo}>Delivered</Text>
+                    </View>
+                  </View>
+                  <View style={styles.earningCard}>
+                    {delivered && (
+                      <Text style={styles.boyEarning}>
+                        This order is closed, you earned{' '}
+                        <Text style={styles.earnedMoney}>€34</Text>
+                      </Text>
+                    )}
+                  </View>
+                  {updateStatus !== 'Completed' && (
+                    <TouchableOpacity
+                      onPress={()=>handleStatusUpdated(updateStatus,location)}
+                      style={[styles.logbutton, {backgroundColor: colors.primary}]}
+                      disabled={updateStatus == 'Completed' ? true : false}>
+                      <Text style={styles.buttonText}>{updateStatus}</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            )
+          })
+        }
+        {/* <View>
           <View style={styles.packageCard}>
             <View style={{width: '10%'}}>
               <Image
@@ -125,20 +381,6 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
               <View style={styles.borderShowOff} />
 
               <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Pickup OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Delivered OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
                 <Text style={styles.headingOTP}>Package photo</Text>
                 <TouchableOpacity onPress={() => toggleModal()}>
                   <Image
@@ -200,9 +442,9 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
               </TouchableOpacity>
             )}
           </View>
-        </View>
+        </View> */}
 
-        <View>
+        {/* <View>
           <View style={styles.packageCard}>
             <View style={{width: '10%'}}>
               <Image
@@ -243,21 +485,7 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
                 <Text style={styles.headingOTP}>Vehicle:</Text>
                 <Text style={styles.subheadingOTP}>Pickup Truck</Text>
               </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Pickup OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
-              <View style={styles.borderShowOff} />
-
-              <View style={styles.packageBasicInfo}>
-                <Text style={styles.headingOTP}>Delivered OTP:</Text>
-                <Text style={styles.subheadingOTP}>123456</Text>
-              </View>
-
+              
               <View style={styles.borderShowOff} />
 
               <View style={styles.packageBasicInfo}>
@@ -322,16 +550,21 @@ const DeliveryDetailsMultipleOrder = ({navigation}) => {
               </TouchableOpacity>
             )}
           </View>
-        </View>
+        </View> */}
       </View>
       {/* Modal start here  */}
       <DeliveryboyPackagePreviewModal
         isImageModalVisible={isImageModalVisible}
         setImageModalVisible={setImageModalVisible}
       />
+      {/* <DeliveryboySubmitOTPModal
+        isOTPModalVisible={isOTPModalVisible}
+        setOTPModalVisible={setOTPModalVisible}
+      /> */}
       <DeliveryboySubmitOTPModal
         isOTPModalVisible={isOTPModalVisible}
         setOTPModalVisible={setOTPModalVisible}
+        submitOTP={validateOtp}
       />
     </ScrollView>
   );

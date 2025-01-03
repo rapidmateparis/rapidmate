@@ -16,12 +16,14 @@ import StepIndicator from 'react-native-step-indicator';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
+import {usePlacedOrderDetails, useUserDetails} from '../commonComponent/StoreContext';
 import {API} from '../../utils/constant';
 
 const {height: screenHeight} = Dimensions.get('window');
 
 const OrderPickup = ({route, navigation}) => {
+  const {saveUserDetails, userDetails} = useUserDetails();
+
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
   const {placedOrderDetails} = usePlacedOrderDetails();
   const [isCopied, setIsCopied] = useState(false);
@@ -34,6 +36,19 @@ const OrderPickup = ({route, navigation}) => {
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
   const [deliveredOtp, setDeliveredOtp] = useState(placedOrderDetails[0]?.delivered_otp);
+
+
+  useEffect(()=>{
+
+    console.log('progressTypeId ====>',userDetails.progressTypeId)
+    console.log('delivered_otp ====>',userDetails.delivered_otp)
+
+    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId)
+    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp)
+  },[userDetails.progressTypeId,userDetails.delivered_otp])
+
+  
+  
   const [currentPosition, setCurrentPosition] = useState(0);
 
   console.log('0', driverDetails);
@@ -224,8 +239,8 @@ const OrderPickup = ({route, navigation}) => {
                 currentPosition={currentPosition}
                 labels={labels}
                 stepCount={stepCount}
-                onPress={position => setCurrentPosition(position)}
-              />
+                // onPress={position => setCurrentPosition(position)}
+                />
             </View>
 
             <View style={styles.driverCard}>
@@ -286,18 +301,42 @@ const OrderPickup = ({route, navigation}) => {
               </View>
             </View>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 // navigation.navigate('OrderConfirm', {
                 //   driverDetails: route.params.driverDetails,
                 //   locationList: route.params.locationList,
                 //   placedOrderDetails: placedOrderDetails[0],
                 // })
-                navigation.navigate('PickupBottomNav');
+                navigation.navigate('DeliveryDetails', {
+                  orderItem: placedOrderDetails[0],
+                });
               }}
               style={styles.trackOrderBtn}>
               <Text style={styles.trackText}>View Order Details</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
+            <View style={{flexDirection: 'row', paddingVertical: 10,justifyContent:'space-evenly'}}>
+                <TouchableOpacity
+                  style={styles.requestTouch}
+                  onPress={() => {
+                    // TODO: Because this screen only show when delivery boy allocated for this order so manually change the id
+                    const changeStatus = {...placedOrderDetails[0],is_delivery_boy_allocated:1}
+
+                    navigation.navigate('DeliveryDetails', {
+                      orderItem: changeStatus,
+                    });
+                  }}>
+                  <Text style={styles.cancelRequest}>View Order Details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.requestTouch}
+                  onPress={() => {
+                    navigation.navigate('PickupBottomNav');
+                  }}>
+                  <Text style={styles.cancelRequest}>Go Home</Text>
+                </TouchableOpacity>
+              </View>
           </View>
         </ImageBackground>
       </View>
@@ -431,6 +470,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  requestTouch: {
+    backgroundColor: colors.primary,
+    borderRadius: 5,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    // marginLeft: 10,
+    marginTop: 10,
   },
 });
 

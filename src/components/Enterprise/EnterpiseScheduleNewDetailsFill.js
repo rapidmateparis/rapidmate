@@ -310,7 +310,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     var totalDistance = 0;
     var totalHours = 0;
     locations.forEach(element => {
-      if (element.hasOwnProperty('locationId')) {
+        if(element.destinationDescription && element?.distance){
         var currentElement = {};
         currentElement.distance = element.distance.toFixed(2);
         totalDistance = totalDistance + element.distance;
@@ -423,13 +423,15 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           <MultpleMapAddress
             sourceLocation={routeParams.sourceBranch}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
-            onDestinationLocation={onMultpleDestinationLocation}
+            onDestinationLocation={(location)=>{
+              onMultpleDestinationLocation(location)}
+            }
           />
         </View>
       ) : (
         <View style={{height: 200, position: 'relative'}}>
           <MapAddress
-            sourceLocation={routeParams.sourceBranch}
+            // sourceLocation={routeParams.sourceBranch}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
             onSourceLocation={onSourceLocation}
             onDestinationLocation={onDestinationLocation}
@@ -1137,8 +1139,11 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
+                      is_scheduled_order: isInstantDate ? 0 :1
                     };
-                    navigation.navigate('EnterprisePickupOrderPriview', params);
+                    // navigation.navigate('AddDropDetails', {props: params,component:'ENTERPRISE'});
+                    navigation.navigate('EnterpriseAddMultpleDropDetails', {props: params,component:'ENTERPRISE'});
+                    // navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
                     Alert.alert(
                       'Error Alert',
@@ -1178,11 +1183,13 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       schedule_date_time: moment(date).format('YYYY-MM-DD')+' '+moment(
                         time,
                         ).format('hh:mm'),
+                      is_scheduled_order: isInstantDate ? 0 :1
                     };
                     console.log(imageViewId);
                     console.log('Payload  ---------->',params);
 
-                    navigation.navigate('EnterprisePickupOrderPriview', params);
+                    navigation.navigate('AddDropDetails', {props: params,component:'ENTERPRISE'});
+                    // navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
                     Alert.alert(
                       'Error Alert',

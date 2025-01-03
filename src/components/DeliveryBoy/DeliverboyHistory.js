@@ -85,7 +85,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         if (size === successResponse[0]._response.length) {
           setPage(page + 1);
           setCheckMoreData(true);
-        } else {
+        } else if(size > successResponse[0]._response.length ){
           setCheckMoreData(false);
         }
         if (newPage === 1) {
@@ -174,11 +174,17 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         }}>
         <TouchableOpacity
           onPress={() => {
+          if(item?.item?.locations && item?.item?.locations?.length > 0){
+            navigation.navigate('DeliveryDetailsMultipleOrder',{
+                orderItem: item.item,
+            });
+          }else{
             navigation.navigate('DeliveryboyDeliveryDetails', {
               order_number: item.item.order_number,
               package_photo: item.item.package_photo,
               orderItem: item.item,
             });
+          }
           }}
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
@@ -308,9 +314,9 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
     }, [filterCriteria]),
   );
 
-  useEffect(() => {
-    getPastRecords(page);
-  }, [page]);
+  // useEffect(() => {
+  //   getPastRecords(page);
+  // }, [page]);
 
   const resetAll = () => {
     setPastOrderList([]);
@@ -335,7 +341,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         if (size === successResponse[0]._response.length) {
           setPage(page + 1);
           setCheckMoreData(true);
-        } else {
+        } else if(size > successResponse[0]._response.length ){
           setCheckMoreData(false);
         }
 
@@ -424,10 +430,19 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           backgroundColor: '#FBFAF5',
         }}>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('DeliveryboyMainDeliveryDetails', {
-              orderItem: item.item,
-            })
+          onPress={() =>{
+
+            if(item?.item?.locations && item?.item?.locations?.length > 0){
+              navigation.navigate('DeliveryDetailsMultipleInvoice',{
+                  orderItem: item.item,
+              });
+            }else{
+              navigation.navigate('DeliveryboyMainDeliveryDetails', {
+                orderItem: item.item,
+                componentType : 'DELIVERBOY'
+              })
+            }
+          }
           }
           style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>

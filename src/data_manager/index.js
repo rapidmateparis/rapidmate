@@ -793,12 +793,13 @@ export const cancelOrderEnterprise = (
 
 export const downloadInvoiceOrder = (
   params,
+  type,
   successCallback,
   errorCallback,
 ) => {
-  console.log('print_data==>', API.orderPickupUrl + '/invoice/' + params);
+  console.log('print_data==> invoice', API.downloadInvoice + params+'/'+type+'?show=true');
   axiosCall(
-    API.orderPickupUrl + '/invoice/' + params,
+    API.downloadInvoice + params+'/'+type+'?show=true',
     HTTPMethod.GET,
     {},
     response => {
@@ -1119,6 +1120,7 @@ export const getEnterpriseDashboardInfo = (
   successCallback,
   errorCallback,
 ) => {
+  console.log('Dash board info enterprise ===>',API.enterpriseDashboardUrl + param)
   axiosCall(
     API.enterpriseDashboardUrl + param,
     HTTPMethod.GET,
@@ -1386,3 +1388,20 @@ export const getDeliveryBoyBillingDetails = (params, successCallback, errorCallb
     },
   );
 };
+
+export const getTaxDetails = (successCallback, errorCallback) => {
+  console.log('URL ',API.vechicleTaxList)
+  axiosCall(
+    API.vechicleTaxList,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+

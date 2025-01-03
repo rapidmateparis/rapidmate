@@ -29,7 +29,8 @@ const PickupSignup = ({navigation}) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
-  const [dropdownValue, setDropdownValue] = useState('+33');
+  const [dropdownValue, setDropdownValue] = useState('75');
+  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] = useState('75');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
@@ -37,6 +38,7 @@ const PickupSignup = ({navigation}) => {
   const {setLoading} = useLoader();
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
+  const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -71,9 +73,9 @@ const PickupSignup = ({navigation}) => {
     if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords does not match';
     }
-    if (!selectedAccountType) {
+    /* if (!selectedAccountType) {
       errors.selectedAccountType = 'Please select an account type';
-    }
+    } */
     if (!number.trim()) {
       errors.number = 'Number is required';
     } else if (isNaN(number)) {
@@ -106,13 +108,22 @@ const PickupSignup = ({navigation}) => {
             } else {
               setMasterCountryList(successResponse[0]._response);
               var formattedCountryList = [];
+              var formattedCountryCodeList = [];
               successResponse[0]._response.forEach(element => {
                 formattedCountryList.push({
                   label: element.country_name,
                   value: element.id,
+                  code: element.phone_code
+                });
+                formattedCountryCodeList.push({
+                  label: "+" + element.phone_code,
+                  value: element.id,
                 });
               });
               setCountryList(formattedCountryList);
+              setCountryCodeList(formattedCountryCodeList);
+              setDropdownValue(formattedCountryCodeList[0].value)
+              setDropdownCountryCodeValue(formattedCountryCodeList[0].label)
             }
           }
         }
@@ -135,11 +146,12 @@ const PickupSignup = ({navigation}) => {
         info: {
           userName: email,
           email: email,
-          phoneNumber: '+91' + number,
+          phoneNumber: number,
           password: password,
           userrole: 'CONSUMER',
           firstName: name,
           lastName: '',
+          phone_code : dropdownCountryCodeValue.toString(),
           country: dropdownCountryValue.toString(),
         },
       };
@@ -281,7 +293,7 @@ const PickupSignup = ({navigation}) => {
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
                 <Dropdown
-                  data={data}
+                  data={countryCodeList}
                   search
                   maxHeight={300}
                   labelField="label"
@@ -298,6 +310,7 @@ const PickupSignup = ({navigation}) => {
                   onBlur={() => setIsFocus(false)}
                   onChange={item => {
                     setDropdownValue(item.value);
+                    setDropdownCountryCodeValue(item.label);
                     setIsFocus(false);
                   }}
                   renderLeftIcon={() => (
@@ -354,54 +367,7 @@ const PickupSignup = ({navigation}) => {
               )}
             />
           </View>
-          {errors.selectedAccountType ? (
-            <Text style={[{color: 'red'}]}>{errors.selectedAccountType}</Text>
-          ) : null}
-          <View>
-            <Text style={styles.accountType}>Create account as:</Text>
-
-            {/* Individual Account Type */}
-            <TouchableOpacity
-              style={[
-                styles.accountCard,
-                selectedAccountType !== 'individual' && styles.notSelectedCard,
-                selectedAccountType === 'individual' && styles.selectedCard,
-              ]}
-              onPress={() => handleAccountTypeSelection('individual')}>
-              <AntDesign name="user" size={20} color="#131314" />
-              <Text style={styles.accountTitle}>Individual</Text>
-              {selectedAccountType === 'individual' && (
-                <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={15} color={colors.white} />
-                </View>
-              )}
-              {selectedAccountType !== 'individual' && (
-                <View style={styles.cricleRound} />
-              )}
-            </TouchableOpacity>
-
-            {/* Company Account Type */}
-            <TouchableOpacity
-              style={[
-                styles.accountCard,
-                selectedAccountType !== 'company' && styles.notSelectedCard,
-                selectedAccountType === 'company' && styles.selectedCard,
-              ]}
-              onPress={() => handleAccountTypeSelection('company')}>
-              <Image source={require('../../image/bulding.png')} />
-              <Text style={styles.accountTitle}>Company</Text>
-              {selectedAccountType === 'company' && (
-                <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={15} color={colors.white} />
-                </View>
-              )}
-              {selectedAccountType !== 'company' && (
-                <View style={styles.cricleRound} />
-              )}
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
+         <TouchableOpacity
             onPress={() => {
               handleSignUp();
               // navigation.navigate('SignUpVerify');

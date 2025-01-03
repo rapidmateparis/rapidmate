@@ -20,7 +20,7 @@ import Notifications from './Settings/Notifications';
 import PickupHome from './PickupHome';
 import History from './History';
 import RNExitApp from 'react-native-exit-app';
-import {requestNotificationPermission} from '../../utils/common';
+import {requestNotificationPermission,localizationText} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {getNotificationCount, getViewOrderDetail, updateUserProfile} from '../../data_manager';
@@ -84,7 +84,15 @@ const PickupBottomNav = ({navigation}) => {
 
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      console.log('remoteMessage *Consumer*', JSON.stringify(remoteMessage));
+      if(remoteMessage.data?.delivered_otp){
+        saveUserDetails({...userDetails,delivered_otp:remoteMessage.data?.delivered_otp});
+      }
+      
+      if(remoteMessage.data?.progressTypeId){
+        saveUserDetails({...userDetails,progressTypeId:remoteMessage.data?.progressTypeId});
+      }
+      
       getNotificationAllCount()
       getViewOrderDetail(
         remoteMessage.data?.orderNumber,
@@ -240,7 +248,7 @@ const PickupBottomNav = ({navigation}) => {
           name="Account"
           component={Settings}
           options={{
-            headerTitle: 'Settings',
+            headerTitle: `${localizationText('Common','settings')}`,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,

@@ -9,6 +9,7 @@ import {
   Image,
   Platform,
   Alert,
+  Linking,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
@@ -38,42 +39,72 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     setLoading(true);
     try {
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderDetails.order_number, resolve, reject);
+        downloadInvoiceOrder(orderDetails.order_number,'deliveryboy', resolve, reject);
       });
 
-      const invoiceData = successResponse;
-      const filePath =
-        Platform.OS === 'android'
-          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderDetails.order_number}.pdf`
-          : `${RNFS.DocumentDirectoryPath}/invoice_${orderDetails.order_number}.pdf`;
+      const pdf = API.downloadInvoice + orderDetails.order_number+'/'+'deliveryboy'+'?show=true'
+      downloadFile(pdf)
+      // const invoiceData = successResponse;
+      // const filePath =
+      //   Platform.OS === 'android'
+      //     ? `${RNFS.ExternalDirectoryPath}/invoice_${orderDetails.order_number}.pdf`
+      //     : `${RNFS.DocumentDirectoryPath}/invoice_${orderDetails.order_number}.pdf`;
 
-      // Convert binary data to base64
-      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+      // // Convert binary data to base64
+      // const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
 
-      // Write the file to the document directory
-      await RNFS.writeFile(filePath, base64Data, 'base64');
+      // // Write the file to the document directory
+      // await RNFS.writeFile(filePath, base64Data, 'base64');
 
-      // Verify the file exists
-      const fileExists = await RNFS.exists(filePath);
-      if (fileExists) {
-        Alert.alert('Success', 'Invoice saved successfully.', [
-          {
-            text: 'Open Invoice',
-            onPress: () => {
-              openPDFWithNativeViewer(filePath);
-            },
-          },
-        ]);
-        console.log('Invoice saved to: ', filePath);
-      } else {
-        Alert.alert('Error', 'Failed to save invoice file.');
-      }
+      // // Verify the file exists
+      // const fileExists = await RNFS.exists(filePath);
+      // if (fileExists) {
+      //   Alert.alert('Success', 'Invoice saved successfully.', [
+      //     {
+      //       text: 'Open Invoice',
+      //       onPress: () => {
+      //         openPDFWithNativeViewer(filePath);
+      //       },
+      //     },
+      //   ]);
+      //   console.log('Invoice saved to: ', filePath);
+      // } else {
+      //   Alert.alert('Error', 'Failed to save invoice file.');
+      // }
     } catch (error) {
       Alert.alert('Error', 'Failed to save invoice file.');
       console.error('File saving error:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const downloadFile = (pdf) => {
+    setLoading(true);
+    let date = new Date();
+    let exe = '.pdf';
+    let filename =
+    `invoice_${orderDetails.order_number}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
+    const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
+
+    const options = {
+      fromUrl: pdf,
+      toFile: localFile,
+    };
+
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+          setTimeout(() => {
+            FileViewer.open(localFile);
+          }, 300);
+      })
+      .then(() => {
+        setLoading(false);
+          Linking.openURL(pdf)
+      })
+      .catch(error => {
+        setLoading(false);
+      });
   };
 
   const openPDFWithNativeViewer = async filePath => {
@@ -154,10 +185,10 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
                 ? orderDetails.drop_company_name
                 : 'Company Name'}
             </Text>
-            <Text style={styles.dropInfo}>
+            {dropOffLocation &&  dropOffLocation?.address && dropOffLocation.city &&dropOffLocation.state && <Text style={styles.dropInfo}>
               {dropOffLocation.address}{', '}{dropOffLocation.city}{', '}
               {dropOffLocation.state}
-            </Text>
+            </Text>}
           </View>
         </View>
 

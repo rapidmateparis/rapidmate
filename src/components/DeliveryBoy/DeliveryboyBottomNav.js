@@ -15,6 +15,7 @@ import {getLocations, getNotificationCount, getViewOrderDetail} from '../../data
 import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
 import {useLoader} from '../../utils/loaderContext';
 import {useLocationData, useUserDetails} from '../commonComponent/StoreContext';
+import { playNotificationSound, stopNotificationSound } from '../../utils/common';
 
 const Bottom = createBottomTabNavigator();
 
@@ -73,11 +74,11 @@ const DeliveryboyBottomNav = ({navigation}) => {
 
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      console.log('remoteMessage ', JSON.stringify(remoteMessage));
-
+      console.log('remoteMessage *Delivery Boy*', JSON.stringify(remoteMessage));
       getNotificationAllCount()
 
       if(remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' && remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
+        playNotificationSound()
         setDeliveryBoyAcceptRejectModalModalVisible(true);
         getViewOrderDetail(
           remoteMessage.data?.orderNumber,
@@ -86,8 +87,9 @@ const DeliveryboyBottomNav = ({navigation}) => {
             if (successResponse[0]._success) {
               setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
               setTimeout(()=>{
+                stopNotificationSound()
                 setDeliveryBoyAcceptRejectModalModalVisible(false);
-              },10000)
+              },30000)
             }
           },
           errorResponse => {
@@ -96,6 +98,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               {
                 text: 'OK',
                 onPress: () => {
+                  stopNotificationSound()
                   setDeliveryBoyAcceptRejectModalModalVisible(false);
                 },
               },
@@ -243,9 +246,10 @@ const DeliveryboyBottomNav = ({navigation}) => {
         isDeliveryBoyAcceptRejectModalModalVisible={
           isDeliveryBoyAcceptRejectModalModalVisible
         }
-        setDeliveryBoyAcceptRejectModalModalVisible={
-          setDeliveryBoyAcceptRejectModalModalVisible
-        }
+        setDeliveryBoyAcceptRejectModalModalVisible={(flag)=>{
+          stopNotificationSound()
+          setDeliveryBoyAcceptRejectModalModalVisible(flag)
+        }}
         deliveryBoyAcceptRejectMessage={deliveryBoyAcceptRejectMessage}
       />
     </>
