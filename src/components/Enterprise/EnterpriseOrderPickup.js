@@ -20,10 +20,12 @@ import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 import {getLocations} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
 const {height: screenHeight} = Dimensions.get('window');
 const EnterpriseOrderPickup = ({navigation, route}) => {
   const {setLoading} = useLoader();
+  const { userDetails} = useUserDetails();
 
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
@@ -40,11 +42,14 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
 
   const orderId = driverDetails.order.order_number;
   const otp = driverDetails.order.otp;
-  const deliveredOtp = driverDetails.order.delivered_otp;
+  // const deliveredOtp = driverDetails.order.delivered_otp;
+
+  const [deliveredOtp, setDeliveredOtp] = useState(driverDetails.order.delivered_otp);
+
 
   const [currentPosition, setCurrentPosition] = useState(0);
 
-  const stepCount = 4;
+  const stepCount = 5;
 
   // Labels for each step in the step indicator
   const labels = [
@@ -52,6 +57,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     'Pickup in Progress',
     'Your order has been picked up for delivery',
     'Order arriving soon!',
+    'Completed'
   ];
 
   const customStyles = {
@@ -77,6 +83,18 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     labelSize: 12,
     currentStepLabelColor: '#fe7013',
   };
+
+
+
+  useEffect(()=>{
+
+    console.log('progressTypeId ====>',userDetails.progressTypeId)
+    console.log('delivered_otp ====>',userDetails.delivered_otp)
+
+    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId)
+    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp)
+  },[userDetails.progressTypeId,userDetails.delivered_otp])
+
 
   useEffect(() => {
     const onBackPress = () => true;
@@ -263,7 +281,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
                 currentPosition={currentPosition}
                 labels={labels}
                 stepCount={stepCount}
-                onPress={position => setCurrentPosition(position)}
+                // onPress={position => setCurrentPosition(position)}
               />
             </View>
 

@@ -129,6 +129,15 @@ const EnterpriseBottomNav = ({navigation}) => {
 
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
+
+      if(remoteMessage.data?.delivered_otp){
+        saveUserDetails({...userDetails,delivered_otp:remoteMessage.data?.delivered_otp});
+      }
+      
+      if(remoteMessage.data?.progressTypeId){
+        saveUserDetails({...userDetails,progressTypeId:remoteMessage.data?.progressTypeId});
+      }
+
       getNotificationAllCount()
       setDeliveryBoyAcceptRejectModalModalVisible(true);
       console.log('remoteMessage', JSON.stringify(remoteMessage));
