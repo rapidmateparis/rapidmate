@@ -23,9 +23,11 @@ import BigTruckImage from '../../image/Big-Package.png';
 import {useLoader} from '../../utils/loaderContext';
 import {
   addPayment,
+  checkPromoCode,
   createEnterpriseOrder,
   createPickupOrder,
   getEnterprisePaymentMethod,
+  getTaxDetails,
 } from '../../data_manager';
 import {
   usePlacedOrderDetails,
@@ -47,6 +49,10 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [paymentMethod, setPaymentMethod] = useState([]);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
+  const [vechicleTax, setVechicleTax] = useState(20);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [paymentAmount, setPaymentAmount] = useState(totalAmount);
+  const [promoCodeResponse, setPromoCodeResponse] = useState();
 
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
@@ -80,6 +86,18 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       }
     }
   }, [orderNumber]);
+
+  useEffect(() => {
+    getTaxDetails((success)=>{
+      if(success[0]._response[0].tax_value){
+        setVechicleTax(parseFloat(success[0]._response[0].tax_value))
+      }
+    },
+    (error)=>{
+      console.log('error ====== ===== ',error)
+    })
+  }, []);
+
 
   useEffect(() => {
     console.log(userDetails.userDetails[0]);
@@ -117,7 +135,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            amount: params.amount * 100, // Amount in cents
+            amount: parseInt(paymentAmount * 100),
+            // amount: params.amount * 100, // Amount in cents
             currency: 'EUR',
             //payment_method_types: ['card', 'google_pay']
           }).toString(),
@@ -193,6 +212,13 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   };
 
   const placeEnterpriseOrder = async () => {
+    console.log('total_duration ====>')
+    console.log('requestParams from props ******', params);
+    // paymentAmount
+    try {
+
+      const time = params?.distanceTime?.time ? parseFloat(params.distanceTime.time).toFixed(2):0
+   
     let requestParams = {
       enterprise_ext_id: userDetails.userDetails[0].ext_id,
       branch_id: params.branch_id,
@@ -214,7 +240,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       is_same_dropoff_location: 0,
       repeat_dropoff_location_id: '',
       distance: parseFloat(params.distance).toFixed(1),
-      total_amount: parseFloat(params.amount),
+      total_duration: time,
+
+      total_amount: parseFloat(paymentAmount),
       package_photo: API.imageViewUrl + params.imageId, //'https://example.com/package.jpg',
       repeat_mode: params.repeat_mode,
       repeat_every: params.repeat_every,
@@ -245,6 +273,11 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       // requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
       requestParams={...requestParams,order_date:localToUTC(params.schedule_date_time)}
     }
+    if (promoCodeResponse) {
+      requestParams.promo_code = promoCodeResponse.promoCode;
+      requestParams.promo_value = promoCodeResponse.discount;
+      requestParams.order_amount = parseFloat(totalAmount);
+    }
 
     // if (params.branches) {
     //   requestParams.branches = params.branches;
@@ -271,7 +304,61 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         ]);
       },
     );
+       
+  } catch (error) {
+    console.log('error==>errorResponse', error);
+  }
   };
+
+  const getTaxAmount = ()=>{
+    const amount =   typeof params.amount === 'number'
+      ? params.amount.toFixed(2)
+      : parseFloat(params.amount)
+    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+     return taxAmount? taxAmount.toFixed(2): 0
+  }
+  useEffect(()=>{
+
+    const amount =   typeof params.amount === 'number'
+       ? params.amount.toFixed(2)
+       : parseFloat(params.amount)
+     console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
+      const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+      const total_Amount = parseFloat(amount)+taxAmount
+      if(total_Amount){
+       setTotalAmount(total_Amount.toFixed(2))
+       setPaymentAmount(total_Amount.toFixed(2))
+      }
+   },[vechicleTax])
+
+   const applyPromoCode = () => {
+    let params = {
+      promoCode: promoCode,
+      orderAmount: paymentAmount,
+    };
+    checkPromoCode(
+      params,
+      successResponse => {
+        console.log(
+          'applyPromoCode==>successResponse',
+          JSON.stringify(successResponse),
+        );
+        if (successResponse[0]._success) {
+          const promoResponse = successResponse[0]._response[0];
+          setPromoCodeResponse(promoResponse);
+          setPaymentAmount(successResponse[0]._response[0].totalAmount);
+        }
+      },
+      errorResponse => {
+        console.log(
+          'applyPromoCode==>errorResponse',
+          JSON.stringify(errorResponse),
+        );
+      },
+    );
+  };
+
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -317,6 +404,14 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
               <Text>€</Text> {params.amount}
             </Text>
           </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Tax {vechicleTax}%</Text>
+            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
+            <Text style={styles.totalAmount}>€ {totalAmount}</Text>
+          </View>
         </View>
 
         <View style={styles.inputContainer}>
@@ -326,17 +421,46 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             placeholder="Promo code"
             placeholderTextColor="#999"
           />
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.secondary,
-              paddingHorizontal: 20,
-              paddingVertical: 13,
-              borderTopRightRadius: 10,
-              borderBottomEndRadius: 10,
-            }}>
-            <AntDesign name="check" size={20} color="#fff" />
-          </TouchableOpacity>
+          
+         { promoCodeResponse ? (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={() => {
+                setPromoCodeResponse(null);
+                setPaymentAmount(totalAmount);
+              }}>
+              <AntDesign name="close" size={20} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={applyPromoCode}>
+              <AntDesign name="check" size={20} color="#fff" />
+            </TouchableOpacity>
+          )}
         </View>
+
+        {promoCodeResponse && (
+          <Text
+            style={[
+              styles.discountInfo,
+              {fontSize: 16, alignSelf: 'flex-end'},
+            ]}>
+            Discount: € {promoCodeResponse.discount}
+          </Text>
+        )}
 
         {paymentMethod.length > 0 && 
         <>
@@ -429,7 +553,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
             <Text>€</Text>
-            {params.amount}
+            {paymentAmount}
           </Text>
           <TouchableOpacity onPress={onPayment}>
             <Text style={styles.PayText}>Proceed to pay</Text>

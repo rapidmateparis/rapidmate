@@ -53,7 +53,7 @@ const OrderPickup = ({route, navigation}) => {
 
   console.log('0', driverDetails);
 
-  const stepCount = 4;
+  const stepCount = 5;
 
   // Labels for each step in the step indicator
   const labels = [
@@ -61,6 +61,7 @@ const OrderPickup = ({route, navigation}) => {
     'Pickup in Progress',
     'Your order has been picked up for delivery',
     'Order arriving soon!',
+    'Completed'
   ];
 
   const customStyles = {
