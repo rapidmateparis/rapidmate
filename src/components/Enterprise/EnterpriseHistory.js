@@ -27,7 +27,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import EnterpriseShiftFillter from './EnterpriseShiftFillter';
 import {useFocusEffect} from '@react-navigation/native';
-import { localToUTC, titleFormat } from '../../utils/common';
+import {localToUTC, titleFormat} from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -53,8 +53,8 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
 
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
-      {orders.map((item, index) => {
-        return (
+      {orders.length > 0 ? (
+        orders.map((item, index) => (
           <View
             key={index}
             style={{
@@ -78,10 +78,7 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
                   {item.consumer_order_title}{' '}
                   {item.is_show_datetime_in_title == 1
                     ? item.order_status === 'ORDER_PLACED'
-                      ? titleFormat(
-                          item.schedule_date_time ||
-                            item.order_date,
-                        )
+                      ? titleFormat(item.schedule_date_time || item.order_date)
                       : titleFormat(item.updated_on)
                     : ''}
                 </Text>
@@ -131,8 +128,29 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
               </View>
             </TouchableOpacity>
           </View>
-        );
-      })}
+        ))
+      ) : (
+        <View style={styles.scrollViewContainer}>
+          <View
+            style={{
+              width: 350,
+              height: 350,
+              position: 'relative',
+              marginVertical: 40,
+            }}>
+            <View style={styles.container}>
+              <Image
+                style={styles.loaderMap}
+                source={require('../../image/No-Data-Table.png')}
+              />
+              <Text style={styles.text}>No orders to show</Text>
+              <Text style={styles.subText}>
+                If there is any active order, it will be shown here.
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -159,10 +177,8 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
 
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
-      {orders.map((item, index) => {
-        // console.log('item  ===',item)
-        // destination_description
-        return (
+      {orders.length > 0 ? (
+        orders.map((item, index) => (
           <View
             key={index}
             style={{
@@ -186,10 +202,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                   {item.consumer_order_title}{' '}
                   {item.is_show_datetime_in_title == 1
                     ? item.order_status === 'ORDER_PLACED'
-                      ? titleFormat(
-                          item.schedule_date_time ||
-                            item.order_date,
-                        )
+                      ? titleFormat(item.schedule_date_time || item.order_date)
                       : titleFormat(item.updated_on)
                     : ''}
                 </Text>
@@ -205,19 +218,22 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                 </Text>
               </View>
 
-              {item?.locations?.length > 0 && item?.locations.map((location)=>{
-                return(
-              <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To{' '}
-                  <Text style={styles.Location}>
-                    {location.destination_description}
-                  </Text>
-                </Text>
-              </View>
-                )
-              }) }
+              {item?.locations?.length > 0 &&
+                item?.locations.map((location, locIndex) => (
+                  <View key={locIndex} style={styles.packageMiddle}>
+                    <MaterialIcons
+                      name="my-location"
+                      size={15}
+                      color="#717172"
+                    />
+                    <Text style={styles.fromLocation}>
+                      To{' '}
+                      <Text style={styles.Location}>
+                        {location.destination_description}
+                      </Text>
+                    </Text>
+                  </View>
+                ))}
 
               <View style={styles.footerCard}>
                 <Text
@@ -235,7 +251,6 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
               <View style={styles.borderShow}></View>
               <View style={styles.footerCard}>
                 <Text style={styles.orderId}>
-                  {' '}
                   {getVehicleType(item.vehicle_type_id)}
                 </Text>
                 <Text style={styles.valueMoney}>
@@ -244,8 +259,29 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
               </View>
             </TouchableOpacity>
           </View>
-        );
-      })}
+        ))
+      ) : (
+        <View style={styles.scrollViewContainer}>
+          <View
+            style={{
+              width: 350,
+              height: 350,
+              position: 'relative',
+              marginVertical: 40,
+            }}>
+            <View style={styles.container}>
+              <Image
+                style={styles.loaderMap}
+                source={require('../../image/No-Data-Table.png')}
+              />
+              <Text style={styles.text}>No orders to show</Text>
+              <Text style={styles.subText}>
+                If there is any active order, it will be shown here.
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -278,8 +314,8 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
 
   return (
     <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
-      {orders.map((item, index) => {
-        return (
+      {orders.length > 0 ? (
+        orders.map((item, index) => (
           <View
             key={index}
             style={{
@@ -335,12 +371,6 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
                   {getBranchAddress(item.branch_id)}
                 </Text>
               </View>
-              {/* <View style={styles.packageMiddle}>
-                <MaterialIcons name="my-location" size={15} color="#717172" />
-                <Text style={styles.fromLocation}>
-                  To <Text style={styles.Location}>To 5th Avenue, XYZ</Text>
-                </Text>
-              </View> */}
 
               <View style={styles.footerCard}>
                 <Text
@@ -356,8 +386,29 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
               </View>
             </TouchableOpacity>
           </View>
-        );
-      })}
+        ))
+      ) : (
+        <View style={styles.scrollViewContainer}>
+          <View
+            style={{
+              width: 350,
+              height: 350,
+              position: 'relative',
+              marginVertical: 40,
+            }}>
+            <View style={styles.container}>
+              <Image
+                style={styles.loaderMap}
+                source={require('../../image/No-Data-Table.png')}
+              />
+              <Text style={styles.text}>No shifts to show</Text>
+              <Text style={styles.subText}>
+                If there is any active shift, it will be shown here.
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -409,10 +460,7 @@ const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
                   {item.consumer_order_title}{' '}
                   {item.is_show_datetime_in_title == 1
                     ? item.order_status === 'ORDER_PLACED'
-                      ? titleFormat(
-                          item.schedule_date_time ||
-                            item.order_date,
-                        )
+                      ? titleFormat(item.schedule_date_time || item.order_date)
                       : titleFormat(item.updated_on)
                     : ''}
                 </Text>
@@ -551,7 +599,7 @@ function EnterpriseHistory({navigation}) {
     getLocations(
       null,
       successResponse => {
-        console.log('list of all location ',successResponse[0])
+        console.log('list of all location ', successResponse[0]);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setLocationList(tempOrderList);
@@ -573,28 +621,23 @@ function EnterpriseHistory({navigation}) {
     searchOrderApi(
       params,
       successResponse => {
-        console.log('one time responce ===>',JSON.stringify(successResponse))
+        console.log('one time responce ===>', JSON.stringify(successResponse));
         setLoading(false);
         if (successResponse[0]._success) {
-            if (params.tab_id == 2) {
-              setEnterpriseOrderList(
-                successResponse[0]._response.filter(
-                  item => item.locations.length > 0,
-                ),
-              );
-            } else {
-              setEnterpriseOrderList(successResponse[0]._response);
-            }
+          if (params.tab_id == 2) {
+            setEnterpriseOrderList(
+              successResponse[0]._response.filter(
+                item => item.locations.length > 0,
+              ),
+            );
+          } else {
+            setEnterpriseOrderList(successResponse[0]._response);
           }
+        }
       },
       errorResponse => {
         setLoading(false);
         setEnterpriseOrderList([]);
-        if (errorResponse[0]._errors.message) {
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        }
       },
     );
   };

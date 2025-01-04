@@ -178,10 +178,10 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
-                  <Image source={require('../../image/chat-icon.png')} />
+                  <Image style={{width: 32, height: 32,}} source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Image source={require('../../image/call-icon.png')} />
+                  <Image style={{width: 32, height: 32,}} source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -225,10 +225,10 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                       </View>
                       <View style={styles.contactInfoIcons}>
                         <TouchableOpacity style={{marginRight: 10}}>
-                          <Image source={require('../../image/chat-icon.png')} />
+                          <Image style={{width: 32, height: 32,}} source={require('../../image/chat-icon.png')} />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                          <Image source={require('../../image/call-icon.png')} />
+                          <Image style={{width: 32, height: 32,}} source={require('../../image/call-icon.png')} />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -289,7 +289,7 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                           updateStatus == 'Ready to pickup' || updateStatus === null ? '#D9D9D9' : '#FF0058'
                         }
                       />
-                      <Text style={styles.statusInfo}>Going to Pickupd</Text>
+                      <Text style={styles.statusInfo}>Going to Pickup</Text>
                     </View>
                     <View style={styles.borderStyle} />
 
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   subheadingOTP: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
   },
@@ -732,11 +732,12 @@ const styles = StyleSheet.create({
   borderStyle: {
     borderWidth: 1,
     borderColor: '#f1f1f1',
-    width: 20,
+    width: 15,
   },
   deliveryinfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   statusInfo: {
     fontSize: 12,
@@ -746,8 +747,7 @@ const styles = StyleSheet.create({
   },
   statusAboutDelivery: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingHorizontal: 5,
+    justifyContent: 'space-between',
   },
   logbutton: {
     width: '100%',
