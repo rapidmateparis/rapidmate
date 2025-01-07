@@ -201,7 +201,7 @@ const DeliveryboyBillingDetails = () => {
       country_id: dropdownCountryValue,
       dni_number: dninumber,
       postal_code: postalcode,
-      account_type:accountType
+      account_type:1 // accountType
     };
     updateDeliveryBoyBillingDetails(
       profileParams,
@@ -227,7 +227,7 @@ const DeliveryboyBillingDetails = () => {
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, marginVertical: 15}}>
-        <View>
+        {/* <View>
           <Text style={styles.label}>Account</Text>
           <View style={styles.containerCountry}>
             <Dropdown
@@ -251,7 +251,7 @@ const DeliveryboyBillingDetails = () => {
               )}
             />
           </View>
-        </View>
+        </View> */}
 
         <View
           style={{

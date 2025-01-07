@@ -50,6 +50,7 @@ const DeliveryDetails = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
   const [locations, setLocations] = useState([]);
+  const [multipleOrderLocation, setMultipleOrderLocation] = useState([]);
 
   const enterpriseDestinationList = route?.params?.orderItem?.locations || []
 
@@ -108,14 +109,22 @@ const DeliveryDetails = ({navigation, route}) => {
     getViewEnterpriseOrderDetail(
       orderNumber,
       successResponse => {
+
         setLoading(false);
         if (successResponse[0]._success) {
+          console.log('Enterprise new details  =====>',JSON.stringify(successResponse[0]._response))
+
           let data = successResponse[0]._response.order;
-          if (data.orderLines && data.orderLines.length > 0) {
+          let orderLines = successResponse[0]._response.orderLines;
+          if (orderLines && orderLines.length > 0) {
             getAllLocations();
+            setMultipleOrderLocation(orderLines)
           }
           setOrder(data);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
+          getSourceAddress(
+            successResponse[0]._response.order.pickup_location,
+          );
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location,
           );
@@ -137,6 +146,7 @@ const DeliveryDetails = ({navigation, route}) => {
     getViewOrderDetail(
       orderNumber,
       successResponse => {
+        console.log('Order details ---- >',JSON.stringify(successResponse))
         setLoading(false);
         if (successResponse[0]._success) {
           setOrder(successResponse[0]._response.order);
@@ -189,7 +199,10 @@ const DeliveryDetails = ({navigation, route}) => {
       locationId,
       successResponse => {
         setLoading(false);
+
         if (successResponse[0]._success) {
+          console.log('successResponse[0]._response[0]', successResponse[0]._response[0]);
+
           setDestinationAddress(successResponse[0]._response[0]);
         }
       },
@@ -443,6 +456,7 @@ const DeliveryDetails = ({navigation, route}) => {
               sourceAddress: sourceAddress,
               destinationAddress: destinationAddress,
             }}
+            multipleToAddress = {multipleOrderLocation?.length > 0 ?multipleOrderLocation :[]}
           />
         </View>
 
