@@ -174,7 +174,10 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         }}>
         <TouchableOpacity
           onPress={() => {
-          if(item?.item?.locations && item?.item?.locations?.length > 0){
+            console.log('item?.item =====>',item?.item)
+            if(item?.item?.delivery_type_id === 3){
+              navigation.navigate('DeliveryboyShiftDetails');
+            }else if(item?.item?.delivery_type_id === 2 && item?.item?.locations && item?.item?.locations?.length > 0){
             navigation.navigate('DeliveryDetailsMultipleOrder',{
                 orderItem: item.item,
             });
@@ -431,8 +434,10 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         }}>
         <TouchableOpacity
           onPress={() =>{
-
-            if(item?.item?.locations && item?.item?.locations?.length > 0){
+            console.log('delivery_type_id ====>',item?.item)
+            if(item?.item?.delivery_type_id === 3){
+              navigation.navigate('DeliveryboyShiftDetails');
+            }else if(item?.item?.delivery_type_id === 2 && item?.item?.locations && item?.item?.locations?.length > 0){
               navigation.navigate('DeliveryDetailsMultipleInvoice',{
                   orderItem: item.item,
               });

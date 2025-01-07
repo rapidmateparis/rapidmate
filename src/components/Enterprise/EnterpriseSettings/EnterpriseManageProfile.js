@@ -64,7 +64,7 @@ const EnterpriseManageProfile = ({navigation}) => {
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       company_name: company,
-      email: email,
+      // email: email,
       first_name: userName.split(' ')[0],
       phone: '+33' + number,
       industry_type_id: dropdownIndustryValue,
@@ -197,7 +197,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             />
           </View>
         </View>
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -206,7 +206,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             value={email}
             onChangeText={text => setEmail(text)}
           />
-        </View>
+        </View> */}
         <View style={{flex: 1}}>
           <Text style={styles.textlable}>Company Name</Text>
           <TextInput

@@ -54,6 +54,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
 
+  console.log('params =====>,',params)
+
+
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
       case 1:
@@ -391,12 +394,27 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             </Text>
           </View>
 
-          <View style={styles.distanceTime}>
-            <EvilIcons name="location" size={18} color="#606060" />
-            <Text style={styles.vehicleCapacity}>
-              To - {params.dropoff_location.destinationDescription}
-            </Text>
-          </View>
+          {
+            params?.dropDetails?.length > 0 ?
+            params?.dropDetails.map((dropLocation)=>{
+              return(
+                <View style={styles.distanceTime}>
+                  <EvilIcons name="location" size={18} color="#606060" />
+                  <Text style={styles.vehicleCapacity}>
+                    To - {dropLocation.destinationDescription}
+                  </Text>
+                </View>
+              )
+            })            
+            :
+            <View style={styles.distanceTime}>
+              <EvilIcons name="location" size={18} color="#606060" />
+              <Text style={styles.vehicleCapacity}>
+                To - {params.dropoff_location.destinationDescription}
+              </Text>
+            </View>
+
+          }
 
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>

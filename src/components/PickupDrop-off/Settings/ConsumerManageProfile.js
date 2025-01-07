@@ -46,7 +46,7 @@ const ConsumerManageProfile = ({navigation}) => {
       first_name: vehicleModel,
       last_name: '',
       phone: dropdownValue + number,
-      email: email,
+      // email: email,
     };
     updateUserProfile(
       userDetails.userDetails[0].role,
@@ -160,7 +160,7 @@ const ConsumerManageProfile = ({navigation}) => {
             />
           </View>
         </View>
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -169,7 +169,7 @@ const ConsumerManageProfile = ({navigation}) => {
             value={email}
             onChangeText={text => setEmail(text)}
           />
-        </View>
+        </View> */}
         <TouchableOpacity
           onPress={() => saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>

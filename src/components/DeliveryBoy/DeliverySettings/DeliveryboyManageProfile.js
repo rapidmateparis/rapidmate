@@ -60,7 +60,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
       first_name: userName,
       last_name: '',
       phone: dropdownValue + number,
-      email: email,
+      // email: email,
 
       plat_no: vehicleNo,
       modal: vehicleModel,
@@ -186,7 +186,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
             />
           </View>
         </View>
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -195,7 +195,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
             value={email}
             onChangeText={text => setEmail(text)}
           />
-        </View>
+        </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{flex: 1, marginRight: 10}}>
             <Text style={styles.textlable}>Vehicle No.</Text>

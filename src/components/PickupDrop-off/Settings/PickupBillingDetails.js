@@ -24,7 +24,7 @@ import {useUserDetails} from '../../commonComponent/StoreContext';
 
 const PickupBillingDetails = ({navigation}) => {
   const [isFocus, setIsFocus] = useState(false);
-  const [accountType, setAccountType] = useState(null);
+  const [accountType, setAccountType] = useState(1);
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [address, setAddress] = useState(null);
@@ -195,7 +195,7 @@ const PickupBillingDetails = ({navigation}) => {
       country_id: dropdownCountryValue.toString(),
       dni_number: dninumber,
       postal_code: postalcode,
-      account_type:accountType
+      account_type:1 // accountType
     };
 
     addConsumerBillingDetails(
@@ -222,7 +222,7 @@ const PickupBillingDetails = ({navigation}) => {
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, marginVertical: 15,}}>
-        <View>
+        {/* <View>
           <Text style={styles.label}>Account</Text>
           <View style={styles.containerCountry}>
             <Dropdown
@@ -254,7 +254,7 @@ const PickupBillingDetails = ({navigation}) => {
               )}
             />
           </View>
-        </View>
+        </View> */}
         <View
           style={{
             flexDirection: 'row',
