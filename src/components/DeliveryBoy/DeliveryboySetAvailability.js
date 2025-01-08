@@ -17,6 +17,7 @@ import moment from 'moment';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {planningSetupUpdate, getCurrentPlanningSetup} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import DatePicker from 'react-native-date-picker';
 
 const DeliveryboySetAvailability = ({navigation}) => {
   const [toggleAvailable24, setToggleAvailable24] = useState(false);
@@ -485,26 +486,65 @@ const DeliveryboySetAvailability = ({navigation}) => {
                   </View>
 
                   {timeSlots[day] &&
-                    timeSlots[day].map((slot, slotIndex) => (
+                    timeSlots[day].map((slot, slotIndex) => {
+                      return(
                       <View key={slotIndex} style={styles.selectTimeCard}>
+                        <DatePicker
+                          modal
+                          open={!!slot.showFromTimePicker}
+                          date={slot?.from_time? moment(slot?.from_time,'hh:mm A').toDate() : new Date()}
+                          mode="time"
+                          onConfirm={date => {
+                              setTimeSlots({
+                                ...timeSlots,
+                                [day]: timeSlots[day].map((s, idx) =>
+                                  idx === slotIndex
+                                    ? {...s, 
+                                      from_time: moment(date).format('hh:mm A'),
+                                      showFromTimePicker:false }
+                                    : s,
+                                ),
+                              })
+                          }}
+                          onCancel={() => {
+                            setTimeSlots({
+                              ...timeSlots,
+                              [day]: timeSlots[day].map((s, idx) =>
+                                idx === slotIndex
+                                  ? {...s, showFromTimePicker:false }
+                                  : s,
+                              ),
+                            })
+                          }}
+                        />
                         <View style={styles.textInputDiv}>
                           <TextInput
                             style={styles.loginput}
                             placeholder="From HH:MM"
                             placeholderTextColor="#999"
                             value={slot.from_time}
-                            onChangeText={text =>
+                            editable={false}
+                            // onChangeText={text =>
+                              // setTimeSlots({
+                              //   ...timeSlots,
+                              //   [day]: timeSlots[day].map((s, idx) =>
+                              //     idx === slotIndex
+                              //       ? {...s, from_time: formatTime(text)}
+                              //       : s,
+                              //   ),
+                              // })
+                            // }
+                          />
+                          <TouchableOpacity onPress={()=>{
                               setTimeSlots({
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
                                   idx === slotIndex
-                                    ? {...s, from_time: formatTime(text)}
+                                    ? {...s, showFromTimePicker:true }
                                     : s,
                                 ),
                               })
-                            }
-                          />
-                          <TouchableOpacity>
+                          }}>
                             <MaterialCommunityIcons
                               name="clock-time-four"
                               size={20}
@@ -515,23 +555,61 @@ const DeliveryboySetAvailability = ({navigation}) => {
                         </View>
 
                         <View style={styles.textInputDiv}>
+                        <DatePicker
+                          modal
+                          open={!!slot.showToTimePicker}
+                          date={slot?.to_time? moment(slot?.to_time,'hh:mm A').toDate() : new Date()}
+                          mode="time"
+                          onConfirm={date => {
+                              setTimeSlots({
+                                ...timeSlots,
+                                [day]: timeSlots[day].map((s, idx) =>
+                                  idx === slotIndex
+                                    ? {...s, 
+                                      to_time: moment(date).format('hh:mm A'),
+                                      showToTimePicker:false }
+                                    : s,
+                                ),
+                              })
+                          }}
+                          onCancel={() => {
+                            setTimeSlots({
+                              ...timeSlots,
+                              [day]: timeSlots[day].map((s, idx) =>
+                                idx === slotIndex
+                                  ? {...s, showToTimePicker:false }
+                                  : s,
+                              ),
+                            })
+                          }}
+                        />
                           <TextInput
                             style={styles.loginput}
                             placeholder="To HH:MM"
                             placeholderTextColor="#999"
                             value={slot.to_time}
-                            onChangeText={text =>
-                              setTimeSlots({
-                                ...timeSlots,
-                                [day]: timeSlots[day].map((s, idx) =>
-                                  idx === slotIndex
-                                    ? {...s, to_time: formatTime(text)}
-                                    : s,
-                                ),
-                              })
-                            }
+                            editable={false}
+                            // onChangeText={text =>
+                            //   setTimeSlots({
+                            //     ...timeSlots,
+                            //     [day]: timeSlots[day].map((s, idx) =>
+                            //       idx === slotIndex
+                            //         ? {...s, to_time: formatTime(text)}
+                            //         : s,
+                            //     ),
+                            //   })
+                            // }
                           />
-                          <TouchableOpacity>
+                          <TouchableOpacity onPress={()=>{
+                            setTimeSlots({
+                              ...timeSlots,
+                              [day]: timeSlots[day].map((s, idx) =>
+                                idx === slotIndex
+                                  ? {...s, showToTimePicker:true }
+                                  : s,
+                              ),
+                            })
+                          }}>
                             <MaterialCommunityIcons
                               name="clock-time-four"
                               size={20}
@@ -576,7 +654,8 @@ const DeliveryboySetAvailability = ({navigation}) => {
                           </TouchableOpacity>
                         )}
                       </View>
-                    ))}
+                    )
+                        })}
                 </View>
               </View>
             ))}

@@ -288,7 +288,10 @@ console.log('my dates === >',days)
                           curentInstance[index].timeslots[timeSlotIndex].from_time =
                             moment(date).format('hh:mm A');
                           setDays(curentInstance);
-                          setTimeSlotIndex(null)
+                          setTimeSlotIndex(()=>{
+                            setDays(curentInstance);
+                            return null
+                          })
                         }}
                         onCancel={() => {
                           setTimeSlotIndex(null)

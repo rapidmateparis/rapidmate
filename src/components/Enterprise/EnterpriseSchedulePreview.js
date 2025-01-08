@@ -46,7 +46,8 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       shift_from_date: localToUTC(moment(params.schedule.startDate,'DD/MM/YYYY').toDate()),
       shift_tp_date: localToUTC(moment(params.schedule.endDate,'DD/MM/YYYY').toDate()),
       is_same_slot_all_days: 0,
-      slots: slots
+      slots: slots,
+      amount:params.amount
     };
 
     console.log('requestParams =======>',requestParams)
