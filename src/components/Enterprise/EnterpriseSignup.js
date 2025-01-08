@@ -695,7 +695,7 @@ const EnterpriseSignup = ({navigation}) => {
                 <Text style={styles.checkboxText}>
                   By clicking on this box, you acknowledge that you have read
                   and understood the
-                  <Text style={styles.pirvacyTextBold}> Privacy Policy</Text>
+                  <Text onPress={() => navigation.navigate('PrivacyPolicy')} style={styles.pirvacyTextBold}> Privacy Policy</Text>
                 </Text>
               </TouchableOpacity>
             </View>

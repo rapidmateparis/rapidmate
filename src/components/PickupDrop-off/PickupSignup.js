@@ -386,8 +386,8 @@ const PickupSignup = ({navigation}) => {
             <View>
               <Text style={styles.termOfRapidmate}>
                 By signing up you agree to{' '}
-                <Text style={{color: colors.primary}}>Privacy policy</Text> &{' '}
-                <Text style={{color: colors.primary}}>Terms</Text> of RapidMate
+                <Text onPress={() => navigation.navigate('PrivacyPolicy')} style={{color: colors.primary}}>Privacy policy</Text> &{' '}
+                <Text onPress={() => navigation.navigate('TermsAndConditions')} style={{color: colors.primary}}>Terms</Text> of RapidMate
               </Text>
             </View>
           </TouchableOpacity>
