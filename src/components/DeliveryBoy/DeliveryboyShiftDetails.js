@@ -16,12 +16,12 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import StartShift from '../../image/play-32.png';
 import { useNavigation } from '@react-navigation/native';
 
-const DeliveryboyShiftDetails = ({navigation}) => {
+const DeliveryboyShiftDetails = ({navigation,route}) => {
   const defaultStatusMessage = 'Swipe to accept the request';
   const [swipeStatusMessage, setSwipeStatusMessage] =
     useState(defaultStatusMessage);
   const [forceResetLastButton, setForceResetLastButton] = useState(null);
-
+  const orderDetails =  route?.params?.orderItem
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
   const [delivered, setDelivered] = useState(false);
 
@@ -52,7 +52,7 @@ const DeliveryboyShiftDetails = ({navigation}) => {
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
-                <Text style={styles.companyInfo}>Company Name</Text>
+                <Text style={styles.companyInfo}>{orderDetails.company_name}</Text>
                 <Text style={styles.dropInfo}>
                   22 Rue de la Liberté, Paris, Île-de-France.
                 </Text>

@@ -176,7 +176,9 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
           onPress={() => {
             console.log('item?.item =====>',item?.item)
             if(item?.item?.delivery_type_id === 3){
-              navigation.navigate('DeliveryboyShiftDetails');
+              navigation.navigate('DeliveryboyShiftDetails',{
+                orderItem: item.item,
+            });
             }else if(item?.item?.delivery_type_id === 2 && item?.item?.locations && item?.item?.locations?.length > 0){
             navigation.navigate('DeliveryDetailsMultipleOrder',{
                 orderItem: item.item,

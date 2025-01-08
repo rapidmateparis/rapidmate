@@ -25,18 +25,19 @@ import SemiTruckImage from '../../image/Truck-Right1x.png';
 import PackageImage from '../../image/Big-Package.png';
 import EnterpriseVehcleDimensions from '../commonComponent/EnterpriseVehcleDimensions';
 import {useLoader} from '../../utils/loaderContext';
-import {getAllVehicleTypes} from '../../data_manager';
+import {getAllVehicleTypes, getLookupData} from '../../data_manager';
+import { useLookupData } from '../commonComponent/StoreContext';
 
 const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
-  const [selectedOption, setSelectedOption] = useState('Delivery boy with scooter');
+  const [selectedOption, setSelectedOption] = useState(1);
   const [selectedVehicle, setSelectedVehicle] = useState('');
   const [serviceTypeId, setServiceTypeId] = useState(1);
 
-  const handleOptionSelect = (option, vehicle, id) => {
-    setSelectedOption(option);
+  const handleOptionSelect = (vehicle, type) => {
+    setSelectedOption(type.id);
     setSelectedVehicle(vehicle);
-    if (id) {
-      setServiceTypeId(id);
+    if (type.id) {
+      setServiceTypeId(type.id);
     }
   };
 
@@ -45,6 +46,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   const [vehicleDetails, setVehicleDetails] = useState();
   const {setLoading} = useLoader();
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
+  const {saveLookupData,lookupData} = useLookupData();
+
+  console.log('lookupData ====>',lookupData)
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
@@ -56,7 +60,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     if(vehicleTypeList?.length > 0){
     const vehicle = vehicleTypeList.filter(val => val.vehicle_type == 'Cycle')[0]
     setSelectedVehicle(vehicle)
-    setSelectedVehiclePrice(vehicle.km_price);
+    route.params.delivery_type_id == 3 ? 
+    serviceTypeId === 1 ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount) :
+    setSelectedVehiclePrice(vehicle.enterprise_wov_amount):  setSelectedVehiclePrice(vehicle.km_price);
     }
   },[vehicleTypeList])
 
@@ -65,7 +71,11 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     if(selectedOption !== 'Delivery boy with scooter'){
       setSelectedVehiclePrice(0)
     }else{
-      selectedVehicle?.km_price && setSelectedVehiclePrice(selectedVehicle.km_price);
+
+      route.params.delivery_type_id == 3 ?  
+      serviceTypeId === 1 ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount) :
+      setSelectedVehiclePrice(selectedVehicle.enterprise_wov_amount):  setSelectedVehiclePrice(selectedVehicle.km_price);
+      // selectedVehicle?.km_price && setSelectedVehiclePrice(selectedVehicle.km_price);
     }
   },[selectedOption])
 
@@ -139,11 +149,24 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
         ]);
       },
     );
+
+    getLookupData(
+      null,
+      successResponse => {
+        console.log('successResponse  ew ====>',JSON.stringify(successResponse[0]._response))
+
+        saveLookupData(successResponse[0]._response);
+      },
+      errorResponse => {
+        console.log('getLookup==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+
   }, []);
 
 
   const disableVehicleType = ()=>{
-    return serviceTypeId !== 1 ? true : false
+    return serviceTypeId !== 1 && serviceTypeId !== 2 ? true : false
   }
 
   const disableServiceType =()=>{
@@ -156,7 +179,46 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
         <View>
           <Text style={styles.selectServiceTitle}>Select service type</Text>
 
-          <TouchableOpacity
+          {
+            lookupData?.enterpriseServiceType?.length > 0 ?
+            lookupData?.enterpriseServiceType.map((serviceType)=>{
+              return(
+                <TouchableOpacity
+                  style={[
+                    styles.selectDeliveryboyTypeCard,
+                    selectedOption === serviceType.id && {},
+                  ]}
+                  onPress={() =>
+                    handleOptionSelect(
+                      serviceType.id === 1 ?  vehicleTypeList.filter(val => val.vehicle_type == 'Scooter')[0] : '',
+                      serviceType
+                    )
+                  }>
+                  {selectedOption === serviceType.id ? (
+                    <FontAwesome
+                      name="dot-circle-o"
+                      size={25}
+                      color={colors.secondary}
+                    />
+                  ) : (
+                    <FontAwesome name="circle-thin" size={25} color={colors.text} />
+                  )}
+                  <Text
+                    style={[
+                      styles.deliveryboyType,
+                      selectedOption === serviceType.id && {
+                        fontFamily: 'Montserrat-Bold',
+                      },
+                    ]}>
+                    {serviceType.service_type}
+                  </Text>
+                </TouchableOpacity>
+                )
+              })
+              :null
+          }
+
+          {/* <TouchableOpacity
             style={[
               styles.selectDeliveryboyTypeCard,
               selectedOption === 'Delivery boy with scooter' && {},
@@ -272,7 +334,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
               ]}>
               Cleaning staff
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <View style={styles.vehicleTypePrice}>
             <Text style={styles.selectServiceTitle}>Select vehicle type</Text>
@@ -289,7 +351,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
             onPress={() => {
               setTimeout(()=>{
                 setSelectedVehicle(vehicle);
-                setSelectedVehiclePrice(vehicle.km_price);
+                route.params.delivery_type_id == 3 ?  
+                serviceTypeId === 1 ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount) :
+                setSelectedVehiclePrice(vehicle.enterprise_wov_amount):  setSelectedVehiclePrice(vehicle.km_price);
               },500)
             }}
             style={[
@@ -326,7 +390,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 {vehicle.vehicle_type}
               </Text>
 
-              {vehicle.vehicle_type === selectedVehicle.vehicle_type && <View style={styles.chargeBatch} ><Text style={styles.chargeBatchTextStyle}>{`€ ${selectedVehiclePrice.toFixed(2)}/km`}</Text></View>}
+              {vehicle.vehicle_type === selectedVehicle.vehicle_type && <View style={styles.chargeBatch} ><Text style={styles.chargeBatchTextStyle}>{`€ ${selectedVehiclePrice.toFixed(2)}/${route.params.delivery_type_id == 3 ? 'hrs':'km'}`}</Text></View>}
               </View>
             </View>
             <Image style={[vehicle.vehicleStyle,disableVehicleType() ?{tintColor:colors.lightGrey}:[]]}  source={vehicle.image} />
@@ -339,6 +403,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                 ...route.params,
                 vehicle_type: selectedVehicle,
                 service_type_id: serviceTypeId,
+                amount:selectedVehiclePrice
               });
             } else {
               navigation.navigate('EnterpiseScheduleNewDetailsFill', {
