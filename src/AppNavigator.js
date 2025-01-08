@@ -126,6 +126,9 @@ import WithdrawAmountTransfered from './components/PickupDrop-off/Settings/Withd
 import ScheduleOrderSuccess from './components/PickupDrop-off/ScheduleOrderSuccess';
 import DeliveryboyBillingDetails from './components/DeliveryBoy/DeliverySettings/DeliveryboyBillingDetails';
 import EnterpriseAddMultpleDropDetails from './components/Enterprise/EnterpriseAddMultpleDropDetails';
+import PrivacyPolicy from './common/PrivacyPolicy';
+import TermsAndConditions from './common/TermsOfService';
+import EnterpriseBillingDetail from './components/Enterprise/EnterpriseSettings/EnterpriseBillingDetail';
 
 const Stack = createStackNavigator();
 
@@ -230,6 +233,62 @@ const AppNavigator = () => {
                 })}
               />
               <Stack.Screen
+                name="PrivacyPolicy"
+                component={PrivacyPolicy}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Privacy Policy',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="TermsAndConditions"
+                component={TermsAndConditions}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Terms And Conditions',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen 
                 name="AddPaymentMethod"
                 component={AddPaymentMethod}
                 options={({navigation}) => ({
@@ -2461,6 +2520,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: 'Add Drop Details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseBillingDetail"
+                component={EnterpriseBillingDetail}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Billing Details',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

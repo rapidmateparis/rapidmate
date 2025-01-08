@@ -14,7 +14,6 @@ import {colors} from '../../colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const LoginSignup = ({navigation}) => {
-
   return (
     <View style={{width: '100%', backgroundColor: colors.primary}}>
       <View>
@@ -50,17 +49,33 @@ const LoginSignup = ({navigation}) => {
           </TouchableOpacity>
           <View style={{marginTop: 20}}>
             <Text style={[styles.loginDisclemar, {color: colors.white}]}>
-              By logging in or registering, you agreed to the{' '}
-              <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}>
-                Terms & Conditions
-              </Text>{' '}
-              and{' '}
-              <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}>
-                Privacy Policy
-              </Text>
-              .
+              By logging in or registering, you agreed to the
+            </Text>
+            <Text style={[styles.loginDisclemar, {color: colors.white}]}>
+              <TouchableOpacity
+                style={{paddingTop: 10}}
+                onPress={() => navigation.navigate('TermsAndConditions')}>
+                <Text
+                  style={{
+                    textDecorationLine: 'underline',
+                    color: colors.white,
+                  }}>
+                  Terms & Conditions
+                </Text>
+              </TouchableOpacity>{' '}
+              <TouchableOpacity>
+                <Text style={{color: colors.white,}}>and {' '}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('PrivacyPolicy')}>
+                <Text
+                  style={{
+                    textDecorationLine: 'underline',
+                    color: colors.white,
+                  }}>
+                  Privacy Policy
+                </Text>
+              </TouchableOpacity>
             </Text>
           </View>
         </View>

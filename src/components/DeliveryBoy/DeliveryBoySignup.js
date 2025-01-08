@@ -587,9 +587,7 @@ const DeliveryBoySignup = ({navigation}) => {
               We collect this data for the purposes of processing your
               application to become a courier. By clicking this box, you
               acknowledge that you have read and understood the{' '}
-              <TouchableOpacity>
-                <Text style={styles.pirvacyTextBold}>Privacy Policy</Text>
-              </TouchableOpacity>
+                <Text onPress={() => navigation.navigate('PrivacyPolicy')} style={styles.pirvacyTextBold}>Privacy Policy</Text>
             </Text>
           </View>
           <TouchableOpacity

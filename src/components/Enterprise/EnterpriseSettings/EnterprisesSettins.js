@@ -99,7 +99,7 @@ const EnterprisesSettins = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('DeliveryboyTransactions')}
+            onPress={() => navigation.navigate('EnterpriseBillingDetail')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>Billing details</Text>
             <AntDesign name="right" size={13} color="#909090" />
