@@ -18,15 +18,9 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
   const params = route.params;
   const {userDetails} = useUserDetails();
   const [totalHours, setTotalHours] = useState(0);
-
+  console.log(route ,"============")
   useEffect(() => {
-    var hours = 0;
-    params.shiftItem.slots.forEach(element => {
-      hours +=
-        moment(element.to_time, 'HH:mm:ss').diff(
-          moment(element.from_time, 'HH:mm:ss'),
-        ) / 3600000;
-    });
+    var hours = params?.shiftItem?.total_hours ?params?.shiftItem?.total_hours.toFixed(2) :0
     setTotalHours(hours);
   }, []);
   return (

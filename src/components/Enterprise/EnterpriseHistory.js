@@ -27,7 +27,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import EnterpriseShiftFillter from './EnterpriseShiftFillter';
 import {useFocusEffect} from '@react-navigation/native';
-import {localToUTC, titleFormat} from '../../utils/common';
+import {localToUTC, titleFormat, utcLocal} from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -323,69 +323,144 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
               paddingTop: 5,
               backgroundColor: '#FBFAF5',
             }}>
-            <TouchableOpacity
-              onPress={() => {
-                let props = {
-                  branchName: getBranchName(item.branch_id),
-                  branchAddress: getBranchAddress(item.branch_id),
-                  fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format(
-                    'hh A',
-                  ),
-                  toTime: moment(item.slots[0].to_time, 'HH:mm:ss').format(
-                    'hh A',
-                  ),
-                  shiftItem: item,
-                  vehicleType: getVehicleType(item.vehicle_type_id),
-                };
-                navigation.navigate('EnterpriseShiftDetails', {...props});
-              }}
-              style={styles.packageDetailCard}>
-              <View style={styles.packageshiftHeader}>
-                <View style={styles.packageshiftHeader}>
-                  <Image
-                    style={styles.imagesManage}
-                    source={require('../../image/Big-Calender.png')}
-                  />
-                  <Text style={styles.deliveryTime}>
-                    {item.slots[0] &&
-                      moment(item.slots[0].from_time, 'HH:mm:ss').format(
-                        'hh A',
-                      )}
-                    {' to '}
-                    {item.slots[0] &&
-                      moment(item.slots[0].to_time, 'HH:mm:ss').format('hh A')}
-                  </Text>
-                </View>
-                <Text style={styles.deliveryTime}>
-                  {item.slots[0] &&
-                    moment(item.slots[0].to_time, 'HH:mm:ss').diff(
-                      moment(item.slots[0].from_time, 'HH:mm:ss'),
-                    ) / 3600000}{' '}
-                  hours shift
-                </Text>
-              </View>
-
-              <View style={styles.packageMiddle}>
-                <Ionicons name="location-outline" size={15} color="#717172" />
-                <Text style={styles.fromshiftLocation}>
-                  {getBranchAddress(item.branch_id)}
-                </Text>
-              </View>
-
-              <View style={styles.footerCard}>
-                <Text
-                  style={[
-                    styles.orderActive,
-                    {color: colors.Pending, backgroundColor: '#F39C1212'},
-                  ]}>
-                  {item.order_status.replace(/_/g, ' ')}
-                </Text>
-                <Text style={styles.orderId}>
-                  {getVehicleType(item.vehicle_type_id)}
-                </Text>
-              </View>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.packageDetailCard}
+          
+          onPress={() => {
+                  console.log('item ====>',item)
+                  let props = {
+                    branchName: getBranchName(item.branch_id),
+                    branchAddress: getBranchAddress(item.branch_id),
+                    fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format(
+                      'hh A',
+                    ),
+                    toTime: moment(item.slots[0].to_time, 'HH:mm:ss').format(
+                      'hh A',
+                    ),
+                    shiftItem: item,
+                    vehicleType: getVehicleType(item.vehicle_type_id),
+                  };
+                  navigation.navigate('EnterpriseShiftDetails', {...props});
+                }}
+          
+          >
+          <View style={styles.packageHeader}>
+            <Image
+              style={{width: 25, height: 25}}
+              source={require('../../image/Big-Calender.png')}
+            />
+            <Text style={styles.deliveryTime}>Shift</Text>
           </View>
+
+          <View style={styles.overViewCard}>
+            <View>
+              <Text style={styles.requestOverview}>{item.total_days ?item.total_days :0}</Text>
+              <Text style={styles.requestOverviewInfo}>Total days</Text>
+            </View>
+
+            <View>
+              <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
+              <Text style={styles.requestOverviewInfo}>Total hours</Text>
+            </View>
+
+            <View>
+              <Text style={styles.requestOverview}>
+                €<Text>{item.total_amount ? item.total_amount.toFixed(2) :0}</Text>
+              </Text>
+              <Text style={styles.requestOverviewInfo}>Total Amount</Text>
+            </View>
+          </View>
+
+          <View style={styles.scheduleDateTimeCard}>
+            <Text style={styles.schaduleInfo}>
+              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}</Text>
+            </Text>
+            <View style={styles.borderShowoff} />
+            <Text style={styles.schaduleInfo}>
+              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+            </Text>
+          </View>
+
+          <View style={styles.borderShow}></View>
+
+          <View style={styles.footerCard}>
+            <Text style={styles.orderId}>For National Inc.</Text>
+            <Text style={styles.valueMoney}>€34.00</Text>
+          </View>
+        </TouchableOpacity>
+        </View>
+
+
+          // <View
+          //   key={index}
+          //   style={{
+          //     paddingHorizontal: 15,
+          //     paddingTop: 5,
+          //     backgroundColor: '#FBFAF5',
+          //   }}>
+          //   <TouchableOpacity
+          //     onPress={() => {
+          //       console.log('item ====>',item)
+          //       let props = {
+          //         branchName: getBranchName(item.branch_id),
+          //         branchAddress: getBranchAddress(item.branch_id),
+          //         fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format(
+          //           'hh A',
+          //         ),
+          //         toTime: moment(item.slots[0].to_time, 'HH:mm:ss').format(
+          //           'hh A',
+          //         ),
+          //         shiftItem: item,
+          //         vehicleType: getVehicleType(item.vehicle_type_id),
+          //       };
+          //       // navigation.navigate('EnterpriseShiftDetails', {...props});
+          //     }}
+          //     style={styles.packageDetailCard}>
+          //     <View style={styles.packageshiftHeader}>
+          //       <View style={styles.packageshiftHeader}>
+          //         <Image
+          //           style={styles.imagesManage}
+          //           source={require('../../image/Big-Calender.png')}
+          //         />
+          //         <Text style={styles.deliveryTime}>
+          //           {item.slots[0] &&
+          //             moment(item.slots[0].from_time, 'HH:mm:ss').format(
+          //               'hh A',
+          //             )}
+          //           {' to '}
+          //           {item.slots[0] &&
+          //             moment(item.slots[0].to_time, 'HH:mm:ss').format('hh A')}
+          //         </Text>
+          //       </View>
+          //       <Text style={styles.deliveryTime}>
+          //         {item.slots[0] &&
+          //           moment(item.slots[0].to_time, 'HH:mm:ss').diff(
+          //             moment(item.slots[0].from_time, 'HH:mm:ss'),
+          //           ) / 3600000}{' '}
+          //         hours shift
+          //       </Text>
+          //     </View>
+
+          //     <View style={styles.packageMiddle}>
+          //       <Ionicons name="location-outline" size={15} color="#717172" />
+          //       <Text style={styles.fromshiftLocation}>
+          //         {getBranchAddress(item.branch_id)}
+          //       </Text>
+          //     </View>
+
+          //     <View style={styles.footerCard}>
+          //       <Text
+          //         style={[
+          //           styles.orderActive,
+          //           {color: colors.Pending, backgroundColor: '#F39C1212'},
+          //         ]}>
+          //         {item.order_status.replace(/_/g, ' ')}
+          //       </Text>
+          //       <Text style={styles.orderId}>
+          //         {getVehicleType(item.vehicle_type_id)}
+          //       </Text>
+          //     </View>
+          //   </TouchableOpacity>
+          // </View>
         ))
       ) : (
         <View style={styles.scrollViewContainer}>
@@ -962,6 +1037,47 @@ const styles = StyleSheet.create({
   actionCard: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+
+
+
+  overViewCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  requestOverview: {
+    fontSize: 24,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  requestOverviewInfo: {
+    color: colors.text,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+  },
+  scheduleDateTimeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  schaduleInfo: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.text,
+  },
+  schaduleDateTime: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    color: colors.text,
+  },
+  borderShowoff: {
+    borderWidth: 0.5,
+    borderColor: '#000',
+    borderStyle: 'dashed',
+    width: 20,
+    marginHorizontal: 5,
   },
 });
 

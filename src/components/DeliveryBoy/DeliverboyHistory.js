@@ -164,6 +164,78 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
     return result[0]?.address;
   };
 
+  const createShiftOrder=(item)=>{
+    console.log('item ====>',item)
+
+    return( 
+    
+      <TouchableOpacity
+      onPress={() =>{
+        console.log('delivery_type_id ====>',item)
+        if(item?.delivery_type_id === 3){
+          navigation.navigate('DeliveryboyShiftDetails',{
+            orderItem: item.item,
+        });
+        }else if(item?.delivery_type_id === 2 && item?.locations && item?.locations?.length > 0){
+          // navigation.navigate('DeliveryDetailsMultipleInvoice',{
+          //     orderItem: item.item,
+          // });
+        }else{
+          // navigation.navigate('DeliveryboyMainDeliveryDetails', {
+          //   orderItem: item.item,
+          //   componentType : 'DELIVERBOY'
+          // })
+        }
+      }
+      }
+      style={styles.packageDetailCard}>
+          <View style={styles.packageHeader}>
+            <Image
+              style={{width: 25, height: 25}}
+              source={require('../../image/Big-Calender.png')}
+            />
+            <Text style={styles.deliveryTime}>Shift</Text>
+          </View>
+
+          <View style={styles.overViewCard}>
+            <View>
+              <Text style={styles.requestOverview}>{item.total_days ?item.total_days :0}</Text>
+              <Text style={styles.requestOverviewInfo}>Total days</Text>
+            </View>
+
+            <View>
+              <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
+              <Text style={styles.requestOverviewInfo}>Total hours</Text>
+            </View>
+
+            <View>
+              <Text style={styles.requestOverview}>
+                €<Text>{item.total_amount ? item.total_amount.toFixed(2) :0}</Text>
+              </Text>
+              <Text style={styles.requestOverviewInfo}>Aprox earning</Text>
+            </View>
+          </View>
+
+          <View style={styles.scheduleDateTimeCard}>
+            <Text style={styles.schaduleInfo}>
+              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}</Text>
+            </Text>
+            <View style={styles.borderShowoff} />
+            <Text style={styles.schaduleInfo}>
+              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+            </Text>
+          </View>
+
+          <View style={styles.borderShow}></View>
+
+          <View style={styles.footerCard}>
+            <Text style={styles.orderId}>For National Inc.</Text>
+            <Text style={styles.valueMoney}>€34.00</Text>
+          </View>
+        </TouchableOpacity>
+    )
+  }
+
   const renderItem = item => (
     <View style={{flex: 1}}>
       <View
@@ -172,6 +244,9 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
           paddingTop: 5,
           backgroundColor: '#FBFAF5',
         }}>
+          {
+item?.item?.delivery_type_id === 3?
+createShiftOrder(item?.item):
         <TouchableOpacity
           onPress={() => {
             console.log('item?.item =====>',item?.item)
@@ -249,6 +324,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             </Text>
           </View>
         </TouchableOpacity>
+}
       </View>
     </View>
   );
@@ -426,7 +502,80 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
     return result[0]?.address;
   };
 
-  const renderItem = item => (
+  const createShiftOrder=(item)=>{
+    console.log('item ====>',item)
+
+    return( 
+    
+      <TouchableOpacity
+      onPress={() =>{
+        console.log('delivery_type_id ====>',item)
+        if(item?.delivery_type_id === 3){
+          navigation.navigate('DeliveryboyShiftDetails');
+        }else if(item?.delivery_type_id === 2 && item?.locations && item?.locations?.length > 0){
+          // navigation.navigate('DeliveryDetailsMultipleInvoice',{
+          //     orderItem: item.item,
+          // });
+        }else{
+          // navigation.navigate('DeliveryboyMainDeliveryDetails', {
+          //   orderItem: item.item,
+          //   componentType : 'DELIVERBOY'
+          // })
+        }
+      }
+      }
+      style={styles.packageDetailCard}>
+          <View style={styles.packageHeader}>
+            <Image
+              style={{width: 25, height: 25}}
+              source={require('../../image/Big-Calender.png')}
+            />
+            <Text style={styles.deliveryTime}>Shift</Text>
+          </View>
+
+          <View style={styles.overViewCard}>
+            <View>
+              <Text style={styles.requestOverview}>{item.total_days ?item.total_days :0}</Text>
+              <Text style={styles.requestOverviewInfo}>Total days</Text>
+            </View>
+
+            <View>
+              <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
+              <Text style={styles.requestOverviewInfo}>Total hours</Text>
+            </View>
+
+            <View>
+              <Text style={styles.requestOverview}>
+                €<Text>{item.total_amount ? item.total_amount.toFixed(2) :0}</Text>
+              </Text>
+              <Text style={styles.requestOverviewInfo}>Aprox earning</Text>
+            </View>
+          </View>
+
+          <View style={styles.scheduleDateTimeCard}>
+            <Text style={styles.schaduleInfo}>
+              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}</Text>
+            </Text>
+            <View style={styles.borderShowoff} />
+            <Text style={styles.schaduleInfo}>
+              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+            </Text>
+          </View>
+
+          <View style={styles.borderShow}></View>
+
+          <View style={styles.footerCard}>
+            <Text style={styles.orderId}>For National Inc.</Text>
+            <Text style={styles.valueMoney}>€34.00</Text>
+          </View>
+        </TouchableOpacity>
+    )
+  }
+
+
+  const renderItem = item => {
+    console.log('item?.item?.delivery_type_id === 3 ====',item?.item?.delivery_type_id)
+    return(
     <View style={{flex: 1}}>
       <View
         style={{
@@ -434,6 +583,12 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           paddingTop: 5,
           backgroundColor: '#FBFAF5',
         }}>
+
+        {
+          item?.item?.delivery_type_id === 3 ?
+          createShiftOrder(item?.item)
+          :
+          
         <TouchableOpacity
           onPress={() =>{
             console.log('delivery_type_id ====>',item?.item)
@@ -506,6 +661,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
           </View>
         </TouchableOpacity>
+        }
 
         {/* <View style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
@@ -554,7 +710,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         </View> */}
       </View>
     </View>
-  );
+  )};
 
   const handleLoadMorePastRecord = () => {
     if (checkMoreData) {

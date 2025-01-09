@@ -52,15 +52,15 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
-                <Text style={styles.companyInfo}>{orderDetails.company_name}</Text>
+                <Text style={styles.companyInfo}>{orderDetails?.company_name ? orderDetails?.company_name : '-'}</Text>
                 <Text style={styles.dropInfo}>
-                  22 Rue de la Liberté, Paris, Île-de-France.
+                  {orderDetails?.company_address ?  orderDetails.company_address : "22 Rue de la Liberté, Paris, Île-de-France."}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
-                </TouchableOpacity>
+                </TouchableOpacity> 
                 <TouchableOpacity>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
