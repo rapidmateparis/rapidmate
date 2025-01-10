@@ -23,6 +23,33 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
 
+  const calculateTotalHours =(slots)=>{
+    let totalMinutes = 0;
+    slots.forEach(slot => {
+      const start = moment(slot.from_time, 'HH:mm');
+      const end = moment(slot.to_time, 'HH:mm');
+      const diffMinutes = end.diff(start, 'minutes');
+      totalMinutes += diffMinutes;
+    });    
+    const totalHours = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
+    const remainingMinutes = (totalMinutes % 60).toString().padStart(2, '0');
+    return totalHours+'.'+remainingMinutes
+  }
+
+  const calculateTotalDays =(startDate,endDate)=>{
+    const start = moment(startDate, 'DD/MM/YYYY');
+    const end = moment(endDate, 'DD/MM/YYYY');
+    const totalDays = end.diff(start, 'days') + 1;
+    return totalDays
+  }
+
+  const calculateTotalAmount =(totalHours,perHourAmount)=>{
+    console.log(totalHours,perHourAmount)
+    const [hours, minutes] = totalHours.split('.').map(Number);
+    const totalDecimalHours = hours + minutes / 60;
+    return  totalDecimalHours * perHourAmount;
+  }
+
   const placeEnterpriseOrder = async () => {
     var slots = [];
     for (let index = 0; index < params.schedule.days.length; index++) {
@@ -32,8 +59,8 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
         slots.push({
           slot_date:moment(element.slot_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
           day: day.day,
-          from_time: moment(element.from_time, 'hh:mm A').format('HH:MM'),
-          to_time: moment(element.to_time, 'hh:mm A').format('HH:MM'),
+          from_time: moment(element.from_time, 'hh:mm A').format('HH:mm'),
+          to_time: moment(element.to_time, 'hh:mm A').format('HH:mm'),
         });
       }
     }
@@ -47,11 +74,14 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       shift_tp_date: localToUTC(moment(params.schedule.endDate,'DD/MM/YYYY').toDate()),
       is_same_slot_all_days: 0,
       slots: slots,
-      amount:params.amount
+      amount:params.amount,
+      total_hours:calculateTotalHours(slots),
+      total_days:calculateTotalDays(params.schedule.startDate,params.schedule.endDate),
+      total_amount:calculateTotalAmount(calculateTotalHours(slots),parseFloat(params.amount))
     };
 
     console.log('requestParams =======>',requestParams)
-
+ 
     setLoading(true);
     createEnterpriseOrder(
       requestParams,
