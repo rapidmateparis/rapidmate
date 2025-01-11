@@ -228,10 +228,10 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
           {/* <View style={styles.borderShow}></View> */}
 
-          {/* <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View> */}
+          <View style={styles.footerCard}>
+            <Text style={styles.orderId}>For {item?.company_name ? item?.company_name : '-'}</Text>
+            {/* <Text style={styles.valueMoney}>€34.00</Text> */}
+          </View>
         </TouchableOpacity>
     )
   }
@@ -565,7 +565,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           <View style={styles.borderShow}></View>
 
           <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
+            <Text style={styles.orderId}>For {item?.company_name ? item?.company_name : '-'}</Text>
             <Text style={styles.valueMoney}>€34.00</Text>
           </View>
         </TouchableOpacity>

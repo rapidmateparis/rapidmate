@@ -30,7 +30,15 @@ const DeliveryboyBottomNav = ({navigation}) => {
   const {setLoading} = useLoader();
   const {saveLocationData} = useLocationData();
 
+
+  const getNotification= async()=>{
+  const fcmToken = await messaging().getToken();
+  console.log('fcmToken =========>',fcmToken)
+  }
+
+
   useEffect(() => {
+    getNotification()
     getLocations(
       null,
       successResponse => {
@@ -76,15 +84,25 @@ const DeliveryboyBottomNav = ({navigation}) => {
     messaging().onMessage(async remoteMessage => {
       console.log('remoteMessage *Delivery Boy*', JSON.stringify(remoteMessage));
       getNotificationAllCount()
+      
+      const slotId=remoteMessage?.data?.slotId ? remoteMessage?.data?.slotId : ''
 
-      if(remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' && remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
+      if((remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' || remoteMessage?.data?.orderStatus === 'ASSIGNED') && remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
         playNotificationSound()
         setDeliveryBoyAcceptRejectModalModalVisible(true);
+        console.log('slotId ***********>> ',slotId)
+        const param = remoteMessage.data?.orderNumber + '?slotid='+slotId
+        // param = param+slotId? '?slotid='+slotId:''
+        console.log('*****param data *******> ',JSON.stringify(param))
+
         getViewOrderDetail(
-          remoteMessage.data?.orderNumber,
+          param,
           successResponse => {
+            console.log('*****successResponse data *******> ',JSON.stringify(successResponse))
+
             setLoading(false);
             if (successResponse[0]._success) {
+              console.log('*****notification data *******> ',successResponse[0]._response)
               setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
               setTimeout(()=>{
                 stopNotificationSound()
@@ -106,6 +124,8 @@ const DeliveryboyBottomNav = ({navigation}) => {
           },
         );
       }
+
+      // else if(remoteMessage?.data?.orderStatus === 'ASSIGNED')
     });
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Background Msg!!!!', JSON.stringify(remoteMessage));

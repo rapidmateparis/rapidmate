@@ -23,6 +23,16 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
 
+  const getTotalHoursForOneSlot=()=>{
+    const start = moment(slot.from_time, 'HH:mm');
+      const end = moment(slot.to_time, 'HH:mm');
+      const diffMinutes = end.diff(start, 'minutes');
+      const totalHours = Math.floor(diffMinutes / 60).toString().padStart(2, '0');
+      const remainingMinutes = (diffMinutes % 60).toString().padStart(2, '0');
+      return totalHours+'.'+remainingMinutes
+  
+  }
+
   const calculateTotalHours =(slots)=>{
     let totalMinutes = 0;
     slots.forEach(slot => {
@@ -61,6 +71,7 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
           day: day.day,
           from_time: moment(element.from_time, 'hh:mm A').format('HH:mm'),
           to_time: moment(element.to_time, 'hh:mm A').format('HH:mm'),
+          total_hours:getTotalHoursForOneSlot(element.from_time,element.to_time)
         });
       }
     }
