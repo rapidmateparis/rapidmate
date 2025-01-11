@@ -14,13 +14,19 @@ import {colors} from '../../colors';
 import SwipeButton from 'rn-swipe-button';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import StopShift from '../../image/stop-25.png';
+import { utcLocal } from '../../utils/common';
+import { useLoader } from '../../utils/loaderContext';
+import moment from 'moment';
+import { updateShiftOrderStatus } from '../../data_manager';
 
-const DeliveryboyShiftStarted = ({navigation}) => {
+const DeliveryboyShiftStarted = ({navigation,route}) => {
   const [disableCBButton, setDisableCBButton] = useState(false);
   const defaultStatusMessage = 'Swipe to accept the request';
   const [swipeStatusMessage, setSwipeStatusMessage] =
     useState(defaultStatusMessage);
   const [forceResetLastButton, setForceResetLastButton] = useState(null);
+  const orderDetails =  route?.params?.orderItem
+  const {setLoading} = useLoader();
 
   useEffect(() => {
     const interval = setInterval(
@@ -36,8 +42,27 @@ const DeliveryboyShiftStarted = ({navigation}) => {
     hours: 0,
     minutes: 0,
     seconds: 0,
-    centiseconds: 0,
   });
+
+  const [time, setTime] = useState(0);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     setTime(time+1);
+  //     console.log('prevTime ===',time)
+  //   }, 1000);
+
+  //   return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  // }, []);
+
+  const formatTime = (timer) => {
+    const hours = Math.floor(timer / 3600);
+    const minutes = Math.floor((timer % 3600) / 60);
+    const seconds = timer % 60;
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
 
   const runTimer = useCallback(() => {
     const interval = setInterval(() => {
@@ -80,7 +105,14 @@ const DeliveryboyShiftStarted = ({navigation}) => {
       });
     }, 10);
 
-    return () => clearInterval(interval);
+    const intervalId = setInterval(() => {
+      setTime(time+1);
+      console.log('prevTime ===',time)
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId)
+      clearInterval(interval)};
   }, []);
 
   useEffect(() => {
@@ -89,6 +121,41 @@ const DeliveryboyShiftStarted = ({navigation}) => {
       return cleanup;
     }
   }, [startTimerChange]);
+  const checkStartAction=()=>{
+    const slots = orderDetails.slots
+    const todayDate = moment(new Date()).format('DD/MM/YYYY')
+    console.log('todayDate  =====>',todayDate)
+
+    const todayList = slots.filter(slot=>moment(utcLocal(slot.slot_date)).format('DD/MM/YYYY') === todayDate)
+
+    const getSlot = todayList.length > 0 ? todayList[0] : null
+    return getSlot
+  }
+
+  const endCreateShiftOrder=()=>{
+    if(checkStartAction()){
+      setLoading(true);
+      updateShiftOrderStatus(
+        {
+          "order_number" : orderDetails.order_number,
+          "status" : "End",
+          "slot_id" : checkStartAction().id,
+          "total_duration_text" : "01:25:35"
+        },
+        successRes=>{
+          setLoading(false);
+          navigation.navigate('DeliveryboyShiftStaredRequest',{orderItem:orderDetails});
+          console.log('successRes  =====>',successRes)
+        },
+        errorRes=>{
+          setLoading(false);
+          console.log('errorRes  =====>',errorRes)
+        }
+      )
+    }
+
+  }
+
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -99,13 +166,14 @@ const DeliveryboyShiftStarted = ({navigation}) => {
               styles.timerText,
               {fontFamily: 'monospace', width: '100%'},
             ]}>
-            {`${timer.hours.toString().padStart(2, '0')}:${timer.minutes
+            {/* {`${timer.hours.toString().padStart(2, '0')}:${timer.minutes
               .toString()
               .padStart(2, '0')}:${timer.seconds
               .toString()
               .padStart(2, '0')}:${timer.centiseconds
               .toString()
-              .padStart(2, '0')}`}
+              .padStart(2, '0')}`} */}
+              {formatTime(time)}
           </Text>
           <Text style={styles.elapsedTime}>Shift elapsed time</Text>
         </View>
@@ -149,7 +217,7 @@ const DeliveryboyShiftStarted = ({navigation}) => {
               }}
               onSwipeSuccess={() => {
                 updateSwipeStatusMessage('Request rejected');
-                navigation.navigate('DeliveryboyShiftStaredRequest');
+                endCreateShiftOrder()
               }}
               thumbIconImageSource={StopShift}
               railBackgroundColor="#BA1A1A0A"

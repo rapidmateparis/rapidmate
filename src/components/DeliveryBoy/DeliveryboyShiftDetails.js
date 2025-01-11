@@ -9,12 +9,18 @@ import {
   Image,
   StatusBar,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import {colors} from '../../colors';
 import SwipeButton from 'rn-swipe-button';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import StartShift from '../../image/play-32.png';
 import { useNavigation } from '@react-navigation/native';
+import { API } from '../../utils/constant';
+import { updateShiftOrderStatus } from '../../data_manager';
+import { utcLocal } from '../../utils/common';
+import moment from 'moment';
+import { useLoader } from '../../utils/loaderContext';
 
 const DeliveryboyShiftDetails = ({navigation,route}) => {
   const defaultStatusMessage = 'Swipe to accept the request';
@@ -24,6 +30,7 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
   const orderDetails =  route?.params?.orderItem
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
   const [delivered, setDelivered] = useState(false);
+  const {setLoading} = useLoader();
 
   useEffect(() => {
     const interval = setInterval(
@@ -33,6 +40,47 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
     return () => clearInterval(interval);
   }, [defaultStatusMessage]);
 
+
+  const startCreateShiftOrder=()=>{
+    if(checkStartAction()){
+      setLoading(true);
+      updateShiftOrderStatus(
+        {
+          "order_number" : orderDetails.order_number,
+          "status" : "Start",
+          "slot_id" : checkStartAction().id   
+        },
+        successRes=>{
+          setLoading(false);
+          navigation.navigate('DeliveryboyShiftStarted',{orderItem:orderDetails});
+          console.log('successRes  =====>',successRes)
+        },
+        errorRes=>{
+          setLoading(false);
+          console.log('errorRes  =====>',errorRes)
+        }
+      )
+    }
+
+  }
+
+  const checkStartAction=()=>{
+    const slots = orderDetails?.slots ? orderDetails?.slots :[]
+    const todayDate = moment(new Date()).format('DD/MM/YYYY')
+    console.log('todayDate  =====>',todayDate)
+
+    const todayList = slots.filter(slot=>moment(utcLocal(slot.slot_date)).format('DD/MM/YYYY') === todayDate)
+
+    const getSlot = todayList.length > 0 ? todayList[0] : null
+    return getSlot
+  }
+useEffect(()=>{
+  if(checkStartAction() && checkStartAction()?.id && checkStartAction()?.order_status == "WORKING_INPROGRESS"){
+    navigation.navigate('DeliveryboyShiftStarted',{orderItem:orderDetails});
+  }
+},[])
+
+console.log('checkStartAction  =====>',checkStartAction())
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -82,18 +130,18 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
 
               <View style={styles.overViewCard}>
                 <View>
-                  <Text style={styles.requestOverview}>20</Text>
+                  <Text style={styles.requestOverview}>{orderDetails.total_days ?orderDetails.total_days :0}</Text>
                   <Text style={styles.requestOverviewInfo}>Total days</Text>
                 </View>
 
                 <View>
-                  <Text style={styles.requestOverview}>80</Text>
+                  <Text style={styles.requestOverview}>{orderDetails.total_hours ? orderDetails.total_hours.toFixed(2) :0}</Text>
                   <Text style={styles.requestOverviewInfo}>Total hours</Text>
                 </View>
 
                 <View>
                   <Text style={styles.requestOverview}>
-                    €<Text>2.3k</Text>
+                    €<Text>{orderDetails.total_amount ? orderDetails.total_amount.toFixed(2) :0}</Text>
                   </Text>
                   <Text style={styles.requestOverviewInfo}>Aprox earning</Text>
                 </View>
@@ -103,12 +151,12 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
                 <View style={styles.scheduleDateTimeCard}>
                   <Text style={styles.schaduleInfo}>
                     From{' '}
-                    <Text style={styles.schaduleDateTime}>20-02-24, 10 AM</Text>
+                    <Text style={styles.schaduleDateTime}>{moment(utcLocal(orderDetails.shift_from_date)).format('DD-MM-YYYY')}</Text>
                   </Text>
                   <View style={styles.borderShowoff} />
                   <Text style={styles.schaduleInfo}>
                     From{' '}
-                    <Text style={styles.schaduleDateTime}>20-02-24, 10 AM</Text>
+                    <Text style={styles.schaduleDateTime}>{moment(utcLocal(orderDetails.shift_tp_date)).format('DD-MM-YYYY')}</Text>
                   </Text>
                 </View>
                 <Text style={styles.timeSlotDetails}>
@@ -119,7 +167,7 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
             <View style={styles.moreDetails}>
               <Text style={styles.distance}>See details</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('DeliveryScheduleDetails')}>
+                onPress={() => navigation.navigate('DeliveryScheduleDetails',{orderItem:orderDetails})}>
                 <AntDesign name="arrowright" size={18} color="#FF0058" />
               </TouchableOpacity>
             </View>
@@ -128,7 +176,7 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
           <View style={styles.vehicleCardInfo}>
             <View>
               <Text style={styles.packageTitle}>Vehicle requested</Text>
-              <Text style={styles.orderdetails}>Pickup truck</Text>
+              <Text style={styles.orderdetails}>{orderDetails.vehicle_type}</Text>
             </View>
             <View>
               <Image
@@ -148,13 +196,18 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
               If you are at company’s location and ready to start the shift,
               please swipe below!
             </Text>
+            {
+              !!checkStartAction()?.id && 
+              <>
             <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
             <SwipeButton
               onSwipeFail={() => updateSwipeStatusMessage('Incomplete swipe!')}
               onSwipeStart={() => updateSwipeStatusMessage('Swipe started!')}
               onSwipeSuccess={() => {
+                // Alert.alert('swipe success---')
                 updateSwipeStatusMessage('Request accepted');
-                navigation.navigate('DeliveryboyShiftStarted');
+                startCreateShiftOrder()
+                // navigation.navigate('DeliveryboyShiftStarted');
               }}
               thumbIconImageSource={StartShift}
               railBackgroundColor="#27AE601F"
@@ -186,6 +239,8 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
                 justifyContent: 'space-between',
               }}
             />
+            </>
+            }
           </View>
         </SafeAreaView>
       </View>

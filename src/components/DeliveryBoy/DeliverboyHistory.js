@@ -174,7 +174,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         console.log('delivery_type_id ====>',item)
         if(item?.delivery_type_id === 3){
           navigation.navigate('DeliveryboyShiftDetails',{
-            orderItem: item.item,
+            orderItem: item,
         });
         }else if(item?.delivery_type_id === 2 && item?.locations && item?.locations?.length > 0){
           // navigation.navigate('DeliveryDetailsMultipleInvoice',{
@@ -226,12 +226,12 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             </Text>
           </View>
 
-          <View style={styles.borderShow}></View>
+          {/* <View style={styles.borderShow}></View> */}
 
-          <View style={styles.footerCard}>
+          {/* <View style={styles.footerCard}>
             <Text style={styles.orderId}>For National Inc.</Text>
             <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
+          </View> */}
         </TouchableOpacity>
     )
   }
