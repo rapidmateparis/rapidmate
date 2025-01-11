@@ -1389,10 +1389,40 @@ export const getDeliveryBoyBillingDetails = (params, successCallback, errorCallb
   );
 };
 
-export const getTaxDetails = (successCallback, errorCallback) => {
+export const getTaxDetails = (params,successCallback, errorCallback) => {
   console.log('URL ',API.vechicleTaxList)
   axiosCall(
     API.vechicleTaxList,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const updateShiftOrderStatus = (params,successCallback, errorCallback) => {
+  console.log(params,API.changeCreateShiftStatus)
+  axiosCall(
+    API.changeCreateShiftStatus,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyOrderSlots = (params, successCallback, errorCallback) => {
+  console.log('URL ===',API.deliveryBoyOrderSlots+params)
+  axiosCall(
+    API.deliveryBoyOrderSlots+params,
     HTTPMethod.GET,
     {},
     response => {
