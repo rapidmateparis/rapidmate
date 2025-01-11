@@ -383,8 +383,8 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
           <View style={styles.borderShow}></View>
 
           <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For National Inc.</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
+            <Text style={styles.orderId}>For {item?.company_name ? item?.company_name : '-'}</Text>
+            {/* <Text style={styles.valueMoney}>€34.00</Text> */}
           </View>
         </TouchableOpacity>
         </View>
