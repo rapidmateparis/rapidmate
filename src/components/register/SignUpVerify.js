@@ -21,6 +21,7 @@ import {useLoader} from '../../utils/loaderContext';
 import {requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpVerify = ({route, navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
@@ -56,6 +57,15 @@ const SignUpVerify = ({route, navigation}) => {
     ]);
   }
 
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
+
+  const saveRapidTokenInAsync = async rapidToken => {
+    await AsyncStorage.setItem('rapidToken', rapidToken);
+  };
+
+
   const handleVerifyCode = async () => {
     console.log('signUpDetails', signUpDetails);
     if (code) {
@@ -71,6 +81,7 @@ const SignUpVerify = ({route, navigation}) => {
       signUpVerifyApi(
         params,
         successResponse => {
+
           setLoading(false);
           if (successResponse[0]._success) {
             let loginParams = {
@@ -92,6 +103,13 @@ const SignUpVerify = ({route, navigation}) => {
                     userInfo: successResponse[0]._response.user.idToken.payload,
                     userDetails: successResponse[0]._response.user_profile,
                   });
+                  
+                  saveUserDetailsInAsync({
+                    rapidToken : successResponse[0]._response.rapid_token,
+                    userInfo: successResponse[0]._response.user.idToken.payload,
+                    userDetails: successResponse[0]._response.user_profile,
+                  })
+                  saveRapidTokenInAsync(successResponse[0]._response.rapid_token)
                   if (
                     successResponse[0]._response.user_profile[0].role ==
                     'CONSUMER'

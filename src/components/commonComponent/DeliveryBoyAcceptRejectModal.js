@@ -124,7 +124,7 @@ function DeliveryBoyAcceptRejectModal({
 
           <View style={styles.overViewCard}>
             <View>
-              <Text style={styles.requestOverview}>{item.total_days ?item.total_days :0}</Text>
+              <Text style={styles.requestOverview}>{deliveryBoyAcceptRejectMessage?.order.total_days ?deliveryBoyAcceptRejectMessage?.order.total_days :0}</Text>
               <Text style={styles.requestOverviewInfo}>Total days</Text>
             </View>
 
@@ -162,7 +162,7 @@ function DeliveryBoyAcceptRejectModal({
   }
 
   const changeCreateShiftOrder=(status,slot_id,hours)=>{
-    const parm = {
+    let parm = {
       "order_number" : deliveryBoyAcceptRejectMessage?.order?.order_number,
       "status" : status,
       "slot_id" :  slot_id

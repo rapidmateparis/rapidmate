@@ -18,6 +18,7 @@ import { utcLocal } from '../../utils/common';
 import { useLoader } from '../../utils/loaderContext';
 import moment from 'moment';
 import { updateShiftOrderStatus } from '../../data_manager';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
 const DeliveryboyShiftStarted = ({navigation,route}) => {
   const [disableCBButton, setDisableCBButton] = useState(false);
@@ -27,6 +28,7 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
   const [forceResetLastButton, setForceResetLastButton] = useState(null);
   const orderDetails =  route?.params?.orderItem
   const {setLoading} = useLoader();
+  const {saveUserDetails,userDetails} = useUserDetails();
 
   useEffect(() => {
     const interval = setInterval(
@@ -56,11 +58,12 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
   // }, []);
 
   const formatTime = (timer) => {
-    const hours = Math.floor(timer / 3600);
-    const minutes = Math.floor((timer % 3600) / 60);
-    const seconds = timer % 60;
+    // const hours = Math.floor(timer / 3600);
+    // const minutes = Math.floor((timer % 3600) / 60);
+    // const seconds = timer % 60;
 
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    // return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    return getTotalHoursForOneSlot(startTime,new Date())
   };
 
 
@@ -132,17 +135,39 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
     return getSlot
   }
 
+  const getTotalHoursForOneSlot=(from_time,to_time)=>{
+    const start = moment(from_time);
+    const end = moment(to_time);
+    const diffMinutes = end.diff(start, 'minutes');
+    const diffSeconds = end.diff(start, 'seconds');
+    const totalHours = Math.floor(diffMinutes / 60).toString().padStart(2, '0');
+    const remainingMinutes = (diffMinutes % 60).toString().padStart(2, '0');
+    const remainingSeconds = (diffSeconds % 60).toString().padStart(2, '0');
+    return totalHours+':'+remainingMinutes+':'+remainingSeconds
+}
+
+
+const createShiftOrder = userDetails.createShiftOrder
+const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.start_time):null
+
+
+
   const endCreateShiftOrder=()=>{
-    if(checkStartAction()){
+    if(checkStartAction() && startTime){
+
+
       setLoading(true);
       updateShiftOrderStatus(
         {
           "order_number" : orderDetails.order_number,
           "status" : "End",
           "slot_id" : checkStartAction().id,
-          "total_duration_text" : "01:25:35"
+          "total_duration_text" : getTotalHoursForOneSlot(startTime,new Date())
         },
         successRes=>{
+
+          saveUserDetails({...userDetails,createShiftOrder:null});
+
           setLoading(false);
           navigation.navigate('DeliveryboyShiftStaredRequest',{orderItem:orderDetails});
           console.log('successRes  =====>',successRes)

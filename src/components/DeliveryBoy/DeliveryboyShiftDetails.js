@@ -21,6 +21,7 @@ import { updateShiftOrderStatus } from '../../data_manager';
 import { utcLocal } from '../../utils/common';
 import moment from 'moment';
 import { useLoader } from '../../utils/loaderContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
 const DeliveryboyShiftDetails = ({navigation,route}) => {
   const defaultStatusMessage = 'Swipe to accept the request';
@@ -31,7 +32,9 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
   const [delivered, setDelivered] = useState(false);
   const {setLoading} = useLoader();
+  const {saveUserDetails,userDetails} = useUserDetails();
 
+  console.log('orderDetails ====>>',orderDetails)
   useEffect(() => {
     const interval = setInterval(
       () => setSwipeStatusMessage(defaultStatusMessage),
@@ -51,6 +54,18 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
           "slot_id" : checkStartAction().id   
         },
         successRes=>{
+
+         const shiftOrderRunningTime =  {
+            "order_number" : orderDetails.order_number,
+            "status" : "Start",
+            "slot_id" : checkStartAction().id,
+            "start_time":new Date()
+          }
+
+          saveUserDetails({...userDetails,createShiftOrder:shiftOrderRunningTime});
+
+
+
           setLoading(false);
           navigation.navigate('DeliveryboyShiftStarted',{orderItem:orderDetails});
           console.log('successRes  =====>',successRes)

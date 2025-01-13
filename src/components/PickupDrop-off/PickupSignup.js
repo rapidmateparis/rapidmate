@@ -160,6 +160,7 @@ const PickupSignup = ({navigation}) => {
         params,
         successResponse => {
           setLoading(false);
+          console.log('successResponse =====>',successResponse)
           if (successResponse[0]._success) {
             if (successResponse[0]._response) {
               if (
