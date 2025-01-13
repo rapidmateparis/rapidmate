@@ -22,10 +22,13 @@ const TermsAndConditions = () => {
         Introduction: Rapidmate is a division/brand of AJS Group, a company
         registered in Pontoise registry, with company registration number SIRET:
         92270101600011. All services provided by Rapidmate are under the legal
-        and financial responsibility of AJS Group. Rapidmate provides a
-        technology platform connecting businesses and individuals (referred to
-        as "Users") with freelance delivery professionals ("Couriers") to offer
-        scalable, reliable, and eco-friendly logistics services across France.
+        and financial responsibility of AJS Group.
+      </Text>
+      <Text style={styles.bold}>
+        Rapidmate provides a technology platform connecting businesses and
+        individuals (referred to as "Users") with freelance delivery
+        professionals ("Couriers") to offer scalable, reliable, and eco-friendly
+        logistics services across France.
       </Text>
       <Text style={styles.paragraph}>
         Rapidmate provides a technology platform connecting businesses and
@@ -552,6 +555,34 @@ const TermsAndConditions = () => {
           These Terms & Conditions are governed by French law.
         </Text>
 
+        <Text style={styles.subheading}>11. Account Deletion</Text>
+        <Text style={styles.paragraph}>
+          You may request the deletion of your account at any time by contacting
+          us through contact@rapidmate.fr or using the support feature available
+          on the platform. Upon receiving your request, we will process the
+          deletion of your account in accordance with our policies.
+        </Text>
+        <Text style={styles.paragraph}>
+          Once your account is deleted, you will no longer have access to any of
+          the services associated with your account. Please be aware that
+          account deletion is permanent and irreversible. After deletion, you
+          will lose access to any data, records, or content associated with your
+          account, except where we are required by law to retain certain
+          information.
+        </Text>
+        <Text style={styles.paragraph}>
+          We may retain certain information for legitimate business or legal
+          reasons, such as transaction history or records required for
+          compliance with applicable laws and regulations.
+        </Text>
+        <Text style={styles.paragraph}>
+          If you have any questions about the account deletion process, please
+          contact us at{' '}
+          <Text onPress={() => Linking.openURL('mailto:contact@rapidmate.fr')}>
+            contact@rapidmate.fr
+          </Text>
+        </Text>
+
         <Text style={styles.subheading}>Contact Information</Text>
 
         <Text style={styles.contact}>
@@ -563,7 +594,7 @@ const TermsAndConditions = () => {
           </Text>
         </Text>
 
-        <Text style={[styles.contact,{marginBottom: 30,}]}>
+        <Text style={[styles.contact, {marginBottom: 30}]}>
           Phone:{' '}
           <Text
             style={styles.highlight}
