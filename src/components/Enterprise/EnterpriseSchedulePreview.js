@@ -23,9 +23,9 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
 
-  const getTotalHoursForOneSlot=()=>{
-    const start = moment(slot.from_time, 'HH:mm');
-      const end = moment(slot.to_time, 'HH:mm');
+  const getTotalHoursForOneSlot=(from_time,to_time)=>{
+    const start = moment(from_time, 'HH:mm');
+      const end = moment(to_time, 'HH:mm');
       const diffMinutes = end.diff(start, 'minutes');
       const totalHours = Math.floor(diffMinutes / 60).toString().padStart(2, '0');
       const remainingMinutes = (diffMinutes % 60).toString().padStart(2, '0');
