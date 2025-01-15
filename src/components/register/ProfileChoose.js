@@ -6,6 +6,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSignUpDetails} from '../commonComponent/StoreContext';
+import {localizationText} from '../../utils/common';
 
 const ProfileChoose = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -31,9 +32,11 @@ const ProfileChoose = ({navigation}) => {
     <SafeAreaView style={{height: '100%'}}>
       <ScrollView style={{height: '100%', backgroundColor: '#fff'}}>
         <View style={styles.contentContainer}>
-          <Text style={styles.logInText}>Choose profile</Text>
+          <Text style={styles.logInText}>
+            {localizationText('Main', 'chooseProfile')}
+          </Text>
           <Text style={styles.loginAccessText}>
-            Before creating your profile, please select your role on this app.
+            {localizationText('Main', 'chooseProfileDescription')}
           </Text>
           <View style={{marginTop: 30}}>
             <TouchableOpacity
@@ -57,9 +60,11 @@ const ProfileChoose = ({navigation}) => {
                     source={require('../../image/home.png')}
                   />
                   <View style={styles.profileText}>
-                    <Text style={styles.roleText}>I am here as</Text>
+                    <Text style={styles.roleText}>
+                      {localizationText('Common', 'iAmHereAs')}
+                    </Text>
                     <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                      Enterprise
+                      {localizationText('Common', 'enterprise')}
                     </Text>
                   </View>
                   {selectedOption === 'Enterprise' ? (
@@ -107,9 +112,11 @@ const ProfileChoose = ({navigation}) => {
                     source={require('../../image/location-map.png')}
                   />
                   <View style={styles.profileText}>
-                    <Text style={styles.roleText}>I am here as</Text>
+                    <Text style={styles.roleText}>
+                      {localizationText('Common', 'iAmHereAs')}
+                    </Text>
                     <Text style={[styles.roleTypeText, {color: colors.text}]}>
-                      Pickup & Drop-off
+                      {localizationText('Common', 'pickupAndDropoff')}
                     </Text>
                   </View>
                   {selectedOption === 'PickupDrop' ? (
@@ -155,8 +162,12 @@ const ProfileChoose = ({navigation}) => {
                     source={require('../../image/DeliveryBoy-Icon.png')}
                   />
                   <View style={[styles.profileText, {marginLeft: 30}]}>
-                    <Text style={styles.roleText}>I am here as</Text>
-                    <Text style={styles.roleTypeText}>Delivery boy</Text>
+                    <Text style={styles.roleText}>
+                      {localizationText('Common', 'iAmHereAs')}
+                    </Text>
+                    <Text style={styles.roleTypeText}>
+                      {localizationText('Common', 'deliveryBoy')}
+                    </Text>
                   </View>
                   {selectedOption === 'DeliveryBoy' ? (
                     <View
@@ -208,7 +219,7 @@ const ProfileChoose = ({navigation}) => {
                 color: colors.text,
                 fontFamily: 'Montserrat-Medium',
               }}>
-              Continue
+              {localizationText('Common', 'continue')}
             </Text>
           </TouchableOpacity>
         </View>

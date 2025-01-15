@@ -21,6 +21,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {
   getCityList,
@@ -119,16 +120,14 @@ const EnterpriseSignup = ({navigation}) => {
                   value: element.id,
                 });
                 formattedCountryCodeList.push({
-                  label: "+" + element.phone_code,
+                  label: '+' + element.phone_code,
                   value: element.id,
                 });
               });
 
               setCountryList(formattedCountryList);
               setCountryCodeList(formattedCountryCodeList);
-              setDropdownValue(formattedCountryCodeList[0].value)
-
-
+              setDropdownValue(formattedCountryCodeList[0].value);
             }
           }
         }
@@ -304,12 +303,13 @@ const EnterpriseSignup = ({navigation}) => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '85%'}}>
             <Text style={[styles.logInText, {color: colors.text}]}>
-              Enterprise{' '}
-              <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
+              {localizationText('Common', 'enterprise')}{' '}
+              <Text style={{fontFamily: 'Montserrat-Medium'}}>
+                {localizationText('Common', 'signup')}
+              </Text>
             </Text>
             <Text style={styles.loginAccessText}>
-              Let’s create your profile so you can request continuous scheduled
-              deliveries
+              {localizationText('Main', 'enterpriseSignupDescription')}
             </Text>
           </View>
           <Image
@@ -331,7 +331,7 @@ const EnterpriseSignup = ({navigation}) => {
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
                 style={styles.loginput}
-                placeholder="First Name"
+                placeholder={localizationText('Common', 'firstName')}
                 placeholderTextColor="#999"
                 value={name}
                 onChangeText={text => setName(text)}
@@ -342,7 +342,7 @@ const EnterpriseSignup = ({navigation}) => {
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Last Name"
+                placeholder={localizationText('Common', 'lastName')}
                 placeholderTextColor="#999"
                 value={lastname}
                 onChangeText={text => setLastname(text)}
@@ -356,7 +356,7 @@ const EnterpriseSignup = ({navigation}) => {
             <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Email"
+              placeholder={localizationText('Common', 'email')}
               placeholderTextColor="#999"
               value={email}
               onChangeText={text => setEmail(text)}
@@ -369,7 +369,7 @@ const EnterpriseSignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
               value={password}
@@ -391,7 +391,7 @@ const EnterpriseSignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Confirm Password"
+              placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
@@ -457,7 +457,7 @@ const EnterpriseSignup = ({navigation}) => {
             <FontAwesome6 name="warehouse" size={15} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Company name"
+              placeholder={localizationText('Common', 'companyName')}
               placeholderTextColor="#999"
               value={companyName}
               onChangeText={text => setCompanyName(text)}
@@ -500,7 +500,7 @@ const EnterpriseSignup = ({navigation}) => {
             <MaterialCommunityIcons name="package" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Deliveries per month / Hours per month"
+              placeholder={localizationText('Common', 'deliveriesPerMonth')}
               placeholderTextColor="#999"
               keyboardType="numeric"
               value={deliveries}
@@ -659,8 +659,8 @@ const EnterpriseSignup = ({navigation}) => {
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
-              numberOfLines={4} // Set the number of lines you want to display initially
-              placeholder="Describe your projects here"
+              numberOfLines={4}
+              placeholder={localizationText('Common', 'describeYourProjects')}
               placeholderTextColor="#999"
               textAlignVertical="top"
               value={comments}
@@ -676,10 +676,7 @@ const EnterpriseSignup = ({navigation}) => {
               tintColors={{true: '#FFC72B', false: '#999'}}
             />
             <Text style={styles.checkboxText}>
-              By checking this box, I authorise Rapidmate to use my information
-              to send me communications regarding Rapidmate products and events.
-              You can opt out of any marketing communications or customise your
-              preferences at any time.
+              {localizationText('Main', 'enterpriseAuthoriseCheckboxText')}
             </Text>
           </View>
           <View style={styles.checkboxContainer}>
@@ -693,9 +690,13 @@ const EnterpriseSignup = ({navigation}) => {
             <View>
               <TouchableOpacity>
                 <Text style={styles.checkboxText}>
-                  By clicking on this box, you acknowledge that you have read
-                  and understood the
-                  <Text onPress={() => navigation.navigate('PrivacyPolicy')} style={styles.pirvacyTextBold}> Privacy Policy</Text>
+                  {localizationText('Main', 'enterprisePrivacyCheckboxText')}
+                  <Text
+                    onPress={() => navigation.navigate('PrivacyPolicy')}
+                    style={styles.pirvacyTextBold}>
+                    {' '}
+                    {localizationText('Common', 'privacyPolicy')}
+                  </Text>
                 </Text>
               </TouchableOpacity>
             </View>
@@ -703,14 +704,18 @@ const EnterpriseSignup = ({navigation}) => {
           <TouchableOpacity
             onPress={handleSignUp}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Continue</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'continue')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('LogInScreen')}
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
-              Already have an account?{' '}
-              <Text style={{color: colors.primary}}>Login</Text>
+              {localizationText('Common', 'alreadyHaveAccount')}{' '}
+              <Text style={{color: colors.primary}}>
+                {localizationText('Common', 'login')}
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>
