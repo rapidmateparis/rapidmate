@@ -39,13 +39,12 @@ const DeliveryboyManageProfile = ({navigation}) => {
     userDetails?.userDetails[0]?.variant || '',
   );
 
-  const fullName = `${userDetails.userDetails[0].first_name} ${userDetails.userDetails[0].last_name}`;
-
-  const [userName, setUserName] = useState(fullName);
+  const [firstName, setFirstName] = useState(userDetails.userDetails[0].first_name);
+  const [lastName, setLastName] = useState(userDetails.userDetails[0].last_name);
   const {setLoading} = useLoader();
 
   useEffect(() => {
-    setUserName(fullName);
+    //setUserName(fullName);
   }, [userDetails]);
 
   const data = [
@@ -57,8 +56,8 @@ const DeliveryboyManageProfile = ({navigation}) => {
     setLoading(true);
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
-      first_name: userName,
-      last_name: '',
+      first_name: firstName,
+      last_name: lastName,
       phone: dropdownValue + number,
       // email: email,
 
@@ -75,7 +74,8 @@ const DeliveryboyManageProfile = ({navigation}) => {
         setLoading(false);
         const newUserDetails = userDetails.userDetails[0];
         newUserDetails['email'] = email;
-        newUserDetails['first_name'] = userName;
+        newUserDetails['first_name'] = firstName;
+        newUserDetails['last_name'] = lastName;
         newUserDetails['phone'] = number;
 
         newUserDetails['plat_no'] = vehicleNo;
@@ -128,13 +128,23 @@ const DeliveryboyManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Name</Text>
+          <Text style={styles.textlable}>First Name</Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
             placeholderTextColor={'#999'}
-            value={userName}
-            onChangeText={text => setUserName(text)}
+            value={firstName}
+            onChangeText={text => setFirstName(text)}
+          />
+        </View>
+        <View style={{flex: 1}}>
+          <Text style={styles.textlable}>Last Name</Text>
+          <TextInput
+            style={styles.inputTextStyle}
+            placeholder="Type here"
+            placeholderTextColor={'#999'}
+            value={lastName}
+            onChangeText={text => setLastName(text)}
           />
         </View>
         <View>

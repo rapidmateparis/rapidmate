@@ -31,6 +31,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
   console.log("first", orderDetails)
 
   useEffect(() => {
+    console.log("orderDetails.pickup_location_id", orderDetails);
     getLocationInfoById(orderDetails.pickup_location_id, 0);
     getLocationInfoById(orderDetails.dropoff_location_id, 1);
   }, []);
@@ -147,12 +148,12 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails
+          {/* {pickUpLocation && dropOffLocation && <MapDeliveryDetails
             addressData={{
               sourceAddress: pickUpLocation,
               destinationAddress: dropOffLocation,
             }}
-          />
+          />} */}
         </View>
 
         <View style={styles.packageCard}>
