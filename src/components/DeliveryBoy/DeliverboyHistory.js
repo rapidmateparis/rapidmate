@@ -171,7 +171,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
     
       <TouchableOpacity
       onPress={() =>{
-        console.log('3============delivery_type_id ====>',item)
+        console.log('delivery_type_id ====>',item)
         if(item?.delivery_type_id === 3){
           navigation.navigate('DeliveryboyShiftDetails',{
             orderItem: item,
@@ -509,7 +509,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
     
       <TouchableOpacity
       onPress={() =>{
-        console.log('2============delivery_type_id ====>',item)
+        console.log('delivery_type_id ====>',item)
         if(item?.delivery_type_id === 3){
           navigation.navigate('DeliveryboyShiftDetails');
         }else if(item?.delivery_type_id === 2 && item?.locations && item?.locations?.length > 0){
@@ -591,7 +591,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           
         <TouchableOpacity
           onPress={() =>{
-            console.log('1============delivery_type_id ====>',item?.item)
+            console.log('delivery_type_id ====>',item?.item)
             if(item?.item?.delivery_type_id === 3){
               navigation.navigate('DeliveryboyShiftDetails');
             }else if(item?.item?.delivery_type_id === 2 && item?.item?.locations && item?.item?.locations?.length > 0){
