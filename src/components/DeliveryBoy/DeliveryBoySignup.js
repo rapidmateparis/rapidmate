@@ -24,6 +24,7 @@ import {
   signUpUser,
 } from '../../data_manager';
 import {useSignUpDetails} from '../commonComponent/StoreContext';
+import {localizationText} from '../../utils/common';
 
 const DeliveryBoySignup = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -89,14 +90,13 @@ const DeliveryBoySignup = ({navigation}) => {
                   value: element.id,
                 });
                 formattedCountryCodeList.push({
-                  label: "+" + element.phone_code,
+                  label: '+' + element.phone_code,
                   value: element.id,
                 });
               });
               setCountryList(formattedCountryList);
               setCountryCodeList(formattedCountryCodeList);
-              setDropdownValue(formattedCountryCodeList[0].value)
-
+              setDropdownValue(formattedCountryCodeList[0].value);
             }
           }
         }
@@ -270,12 +270,13 @@ const DeliveryBoySignup = ({navigation}) => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '85%'}}>
             <Text style={[styles.logInText, {color: colors.text}]}>
-              Delivery Boy{' '}
-              <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
+              {localizationText('Common', 'deliveryBoy')}{' '}
+              <Text style={{fontFamily: 'Montserrat-Medium'}}>
+                {localizationText('Common', 'signup')}
+              </Text>
             </Text>
             <Text style={styles.loginAccessText}>
-              Let’s create your profile so you can have complete experience of
-              the app.
+              {localizationText('Common', 'pickupDropSignupDescription')}
             </Text>
           </View>
           <View style={styles.profilePhotoCard}>
@@ -304,7 +305,7 @@ const DeliveryBoySignup = ({navigation}) => {
               />
               <TextInput
                 style={styles.loginput}
-                placeholder="First Name"
+                placeholder={localizationText('Common', 'firstName')}
                 placeholderTextColor="#999"
                 value={name}
                 onChangeText={text => setName(text)}
@@ -320,7 +321,7 @@ const DeliveryBoySignup = ({navigation}) => {
               />
               <TextInput
                 style={styles.loginput}
-                placeholder="Last Name"
+                placeholder={localizationText('Common', 'lastName')}
                 placeholderTextColor="#999"
                 value={lastname}
                 onChangeText={text => setLastname(text)}
@@ -339,7 +340,7 @@ const DeliveryBoySignup = ({navigation}) => {
             />
             <TextInput
               style={styles.loginput}
-              placeholder="Email"
+              placeholder={localizationText('Common', 'email')}
               placeholderTextColor="#999"
               value={email}
               onChangeText={text => setEmail(text)}
@@ -352,7 +353,7 @@ const DeliveryBoySignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
               value={password}
@@ -374,7 +375,7 @@ const DeliveryBoySignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Confirm Password"
+              placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
@@ -428,7 +429,7 @@ const DeliveryBoySignup = ({navigation}) => {
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={11}
+              maxLength={9}
               value={number}
               onChangeText={text => setNumber(text)}
             />
@@ -584,10 +585,12 @@ const DeliveryBoySignup = ({navigation}) => {
               tintColors={{true: '#FFC72B', false: '#999'}}
             />
             <Text style={styles.checkboxText}>
-              We collect this data for the purposes of processing your
-              application to become a courier. By clicking this box, you
-              acknowledge that you have read and understood the{' '}
-                <Text onPress={() => navigation.navigate('PrivacyPolicy')} style={styles.pirvacyTextBold}>Privacy Policy</Text>
+              {localizationText('Main', 'deliveryBoyAuthoriseCheckbox')}{' '}
+              <Text
+                onPress={() => navigation.navigate('PrivacyPolicy')}
+                style={styles.pirvacyTextBold}>
+                {localizationText('Common', 'privacyPolicy')}
+              </Text>
             </Text>
           </View>
           <TouchableOpacity
@@ -595,14 +598,18 @@ const DeliveryBoySignup = ({navigation}) => {
               handleSignUp();
             }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Continue</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'continue')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('LogInScreen')}
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
-              Already have an account?{' '}
-              <Text style={{color: colors.primary}}>Login</Text>
+              {localizationText('Common', 'alreadyHaveAccount')}{' '}
+              <Text style={{color: colors.primary}}>
+                {localizationText('Common', 'login')}
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -758,7 +765,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
-    marginLeft: 5,
+    marginRight: 15,
   },
   pirvacyTextBold: {
     fontFamily: 'Montserrat-Bold',

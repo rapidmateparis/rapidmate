@@ -18,6 +18,7 @@ import {colors} from '../../colors';
 import {useSignUpDetails} from '../commonComponent/StoreContext';
 import {getCountryList, signUpUser} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 // import DropDownDropdown from '../common component/dropdown';
 
 const PickupSignup = ({navigation}) => {
@@ -30,7 +31,8 @@ const PickupSignup = ({navigation}) => {
   const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
   const [dropdownValue, setDropdownValue] = useState('75');
-  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] = useState('75');
+  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] =
+    useState('75');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
@@ -113,17 +115,17 @@ const PickupSignup = ({navigation}) => {
                 formattedCountryList.push({
                   label: element.country_name,
                   value: element.id,
-                  code: element.phone_code
+                  code: element.phone_code,
                 });
                 formattedCountryCodeList.push({
-                  label: "+" + element.phone_code,
+                  label: '+' + element.phone_code,
                   value: element.id,
                 });
               });
               setCountryList(formattedCountryList);
               setCountryCodeList(formattedCountryCodeList);
-              setDropdownValue(formattedCountryCodeList[0].value)
-              setDropdownCountryCodeValue(formattedCountryCodeList[0].label)
+              setDropdownValue(formattedCountryCodeList[0].value);
+              setDropdownCountryCodeValue(formattedCountryCodeList[0].label);
             }
           }
         }
@@ -151,7 +153,7 @@ const PickupSignup = ({navigation}) => {
           userrole: 'CONSUMER',
           firstName: name,
           lastName: '',
-          phone_code : dropdownCountryCodeValue.toString(),
+          phone_code: dropdownCountryCodeValue.toString(),
           country: dropdownCountryValue.toString(),
         },
       };
@@ -160,7 +162,7 @@ const PickupSignup = ({navigation}) => {
         params,
         successResponse => {
           setLoading(false);
-          console.log('successResponse =====>',successResponse)
+          console.log('successResponse =====>', successResponse);
           if (successResponse[0]._success) {
             if (successResponse[0]._response) {
               if (
@@ -203,12 +205,13 @@ const PickupSignup = ({navigation}) => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '85%'}}>
             <Text style={[styles.logInText, {color: colors.black}]}>
-              Pickup & Drop-off{' '}
-              <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
+              {localizationText('Common', 'pickupAndDropoff')}{' '}
+              <Text style={{fontFamily: 'Montserrat-Medium'}}>
+                {localizationText('Common', 'signup')}
+              </Text>
             </Text>
             <Text style={styles.loginAccessText}>
-              Let’s create your profile so you can have a complete experience of
-              the app.
+              {localizationText('Main', 'pickupDropSignupDescription')}
             </Text>
           </View>
           <Image
@@ -224,7 +227,7 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="user" size={18} color="#131314" />
             <TextInput
               style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-              placeholder="Name"
+              placeholder={localizationText('Common', 'fullName')}
               placeholderTextColor="#999"
               value={name}
               onChangeText={text => setName(text)}
@@ -237,7 +240,7 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Email"
+              placeholder={localizationText('Common', 'email')}
               placeholderTextColor="#999"
               value={email}
               onChangeText={text => setEmail(text)}
@@ -250,7 +253,7 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
-              placeholder="New Password"
+              placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
               secureTextEntry={!passwordVisible}
               value={password}
@@ -272,7 +275,7 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Confirm New Password"
+              placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
@@ -368,27 +371,39 @@ const PickupSignup = ({navigation}) => {
               )}
             />
           </View>
-         <TouchableOpacity
+          <TouchableOpacity
             onPress={() => {
               handleSignUp();
-              // navigation.navigate('SignUpVerify');
             }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Continue</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'continue')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('LogInScreen')}
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
-              Already have an account yet?{' '}
-              <Text style={{color: colors.primary}}>Login</Text>
+              {localizationText('Common', 'alreadyHaveAccount')}{' '}
+              <Text style={{color: colors.primary}}>
+                {localizationText('Common', 'login')}
+              </Text>
             </Text>
 
             <View>
               <Text style={styles.termOfRapidmate}>
-                By signing up you agree to{' '}
-                <Text onPress={() => navigation.navigate('PrivacyPolicy')} style={{color: colors.primary}}>Privacy policy</Text> &{' '}
-                <Text onPress={() => navigation.navigate('TermsAndConditions')} style={{color: colors.primary}}>Terms</Text> of RapidMate
+                {localizationText('Common', 'bySigningAgreeText')}{' '}
+                <Text
+                  onPress={() => navigation.navigate('PrivacyPolicy')}
+                  style={{color: colors.primary}}>
+                  {localizationText('Common', 'privacyPolicy')}
+                </Text>{' '}
+                &{' '}
+                <Text
+                  onPress={() => navigation.navigate('TermsAndConditions')}
+                  style={{color: colors.primary}}>
+                  {localizationText('Common', 'termsOfRapidmate')}
+                </Text>{' '}
               </Text>
             </View>
           </TouchableOpacity>
