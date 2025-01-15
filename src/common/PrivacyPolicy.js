@@ -28,7 +28,10 @@ const PrivacyPolicy = () => {
           <Text style={styles.paragraph}>
             Rapidmate provides logistics services, connecting businesses with
             delivery professionals to ensure fast and reliable deliveries across
-            France. For questions or concerns about your data, contact us at:
+            France. Rapidmate operates under its parent company, AJS GROUP,
+            which is responsible for issuing all invoices and bills related to
+            our services. For questions or concerns about your data, contact us
+            at:
           </Text>
           <Text style={styles.contact}>
             Email:{' '}
@@ -137,6 +140,19 @@ const PrivacyPolicy = () => {
           <Text style={styles.paragraph}>
             By continuing to use our website, you consent to the use of
             non-essential cookies unless you opt-out using the options provided.
+          </Text>
+          <Text style={styles.paragraph}>
+            We use cookies to enhance user experience, provide analytics, and
+            ensure website functionality. Cookies are categorized into essential
+            and non-essential types. Essential cookies are necessary for the
+            basic operation of our platform, while non-essential cookies are
+            used for analytics and marketing purposes.
+          </Text>
+          <Text>
+            You can manage your cookie preferences via our dedicated cookie
+            settings page or by adjusting your browser settings. For
+            non-essential cookies, we rely on user consent, which can be
+            withdrawn or modified at any time.
           </Text>
           <Text style={styles.sectionTitle}>3. How We Use Your Data</Text>
           <Text style={styles.paragraph}>
@@ -261,7 +277,42 @@ const PrivacyPolicy = () => {
             To exercise your rights, contact us at: contact@rapidmate.fr
           </Text>
 
-          <Text style={styles.sectionTitle}>9. Complaints</Text>
+          <Text style={styles.sectionTitle}>9.Account Deletion</Text>
+          <Text>
+            You may request the deletion of your account at any time by
+            contacting us through{' '}
+            <Text
+              style={styles.highlight}
+              onPress={() => Linking.openURL('mailto:contact@rapidmate.fr')}>
+              contact@rapidmate.fr
+            </Text>{' '}
+            or using the support feature available on the platform. Upon
+            receiving your request, we will process the deletion of your account
+            in accordance with our policies.
+          </Text>
+          <Text style={styles.paragraph}>
+            Once your account is deleted, you will no longer have access to any
+            of the services associated with your account. Please be aware that
+            account deletion is permanent and irreversible. After deletion, you
+            will lose access to any data, records, or content associated with
+            your account, except where we are required by law to retain certain
+            information.
+          </Text>
+          <Text style={styles.paragraph}>
+            We may retain certain information for legitimate business or legal
+            reasons, such as transaction history or records required for
+            compliance with applicable laws and regulations.
+          </Text>
+          <Text>
+            If you have any questions about the account deletion process, please
+            contact us at{' '}
+            <Text
+              style={styles.highlight}
+              onPress={() => Linking.openURL('mailto:contact@rapidmate.fr')}>
+              contact@rapidmate.fr
+            </Text>
+          </Text>
+          <Text style={styles.sectionTitle}>10. Complaints</Text>
           <Text style={styles.paragraph}>
             If you believe your data rights have been violated, we encourage you
             to first reach out to <Text style={styles.bold}>Rapidmate</Text>{' '}
@@ -286,7 +337,7 @@ const PrivacyPolicy = () => {
             </Text>
           </Text>
 
-          <Text style={styles.sectionTitle}>10. Automated Decision-Making</Text>
+          <Text style={styles.sectionTitle}>11. Automated Decision-Making</Text>
           <Text style={styles.paragraph}>
             We do not use your data for automated decision-making or profiling.
             However, we may use data for logistical purposes, such as assigning
@@ -294,7 +345,7 @@ const PrivacyPolicy = () => {
             automated decision-making under GDPR.
           </Text>
 
-          <Text style={styles.sectionTitle}>11. Children’s Privacy</Text>
+          <Text style={styles.sectionTitle}>12. Children’s Privacy</Text>
           <Text style={styles.paragraph}>
             Our services are not directed towards individuals under the age of
             16. We do not knowingly collect or process personal data from
@@ -303,7 +354,7 @@ const PrivacyPolicy = () => {
             steps to delete such information promptly.
           </Text>
 
-          <Text style={styles.sectionTitle}>12. Updates to This Policy</Text>
+          <Text style={styles.sectionTitle}>13. Updates to This Policy</Text>
           <Text style={styles.paragraph}>
             This Privacy Policy may be updated periodically. The latest version
             will always be available on our website, and any significant changes
