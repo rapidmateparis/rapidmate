@@ -96,14 +96,14 @@ const Settings = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.addressCard}>
+       {/*  <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('Wallet')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>{localizationText('Common','wallet')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity

@@ -31,6 +31,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
+  const [condition, setCondition] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [password, setPassword] = useState('');
@@ -200,6 +201,10 @@ const DeliveryBoySignup = ({navigation}) => {
     }
     if (!dropdownCityValue) {
       errors.dropdownCityValue = 'Please select a city';
+    }
+    console.log("toggleCheckBox=======", toggleCheckBox);
+    if (!toggleCheckBox) {
+      errors.toggleCheckBox = 'Please accept the terms & conditions';
     }
     console.log(errors);
     setErrors(errors);
@@ -593,6 +598,11 @@ const DeliveryBoySignup = ({navigation}) => {
               </Text>
             </Text>
           </View>
+          {errors.toggleCheckBox ? (
+            <Text style={[{color: 'red', marginTop: 20, marginBottom: -20}]}>
+              {errors.toggleCheckBox}
+            </Text>
+          ) : null}
           <TouchableOpacity
             onPress={() => {
               handleSignUp();

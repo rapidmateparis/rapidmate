@@ -55,42 +55,52 @@ const PickupPayment = ({route, navigation}) => {
     placePickUpOrder();
   };
 
-  const getTaxAmount = ()=>{
-    const amount =   typeof params.selectedVehiclePrice === 'number'
-      ? params.selectedVehiclePrice.toFixed(2)
-      : parseFloat(params.selectedVehiclePrice)
-    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
-     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
-     return taxAmount? taxAmount.toFixed(2): 0
+  const getTaxAmount = (amount)=>{
+      const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
+      const totalDiscountAmount = amount - discount;
+      const taxAmount =  (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+      return taxAmount? taxAmount.toFixed(2): 0.00;
+  }
+
+  const getDiscountAmount = (amount)=>{
+    console.log("offerDiscount ------------", offerDiscount);
+    if(offerDiscount && parseFloat(offerDiscount) > 0){
+      const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
+      const totalDiscountAmount = amount - discount;
+      return (totalDiscountAmount)?"- " + totalDiscountAmount.toFixed(2):0.00;
+    }
+    return 0.0;
   }
 
 
-  useEffect(()=>{
 
-   const amount =   typeof params.selectedVehiclePrice === 'number'
-      ? params.selectedVehiclePrice.toFixed(2)
-      : parseFloat(params.selectedVehiclePrice)
-    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
-     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
-     const total_Amount = parseFloat(amount)+taxAmount
-     if(total_Amount){
-      setTotalAmount(total_Amount.toFixed(2))
-      setPaymentAmount(total_Amount.toFixed(2))
-     }
+  useEffect(()=>{
+    const amount =   typeof params.selectedVehiclePrice === 'number'
+    ? params.selectedVehiclePrice.toFixed(2)
+    : parseFloat(params.selectedVehiclePrice);
+    const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
+    const totalDiscountAmount = amount - discount;
+    const taxAmount =  (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount ;
+    console.log('totalAmount is ',totalAmount);
+    if(totalAmount){
+      setTotalAmount(totalAmount.toFixed(2))
+      setPaymentAmount(totalAmount.toFixed(2))
+    }
   },[vechicleTax])
 
-  function calculateFinalPrice(originalPrice, discountPercentage) {
-    console.log(originalPrice, discountPercentage);
-    const discount = (originalPrice * discountPercentage) / 100;
-    const finalPrice = originalPrice - discount;
-    console.log(finalPrice);
-    return finalPrice.toFixed(2);
+  function calculateFinalPrice(amount) {
+    const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
+    const totalDiscountAmount = amount - discount;
+    const taxAmount =  (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount ;
+    return totalAmount.toFixed(2);
   }
 
   useEffect(() => {
     {
       offerDiscount > 0 &&
-        setPaymentAmount(calculateFinalPrice(paymentAmount, offerDiscount));
+        setPaymentAmount(calculateFinalPrice(params.selectedVehiclePrice));
     }
   }, []);
 
@@ -420,8 +430,12 @@ const PickupPayment = ({route, navigation}) => {
             <Text style={styles.totalAmount}>€ {params.selectedVehiclePrice}</Text>
           </View>
           <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>Discount {offerDiscount}%</Text>
+            <Text style={styles.totalAmount}>€ {getDiscountAmount(params.selectedVehiclePrice)}</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Tax {vechicleTax}%</Text>
-            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
+            <Text style={styles.totalAmount}>€ {getTaxAmount(params.selectedVehiclePrice)}</Text>
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
