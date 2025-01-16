@@ -16,7 +16,10 @@ import StepIndicator from 'react-native-step-indicator';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import {usePlacedOrderDetails, useUserDetails} from '../commonComponent/StoreContext';
+import {
+  usePlacedOrderDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
 import {API} from '../../utils/constant';
 
 const {height: screenHeight} = Dimensions.get('window');
@@ -35,33 +38,30 @@ const OrderPickup = ({route, navigation}) => {
   const [locationList, setLocationList] = useState(route.params.locationList);
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
-  const [deliveredOtp, setDeliveredOtp] = useState(placedOrderDetails[0]?.delivered_otp);
+  const [deliveredOtp, setDeliveredOtp] = useState(
+    placedOrderDetails[0]?.delivered_otp,
+  );
 
+  useEffect(() => {
+    console.log('progressTypeId ====>', userDetails.progressTypeId);
+    console.log('delivered_otp ====>', userDetails.delivered_otp);
 
-  useEffect(()=>{
+    userDetails.progressTypeId &&
+      setCurrentPosition(userDetails.progressTypeId);
+    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);
+  }, [userDetails.progressTypeId, userDetails.delivered_otp]);
 
-    console.log('progressTypeId ====>',userDetails.progressTypeId)
-    console.log('delivered_otp ====>',userDetails.delivered_otp)
-
-    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId)
-    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp)
-  },[userDetails.progressTypeId,userDetails.delivered_otp])
-
-  
-  
   const [currentPosition, setCurrentPosition] = useState(0);
-
-  console.log('0', driverDetails);
 
   const stepCount = 5;
 
   // Labels for each step in the step indicator
   const labels = [
-    'A driver is assigned to you!',
+    'Driver assigned',
     'Pickup in Progress',
-    'Your order has been picked up for delivery',
+    'Order picked up',
     'Order arriving soon!',
-    'Completed'
+    'Completed',
   ];
 
   const customStyles = {
@@ -122,7 +122,11 @@ const OrderPickup = ({route, navigation}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const formatTime = timeInSeconds => {
@@ -241,7 +245,7 @@ const OrderPickup = ({route, navigation}) => {
                 labels={labels}
                 stepCount={stepCount}
                 // onPress={position => setCurrentPosition(position)}
-                />
+              />
             </View>
 
             <View style={styles.driverCard}>
@@ -261,7 +265,7 @@ const OrderPickup = ({route, navigation}) => {
                     source={require('../../image/driver.jpeg')}
                   />
                 )}
-                <Image
+                {/* <Image
                   style={{
                     position: 'absolute',
                     bottom: 0,
@@ -271,7 +275,7 @@ const OrderPickup = ({route, navigation}) => {
                     borderRadius: 30,
                   }}
                   source={require('../../image/Drivers-Truck.jpg')}
-                />
+                /> */}
               </View>
               <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>
@@ -317,27 +321,35 @@ const OrderPickup = ({route, navigation}) => {
               <Text style={styles.trackText}>View Order Details</Text>
             </TouchableOpacity> */}
 
-            <View style={{flexDirection: 'row', paddingVertical: 10,justifyContent:'space-evenly'}}>
-                <TouchableOpacity
-                  style={styles.requestTouch}
-                  onPress={() => {
-                    // TODO: Because this screen only show when delivery boy allocated for this order so manually change the id
-                    const changeStatus = {...placedOrderDetails[0],is_delivery_boy_allocated:1}
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingVertical: 10,
+                justifyContent: 'space-evenly',
+              }}>
+              <TouchableOpacity
+                style={styles.requestTouch}
+                onPress={() => {
+                  // TODO: Because this screen only show when delivery boy allocated for this order so manually change the id
+                  const changeStatus = {
+                    ...placedOrderDetails[0],
+                    is_delivery_boy_allocated: 1,
+                  };
 
-                    navigation.navigate('DeliveryDetails', {
-                      orderItem: changeStatus,
-                    });
-                  }}>
-                  <Text style={styles.cancelRequest}>View Order Details</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.requestTouch}
-                  onPress={() => {
-                    navigation.navigate('PickupBottomNav');
-                  }}>
-                  <Text style={styles.cancelRequest}>Go Home</Text>
-                </TouchableOpacity>
-              </View>
+                  navigation.navigate('DeliveryDetails', {
+                    orderItem: changeStatus,
+                  });
+                }}>
+                <Text style={styles.cancelRequest}>View Order Details</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.requestTouch}
+                onPress={() => {
+                  navigation.navigate('PickupBottomNav');
+                }}>
+                <Text style={styles.cancelRequest}>Go Home</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ImageBackground>
       </View>
@@ -454,7 +466,7 @@ const styles = StyleSheet.create({
   boxCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: 50,
+    paddingVertical: 25,
     position: 'relative',
   },
   cloud1: {
@@ -479,6 +491,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     // marginLeft: 10,
     marginTop: 10,
+  },
+  cancelRequest: {
+    color: colors.text,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    textAlign: 'center',
   },
 });
 

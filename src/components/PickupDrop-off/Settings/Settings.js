@@ -24,7 +24,7 @@ const Settings = ({navigation}) => {
 
   const languages =[
     {label:'English', key:'en'},
-    {label:'Hindi', key:'hi'},
+    {label:'French', key:'fr'},
   ]
 
   const clearAsyncStorage = async () => {

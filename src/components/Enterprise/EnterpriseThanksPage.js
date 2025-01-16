@@ -15,6 +15,7 @@ import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart';
+import {localizationText} from '../../utils/common';
 
 const EnterpriseThanksPage = ({navigation}) => {
   const clearAsyncStorage = async () => {
@@ -37,17 +38,18 @@ const EnterpriseThanksPage = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/ThanksPage-Timer.png')}
           />
-          <Text style={styles.text}>Thank you for signing up</Text>
+          <Text style={styles.text}>
+            {localizationText('Main', 'thankSigningTitle')}
+          </Text>
           <Text style={styles.subText}>
-            We are reviewing your request and we will notify you soon via email
-            or phone call
+            {localizationText('Main', 'thankSigningDescription')}
           </Text>
         </View>
       </View>
       <TouchableOpacity
         onPress={() => {
           // navigation.navigate('EnterpriseBottomNav')
-          navigation.popToTop()
+          navigation.popToTop();
         }}
         style={[styles.logbutton, {backgroundColor: colors.primary}]}>
         <Text style={styles.buttonText}>Ok</Text>

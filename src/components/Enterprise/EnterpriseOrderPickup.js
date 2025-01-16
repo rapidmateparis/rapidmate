@@ -20,12 +20,12 @@ import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 import {getLocations} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import { useUserDetails } from '../commonComponent/StoreContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
 const {height: screenHeight} = Dimensions.get('window');
 const EnterpriseOrderPickup = ({navigation, route}) => {
   const {setLoading} = useLoader();
-  const { userDetails} = useUserDetails();
+  const {userDetails} = useUserDetails();
 
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
@@ -44,8 +44,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   const otp = driverDetails.order.otp;
   // const deliveredOtp = driverDetails.order.delivered_otp;
 
-  const [deliveredOtp, setDeliveredOtp] = useState(driverDetails.order.delivered_otp);
-
+  const [deliveredOtp, setDeliveredOtp] = useState(
+    driverDetails.order.delivered_otp,
+  );
 
   const [currentPosition, setCurrentPosition] = useState(0);
 
@@ -53,11 +54,11 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
 
   // Labels for each step in the step indicator
   const labels = [
-    'A driver is assigned to you!',
+    'Driver assigned',
     'Pickup in Progress',
-    'Your order has been picked up for delivery',
+    'Order picked up',
     'Order arriving soon!',
-    'Completed'
+    'Completed',
   ];
 
   const customStyles = {
@@ -84,17 +85,14 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     currentStepLabelColor: '#fe7013',
   };
 
+  useEffect(() => {
+    console.log('progressTypeId ====>', userDetails.progressTypeId);
+    console.log('delivered_otp ====>', userDetails.delivered_otp);
 
-
-  useEffect(()=>{
-
-    console.log('progressTypeId ====>',userDetails.progressTypeId)
-    console.log('delivered_otp ====>',userDetails.delivered_otp)
-
-    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId)
-    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp)
-  },[userDetails.progressTypeId,userDetails.delivered_otp])
-
+    userDetails.progressTypeId &&
+      setCurrentPosition(userDetails.progressTypeId);
+    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);
+  }, [userDetails.progressTypeId, userDetails.delivered_otp]);
 
   useEffect(() => {
     const onBackPress = () => true;
@@ -176,9 +174,12 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     )}`;
   };
   const getLocationAddress = locationId => {
-    if (!locationList?.length) return '';
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const handleCall = phoneNumber => {
@@ -291,7 +292,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
                   style={{width: 50, height: 50, borderRadius: 30}}
                   source={require('../../image/driver.jpeg')}
                 />
-                <Image
+                {/* <Image
                   style={{
                     position: 'absolute',
                     bottom: 0,
@@ -301,7 +302,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
                     borderRadius: 30,
                   }}
                   source={require('../../image/Drivers-Truck.jpg')}
-                />
+                /> */}
               </View>
               <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>
@@ -329,7 +330,12 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
               </View>
             </View>
 
-            <View style={{flexDirection: 'row', paddingVertical: 10,justifyContent:'space-evenly'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingVertical: 10,
+                justifyContent: 'space-evenly',
+              }}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('EnterpriseBottomNav')}
                 style={styles.trackOrderBtn}>
@@ -452,7 +458,7 @@ const styles = StyleSheet.create({
   },
   trackText: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     textAlign: 'center',
   },
