@@ -83,7 +83,7 @@ const LoginSignup = ({navigation}) => {
 
 const styles = StyleSheet.create({
   deliveryIconMain: {
-    marginVertical: 100,
+    marginVertical: 70,
     alignItems: 'center',
     justifyContent: 'center',
   },

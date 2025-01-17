@@ -14,6 +14,7 @@ import {
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
 import SavedAddressModal from './SavedAddressModal';
+import { localizationText } from '../../utils/common';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Constants
@@ -139,7 +140,7 @@ const MapAddress = props => {
             />
             <GooglePlacesAutocomplete
               fetchDetails
-              placeholder="Enter pickup address"
+              placeholder={localizationText('Common', 'enterPickupAddress')}
               styles={{
                 textInput: {
                   color: colors.black,
@@ -198,7 +199,7 @@ const MapAddress = props => {
             />
             <GooglePlacesAutocomplete
               fetchDetails
-              placeholder="Enter drop address"
+              placeholder={localizationText('Common', 'enterDropAddress')}
               styles={{
                 textInput: {
                   color: colors.black,

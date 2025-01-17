@@ -288,7 +288,7 @@ const AppNavigator = () => {
                   },
                 })}
               />
-              <Stack.Screen 
+              <Stack.Screen
                 name="AddPaymentMethod"
                 component={AddPaymentMethod}
                 options={({navigation}) => ({
@@ -1290,7 +1290,7 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                   headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}}>
+                    <TouchableOpacity style={{paddingRight: 10}} onPress={() => navigation.navigate('Supports')}>
                       <Ionicons
                         name="settings-outline"
                         size={25}
@@ -2062,9 +2062,7 @@ const AppNavigator = () => {
                   headerRight: () => (
                     <View style={{flexDirection: 'row'}}>
                       <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate('EnterpriseListNewAd')
-                        }
+                        onPress={() => navigation.navigate('Supports')}
                         style={{paddingRight: 10}}>
                         <Ionicons
                           name="settings-outline"

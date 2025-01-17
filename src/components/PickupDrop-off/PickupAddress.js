@@ -31,6 +31,7 @@ import {
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
+import {localizationText} from '../../utils/common';
 
 const {width} = Dimensions.get('window');
 
@@ -283,7 +284,7 @@ const PickupAddress = ({route, navigation}) => {
           <View style={styles.dateCard}>
             <EvilIcons name="calendar" size={25} color="#000" />
             <Text style={styles.dateCardText}>
-              When do you need it?
+              {localizationText('Common', 'whenNeedIt')}
               <Text>
                 {pickupDateTime.pickupDate && (
                   <Text
@@ -301,7 +302,8 @@ const PickupAddress = ({route, navigation}) => {
                       color: colors.secondary,
                     }}>
                     {'\n'}
-                    Time: {pickupDateTime.pickupTime}
+                    {localizationText('Common', 'time')}{' '}
+                    {pickupDateTime.pickupTime}
                   </Text>
                 )}
               </Text>
@@ -316,7 +318,7 @@ const PickupAddress = ({route, navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Montserrat-SemiBold',
                 }}>
-                Schedule
+                {localizationText('Common', 'schedule')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -340,7 +342,9 @@ const PickupAddress = ({route, navigation}) => {
                   ? styles.largeVehicleNameCard
                   : styles.mediumVehicleNameCard
               }>
-              <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
+              <Text style={styles.chooseVehicle}>
+                {localizationText('Common', 'chooseVehicle')}
+              </Text>
               <Text style={styles.selectedVehiclePrice}>
                 € {getPriceUsingVechicelType(selectedVehicleDetails?.id)}
               </Text>
@@ -413,7 +417,9 @@ const PickupAddress = ({route, navigation}) => {
             ? styles.largeContinueBtn
             : styles.mediumContinueBtn
         }>
-        <Text style={styles.continueText}>Continue to order details</Text>
+        <Text style={styles.continueText}>
+          {localizationText('Common', 'continueOrderDetails')}
+        </Text>
         <AntDesign name="arrowright" size={25} color="#000000" />
       </TouchableOpacity>
 

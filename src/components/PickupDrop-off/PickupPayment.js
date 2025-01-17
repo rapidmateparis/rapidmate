@@ -32,7 +32,7 @@ import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 import {debounce} from 'lodash';
-import { localToUTC } from '../../utils/common';
+import {localizationText, localToUTC} from '../../utils/common';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -44,7 +44,7 @@ const PickupPayment = ({route, navigation}) => {
   const [promoCode, setPromoCode] = useState('');
   const params = route.params.props;
   const [totalAmount, setTotalAmount] = useState(0);
-  console.log("dsgdhsgadghsagh", params.userDetails.number)
+  console.log('dsgdhsgadghsagh', params.userDetails.number);
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
@@ -55,45 +55,47 @@ const PickupPayment = ({route, navigation}) => {
     placePickUpOrder();
   };
 
-  const getTaxAmount = (amount)=>{
-      const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
-      const totalDiscountAmount = amount - discount;
-      const taxAmount =  (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
-      return taxAmount? taxAmount.toFixed(2): 0.00;
-  }
+  const getTaxAmount = amount => {
+    const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
+    const totalDiscountAmount = amount - discount;
+    const taxAmount =
+      (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    return taxAmount ? taxAmount.toFixed(2) : 0.0;
+  };
 
-  const getDiscountAmount = (amount)=>{
-    console.log("offerDiscount ------------", offerDiscount);
-    if(offerDiscount && parseFloat(offerDiscount) > 0){
-      const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
+  const getDiscountAmount = amount => {
+    console.log('offerDiscount ------------', offerDiscount);
+    if (offerDiscount && parseFloat(offerDiscount) > 0) {
+      const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
       const totalDiscountAmount = amount - discount;
-      return (totalDiscountAmount)?"- " + totalDiscountAmount.toFixed(2):0.00;
+      return totalDiscountAmount ? '- ' + totalDiscountAmount.toFixed(2) : 0.0;
     }
     return 0.0;
-  }
+  };
 
-
-
-  useEffect(()=>{
-    const amount =   typeof params.selectedVehiclePrice === 'number'
-    ? params.selectedVehiclePrice.toFixed(2)
-    : parseFloat(params.selectedVehiclePrice);
-    const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
+  useEffect(() => {
+    const amount =
+      typeof params.selectedVehiclePrice === 'number'
+        ? params.selectedVehiclePrice.toFixed(2)
+        : parseFloat(params.selectedVehiclePrice);
+    const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
     const totalDiscountAmount = amount - discount;
-    const taxAmount =  (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
-    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount ;
-    console.log('totalAmount is ',totalAmount);
-    if(totalAmount){
-      setTotalAmount(totalAmount.toFixed(2))
-      setPaymentAmount(totalAmount.toFixed(2))
+    const taxAmount =
+      (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount;
+    console.log('totalAmount is ', totalAmount);
+    if (totalAmount) {
+      setTotalAmount(totalAmount.toFixed(2));
+      setPaymentAmount(totalAmount.toFixed(2));
     }
-  },[vechicleTax])
+  }, [vechicleTax]);
 
   function calculateFinalPrice(amount) {
-    const discount = (offerDiscount)?((amount * offerDiscount) / 100):0.0;
+    const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
     const totalDiscountAmount = amount - discount;
-    const taxAmount =  (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
-    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount ;
+    const taxAmount =
+      (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount;
     return totalAmount.toFixed(2);
   }
 
@@ -112,14 +114,16 @@ const PickupPayment = ({route, navigation}) => {
 
   useEffect(() => {}, [orderResponse]);
   useEffect(() => {
-    getTaxDetails((success)=>{
-      if(success[0]._response[0].tax_value){
-        setVechicleTax(parseFloat(success[0]._response[0].tax_value))
-      }
-    },
-    (error)=>{
-      console.log('error ====== ===== ',error)
-    })
+    getTaxDetails(
+      success => {
+        if (success[0]._response[0].tax_value) {
+          setVechicleTax(parseFloat(success[0]._response[0].tax_value));
+        }
+      },
+      error => {
+        console.log('error ====== ===== ', error);
+      },
+    );
   }, []);
 
   const createPaymentIntent = async () => {
@@ -191,7 +195,7 @@ const PickupPayment = ({route, navigation}) => {
               successResponse => {
                 setLoading(false);
                 console.log('message===>', JSON.stringify(successResponse));
-                navigation.navigate('PickupBottomNav')
+                navigation.navigate('PickupBottomNav');
               },
               errorResponse => {
                 setLoading(false);
@@ -204,26 +208,42 @@ const PickupPayment = ({route, navigation}) => {
     }
   };
 
+  const getCurrentDateAndTime = () => {
+    // return format like YYYY-MM-DD HH:mm:ss
+    const currentDate = new Date();
+    const date =
+      currentDate.getDate() > 9
+        ? currentDate.getDate()
+        : '0' + currentDate.getDate();
+    const month =
+      currentDate.getMonth() + 1 > 9
+        ? currentDate.getMonth() + 1
+        : '0' + currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
 
-  const getCurrentDateAndTime =()=>{ // return format like YYYY-MM-DD HH:mm:ss
-    const currentDate = new Date()
-    const date = currentDate.getDate() > 9 ? currentDate.getDate() :'0'+currentDate.getDate()
-    const month = currentDate.getMonth()+1  > 9 ? currentDate.getMonth()+1 :'0'+currentDate.getMonth()+1
-    const year = currentDate.getFullYear()
+    const hour =
+      currentDate.getHours() > 9
+        ? currentDate.getHours()
+        : '0' + currentDate.getHours();
+    const min =
+      currentDate.getMinutes() > 9
+        ? currentDate.getMinutes()
+        : '0' + currentDate.getMinutes();
+    const sec =
+      currentDate.getSeconds() > 9
+        ? currentDate.getSeconds()
+        : '0' + currentDate.getSeconds();
 
-    const hour = currentDate.getHours() > 9 ? currentDate.getHours() :'0'+currentDate.getHours()
-    const min = currentDate.getMinutes() > 9 ? currentDate.getMinutes() :'0'+currentDate.getMinutes()
-    const sec = currentDate.getSeconds() > 9 ? currentDate.getSeconds() :'0'+currentDate.getSeconds()
-
-    return `${year}-${month}-${date} ${hour}:${min}:${sec}`
-
-  }
+    return `${year}-${month}-${date} ${hour}:${min}:${sec}`;
+  };
 
   const placePickUpOrder = async () => {
     if (userDetails.userDetails[0]) {
       console.log('params.schedule_date_time', params.schedule_date_time);
       if (params.serviceTypeId == 1) {
-        var scheduleParam = {schedule_date_time: localToUTC(params.schedule_date_time)};
+        var scheduleParam = {
+          schedule_date_time: localToUTC(params.schedule_date_time),
+        };
       }
       let requestParams = {
         consumer_ext_id: userDetails.userDetails[0].ext_id,
@@ -253,11 +273,10 @@ const PickupPayment = ({route, navigation}) => {
         // order_date: getCurrentDateAndTime()
         order_date: localToUTC(),
         package_photo: params.userDetails.package_photo,
-        tax_value:vechicleTax
+        tax_value: vechicleTax,
       };
-      
 
-      console.log('LOCAL to UTC ==:', localToUTC())      
+      console.log('LOCAL to UTC ==:', localToUTC());
       if (promoCodeResponse) {
         requestParams.promo_code = promoCodeResponse.promoCode;
         requestParams.promo_value = promoCodeResponse.discount;
@@ -275,7 +294,7 @@ const PickupPayment = ({route, navigation}) => {
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
           }
-          console.log("requestParams===",requestParams)
+          console.log('requestParams===', requestParams);
         },
         errorResponse => {
           setLoading(false);
@@ -303,9 +322,9 @@ const PickupPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('PaymentSuccess',{
+          navigation.navigate('PaymentSuccess', {
             schedule_date_time: params.schedule_date_time,
-            serviceTypeId:params.serviceTypeId
+            serviceTypeId: params.serviceTypeId,
           });
         }
       },
@@ -390,7 +409,9 @@ const PickupPayment = ({route, navigation}) => {
               />
             </View>
             <View>
-              <Text style={styles.vehicleName}>Order Summary</Text>
+              <Text style={styles.vehicleName}>
+                {localizationText('Common', 'orderSummary')}
+              </Text>
               <Text style={styles.vehicleCapacity}>
                 {params.selectedVehicle}{' '}
                 {params.selectedVehicleDetails.capacity}
@@ -408,7 +429,7 @@ const PickupPayment = ({route, navigation}) => {
           <View style={[styles.distanceTime, {marginVertical: 3}]}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From:{' '}
+              {localizationText('Common', 'from')}{' '}
               {params.sourceLocation.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : ''}{' '}
@@ -418,7 +439,7 @@ const PickupPayment = ({route, navigation}) => {
           <View style={styles.distanceTime}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              To:{' '}
+              {localizationText('Common', 'to')}{' '}
               {params.destinationLocation.destinationDescription
                 ? params.destinationLocation.destinationDescription
                 : ''}
@@ -426,19 +447,33 @@ const PickupPayment = ({route, navigation}) => {
           </View>
 
           <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Amount</Text>
-            <Text style={styles.totalAmount}>€ {params.selectedVehiclePrice}</Text>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'amount')}
+            </Text>
+            <Text style={styles.totalAmount}>
+              € {params.selectedVehiclePrice}
+            </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Discount {offerDiscount}%</Text>
-            <Text style={styles.totalAmount}>€ {getDiscountAmount(params.selectedVehiclePrice)}</Text>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'discount')} {offerDiscount}%
+            </Text>
+            <Text style={styles.totalAmount}>
+              € {getDiscountAmount(params.selectedVehiclePrice)}
+            </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Tax {vechicleTax}%</Text>
-            <Text style={styles.totalAmount}>€ {getTaxAmount(params.selectedVehiclePrice)}</Text>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              Tax {vechicleTax}%
+            </Text>
+            <Text style={styles.totalAmount}>
+              € {getTaxAmount(params.selectedVehiclePrice)}
+            </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'totalAmount')}
+            </Text>
             <Text style={styles.totalAmount}>€ {totalAmount}</Text>
           </View>
         </View>
@@ -495,12 +530,15 @@ const PickupPayment = ({route, navigation}) => {
               styles.discountInfo,
               {fontSize: 16, alignSelf: 'flex-end'},
             ]}>
-            Discount: € {promoCodeResponse.discount}
+            {localizationText('Common', 'discount')}: €{' '}
+            {promoCodeResponse.discount}
           </Text>
         )}
 
         <View>
-          <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
+          <Text style={styles.selectPaymentMethod}>
+            {localizationText('Common', 'creditDebitCards')}
+          </Text>
         </View>
 
         <View style={styles.discountCard}>
@@ -509,7 +547,7 @@ const PickupPayment = ({route, navigation}) => {
             source={require('../../image/Group.png')}
           />
           <Text style={styles.discountInfo}>
-            20% off on city bank credit card!
+            20% {localizationText('Common', 'creditCardsOff')}
           </Text>
         </View>
 
@@ -531,7 +569,9 @@ const PickupPayment = ({route, navigation}) => {
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>
           <TouchableOpacity onPress={debounce(onPayment, 500)}>
-            <Text style={styles.PayText}>Proceed to pay</Text>
+            <Text style={styles.PayText}>
+              {localizationText('Common', 'proceedToPay')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
