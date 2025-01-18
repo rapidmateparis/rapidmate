@@ -13,6 +13,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const AboutUs = ({navigation}) => {
   return (
@@ -23,10 +24,11 @@ const AboutUs = ({navigation}) => {
           source={require('../../image/AboutUs-Bg.png')}>
           <View
             style={{paddingTop: '25%', paddingRight: '45%', paddingLeft: 15}}>
-            <Text style={styles.aboutCompany}>About us</Text>
+            <Text style={styles.aboutCompany}>
+              {localizationText('Common', 'aboutUs')}
+            </Text>
             <Text style={styles.companyIntro}>
-              We link businesses, customers, and couriers to transform urban
-              goods transportation
+              {localizationText('Main', 'aboutUsTitleText')}
             </Text>
           </View>
         </ImageBackground>

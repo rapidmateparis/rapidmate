@@ -17,6 +17,7 @@ import {colors} from '../../../colors';
 import {getConsumerWallet} from '../../../data_manager';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {useLoader} from '../../../utils/loaderContext';
+import { localizationText } from '../../../utils/common';
 
 const Wallet = ({navigation}) => {
   const [walletAmount, setWalletAmount] = useState();
@@ -59,23 +60,31 @@ const Wallet = ({navigation}) => {
               <Text style={styles.dollerSymbol}>
                 € {walletAmount ? walletAmount : ''}
               </Text>
-              <Text style={styles.walletBalance}>Wallet balance</Text>
+              <Text style={styles.walletBalance}>
+                {localizationText('Common', 'walletBalance')}
+              </Text>
             </View>
             <View style={styles.actionCard}>
               <TouchableOpacity style={styles.actionsBt}>
-                <Text style={styles.btnText}>Add funds</Text>
+                <Text style={styles.btnText}>
+                  {localizationText('Common', 'addFunds')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
         </ImageBackground>
 
         <View style={styles.addCardsHeader}>
-          <Text style={styles.subCardName}>Cards</Text>
+          <Text style={styles.subCardName}>
+            {localizationText('Common', 'cards')}
+          </Text>
           <View style={styles.addSection}>
             <TouchableOpacity>
               <AntDesign name="pluscircle" size={25} color="#FF0058" />
             </TouchableOpacity>
-            <Text style={styles.addCardText}>Add card</Text>
+            <Text style={styles.addCardText}>
+              {localizationText('Common', 'addCard')}
+            </Text>
           </View>
         </View>
 
@@ -104,7 +113,7 @@ const Wallet = ({navigation}) => {
         <View style={styles.securePayment}>
           <FontAwesome name="shield" size={15} color="#1D1617" />
           <Text style={styles.paymentInfo}>
-            Your payment information is secure
+            {localizationText('Common', 'yourPaymentSecureText')}
           </Text>
         </View>
       </View>
@@ -152,14 +161,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.white,
     borderRadius: 20,
-    width: 100,
-    height: 40,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
   btnText: {
     textAlign: 'center',
     color: colors.white,
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
   },
   actionCard: {

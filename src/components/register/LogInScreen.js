@@ -226,7 +226,7 @@ const LogInScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('PasswordRecovery')}>
               <Text style={[styles.forgotPasswordText, {color: colors.text}]}>
-              {localizationText('Common', 'passportForgot')}
+              {localizationText('Common', 'passwordForgot')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
