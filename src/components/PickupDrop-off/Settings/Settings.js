@@ -96,7 +96,7 @@ const Settings = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-       {/*  <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('Wallet')}
             style={styles.bookAddress}>

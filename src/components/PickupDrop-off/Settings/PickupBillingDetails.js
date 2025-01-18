@@ -21,6 +21,7 @@ import {
 } from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import {useUserDetails} from '../../commonComponent/StoreContext';
+import {localizationText} from '../../../utils/common';
 
 const PickupBillingDetails = ({navigation}) => {
   const [isFocus, setIsFocus] = useState(false);
@@ -156,9 +157,9 @@ const PickupBillingDetails = ({navigation}) => {
     );
   }, []);
 
-  useEffect(()=>{
-    if(masterStateList?.length > 0){
-    var formattedStateList = [];
+  useEffect(() => {
+    if (masterStateList?.length > 0) {
+      var formattedStateList = [];
       masterStateList.forEach(element => {
         if (billingDetails.country_id == element.country_id) {
           formattedStateList.push({
@@ -170,19 +171,19 @@ const PickupBillingDetails = ({navigation}) => {
       setStateList(formattedStateList);
     }
 
-    if(masterCityList?.length > 0){
+    if (masterCityList?.length > 0) {
       var formattedCityList = [];
-        masterCityList.forEach(element => {
-          if (billingDetails.state_id == element.state_id) {
-            formattedCityList.push({
-              label: element.city_name,
-              value: element.id,
-            });
-          }
-        });
-        setCityList(formattedCityList);
-      }
-  },[billingDetails,masterCityList,masterStateList])
+      masterCityList.forEach(element => {
+        if (billingDetails.state_id == element.state_id) {
+          formattedCityList.push({
+            label: element.city_name,
+            value: element.id,
+          });
+        }
+      });
+      setCityList(formattedCityList);
+    }
+  }, [billingDetails, masterCityList, masterStateList]);
 
   const submitBillingDetails = () => {
     let params = {
@@ -195,7 +196,7 @@ const PickupBillingDetails = ({navigation}) => {
       country_id: dropdownCountryValue.toString(),
       dni_number: dninumber,
       postal_code: postalcode,
-      account_type:1 // accountType
+      account_type: 1, // accountType
     };
 
     addConsumerBillingDetails(
@@ -211,7 +212,7 @@ const PickupBillingDetails = ({navigation}) => {
         ]);
       },
       errorResponse => {
-        console.log('errorResponse', JSON.stringify(errorResponse))
+        console.log('errorResponse', JSON.stringify(errorResponse));
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -221,7 +222,7 @@ const PickupBillingDetails = ({navigation}) => {
 
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15, marginVertical: 15,}}>
+      <View style={{paddingHorizontal: 15, marginVertical: 15}}>
         {/* <View>
           <Text style={styles.label}>Account</Text>
           <View style={styles.containerCountry}>
@@ -262,10 +263,12 @@ const PickupBillingDetails = ({navigation}) => {
             justifyContent: 'space-between',
           }}>
           <View style={[styles.nameInputDiv, {marginRight: 10}]}>
-            <Text style={styles.label}>First Name</Text>
+            <Text style={styles.label}>
+              {localizationText('Common', 'firstName')}
+            </Text>
             <TextInput
               style={styles.loginput}
-              placeholder="Type here.."
+              placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor="#999"
               value={firstName}
               onChangeText={text => setFirstName(text)}
@@ -273,10 +276,12 @@ const PickupBillingDetails = ({navigation}) => {
           </View>
 
           <View style={styles.nameInputDiv}>
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>
+              {localizationText('Common', 'lastName')}
+            </Text>
             <TextInput
               style={styles.loginput}
-              placeholder="Type here.."
+              placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor="#999"
               value={lastName}
               onChangeText={text => setLastName(text)}
@@ -285,10 +290,12 @@ const PickupBillingDetails = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={styles.label}>Address</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'address')}
+          </Text>
           <TextInput
             style={styles.normalInput}
-            placeholder="Type here.."
+            placeholder={localizationText('Common', 'typeHere')}
             placeholderTextColor="#999"
             value={address}
             onChangeText={text => setAddress(text)}
@@ -296,7 +303,9 @@ const PickupBillingDetails = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={styles.label}>Country</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'country')}
+          </Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
@@ -331,7 +340,9 @@ const PickupBillingDetails = ({navigation}) => {
           </View>
         </View>
         <View>
-          <Text style={styles.label}>State</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'state')}
+          </Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={stateList}
@@ -367,7 +378,7 @@ const PickupBillingDetails = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={styles.label}>City</Text>
+          <Text style={styles.label}>{localizationText('Common', 'city')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={cityList}
@@ -393,10 +404,12 @@ const PickupBillingDetails = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={styles.label}>Postal Code</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'postalCode')}
+          </Text>
           <TextInput
             style={styles.normalInput}
-            placeholder="Type here.."
+            placeholder={localizationText('Common', 'typeHere')}
             placeholderTextColor="#999"
             value={postalcode}
             maxLength={5}
@@ -405,10 +418,12 @@ const PickupBillingDetails = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={styles.label}>DNI Number</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'dniNumber')}
+          </Text>
           <TextInput
             style={styles.normalInput}
-            placeholder="Type here.."
+            placeholder={localizationText('Common', 'typeHere')}
             placeholderTextColor="#999"
             value={dninumber}
             onChangeText={text => setDNINumber(text)}
@@ -418,7 +433,9 @@ const PickupBillingDetails = ({navigation}) => {
         <TouchableOpacity
           onPress={submitBillingDetails}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

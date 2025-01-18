@@ -22,7 +22,8 @@ import {
   getLocations,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+import {localizationText} from '../../utils/common';
 
 const LoaderForDriver = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -60,12 +61,10 @@ const LoaderForDriver = ({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
-    if(isVisible && reTryCount !== null && reTryCount <= 5){
+    if (isVisible && reTryCount !== null && reTryCount <= 5) {
       getLocationsData();
     }
-
-  }, [reTryCount,isVisible]);
-
+  }, [reTryCount, isVisible]);
 
   const getLocationsData = () => {
     getLocations(
@@ -80,7 +79,7 @@ const LoaderForDriver = ({navigation}) => {
           getAllocatedDeliveryBoy(
             params,
             successResponse => {
-              updateReTryCount(null)
+              updateReTryCount(null);
               clearTimeout(timeout.current);
               navigation.navigate('OrderPickup', {
                 driverDetails: successResponse[0]._response,
@@ -88,13 +87,12 @@ const LoaderForDriver = ({navigation}) => {
               });
             },
             errorResponse => {
-              timeout.current = setTimeout(()=>{
-                updateReTryCount(reTryCount+1)
-                if(reTryCount === 5){
+              timeout.current = setTimeout(() => {
+                updateReTryCount(reTryCount + 1);
+                if (reTryCount === 5) {
                   navigation.navigate('DriverNotAvailable', errorResponse);
                 }
-              },30000)
-              
+              }, 30000);
             },
           );
         }
@@ -153,10 +151,11 @@ const LoaderForDriver = ({navigation}) => {
               style={styles.loaderMap}
               source={require('../../image/Driver-Looking-Map.png')}
             />
-            <Text style={styles.text}>Looking for driver</Text>
+            <Text style={styles.text}>
+              {localizationText('Common', 'lookingForDriver')}
+            </Text>
             <Text style={styles.subText}>
-              please wait, we are looking for a driver to pick up and deliver
-              your order..
+              {localizationText('Common', 'lookingForDriverDescription')}
             </Text>
           </View>
         </ImageBackground>
@@ -174,7 +173,9 @@ const LoaderForDriver = ({navigation}) => {
       <TouchableOpacity
         onPress={() => toggleModal()}
         style={styles.requestTouch}>
-        <Text style={styles.cancelRequest}>Cancel request</Text>
+        <Text style={styles.cancelRequest}>
+          {localizationText('Common', 'cancelRequest')}
+        </Text>
       </TouchableOpacity>
 
       {/* CancellationModal Modal  */}

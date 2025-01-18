@@ -16,6 +16,7 @@ import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useLoader} from '../../../utils/loaderContext';
 import {updateUserProfile} from '../../../data_manager';
+import { localizationText } from '../../../utils/common';
 
 const ConsumerManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -102,7 +103,7 @@ const ConsumerManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Name</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'name')}</Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -112,7 +113,7 @@ const ConsumerManageProfile = ({navigation}) => {
           />
         </View>
         <View>
-          <Text style={styles.textlable}>Phone Number</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'phoneNumber')}</Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -173,7 +174,7 @@ const ConsumerManageProfile = ({navigation}) => {
         <TouchableOpacity
           onPress={() => saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

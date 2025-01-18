@@ -129,6 +129,7 @@ import EnterpriseAddMultpleDropDetails from './components/Enterprise/EnterpriseA
 import PrivacyPolicy from './common/PrivacyPolicy';
 import TermsAndConditions from './common/TermsOfService';
 import EnterpriseBillingDetail from './components/Enterprise/EnterpriseSettings/EnterpriseBillingDetail';
+import {localizationText} from './utils/common';
 
 const Stack = createStackNavigator();
 
@@ -137,6 +138,23 @@ const AppNavigator = () => {
   const [userDetails, setUserDetail] = useState(null);
   const {saveUserDetails} = useUserDetails();
   const [isLoading, setIsLoading] = useState(true);
+  const takeSelfie = localizationText('NavHeaderTitles', 'takeSelfie') || 'Take a selfie';
+  const privacyPolicy = localizationText('Common', 'privacyPolicy') || 'Privacy Policy';
+  const termsAndConditions = localizationText('Common', 'privacyPolicy') || 'Terms And Conditions';
+  const addPaymentMethod = localizationText('NavHeaderTitles', 'addPaymentMethod') || 'Add Payment Method';
+  const withdraw = localizationText('NavHeaderTitles', 'withdraw') || 'Withdraw';
+  const addPickupDetails = localizationText('NavHeaderTitles', 'addPickupDetails') || 'Add Pickup Details';
+  const addDropDetails = localizationText('NavHeaderTitles', 'addDropDetails') || 'Add Drop Details';
+  const orderPreview = localizationText('NavHeaderTitles', 'orderPreview') || 'Order Preview';
+  const orderConfirmed = localizationText('NavHeaderTitles', 'orderConfirmed') || 'Order Confirmed';
+  const payment = localizationText('NavHeaderTitles', 'payment') || 'Payment';
+  const paymentSuccess = localizationText('NavHeaderTitles', 'paymentSuccess') || 'Payment Success';
+  const scheduleOrderSuccess = localizationText('NavHeaderTitles', 'scheduleOrderSuccess') || 'Schedule Order Success';
+  const notificationSettings = localizationText('NavHeaderTitles', 'notificationSettings') || 'Notification Settings';
+  const notifications = localizationText('Common', 'notifications') || 'Notifications';
+  const wallet = localizationText('Common', 'wallet') || 'Wallet';
+  const deliveryDetails = localizationText('Main', 'deliveryDetails') || 'Delivery Details';
+  const changePassword = localizationText('Common', 'changePassword') || 'Change Password';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -219,7 +237,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Take a selfie',
+                  headerTitle: takeSelfie,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -247,7 +265,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Privacy Policy',
+                  headerTitle: privacyPolicy,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -275,7 +293,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Terms And Conditions',
+                  headerTitle: termsAndConditions,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -303,7 +321,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Payment Method',
+                  headerTitle: addPaymentMethod,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -331,7 +349,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Withdraw',
+                  headerTitle: withdraw,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -508,7 +526,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add pickup details',
+                  headerTitle: addPickupDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -536,7 +554,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add drop details',
+                  headerTitle: addDropDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -564,7 +582,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Order preview',
+                  headerTitle: orderPreview,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -582,7 +600,7 @@ const AppNavigator = () => {
                 component={OrderPickup}
                 options={() => ({
                   headerLeft: null,
-                  headerTitle: 'Order Confirmed',
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -610,7 +628,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Payment',
+                  headerTitle: payment,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -638,7 +656,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Payment Success',
+                  headerTitle: paymentSuccess,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -666,7 +684,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule Order Success',
+                  headerTitle: scheduleOrderSuccess,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -709,7 +727,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Order Confirmed',
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -747,7 +765,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Notification settings',
+                  headerTitle: notificationSettings,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -775,7 +793,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Notifications',
+                  headerTitle: notifications,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -803,7 +821,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Wallet',
+                  headerTitle: wallet,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -831,7 +849,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -922,7 +940,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Change password',
+                  headerTitle: changePassword,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1027,7 +1045,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1083,7 +1101,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1150,7 +1168,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1189,7 +1207,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1230,7 +1248,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1290,7 +1308,9 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                   headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}} onPress={() => navigation.navigate('Supports')}>
+                    <TouchableOpacity
+                      style={{paddingRight: 10}}
+                      onPress={() => navigation.navigate('Supports')}>
                       <Ionicons
                         name="settings-outline"
                         size={25}
@@ -1501,7 +1521,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Wallet',
+                  headerTitle: wallet,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2405,7 +2425,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Order Confirmed',
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2433,7 +2453,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Order Confirmed',
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2489,7 +2509,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Payment',
+                  headerTitle: payment,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2517,7 +2537,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Drop Details',
+                  headerTitle: addDropDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
