@@ -16,7 +16,7 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {getCompanyList} from '../../data_manager';
 import {useUserDetails} from './StoreContext';
-import { localToUTC } from '../../utils/common';
+import {localizationText, localToUTC} from '../../utils/common';
 
 function PlaningFilterModal({
   setModalVisible,
@@ -25,14 +25,19 @@ function PlaningFilterModal({
 }) {
   const [fromDate, setFromDate] = useState(new Date());
   const [fromDateOpen, setFromDateOpen] = useState(false);
-  const [fromPickupDate, setFromPickupDate] = useState(moment(new Date()).format('DD/MM/YYYY'));
+  const [fromPickupDate, setFromPickupDate] = useState(
+    moment(new Date()).format('DD/MM/YYYY'),
+  );
   const [toDate, setToDate] = useState(new Date());
   const [toDateOpen, setToDateOpen] = useState(false);
-  const [toPickupDate, setToPickupDate] = useState(moment(new Date()).format('DD/MM/YYYY'));
+  const [toPickupDate, setToPickupDate] = useState(
+    moment(new Date()).format('DD/MM/YYYY'),
+  );
   const [formdate, setFormdate] = useState('');
   const [day, setDay] = useState(0);
   const [companyList, setCompanyList] = useState([]);
   const {userDetails} = useUserDetails();
+  const noCompanyDetails = localizationText('Common', 'noCompanyDetails') || 'No Company Details';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -74,13 +79,17 @@ function PlaningFilterModal({
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Apply filters</Text>
+            <Text style={styles.headerTitle}>
+              {localizationText('Common', 'applyFilters')}
+            </Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
           </View>
           <View style={styles.modalCard}>
-            <Text style={styles.textlable}>From date</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'fromDate')}
+            </Text>
             <View style={styles.textInputDiv}>
               <DatePicker
                 modal
@@ -114,7 +123,9 @@ function PlaningFilterModal({
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.textlable}>To date</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'toDate')}
+            </Text>
             <View style={styles.textInputDiv}>
               <DatePicker
                 modal
@@ -152,7 +163,7 @@ function PlaningFilterModal({
 
             <View>
               <Text style={styles.dayFilterText}>
-                Filter by a day of the week
+                {localizationText('Common', 'filterByDay')}
               </Text>
               <View style={styles.dayCard}>
                 <TouchableOpacity
@@ -273,12 +284,12 @@ function PlaningFilterModal({
             <View style={styles.borderShowOff}></View>
 
             <View style={styles.recentlyInfo}>
-              <Text style={styles.deliveryRecently}>My companies</Text>
+              <Text style={styles.deliveryRecently}>{localizationText('Common', 'myCompanies')}</Text>
             </View>
 
             <View style={styles.companyLogoCard}>
               {companyList.length === 0 ? (
-                <Text style={styles.userName}>No Company Details</Text>
+                <Text style={styles.userName}>{noCompanyDetails}</Text>
               ) : (
                 <FlatList
                   data={companyList}
@@ -299,7 +310,7 @@ function PlaningFilterModal({
                 day: day,
               });
             }}>
-            <Text style={styles.okButton}>Apply</Text>
+            <Text style={styles.okButton}>{localizationText('Common', 'apply')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -454,6 +465,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
     paddingVertical: 5,
+  },
+  userName: {
+    fontSize: 15,
+    fontFamily: 'Montserrat-Bold',
+    color: colors.text,
   },
 });
 

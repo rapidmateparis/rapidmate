@@ -42,17 +42,19 @@ const AddPickupdetails = ({route, navigation}) => {
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
   const {setLoading} = useLoader();
+  const mySelfText = localizationText('Common', 'mySelf') || 'My Self';
+  const othersText = localizationText('Common', 'others') || 'Others';
 
   const radioButtons = useMemo(
     () => [
       {
         id: '1',
-        label: 'My Self',
+        label: mySelfText,
         value: 'self',
       },
       {
         id: '2',
-        label: 'Others',
+        label: othersText,
         value: 'others',
       },
     ],

@@ -153,7 +153,7 @@ const AppNavigator = () => {
   const notificationSettings = localizationText('NavHeaderTitles', 'notificationSettings') || 'Notification Settings';
   const notifications = localizationText('Common', 'notifications') || 'Notifications';
   const wallet = localizationText('Common', 'wallet') || 'Wallet';
-  const deliveryDetails = localizationText('Main', 'deliveryDetails') || 'Delivery Details';
+  const deliveryDetails = localizationText('NavHeaderTitles', 'deliveryDetails') || 'Delivery Details';
   const changePassword = localizationText('Common', 'changePassword') || 'Change Password';
 
   const toggleModal = () => {
