@@ -22,7 +22,7 @@ import {
 } from '../../data_manager';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
-import { titleFormat, utcLocal } from '../../utils/common';
+import { localizationText, titleFormat, utcLocal } from '../../utils/common';
 
 const Planning = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -31,6 +31,7 @@ const Planning = ({navigation}) => {
   const [orderList, setOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [calendarData, setCalendarData] = useState();
+  const noRecordFound = localizationText('Common', 'noRecordFound') || 'No record Found';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -215,7 +216,7 @@ const Planning = ({navigation}) => {
       <View style={{backgroundColor: '#fff'}}>
         <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Availability</Text>
+            <Text style={styles.headerText}>{localizationText('Common', 'planning')}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity onPress={() => toggleModal()}>
                 <AntDesign name="filter" size={25} color={colors.secondary} />
@@ -225,7 +226,7 @@ const Planning = ({navigation}) => {
                   navigation.navigate('DeliveryboySetAvailability')
                 }
                 style={styles.availbilityBt}>
-                <Text style={styles.availabilityText}>Set availability</Text>
+                <Text style={styles.availabilityText}>{localizationText('Common', 'setAvailability')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -253,24 +254,24 @@ const Planning = ({navigation}) => {
       <View style={styles.mainColorCard}>
         <View style={styles.colorCardWise}>
           <Octicons name="dot-fill" size={20} color={colors.primary} />
-          <Text style={styles.colorWiseText}>Restaurant</Text>
+          <Text style={styles.colorWiseText}>{localizationText('Common', 'restaurant')}</Text>
         </View>
 
         <View style={styles.colorCardWise}>
           <Octicons name="dot-fill" size={20} color={colors.MountainMeadow} />
-          <Text style={styles.colorWiseText}>Supermarkets</Text>
+          <Text style={styles.colorWiseText}>{localizationText('Common', 'supermarkets')}</Text>
         </View>
 
         <View style={styles.colorCardWise}>
           <Octicons name="dot-fill" size={20} color={colors.CuriousBlue} />
-          <Text style={styles.colorWiseText}>E-Commerce</Text>
+          <Text style={styles.colorWiseText}>{localizationText('Common', 'eCommerce')}</Text>
         </View>
       </View>
 
       <View style={styles.mainColorCard}>
         <View style={styles.colorCardWise}>
           <Octicons name="dot-fill" size={20} color={colors.Wisteria} />
-          <Text style={styles.colorWiseText}>Packers & Movers</Text>
+          <Text style={styles.colorWiseText}>{localizationText('Common', 'packersAndMovers')}</Text>
         </View>
       </View>
 
@@ -278,7 +279,7 @@ const Planning = ({navigation}) => {
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
           <View style={styles.packageDetailCard}>
             {orderList.length == 0 ? (
-              <Text style={styles.listText}>No Record Found</Text>
+              <Text style={styles.listText}>{noRecordFound}</Text>
             ) : (
               <FlatList data={orderList} renderItem={renderPlanningList} />
             )}

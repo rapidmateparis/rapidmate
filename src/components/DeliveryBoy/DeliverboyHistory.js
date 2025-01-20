@@ -30,7 +30,7 @@ import {
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
-import {titleFormat, utcLocal} from '../../utils/common';
+import {localizationText, titleFormat, utcLocal} from '../../utils/common';
 const Tab = createMaterialTopTabNavigator();
 
 const TodayList = ({navigation, filterCriteria, searchText}) => {
@@ -43,6 +43,19 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [checkMoreData, setCheckMoreData] = useState(true);
+  const shift = localizationText('Common', 'shift') || 'Shift';
+  const totalDays = localizationText('Common', 'totalDays') || 'Total days';
+  const totalHours = localizationText('Common', 'totalHours') || 'Total hours';
+  const aproxEarning =
+    localizationText('Common', 'aproxEarning') || 'Aprox earning';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const forText = localizationText('Common', 'for') || 'For';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const noOrdersToShow =
+    localizationText('Common', 'noOrdersToShow') || 'No orders to show';
+  const noOrdersDescription =
+    localizationText('Common', 'noOrdersDescription') || '';
 
   useFocusEffect(
     useCallback(() => {
@@ -85,7 +98,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         if (size === successResponse[0]._response.length) {
           setPage(page + 1);
           setCheckMoreData(true);
-        } else if(size > successResponse[0]._response.length ){
+        } else if (size > successResponse[0]._response.length) {
           setCheckMoreData(false);
         }
         if (newPage === 1) {
@@ -164,77 +177,94 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
     return result[0]?.address;
   };
 
-  const createShiftOrder=(item)=>{
-    console.log('item ====>',item)
+  const createShiftOrder = item => {
+    console.log('item ====>', item);
 
-    return( 
-    
+    return (
       <TouchableOpacity
-      onPress={() =>{
-        console.log('delivery_type_id ====>',item)
-        if(item?.delivery_type_id === 3){
-          navigation.navigate('DeliveryboyShiftDetails',{
-            orderItem: item,
-        });
-        }else if(item?.delivery_type_id === 2 && item?.locations && item?.locations?.length > 0){
-          // navigation.navigate('DeliveryDetailsMultipleInvoice',{
-          //     orderItem: item.item,
-          // });
-        }else{
-          // navigation.navigate('DeliveryboyMainDeliveryDetails', {
-          //   orderItem: item.item,
-          //   componentType : 'DELIVERBOY'
-          // })
-        }
-      }
-      }
-      style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={{width: 25, height: 25}}
-              source={require('../../image/Big-Calender.png')}
-            />
-            <Text style={styles.deliveryTime}>Shift</Text>
+        onPress={() => {
+          console.log('delivery_type_id ====>', item);
+          if (item?.delivery_type_id === 3) {
+            navigation.navigate('DeliveryboyShiftDetails', {
+              orderItem: item,
+            });
+          } else if (
+            item?.delivery_type_id === 2 &&
+            item?.locations &&
+            item?.locations?.length > 0
+          ) {
+            // navigation.navigate('DeliveryDetailsMultipleInvoice',{
+            //     orderItem: item.item,
+            // });
+          } else {
+            // navigation.navigate('DeliveryboyMainDeliveryDetails', {
+            //   orderItem: item.item,
+            //   componentType : 'DELIVERBOY'
+            // })
+          }
+        }}
+        style={styles.packageDetailCard}>
+        <View style={styles.packageHeader}>
+          <Image
+            style={{width: 25, height: 25}}
+            source={require('../../image/Big-Calender.png')}
+          />
+          <Text style={styles.deliveryTime}>{shift}</Text>
+        </View>
+
+        <View style={styles.overViewCard}>
+          <View>
+            <Text style={styles.requestOverview}>
+              {item.total_days ? item.total_days : 0}
+            </Text>
+            <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
           </View>
 
-          <View style={styles.overViewCard}>
-            <View>
-              <Text style={styles.requestOverview}>{item.total_days ?item.total_days :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total days</Text>
-            </View>
+          <View>
+            <Text style={styles.requestOverview}>
+              {item.total_hours ? item.total_hours.toFixed(2) : 0}
+            </Text>
+            <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
+          </View>
 
-            <View>
-              <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total hours</Text>
-            </View>
-
-            <View>
-              <Text style={styles.requestOverview}>
-                €<Text>{item.total_amount ? item.total_amount.toFixed(2) :0}</Text>
+          <View>
+            <Text style={styles.requestOverview}>
+              €
+              <Text>
+                {item.total_amount ? item.total_amount.toFixed(2) : 0}
               </Text>
-              <Text style={styles.requestOverviewInfo}>Aprox earning</Text>
-            </View>
-          </View>
-
-          <View style={styles.scheduleDateTimeCard}>
-            <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}</Text>
             </Text>
-            <View style={styles.borderShowoff} />
-            <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+            <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
+          </View>
+        </View>
+
+        <View style={styles.scheduleDateTimeCard}>
+          <Text style={styles.schaduleInfo}>
+            {fromText}{' '}
+            <Text style={styles.schaduleDateTime}>
+              {moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}
             </Text>
-          </View>
+          </Text>
+          <View style={styles.borderShowoff} />
+          <Text style={styles.schaduleInfo}>
+            {toText}{' '}
+            <Text style={styles.schaduleDateTime}>
+              {moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}
+            </Text>
+          </Text>
+        </View>
 
-          {/* <View style={styles.borderShow}></View> */}
+        {/* <View style={styles.borderShow}></View> */}
 
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For {item?.company_name ? item?.company_name : '-'}</Text>
-            {/* <Text style={styles.valueMoney}>€34.00</Text> */}
-          </View>
-        </TouchableOpacity>
-    )
-  }
+        <View style={styles.footerCard}>
+          <Text style={styles.orderId}>
+            {forText}: {item?.company_name ? item?.company_name : '-'}
+          </Text>
+          {/* <Text style={styles.valueMoney}>€34.00</Text> */}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderItem = item => (
     <View style={{flex: 1}}>
@@ -244,87 +274,93 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
           paddingTop: 5,
           backgroundColor: '#FBFAF5',
         }}>
-          {
-item?.item?.delivery_type_id === 3?
-createShiftOrder(item?.item):
-        <TouchableOpacity
-          onPress={() => {
-            console.log('item?.item =====>',item?.item)
-            if(item?.item?.delivery_type_id === 3){
-              navigation.navigate('DeliveryboyShiftDetails',{
-                orderItem: item.item,
-            });
-            }else if(item?.item?.delivery_type_id === 2 && item?.item?.locations && item?.item?.locations?.length > 0){
-            navigation.navigate('DeliveryDetailsMultipleOrder',{
-                orderItem: item.item,
-            });
-          }else{
-            navigation.navigate('DeliveryboyDeliveryDetails', {
-              order_number: item.item.order_number,
-              package_photo: item.item.package_photo,
-              orderItem: item.item,
-            });
-          }
-          }}
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              {item.item.delivery_boy_order_title}{' '}
-              {item.item.is_show_datetime_in_title == 1
-                ? item.item.order_status === 'ORDER_PLACED'
-                  ? titleFormat(
-                      item.item.schedule_date_time || item.item.order_date,
-                    )
-                  : titleFormat(item.item.updated_on)
-                : ''}
-              {/* Scheduled on{' '}
+        {item?.item?.delivery_type_id === 3 ? (
+          createShiftOrder(item?.item)
+        ) : (
+          <TouchableOpacity
+            onPress={() => {
+              console.log('item?.item =====>', item?.item);
+              if (item?.item?.delivery_type_id === 3) {
+                navigation.navigate('DeliveryboyShiftDetails', {
+                  orderItem: item.item,
+                });
+              } else if (
+                item?.item?.delivery_type_id === 2 &&
+                item?.item?.locations &&
+                item?.item?.locations?.length > 0
+              ) {
+                navigation.navigate('DeliveryDetailsMultipleOrder', {
+                  orderItem: item.item,
+                });
+              } else {
+                navigation.navigate('DeliveryboyDeliveryDetails', {
+                  order_number: item.item.order_number,
+                  package_photo: item.item.package_photo,
+                  orderItem: item.item,
+                });
+              }
+            }}
+            style={styles.packageDetailCard}>
+            <View style={styles.packageHeader}>
+              <Image
+                style={styles.packageManage}
+                source={require('../../image/Big-Package.png')}
+              />
+              <Text style={styles.deliveryTime}>
+                {item.item.delivery_boy_order_title}{' '}
+                {item.item.is_show_datetime_in_title == 1
+                  ? item.item.order_status === 'ORDER_PLACED'
+                    ? titleFormat(
+                        item.item.schedule_date_time || item.item.order_date,
+                      )
+                    : titleFormat(item.item.updated_on)
+                  : ''}
+                {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
               )} */}
-            </Text>
-          </View>
-
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From{' '}
-              <Text style={styles.Location}>
-                {getLocationAddress(item.item.pickup_location_id)}
               </Text>
-            </Text>
-          </View>
+            </View>
 
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To{' '}
-              <Text style={styles.Location}>
-                {getLocationAddress(item.item.dropoff_location_id)}
+            <View style={styles.packageMiddle}>
+              <Ionicons name="location-outline" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                {fromText}{' '}
+                <Text style={styles.Location}>
+                  {getLocationAddress(item.item.pickup_location_id)}
+                </Text>
               </Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>
-              Order ID: {item.item.order_number}
-            </Text>
-            <Text style={styles.orderId}>{item.item.company_name}</Text>
-          </View>
+            </View>
 
-          <View style={styles.borderShow}></View>
+            <View style={styles.packageMiddle}>
+              <MaterialIcons name="my-location" size={15} color="#717172" />
+              <Text style={styles.fromLocation}>
+                {toText}{' '}
+                <Text style={styles.Location}>
+                  {getLocationAddress(item.item.dropoff_location_id)}
+                </Text>
+              </Text>
+            </View>
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>
+                {orderID}: {item.item.order_number}
+              </Text>
+              <Text style={styles.orderId}>{item.item.company_name}</Text>
+            </View>
 
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>
-              €
-              {item.item.amount ? Number(item.item.amount).toFixed(2) : '34.00'}
-            </Text>
-          </View>
-        </TouchableOpacity>
-}
+            <View style={styles.borderShow}></View>
+
+            <View style={styles.footerCard}>
+              <Text style={styles.orderId}>{item.item.company_name}</Text>
+              <Text style={styles.valueMoney}>
+                €
+                {item.item.amount
+                  ? Number(item.item.amount).toFixed(2)
+                  : '34.00'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -364,10 +400,8 @@ createShiftOrder(item?.item):
             style={styles.loaderMap}
             source={require('../../image/No-Data-Table.png')}
           />
-          <Text style={styles.text}>No orders to show</Text>
-          <Text style={styles.subText}>
-            If there is any active order, it will be shown here..
-          </Text>
+          <Text style={styles.text}>{noOrdersToShow}</Text>
+          <Text style={styles.subText}>{noOrdersDescription}</Text>
         </View>
       </View>
     </View>
@@ -383,6 +417,19 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [checkMoreData, setCheckMoreData] = useState(true);
+  const shift = localizationText('Common', 'shift') || 'Shift';
+  const totalDays = localizationText('Common', 'totalDays') || 'Total days';
+  const totalHours = localizationText('Common', 'totalHours') || 'Total hours';
+  const aproxEarning =
+    localizationText('Common', 'aproxEarning') || 'Aprox earning';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const forText = localizationText('Common', 'for') || 'For';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const noOrdersToShow =
+    localizationText('Common', 'noOrdersToShow') || 'No orders to show';
+  const noOrdersDescription =
+    localizationText('Common', 'noOrdersDescription') || '';
 
   useFocusEffect(
     useCallback(() => {
@@ -422,7 +469,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         if (size === successResponse[0]._response.length) {
           setPage(page + 1);
           setCheckMoreData(true);
-        } else if(size > successResponse[0]._response.length ){
+        } else if (size > successResponse[0]._response.length) {
           setCheckMoreData(false);
         }
 
@@ -502,168 +549,187 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
     return result[0]?.address;
   };
 
-  const createShiftOrder=(item)=>{
-    console.log('item ====>',item)
+  const createShiftOrder = item => {
+    console.log('item ====>', item);
 
-    return( 
-    
+    return (
       <TouchableOpacity
-      onPress={() =>{
-        console.log('delivery_type_id ====>',item)
-        if(item?.delivery_type_id === 3){
-          navigation.navigate('DeliveryboyShiftDetails');
-        }else if(item?.delivery_type_id === 2 && item?.locations && item?.locations?.length > 0){
-          // navigation.navigate('DeliveryDetailsMultipleInvoice',{
-          //     orderItem: item.item,
-          // });
-        }else{
-          // navigation.navigate('DeliveryboyMainDeliveryDetails', {
-          //   orderItem: item.item,
-          //   componentType : 'DELIVERBOY'
-          // })
-        }
-      }
-      }
-      style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={{width: 25, height: 25}}
-              source={require('../../image/Big-Calender.png')}
-            />
-            <Text style={styles.deliveryTime}>Shift</Text>
+        onPress={() => {
+          console.log('delivery_type_id ====>', item);
+          if (item?.delivery_type_id === 3) {
+            navigation.navigate('DeliveryboyShiftDetails');
+          } else if (
+            item?.delivery_type_id === 2 &&
+            item?.locations &&
+            item?.locations?.length > 0
+          ) {
+            // navigation.navigate('DeliveryDetailsMultipleInvoice',{
+            //     orderItem: item.item,
+            // });
+          } else {
+            // navigation.navigate('DeliveryboyMainDeliveryDetails', {
+            //   orderItem: item.item,
+            //   componentType : 'DELIVERBOY'
+            // })
+          }
+        }}
+        style={styles.packageDetailCard}>
+        <View style={styles.packageHeader}>
+          <Image
+            style={{width: 25, height: 25}}
+            source={require('../../image/Big-Calender.png')}
+          />
+          <Text style={styles.deliveryTime}>{shift}</Text>
+        </View>
+
+        <View style={styles.overViewCard}>
+          <View>
+            <Text style={styles.requestOverview}>
+              {item.total_days ? item.total_days : 0}
+            </Text>
+            <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
           </View>
 
-          <View style={styles.overViewCard}>
-            <View>
-              <Text style={styles.requestOverview}>{item.total_days ?item.total_days :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total days</Text>
-            </View>
+          <View>
+            <Text style={styles.requestOverview}>
+              {item.total_hours ? item.total_hours.toFixed(2) : 0}
+            </Text>
+            <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
+          </View>
 
-            <View>
-              <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total hours</Text>
-            </View>
-
-            <View>
-              <Text style={styles.requestOverview}>
-                €<Text>{item.total_amount ? item.total_amount.toFixed(2) :0}</Text>
+          <View>
+            <Text style={styles.requestOverview}>
+              €
+              <Text>
+                {item.total_amount ? item.total_amount.toFixed(2) : 0}
               </Text>
-              <Text style={styles.requestOverviewInfo}>Aprox earning</Text>
-            </View>
-          </View>
-
-          <View style={styles.scheduleDateTimeCard}>
-            <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}</Text>
             </Text>
-            <View style={styles.borderShowoff} />
-            <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+            <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
+          </View>
+        </View>
+
+        <View style={styles.scheduleDateTimeCard}>
+          <Text style={styles.schaduleInfo}>
+            {fromText}{' '}
+            <Text style={styles.schaduleDateTime}>
+              {moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}
             </Text>
-          </View>
+          </Text>
+          <View style={styles.borderShowoff} />
+          <Text style={styles.schaduleInfo}>
+            {toText}{' '}
+            <Text style={styles.schaduleDateTime}>
+              {moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}
+            </Text>
+          </Text>
+        </View>
 
-          <View style={styles.borderShow}></View>
+        <View style={styles.borderShow}></View>
 
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For {item?.company_name ? item?.company_name : '-'}</Text>
-            <Text style={styles.valueMoney}>€34.00</Text>
-          </View>
-        </TouchableOpacity>
-    )
-  }
-
+        <View style={styles.footerCard}>
+          <Text style={styles.orderId}>
+            {forText} {item?.company_name ? item?.company_name : '-'}
+          </Text>
+          <Text style={styles.valueMoney}>€34.00</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderItem = item => {
-    console.log('item?.item?.delivery_type_id === 3 ====',item?.item?.delivery_type_id)
-    return(
-    <View style={{flex: 1}}>
-      <View
-        style={{
-          paddingHorizontal: 15,
-          paddingTop: 5,
-          backgroundColor: '#FBFAF5',
-        }}>
-
-        {
-          item?.item?.delivery_type_id === 3 ?
-          createShiftOrder(item?.item)
-          :
-          
-        <TouchableOpacity
-          onPress={() =>{
-            console.log('delivery_type_id ====>',item?.item)
-            if(item?.item?.delivery_type_id === 3){
-              navigation.navigate('DeliveryboyShiftDetails');
-            }else if(item?.item?.delivery_type_id === 2 && item?.item?.locations && item?.item?.locations?.length > 0){
-              navigation.navigate('DeliveryDetailsMultipleInvoice',{
-                  orderItem: item.item,
-              });
-            }else{
-              navigation.navigate('DeliveryboyMainDeliveryDetails', {
-                orderItem: item.item,
-                componentType : 'DELIVERBOY'
-              })
-            }
-          }
-          }
-          style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={styles.packageManage}
-              source={require('../../image/Big-Package.png')}
-            />
-            <Text style={styles.deliveryTime}>
-              {item.item.delivery_boy_order_title}{' '}
-              {item.item.is_show_datetime_in_title == 1
-                ? item.item.order_status === 'ORDER_PLACED'
-                  ? titleFormat(
-                      item.item.schedule_date_time || item.item.order_date,
-                    )
-                  : titleFormat(item.item.updated_on)
-                : ''}
-              {/* Scheduled on{' '}
+    console.log(
+      'item?.item?.delivery_type_id === 3 ====',
+      item?.item?.delivery_type_id,
+    );
+    return (
+      <View style={{flex: 1}}>
+        <View
+          style={{
+            paddingHorizontal: 15,
+            paddingTop: 5,
+            backgroundColor: '#FBFAF5',
+          }}>
+          {item?.item?.delivery_type_id === 3 ? (
+            createShiftOrder(item?.item)
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                console.log('delivery_type_id ====>', item?.item);
+                if (item?.item?.delivery_type_id === 3) {
+                  navigation.navigate('DeliveryboyShiftDetails');
+                } else if (
+                  item?.item?.delivery_type_id === 2 &&
+                  item?.item?.locations &&
+                  item?.item?.locations?.length > 0
+                ) {
+                  navigation.navigate('DeliveryDetailsMultipleInvoice', {
+                    orderItem: item.item,
+                  });
+                } else {
+                  navigation.navigate('DeliveryboyMainDeliveryDetails', {
+                    orderItem: item.item,
+                    componentType: 'DELIVERBOY',
+                  });
+                }
+              }}
+              style={styles.packageDetailCard}>
+              <View style={styles.packageHeader}>
+                <Image
+                  style={styles.packageManage}
+                  source={require('../../image/Big-Package.png')}
+                />
+                <Text style={styles.deliveryTime}>
+                  {item.item.delivery_boy_order_title}{' '}
+                  {item.item.is_show_datetime_in_title == 1
+                    ? item.item.order_status === 'ORDER_PLACED'
+                      ? titleFormat(
+                          item.item.schedule_date_time || item.item.order_date,
+                        )
+                      : titleFormat(item.item.updated_on)
+                    : ''}
+                  {/* Scheduled on{' '}
               {moment(new Date(item.item.delivery_date)).format(
                 'dddd, DD MMMM YYYY',
               )} */}
-            </Text>
-          </View>
+                </Text>
+              </View>
 
-          <View style={styles.packageMiddle}>
-            <Ionicons name="location-outline" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              From{' '}
-              <Text style={styles.Location}>
-                {getLocationAddress(item.item.pickup_location_id)}
-              </Text>
-            </Text>
-          </View>
+              <View style={styles.packageMiddle}>
+                <Ionicons name="location-outline" size={15} color="#717172" />
+                <Text style={styles.fromLocation}>
+                  {fromText}{' '}
+                  <Text style={styles.Location}>
+                    {getLocationAddress(item.item.pickup_location_id)}
+                  </Text>
+                </Text>
+              </View>
 
-          <View style={styles.packageMiddle}>
-            <MaterialIcons name="my-location" size={15} color="#717172" />
-            <Text style={styles.fromLocation}>
-              To{' '}
-              <Text style={styles.Location}>
-                {getLocationAddress(item.item.dropoff_location_id)}
-              </Text>
-            </Text>
-          </View>
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>
-              Order ID: {item.item.order_number}
-            </Text>
-            <Text style={styles.orderId}>{item.item.company_name}</Text>
-          </View>
+              <View style={styles.packageMiddle}>
+                <MaterialIcons name="my-location" size={15} color="#717172" />
+                <Text style={styles.fromLocation}>
+                  {toText}{' '}
+                  <Text style={styles.Location}>
+                    {getLocationAddress(item.item.dropoff_location_id)}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.footerCard}>
+                <Text style={styles.orderId}>
+                  {orderID}: {item.item.order_number}
+                </Text>
+                <Text style={styles.orderId}>{item.item.company_name}</Text>
+              </View>
 
-          <View style={styles.borderShow}></View>
+              <View style={styles.borderShow}></View>
 
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>{item.item.company_name}</Text>
-            <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
-          </View>
-        </TouchableOpacity>
-        }
+              <View style={styles.footerCard}>
+                <Text style={styles.orderId}>{item.item.company_name}</Text>
+                <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
 
-        {/* <View style={styles.packageDetailCard}>
+          {/* <View style={styles.packageDetailCard}>
           <View style={styles.packageHeader}>
             <Image
               style={{width: 25, height: 25}}
@@ -708,9 +774,10 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.valueMoney}>€34.00</Text>
           </View>
         </View> */}
+        </View>
       </View>
-    </View>
-  )};
+    );
+  };
 
   const handleLoadMorePastRecord = () => {
     if (checkMoreData) {
@@ -749,10 +816,8 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             style={styles.loaderMap}
             source={require('../../image/No-Data-Table.png')}
           />
-          <Text style={styles.text}>No orders to show</Text>
-          <Text style={styles.subText}>
-            If there is any active order, it will be shown here..
-          </Text>
+          <Text style={styles.text}>{noOrdersToShow}</Text>
+          <Text style={styles.subText}>{noOrdersDescription}</Text>
         </View>
       </View>
     </View>
@@ -778,6 +843,8 @@ const DeliveryboyHistory = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
   const [filterCriteria, setFilterCriteria] = useState('N');
   const [isEnabled, setIsEnabled] = useState(false);
+  const ongoing = localizationText('Common', 'ongoing') || 'Ongoing';
+  const past = localizationText('Common', 'past') || 'Past';
 
   // Toggle the switch and update filterCriteria
   const toggleSwitch = () => {
@@ -794,7 +861,9 @@ const DeliveryboyHistory = ({navigation}) => {
         style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#fff'}}>
         {/* Search Bar */}
         <View style={styles.header}>
-          <Text style={styles.headerText}>History</Text>
+          <Text style={styles.headerText}>
+            {localizationText('Common', 'history')}
+          </Text>
         </View>
         <View style={styles.searchContainer}>
           <AntDesign
@@ -806,7 +875,7 @@ const DeliveryboyHistory = ({navigation}) => {
           <TextInput
             style={styles.searchinput}
             placeholderTextColor="#999"
-            placeholder="Search your deliveries"
+            placeholder={localizationText('Common', 'searchYourDeliveries')}
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -823,7 +892,9 @@ const DeliveryboyHistory = ({navigation}) => {
       </View>
 
       <View style={styles.containerSwitch}>
-        <Text style={styles.label}>Show Enterprise Orders</Text>
+        <Text style={styles.label}>
+          {localizationText('Common', 'showEnterpriseOrders')}
+        </Text>
         <Switch
           trackColor={{false: '#767577', true: '#FFC72B'}}
           thumbColor={isEnabled ? '#f4f3f4' : '#f4f3f4'}
@@ -842,7 +913,7 @@ const DeliveryboyHistory = ({navigation}) => {
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
           tabBarStyle: [{display: 'flex', backgroundColor: '#fff'}],
         }}>
-        <Tab.Screen name="Ongoing">
+        <Tab.Screen name={ongoing}>
           {() => (
             <TodayList
               navigation={navigation}
@@ -851,7 +922,7 @@ const DeliveryboyHistory = ({navigation}) => {
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Past">
+        <Tab.Screen name={past}>
           {() => (
             <PastList
               navigation={navigation}
@@ -1057,7 +1128,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   label: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
   },

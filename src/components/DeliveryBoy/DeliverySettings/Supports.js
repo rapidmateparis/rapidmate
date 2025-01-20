@@ -11,13 +11,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../../../colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { localizationText } from '../../../utils/common';
 
 const Supports = () => {
   const navigation = useNavigation();
-
-  const handleContinue = () => {
-    navigation.navigate('ChooseDeliveryType');
-  };
+  const orderClosedEarned =
+      localizationText('Common', 'orderClosedEarned') ||
+      'This order is closed, you earned';
 
   const renderCard = (option, iconSource, title, subtitle, imageStyle) => {
     return (
@@ -46,7 +46,7 @@ const Supports = () => {
         {renderCard(
           'ReportSafety',
           require('../../../image/ReportSaftyIcon.png'),
-          'Report safety issue',
+          {orderClosedEarned},
           'Tell us here if you have any safety issue',
         )}
         {renderCard(

@@ -35,7 +35,7 @@ import {Buffer} from 'buffer';
 import {API} from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
 import {useUserDetails} from '../commonComponent/StoreContext';
-import { utcLocal } from '../../utils/common';
+import { localizationText, utcLocal } from '../../utils/common';
 
 const DeliveryDetails = ({navigation, route}) => {
   const {setLoading} = useLoader();
@@ -51,6 +51,24 @@ const DeliveryDetails = ({navigation, route}) => {
   const {userDetails} = useUserDetails();
   const [locations, setLocations] = useState([]);
   const [multipleOrderLocation, setMultipleOrderLocation] = useState([]);
+  const pickupInformation = localizationText('Main', 'pickupInformation') || 'Pickup Information';
+  const dropOffInformation = localizationText('Main', 'dropOffInformation') || 'Drop off Information';
+  const packageInformation = localizationText('Main', 'packageInformation') || 'Package information';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const orderDate = localizationText('Common', 'orderDate') || 'Order Date';
+  const vehicleText = localizationText('Common', 'vehicle') || 'Vehicle';
+  const pickupOTP = localizationText('Common', 'pickupOTP') || 'Pickup OTP';
+  const deliveredOTP = localizationText('Common', 'deliveredOTP') || 'Delivered OTP';
+  const orderFare = localizationText('Common', 'orderFare') || 'Order fare';
+  const travelled = localizationText('Common', 'travelled') || 'Travelled';
+  const inText = localizationText('Common', 'inText') || 'in';
+  const tax = localizationText('Common', 'tax') || 'Tax';
+  const promo = localizationText('Common', 'promo') || 'Promo';
+  const amountCharged = localizationText('Common', 'amountCharged') || 'Amount charged';
+  const paidWith = localizationText('Common', 'paidWith') || 'Paid with';
+  const downloadInvoice = localizationText('Common', 'downloadInvoice') || 'Download invoice';
+  const cancelRequest = localizationText('Common', 'cancelRequest') || 'Cancel request';
+  
 
   const enterpriseDestinationList = route?.params?.orderItem?.locations || []
 
@@ -495,7 +513,7 @@ const DeliveryDetails = ({navigation, route}) => {
               source={require('../../image/Pickup-Package-Icon.png')}
             />
             <View style={{marginLeft: 10}}>
-              <Text style={styles.dropInfo}>Pickup information</Text>
+              <Text style={styles.dropInfo}>{pickupInformation}</Text>
               {order.company_name && <Text style={styles.companyInfo}>
                 {order.company_name ? order.company_name : ''}
               </Text>}
@@ -525,7 +543,7 @@ const DeliveryDetails = ({navigation, route}) => {
               source={require('../../image/package-img.png')}
             />
             <View style={{marginLeft: 10}}>
-              <Text style={styles.dropInfo}>Drop off information</Text>
+              <Text style={styles.dropInfo}>{dropOffInformation}</Text>
               {order.company_name && <Text style={styles.companyInfo}>
                 {order.company_name ? order.drop_company_name : ''}
               </Text>}
@@ -580,30 +598,30 @@ const DeliveryDetails = ({navigation, route}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Package information</Text>
+              <Text style={styles.orderFare}>{packageInformation}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Order ID:</Text>
+              <Text style={styles.orderFareValue}>{orderID}:</Text>
               <Text style={styles.value}>{order.order_number}</Text>
             </View>
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Order Date:</Text>
+              <Text style={styles.orderFareValue}>{orderDate}:</Text>
               <Text style={styles.value}>{utcLocal(order.order_date)}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Vehicle:</Text>
+              <Text style={styles.orderFareValue}>{vehicleText}:</Text>
               <Text style={styles.value}>{vehicleType.vehicle_type}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Pickup OTP:</Text>
+              <Text style={styles.orderFareValue}>{pickupOTP}:</Text>
               <Text style={styles.value}>{route.params?.orderItem?.otp}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Delivered OTP:</Text>
+              <Text style={styles.orderFareValue}>{deliveredOTP}:</Text>
               <Text style={styles.value}>
                 {route.params?.orderItem?.delivered_otp}
               </Text>
@@ -617,40 +635,40 @@ const DeliveryDetails = ({navigation, route}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare</Text>
+              <Text style={styles.orderFare}>{orderFare}</Text>
               <Text style={styles.totalmoney}>
                 € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
             <Text style={styles.travel}>
-              Travelled {order.distance ? order.distance.toFixed(2) : '0.00'} km
-              in {order.total_duration ? order.total_duration : '00'}
+              {travelled} {order.distance ? order.distance.toFixed(2) : '0.00'} km {''}
+              {inText} {order.total_duration ? order.total_duration : '00'}
             </Text>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Order fare</Text>
+              <Text style={styles.orderFareValue}>{orderFare}</Text>
               <Text style={styles.value}>
                 € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Tax</Text>
+              <Text style={styles.orderFareValue}>{tax}</Text>
               <Text style={styles.value}>
                 € {getTaxAmount()}
               </Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Promo</Text>
+              <Text style={styles.orderFareValue}>{promo}</Text>
               <Text style={styles.value}>
                 {order.promo_value ? order.promo_value : '0'}
               </Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Amount charged</Text>
+              <Text style={styles.orderFareValue}>{amountCharged}</Text>
               <Text style={styles.value}>
                 € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
@@ -659,7 +677,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
               <Text style={styles.paidWith}>
-                Paid with {order.paid_with ? order.paid_with : ''}
+                {paidWith} {''} {order.paid_with ? order.paid_with : ''}
               </Text>
             </View>
           </View>
@@ -671,7 +689,7 @@ const DeliveryDetails = ({navigation, route}) => {
             onPress={downloadInvoiceFile}>
             <View style={styles.invoiceCard}>
               <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-              <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+              <Text style={styles.downloadInvoiceText}>{downloadInvoice}</Text>
             </View>
             <View>
               <Feather
@@ -689,7 +707,7 @@ const DeliveryDetails = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => toggleModal()}
           style={styles.requestTouch}>
-          <Text style={styles.cancelRequest}>Cancel request</Text>
+          <Text style={styles.cancelRequest}>{cancelRequest}</Text>
         </TouchableOpacity>
       ) : null}
 
