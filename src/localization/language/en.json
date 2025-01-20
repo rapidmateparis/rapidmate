@@ -174,7 +174,23 @@
     "goingToPickup": "Going to pickup",
     "reached": "Reached",
     "delivered": "Delivered",
-    "orderClosedEarned": "This order is closed, you earned"
+    "orderClosedEarned": "This order is closed, you earned",
+    "reportSafetyIssue": "Report safety issue",
+    "reportSafetyIssueDescription": "Tell us here if you have any safety issue",
+    "driverFeedback": "Driver feedback",
+    "driverFeedbackDescription": "Tell us know your concern about the driver",
+    "lostSomething": "Lost something?",
+    "lostSomethingDescription": "Tell us if you have lost or some missing item",
+    "waiting": "Waiting",
+    "comments": "Comments",
+    "companyInformation": "Company information",
+    "shiftDifferentSlots": "Some days have different time slots, please see details!",
+    "seeDetails": "See details",
+    "manageDeliveryPreferance": "Manage delivery preferance",
+    "transactions": "Transactions",
+    "deleteText": "Delete",
+    "addNewAddress": "Add new address",
+    "editAddress": "Edit address"
   },
   "NavHeaderTitles": {
     "takeSelfie": "Take a selfie",
@@ -249,6 +265,7 @@
     "dropOffInformation": "Drop off information",
     "packageInformation": "Package information",
     "couldntFindDriver": "Couldn’t find driver",
-    "couldntFindDriverDescription": "No drivers available in your area for now, please try again later"
+    "couldntFindDriverDescription": "No drivers available in your area for now, please try again later",
+    "shiftDetailsSwipeDescription": "If you are at company’s location and ready to start the shift, please swipe below!"
   }
 }

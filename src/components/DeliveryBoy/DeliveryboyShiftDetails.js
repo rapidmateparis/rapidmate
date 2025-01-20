@@ -15,26 +15,26 @@ import {colors} from '../../colors';
 import SwipeButton from 'rn-swipe-button';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import StartShift from '../../image/play-32.png';
-import { useNavigation } from '@react-navigation/native';
-import { API } from '../../utils/constant';
-import { updateShiftOrderStatus } from '../../data_manager';
-import { utcLocal } from '../../utils/common';
+import {useNavigation} from '@react-navigation/native';
+import {API} from '../../utils/constant';
+import {updateShiftOrderStatus} from '../../data_manager';
+import {localizationText, utcLocal} from '../../utils/common';
 import moment from 'moment';
-import { useLoader } from '../../utils/loaderContext';
-import { useUserDetails } from '../commonComponent/StoreContext';
+import {useLoader} from '../../utils/loaderContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
 
-const DeliveryboyShiftDetails = ({navigation,route}) => {
+const DeliveryboyShiftDetails = ({navigation, route}) => {
   const defaultStatusMessage = 'Swipe to accept the request';
   const [swipeStatusMessage, setSwipeStatusMessage] =
     useState(defaultStatusMessage);
   const [forceResetLastButton, setForceResetLastButton] = useState(null);
-  const orderDetails =  route?.params?.orderItem
+  const orderDetails = route?.params?.orderItem;
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
   const [delivered, setDelivered] = useState(false);
   const {setLoading} = useLoader();
-  const {saveUserDetails,userDetails} = useUserDetails();
+  const {saveUserDetails, userDetails} = useUserDetails();
 
-  console.log('orderDetails ====>>',orderDetails)
+  console.log('orderDetails ====>>', orderDetails);
   useEffect(() => {
     const interval = setInterval(
       () => setSwipeStatusMessage(defaultStatusMessage),
@@ -43,59 +43,66 @@ const DeliveryboyShiftDetails = ({navigation,route}) => {
     return () => clearInterval(interval);
   }, [defaultStatusMessage]);
 
-
-  const startCreateShiftOrder=()=>{
-    if(checkStartAction()){
+  const startCreateShiftOrder = () => {
+    if (checkStartAction()) {
       setLoading(true);
       updateShiftOrderStatus(
         {
-          "order_number" : orderDetails.order_number,
-          "status" : "Start",
-          "slot_id" : checkStartAction().id   
+          order_number: orderDetails.order_number,
+          status: 'Start',
+          slot_id: checkStartAction().id,
         },
-        successRes=>{
+        successRes => {
+          const shiftOrderRunningTime = {
+            order_number: orderDetails.order_number,
+            status: 'Start',
+            slot_id: checkStartAction().id,
+            start_time: new Date(),
+          };
 
-         const shiftOrderRunningTime =  {
-            "order_number" : orderDetails.order_number,
-            "status" : "Start",
-            "slot_id" : checkStartAction().id,
-            "start_time":new Date()
-          }
-
-          saveUserDetails({...userDetails,createShiftOrder:shiftOrderRunningTime});
-
-
+          saveUserDetails({
+            ...userDetails,
+            createShiftOrder: shiftOrderRunningTime,
+          });
 
           setLoading(false);
-          navigation.navigate('DeliveryboyShiftStarted',{orderItem:orderDetails});
-          console.log('successRes  =====>',successRes)
+          navigation.navigate('DeliveryboyShiftStarted', {
+            orderItem: orderDetails,
+          });
+          console.log('successRes  =====>', successRes);
         },
-        errorRes=>{
+        errorRes => {
           setLoading(false);
-          console.log('errorRes  =====>',errorRes)
-        }
-      )
+          console.log('errorRes  =====>', errorRes);
+        },
+      );
     }
+  };
 
-  }
+  const checkStartAction = () => {
+    const slots = orderDetails?.slots ? orderDetails?.slots : [];
+    const todayDate = moment(new Date()).format('DD/MM/YYYY');
+    console.log('todayDate  =====>', todayDate);
 
-  const checkStartAction=()=>{
-    const slots = orderDetails?.slots ? orderDetails?.slots :[]
-    const todayDate = moment(new Date()).format('DD/MM/YYYY')
-    console.log('todayDate  =====>',todayDate)
+    const todayList = slots.filter(
+      slot =>
+        moment(utcLocal(slot.slot_date)).format('DD/MM/YYYY') === todayDate,
+    );
 
-    const todayList = slots.filter(slot=>moment(utcLocal(slot.slot_date)).format('DD/MM/YYYY') === todayDate)
+    const getSlot = todayList.length > 0 ? todayList[0] : null;
+    return getSlot;
+  };
+  useEffect(() => {
+    if (
+      checkStartAction() &&
+      checkStartAction()?.id &&
+      checkStartAction()?.order_status == 'WORKING_INPROGRESS'
+    ) {
+      navigation.navigate('DeliveryboyShiftStarted', {orderItem: orderDetails});
+    }
+  }, []);
 
-    const getSlot = todayList.length > 0 ? todayList[0] : null
-    return getSlot
-  }
-useEffect(()=>{
-  if(checkStartAction() && checkStartAction()?.id && checkStartAction()?.order_status == "WORKING_INPROGRESS"){
-    navigation.navigate('DeliveryboyShiftStarted',{orderItem:orderDetails});
-  }
-},[])
-
-console.log('checkStartAction  =====>',checkStartAction())
+  console.log('checkStartAction  =====>', checkStartAction());
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -105,7 +112,9 @@ console.log('checkStartAction  =====>',checkStartAction())
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
-              <Text style={styles.dropInfo}>Company information</Text>
+              <Text style={styles.dropInfo}>
+                {localizationText('Common', 'companyInformation')}
+              </Text>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('DeliveryboyMainDeliveryDetails')
@@ -115,15 +124,21 @@ console.log('checkStartAction  =====>',checkStartAction())
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
-                <Text style={styles.companyInfo}>{orderDetails?.company_name ? orderDetails?.company_name : '-'}</Text>
+                <Text style={styles.companyInfo}>
+                  {orderDetails?.company_name
+                    ? orderDetails?.company_name
+                    : '-'}
+                </Text>
                 <Text style={styles.dropInfo}>
-                  {orderDetails?.company_address ?  orderDetails.company_address : "22 Rue de la Liberté, Paris, Île-de-France."}
+                  {orderDetails?.company_address
+                    ? orderDetails.company_address
+                    : '22 Rue de la Liberté, Paris, Île-de-France.'}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
                   <Image source={require('../../image/chat-icon.png')} />
-                </TouchableOpacity> 
+                </TouchableOpacity>
                 <TouchableOpacity>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
@@ -140,49 +155,82 @@ console.log('checkStartAction  =====>',checkStartAction())
                   style={{width: 25, height: 25}}
                   source={require('../../image/Big-Calender.png')}
                 />
-                <Text style={styles.deliveryTime}>Shift</Text>
+                <Text style={styles.deliveryTime}>
+                  {localizationText('Common', 'shift')}
+                </Text>
               </View>
 
               <View style={styles.overViewCard}>
                 <View>
-                  <Text style={styles.requestOverview}>{orderDetails.total_days ?orderDetails.total_days :0}</Text>
-                  <Text style={styles.requestOverviewInfo}>Total days</Text>
-                </View>
-
-                <View>
-                  <Text style={styles.requestOverview}>{orderDetails.total_hours ? orderDetails.total_hours.toFixed(2) :0}</Text>
-                  <Text style={styles.requestOverviewInfo}>Total hours</Text>
+                  <Text style={styles.requestOverview}>
+                    {orderDetails.total_days ? orderDetails.total_days : 0}
+                  </Text>
+                  <Text style={styles.requestOverviewInfo}>
+                    {localizationText('Common', 'totalDays')}
+                  </Text>
                 </View>
 
                 <View>
                   <Text style={styles.requestOverview}>
-                    €<Text>{orderDetails.total_amount ? orderDetails.total_amount.toFixed(2) :0}</Text>
+                    {orderDetails.total_hours
+                      ? orderDetails.total_hours.toFixed(2)
+                      : 0}
                   </Text>
-                  <Text style={styles.requestOverviewInfo}>Aprox earning</Text>
+                  <Text style={styles.requestOverviewInfo}>
+                    {localizationText('Common', 'totalHours')}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={styles.requestOverview}>
+                    €
+                    <Text>
+                      {orderDetails.total_amount
+                        ? orderDetails.total_amount.toFixed(2)
+                        : 0}
+                    </Text>
+                  </Text>
+                  <Text style={styles.requestOverviewInfo}>
+                    {localizationText('Common', 'aproxEarning')}
+                  </Text>
                 </View>
               </View>
 
               <View>
                 <View style={styles.scheduleDateTimeCard}>
                   <Text style={styles.schaduleInfo}>
-                    From{' '}
-                    <Text style={styles.schaduleDateTime}>{moment(utcLocal(orderDetails.shift_from_date)).format('DD-MM-YYYY')}</Text>
+                    {localizationText('Common', 'from')}{' '}
+                    <Text style={styles.schaduleDateTime}>
+                      {moment(utcLocal(orderDetails.shift_from_date)).format(
+                        'DD-MM-YYYY',
+                      )}
+                    </Text>
                   </Text>
                   <View style={styles.borderShowoff} />
                   <Text style={styles.schaduleInfo}>
-                    From{' '}
-                    <Text style={styles.schaduleDateTime}>{moment(utcLocal(orderDetails.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+                    {localizationText('Common', 'to')}{' '}
+                    <Text style={styles.schaduleDateTime}>
+                      {moment(utcLocal(orderDetails.shift_tp_date)).format(
+                        'DD-MM-YYYY',
+                      )}
+                    </Text>
                   </Text>
                 </View>
                 <Text style={styles.timeSlotDetails}>
-                  Some days have different time slots, please see details!
+                  {localizationText('Common', 'shiftDifferentSlots')}
                 </Text>
               </View>
             </View>
             <View style={styles.moreDetails}>
-              <Text style={styles.distance}>See details</Text>
+              <Text style={styles.distance}>
+                {localizationText('Common', 'seeDetails')}
+              </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('DeliveryScheduleDetails',{orderItem:orderDetails})}>
+                onPress={() =>
+                  navigation.navigate('DeliveryScheduleDetails', {
+                    orderItem: orderDetails,
+                  })
+                }>
                 <AntDesign name="arrowright" size={18} color="#FF0058" />
               </TouchableOpacity>
             </View>
@@ -190,12 +238,16 @@ console.log('checkStartAction  =====>',checkStartAction())
 
           <View style={styles.vehicleCardInfo}>
             <View>
-              <Text style={styles.packageTitle}>Vehicle requested</Text>
-              <Text style={styles.orderdetails}>{orderDetails.vehicle_type}</Text>
+              <Text style={styles.packageTitle}>
+                {localizationText('Common', 'vehicleRequested')}
+              </Text>
+              <Text style={styles.orderdetails}>
+                {orderDetails.vehicle_type}
+              </Text>
             </View>
             <View>
               <Image
-              style={{width: 45, height: 30,}}
+                style={{width: 45, height: 30}}
                 source={require('../../image/Delivery-PickupTruck-Icon.png')}
               />
             </View>
@@ -208,54 +260,58 @@ console.log('checkStartAction  =====>',checkStartAction())
         <SafeAreaView>
           <View style={styles.container}>
             <Text style={styles.swipeInfo}>
-              If you are at company’s location and ready to start the shift,
-              please swipe below!
+              {localizationText('Main', 'shiftDetailsSwipeDescription')}
             </Text>
-            {
-              !!checkStartAction()?.id && 
+            {!!checkStartAction()?.id && (
               <>
-            <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
-            <SwipeButton
-              onSwipeFail={() => updateSwipeStatusMessage('Incomplete swipe!')}
-              onSwipeStart={() => updateSwipeStatusMessage('Swipe started!')}
-              onSwipeSuccess={() => {
-                // Alert.alert('swipe success---')
-                updateSwipeStatusMessage('Request accepted');
-                startCreateShiftOrder()
-                // navigation.navigate('DeliveryboyShiftStarted');
-              }}
-              thumbIconImageSource={StartShift}
-              railBackgroundColor="#27AE601F"
-              railStyles={{
-                backgroundColor: '#27AE601F',
-                borderColor: '#27AE60',
-              }}
-              thumbIconBackgroundColor="#4BAE4F"
-              thumbIconStyles={{padding: 0, width: 0, borderWidth: 0}}
-              thumbIconWidth={50}
-              title={
-                <View style={styles.swipeTitleComp}>
-                  <Text style={{color: colors.text,}}>Swipe to start shift</Text>
-                  <AntDesign
-                    name="doubleright"
-                    size={18}
-                    color="#000"
-                    style={styles.copyIcon}
-                  />
-                </View>
-              }
-              enable
-              titleStyles={{
-                color: '#19151C',
-                fontSize: 14,
-                fontFamily: 'Montserrat-Regular',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            />
-            </>
-            }
+                <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
+                <SwipeButton
+                  onSwipeFail={() =>
+                    updateSwipeStatusMessage('Incomplete swipe!')
+                  }
+                  onSwipeStart={() =>
+                    updateSwipeStatusMessage('Swipe started!')
+                  }
+                  onSwipeSuccess={() => {
+                    // Alert.alert('swipe success---')
+                    updateSwipeStatusMessage('Shift accepted');
+                    startCreateShiftOrder();
+                    // navigation.navigate('DeliveryboyShiftStarted');
+                  }}
+                  thumbIconImageSource={StartShift}
+                  railBackgroundColor="#27AE601F"
+                  railStyles={{
+                    backgroundColor: '#27AE601F',
+                    borderColor: '#27AE60',
+                  }}
+                  thumbIconBackgroundColor="#4BAE4F"
+                  thumbIconStyles={{padding: 0, width: 0, borderWidth: 0}}
+                  thumbIconWidth={50}
+                  title={
+                    <View style={styles.swipeTitleComp}>
+                      <Text style={{color: colors.text}}>
+                        Swipe to start shift
+                      </Text>
+                      <AntDesign
+                        name="doubleright"
+                        size={18}
+                        color="#000"
+                        style={styles.copyIcon}
+                      />
+                    </View>
+                  }
+                  enable
+                  titleStyles={{
+                    color: '#19151C',
+                    fontSize: 14,
+                    fontFamily: 'Montserrat-Regular',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                />
+              </>
+            )}
           </View>
         </SafeAreaView>
       </View>
@@ -536,7 +592,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginVertical: 10,
   },
-  swipeBt:{
+  swipeBt: {
     marginTop: '30%',
   },
 });

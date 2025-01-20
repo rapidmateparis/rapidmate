@@ -174,7 +174,23 @@
     "goingToPickup": "Aller à la cueillette",
     "reached": "Atteint",
     "delivered": "Livré",
-    "orderClosedEarned": "Cette commande est clôturée, vous avez gagné"
+    "orderClosedEarned": "Cette commande est clôturée, vous avez gagné",
+    "reportSafetyIssue": "Signaler un problème de sécurité",
+    "reportSafetyIssueDescription": "Si vous avez un problème de sécurité, dites-le nous ici",
+    "driverFeedback": "Retour d'information sur le conducteur",
+    "driverFeedbackDescription": "Faites-nous part de vos préoccupations concernant le conducteur",
+    "lostSomething": "Perdu quelque chose ?",
+    "lostSomethingDescription": "Signalez-nous si vous avez perdu un objet ou s'il en manque un",
+    "waiting": "Attente",
+    "comments": "Comments",
+    "companyInformation": "Informations sur l'entreprise",
+    "shiftDifferentSlots": "Certains jours ont des créneaux horaires différents, voir les détails !",
+    "seeDetails": "Voir les détails",
+    "manageDeliveryPreferance": "Gérer les préférences de livraison",
+    "transactions": "Transactions",
+    "deleteText": "Supprimer",
+    "addNewAddress": "Ajouter une nouvelle adresse",
+    "editAddress": "Editer l'adresse"
   },
   "NavHeaderTitles": {
     "takeSelfie": "Prendre un selfie",
@@ -249,6 +265,7 @@
     "dropOffInformation": "Informations sur les chutes",
     "packageInformation": "Informations sur le paquet",
     "couldntFindDriver": "Impossible de trouver le pilote",
-    "couldntFindDriverDescription": "No drivers available in your area for now, please try again later"
+    "couldntFindDriverDescription": "No drivers available in your area for now, please try again later",
+    "shiftDetailsSwipeDescription": "Si vous êtes sur le site de l'entreprise et prêt(e) à commencer le travail, veuillez cliquer ci-dessous !"
   }
 }

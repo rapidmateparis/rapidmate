@@ -21,6 +21,7 @@ import {Buffer} from 'buffer';
 import {API} from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
 import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 
 const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
@@ -28,10 +29,10 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
   const [pickUpLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
 
-  console.log("first", orderDetails)
+  console.log('first', orderDetails);
 
   useEffect(() => {
-    console.log("orderDetails.pickup_location_id", orderDetails);
+    console.log('orderDetails.pickup_location_id', orderDetails);
     getLocationInfoById(orderDetails.pickup_location_id, 0);
     getLocationInfoById(orderDetails.dropoff_location_id, 1);
   }, []);
@@ -40,11 +41,21 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     setLoading(true);
     try {
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderDetails.order_number,'deliveryboy', resolve, reject);
+        downloadInvoiceOrder(
+          orderDetails.order_number,
+          'deliveryboy',
+          resolve,
+          reject,
+        );
       });
 
-      const pdf = API.downloadInvoice + orderDetails.order_number+'/'+'deliveryboy'+'?show=true'
-      downloadFile(pdf)
+      const pdf =
+        API.downloadInvoice +
+        orderDetails.order_number +
+        '/' +
+        'deliveryboy' +
+        '?show=true';
+      downloadFile(pdf);
       // const invoiceData = successResponse;
       // const filePath =
       //   Platform.OS === 'android'
@@ -80,12 +91,14 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     }
   };
 
-  const downloadFile = (pdf) => {
+  const downloadFile = pdf => {
     setLoading(true);
     let date = new Date();
     let exe = '.pdf';
     let filename =
-    `invoice_${orderDetails.order_number}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
+      `invoice_${orderDetails.order_number}` +
+      Math.floor(date.getTime() + date.getSeconds() / 2) +
+      exe;
     const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
 
     const options = {
@@ -95,13 +108,13 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
 
     RNFS.downloadFile(options)
       .promise.then(() => {
-          setTimeout(() => {
-            FileViewer.open(localFile);
-          }, 300);
+        setTimeout(() => {
+          FileViewer.open(localFile);
+        }, 300);
       })
       .then(() => {
         setLoading(false);
-          Linking.openURL(pdf)
+        Linking.openURL(pdf);
       })
       .catch(error => {
         setLoading(false);
@@ -162,14 +175,20 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             source={require('../../image/Pickup-Package-Icon.png')}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup information</Text>
+            <Text style={styles.dropInfo}>
+              {localizationText('Main', 'pickupInformation')}
+            </Text>
             <Text style={styles.companyInfo}>
               {orderDetails.company_name
                 ? orderDetails.company_name
                 : 'Company Name'}
             </Text>
             <Text style={styles.dropInfo}>
-              {pickUpLocation?.address || ''}{', '}{pickUpLocation?.city}{', '}{pickUpLocation?.state}
+              {pickUpLocation?.address || ''}
+              {', '}
+              {pickUpLocation?.city}
+              {', '}
+              {pickUpLocation?.state}
             </Text>
           </View>
         </View>
@@ -180,16 +199,26 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             source={require('../../image/package-img.png')}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off information</Text>
+            <Text style={styles.dropInfo}>
+              {localizationText('Main', 'dropOffInformation')}
+            </Text>
             <Text style={styles.companyInfo}>
               {orderDetails.drop_company_name
                 ? orderDetails.drop_company_name
                 : 'Company Name'}
             </Text>
-            {dropOffLocation &&  dropOffLocation?.address && dropOffLocation.city &&dropOffLocation.state && <Text style={styles.dropInfo}>
-              {dropOffLocation.address}{', '}{dropOffLocation.city}{', '}
-              {dropOffLocation.state}
-            </Text>}
+            {dropOffLocation &&
+              dropOffLocation?.address &&
+              dropOffLocation.city &&
+              dropOffLocation.state && (
+                <Text style={styles.dropInfo}>
+                  {dropOffLocation.address}
+                  {', '}
+                  {dropOffLocation.city}
+                  {', '}
+                  {dropOffLocation.state}
+                </Text>
+              )}
           </View>
         </View>
 
@@ -199,21 +228,25 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare</Text>
+              <Text style={styles.orderFare}>
+                {localizationText('Common', 'orderFare')}
+              </Text>
               <Text style={styles.totalmoney}>€ {orderDetails.amount}</Text>
             </View>
 
             <Text style={styles.travel}>
-              Travelled{' '}
+              {localizationText('Common', 'travelled')}{' '}
               {orderDetails.distance
                 ? orderDetails.distance.toFixed(2)
                 : '0.00'}{' '}
-              km in{' '}
+              km {localizationText('Common', 'inText')}{' '}
               {orderDetails.total_duration ? orderDetails.total_duration : '00'}
             </Text>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Order fare</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'orderFare')}
+              </Text>
               <Text style={styles.value}>
                 €{' '}
                 {orderDetails.order_amount
@@ -223,7 +256,9 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'waiting')}
+              </Text>
               <Text style={styles.value}>
                 €{' '}
                 {orderDetails.waiting_fare
@@ -233,14 +268,18 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Promo</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'promo')}
+              </Text>
               <Text style={styles.value}>
                 {orderDetails.promo_value ? orderDetails.promo_value : '0%'}
               </Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Amount charged</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'amountCharged')}
+              </Text>
               <Text style={styles.value}>
                 €{' '}
                 {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
@@ -250,28 +289,31 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
               <Text style={styles.paidWith}>
-                Paid with {orderDetails.paid_with ? orderDetails.paid_with : ''}
+                {localizationText('Common', 'paidWith')}{' '}
+                {orderDetails.paid_with ? orderDetails.paid_with : ''}
               </Text>
             </View>
           </View>
         </View>
         {console.log(orderDetails)}
         <View style={styles.packageInformationCard}>
-          <Text style={styles.packageTitle}>Package information</Text>
+          <Text style={styles.packageTitle}>
+            {localizationText('Main', 'packageInformation')}
+          </Text>
           <Text style={styles.orderdetails}>
-            Order ID:{' '}
+            {localizationText('Common', 'orderID')}:{' '}
             <Text style={styles.detailsId}>
               {orderDetails.order_number ? orderDetails.order_number : ''}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Comments:{' '}
+            {localizationText('Common', 'comments')}:{' '}
             <Text style={styles.detailsId}>
               {orderDetails.pickup_notes ? orderDetails.pickup_notes : ''}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Vehicle:{' '}
+            {localizationText('Common', 'vehicle')}:{' '}
             <Text style={styles.detailsId}>
               {orderDetails.vehicle_type ? orderDetails.vehicle_type : ''}
             </Text>
@@ -284,7 +326,9 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           <View style={styles.invoiceCardBtn}>
             <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
 
-            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+            <Text style={styles.downloadInvoiceText}>
+              {localizationText('Common', 'downloadInvoice')}
+            </Text>
           </View>
           <View>
             <Feather
