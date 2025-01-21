@@ -14,10 +14,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import RNRestart from 'react-native-restart';
 import {API} from '../../../utils/constant';
+import {localizationText} from '../../../utils/common';
+import i18n from '../../../localization/localizationUtils';
 
 const DeliveryboySettings = ({navigation}) => {
   const {userDetails} = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+
+  const languages = [
+    {label: 'English', key: 'en'},
+    {label: 'French', key: 'fr'},
+  ];
+
+  const getCurrentSelectedLanguage = () => {
+    const currentLanguage = i18n.language;
+    const findLang = languages.find(lang => lang.key === currentLanguage);
+    if (!findLang) return '';
+    else return findLang.label;
+  };
 
   const clearAsyncStorage = async () => {
     await AsyncStorage.clear();
@@ -52,7 +67,9 @@ const DeliveryboySettings = ({navigation}) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('DeliveryboyManageProfile')}
               style={styles.goprofile}>
-              <Text style={styles.manageProfile}>Manage your profile</Text>
+              <Text style={styles.manageProfile}>
+                {localizationText('Common', 'manageYourProfile')}
+              </Text>
               <AntDesign name="right" size={13} color="#000000" />
             </TouchableOpacity>
           </View>
@@ -64,7 +81,9 @@ const DeliveryboySettings = ({navigation}) => {
               navigation.navigate('AddressBook', {userDetails: userDetails})
             }
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Address book</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'addressBook')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -73,7 +92,9 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryPreferance')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Manage delivery preferance</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'manageDeliveryPreferance')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -82,7 +103,9 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyWallet')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Wallet</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'wallet')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -91,7 +114,9 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyTransactions')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Transactions</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'transactions')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -100,7 +125,9 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyBillingDetails')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Billing details</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'billingDetails')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -109,7 +136,9 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('PickupChangePassword')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Change password</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'changePassword')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -118,24 +147,49 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('NotificationSetting')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Notifications</Text>
-            <AntDesign name="right" size={13} color="#909090" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Language</Text>
-            <Text style={styles.titleStatus}>English</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'notifications')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addressCard}>
           <TouchableOpacity
+            style={styles.bookAddress}
+            onPress={() => setShowOptions(!showOptions)}>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'language')}
+            </Text>
+            <Text style={styles.titleStatus}>
+              {getCurrentSelectedLanguage()}
+            </Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+          {showOptions &&
+            languages.map(lng => {
+              return (
+                <TouchableOpacity
+                  style={styles.bookAddress}
+                  onPress={() => {
+                    i18n.changeLanguage(lng.key);
+                    setShowOptions(false);
+                  }}>
+                  <Text style={styles.cardTitle}></Text>
+                  <Text style={styles.titleStatus}>{lng.label}</Text>
+                  <AntDesign name="right" size={13} color="#909090" />
+                </TouchableOpacity>
+              );
+            })}
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity
             onPress={() => navigation.navigate('')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Help</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'help')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -144,7 +198,9 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('AboutUs')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>About us</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'aboutUs')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -153,7 +209,9 @@ const DeliveryboySettings = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('FAQs')}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>FAQs</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'faqs')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
@@ -164,7 +222,9 @@ const DeliveryboySettings = ({navigation}) => {
               clearAsyncStorage();
             }}
             style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Logout</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'logout')}
+            </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>

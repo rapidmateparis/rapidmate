@@ -16,6 +16,7 @@ import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
 import {updateUserProfile} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
+import { localizationText } from '../../../utils/common';
 
 const DeliveryboyManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -128,27 +129,27 @@ const DeliveryboyManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>First Name</Text>
+          <Text style={styles.textlable}>{localizationText('Common','firstName')}</Text>
           <TextInput
             style={styles.inputTextStyle}
-            placeholder="Type here"
+            placeholder={localizationText('Common','typeHere')}
             placeholderTextColor={'#999'}
             value={firstName}
             onChangeText={text => setFirstName(text)}
           />
         </View>
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Last Name</Text>
+          <Text style={styles.textlable}>{localizationText('Common','lastName')}</Text>
           <TextInput
             style={styles.inputTextStyle}
-            placeholder="Type here"
+            placeholder={localizationText('Common','typeHere')}
             placeholderTextColor={'#999'}
             value={lastName}
             onChangeText={text => setLastName(text)}
           />
         </View>
         <View>
-          <Text style={styles.textlable}>Phone Number</Text>
+          <Text style={styles.textlable}>{localizationText('Common','phoneNumber')}</Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -208,20 +209,20 @@ const DeliveryboyManageProfile = ({navigation}) => {
         </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{flex: 1, marginRight: 10}}>
-            <Text style={styles.textlable}>Vehicle No.</Text>
+            <Text style={styles.textlable}>{localizationText('Common','vehicleNo')}</Text>
             <TextInput
               style={styles.inputTextStyle}
-              placeholder="Type here"
+              placeholder={localizationText('Common','typeHere')}
               placeholderTextColor={'#999'}
               value={vehicleNo}
               onChangeText={text => setVehicleNo(text)}
             />
           </View>
           <View style={{flex: 1, marginLeft: 10}}>
-            <Text style={styles.textlable}>Vehicle model</Text>
+            <Text style={styles.textlable}>{localizationText('Common','vehicleModel')}</Text>
             <TextInput
               style={styles.inputTextStyle}
-              placeholder="Type here"
+              placeholder={localizationText('Common','typeHere')}
               placeholderTextColor={'#999'}
               value={vehicleModel}
               onChangeText={text => setVehicleModel(text)}
@@ -230,20 +231,20 @@ const DeliveryboyManageProfile = ({navigation}) => {
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{flex: 1, marginRight: 10}}>
-            <Text style={styles.textlable}>Vehicle make</Text>
+            <Text style={styles.textlable}>{localizationText('Common','vehicleMake')}</Text>
             <TextInput
               style={styles.inputTextStyle}
-              placeholder="Type here"
+              placeholder={localizationText('Common','typeHere')}
               placeholderTextColor={'#999'}
               value={vehicleMake}
               onChangeText={text => setVehicleMake(text)}
             />
           </View>
           <View style={{flex: 1, marginLeft: 10}}>
-            <Text style={styles.textlable}>Vehicle variant</Text>
+            <Text style={styles.textlable}>{localizationText('Common','vehicleVariant')}</Text>
             <TextInput
               style={styles.inputTextStyle}
-              placeholder="Type here"
+              placeholder={localizationText('Common','typeHere')}
               placeholderTextColor={'#999'}
               value={vehicleVariant}
               onChangeText={text => setVehicleVariant(text)}
@@ -253,7 +254,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
         <TouchableOpacity
           onPress={() => saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>{localizationText('Common','save')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
