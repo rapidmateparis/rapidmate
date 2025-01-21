@@ -27,13 +27,26 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import EnterpriseShiftFillter from './EnterpriseShiftFillter';
 import {useFocusEffect} from '@react-navigation/native';
-import {localToUTC, titleFormat, utcLocal} from '../../utils/common';
+import {
+  localizationText,
+  localToUTC,
+  titleFormat,
+  utcLocal,
+} from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
 const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const noOrdersToShow =
+    localizationText('Common', 'noOrdersToShow') || 'No orders to show';
+  const noOrdersDescription =
+    localizationText('Common', 'noOrdersDescription') || '';
+  const activeText = localizationText('Common', 'active') || 'Active';
 
   const getLocationAddress = locationId => {
     let result = locations.filter(location => location.id == locationId);
@@ -87,7 +100,7 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
               <View style={styles.packageMiddle}>
                 <Ionicons name="location-outline" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
-                  From{' '}
+                  {fromText}{' '}
                   <Text style={styles.Location}>
                     {getLocationAddress(item.pickup_location)}
                   </Text>
@@ -97,7 +110,7 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
               <View style={styles.packageMiddle}>
                 <MaterialIcons name="my-location" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
-                  To{' '}
+                  {toText}{' '}
                   <Text style={styles.Location}>
                     {getLocationAddress(item.dropoff_location)}
                   </Text>
@@ -110,10 +123,10 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
                     styles.orderActive,
                     {color: colors.Completed, backgroundColor: '#27AE6012'},
                   ]}>
-                  Active
+                  {activeText}
                 </Text>
                 <Text style={styles.orderId}>
-                  Order ID: {item.order_number}
+                  {orderID}: {item.order_number}
                 </Text>
               </View>
 
@@ -143,10 +156,8 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
                 style={styles.loaderMap}
                 source={require('../../image/No-Data-Table.png')}
               />
-              <Text style={styles.text}>No orders to show</Text>
-              <Text style={styles.subText}>
-                If there is any active order, it will be shown here.
-              </Text>
+              <Text style={styles.text}>{noOrdersToShow}</Text>
+              <Text style={styles.subText}>{noOrdersDescription}</Text>
             </View>
           </View>
         </View>
@@ -158,6 +169,14 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
 const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const noOrdersToShow =
+    localizationText('Common', 'noOrdersToShow') || 'No orders to show';
+  const noOrdersDescription =
+    localizationText('Common', 'noOrdersDescription') || '';
+  const activeText = localizationText('Common', 'active') || 'Active';
 
   const getLocationAddress = locationId => {
     let result = locations.filter(location => location.id == locationId);
@@ -211,7 +230,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
               <View style={styles.packageMiddle}>
                 <Ionicons name="location-outline" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
-                  From{' '}
+                  {fromText}{' '}
                   <Text style={styles.Location}>
                     {getLocationAddress(item.pickup_location)}
                   </Text>
@@ -227,7 +246,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                       color="#717172"
                     />
                     <Text style={styles.fromLocation}>
-                      To{' '}
+                      {toText}{' '}
                       <Text style={styles.Location}>
                         {location.destination_description}
                       </Text>
@@ -241,10 +260,10 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                     styles.orderActive,
                     {color: colors.Completed, backgroundColor: '#27AE6012'},
                   ]}>
-                  Active
+                  {activeText}
                 </Text>
                 <Text style={styles.orderId}>
-                  Order ID: {item.order_number}
+                  {orderID}: {item.order_number}
                 </Text>
               </View>
 
@@ -274,10 +293,8 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                 style={styles.loaderMap}
                 source={require('../../image/No-Data-Table.png')}
               />
-              <Text style={styles.text}>No orders to show</Text>
-              <Text style={styles.subText}>
-                If there is any active order, it will be shown here.
-              </Text>
+              <Text style={styles.text}>{noOrdersToShow}</Text>
+              <Text style={styles.subText}>{noOrdersDescription}</Text>
             </View>
           </View>
         </View>
@@ -287,6 +304,20 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
 };
 
 const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
+  const shift = localizationText('Common', 'shift') || 'Shift';
+  const totalDays = localizationText('Common', 'totalDays') || 'Total days';
+  const totalHours = localizationText('Common', 'totalHours') || 'Total hours';
+  const totalAmount =
+    localizationText('Common', 'totalAmount') || 'Total Amount';
+  const forText = localizationText('Common', 'for') || 'For';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const noOrdersToShow =
+    localizationText('Common', 'noOrdersToShow') || 'No orders to show';
+  const noOrdersDescription =
+    localizationText('Common', 'noOrdersDescription') || '';
+
   useFocusEffect(
     useCallback(() => {
       onActive();
@@ -323,72 +354,86 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
               paddingTop: 5,
               backgroundColor: '#FBFAF5',
             }}>
-          <TouchableOpacity style={styles.packageDetailCard}
-          
-          onPress={() => {
-                  console.log('item ====>',item)
-                  let props = {
-                    branchName: getBranchName(item.branch_id),
-                    branchAddress: getBranchAddress(item.branch_id),
-                    fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format(
-                      'hh A',
-                    ),
-                    toTime: moment(item.slots[0].to_time, 'HH:mm:ss').format(
-                      'hh A',
-                    ),
-                    shiftItem: item,
-                    vehicleType: getVehicleType(item.vehicle_type_id),
-                  };
-                  navigation.navigate('EnterpriseShiftDetails', {...props});
-                }}
-          
-          >
-          <View style={styles.packageHeader}>
-            <Image
-              style={{width: 25, height: 25}}
-              source={require('../../image/Big-Calender.png')}
-            />
-            <Text style={styles.deliveryTime}>Shift</Text>
+            <TouchableOpacity
+              style={styles.packageDetailCard}
+              onPress={() => {
+                console.log('item ====>', item);
+                let props = {
+                  branchName: getBranchName(item.branch_id),
+                  branchAddress: getBranchAddress(item.branch_id),
+                  fromTime: moment(item.slots[0].from_time, 'HH:mm:ss').format(
+                    'hh A',
+                  ),
+                  toTime: moment(item.slots[0].to_time, 'HH:mm:ss').format(
+                    'hh A',
+                  ),
+                  shiftItem: item,
+                  vehicleType: getVehicleType(item.vehicle_type_id),
+                };
+                navigation.navigate('EnterpriseShiftDetails', {...props});
+              }}>
+              <View style={styles.packageHeader}>
+                <Image
+                  style={{width: 25, height: 25}}
+                  source={require('../../image/Big-Calender.png')}
+                />
+                <Text style={styles.deliveryTime}>{shift}</Text>
+              </View>
+
+              <View style={styles.overViewCard}>
+                <View>
+                  <Text style={styles.requestOverview}>
+                    {item.total_days ? item.total_days : 0}
+                  </Text>
+                  <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
+                </View>
+
+                <View>
+                  <Text style={styles.requestOverview}>
+                    {item.total_hours ? item.total_hours.toFixed(2) : 0}
+                  </Text>
+                  <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
+                </View>
+
+                <View>
+                  <Text style={styles.requestOverview}>
+                    €
+                    <Text>
+                      {item.total_amount ? item.total_amount.toFixed(2) : 0}
+                    </Text>
+                  </Text>
+                  <Text style={styles.requestOverviewInfo}>{totalAmount}</Text>
+                </View>
+              </View>
+
+              <View style={styles.scheduleDateTimeCard}>
+                <Text style={styles.schaduleInfo}>
+                  {fromText}{' '}
+                  <Text style={styles.schaduleDateTime}>
+                    {moment(utcLocal(item.shift_from_date)).format(
+                      'DD-MM-YYYY',
+                    )}
+                  </Text>
+                </Text>
+                <View style={styles.borderShowoff} />
+                <Text style={styles.schaduleInfo}>
+                  {toText}{' '}
+                  <Text style={styles.schaduleDateTime}>
+                    {moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}
+                  </Text>
+                </Text>
+              </View>
+
+              <View style={styles.borderShow}></View>
+
+              <View style={styles.footerCard}>
+                <Text style={styles.orderId}>
+                  {forText} {item?.company_name ? item?.company_name : '-'}
+                </Text>
+                {/* <Text style={styles.valueMoney}>€34.00</Text> */}
+              </View>
+            </TouchableOpacity>
           </View>
-
-          <View style={styles.overViewCard}>
-            <View>
-              <Text style={styles.requestOverview}>{item.total_days ?item.total_days :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total days</Text>
-            </View>
-
-            <View>
-              <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total hours</Text>
-            </View>
-
-            <View>
-              <Text style={styles.requestOverview}>
-                €<Text>{item.total_amount ? item.total_amount.toFixed(2) :0}</Text>
-              </Text>
-              <Text style={styles.requestOverviewInfo}>Total Amount</Text>
-            </View>
-          </View>
-
-          <View style={styles.scheduleDateTimeCard}>
-            <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}</Text>
-            </Text>
-            <View style={styles.borderShowoff} />
-            <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}</Text>
-            </Text>
-          </View>
-
-          <View style={styles.borderShow}></View>
-
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For {item?.company_name ? item?.company_name : '-'}</Text>
-            {/* <Text style={styles.valueMoney}>€34.00</Text> */}
-          </View>
-        </TouchableOpacity>
-        </View>
-
 
           // <View
           //   key={index}
@@ -476,10 +521,8 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
                 style={styles.loaderMap}
                 source={require('../../image/No-Data-Table.png')}
               />
-              <Text style={styles.text}>No shifts to show</Text>
-              <Text style={styles.subText}>
-                If there is any active shift, it will be shown here.
-              </Text>
+              <Text style={styles.text}>{noOrdersToShow}</Text>
+              <Text style={styles.subText}>{noOrdersDescription}</Text>
             </View>
           </View>
         </View>
@@ -491,6 +534,19 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
 const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const shift = localizationText('Common', 'shift') || 'Shift';
+  const totalDays = localizationText('Common', 'totalDays') || 'Total days';
+  const totalHours = localizationText('Common', 'totalHours') || 'Total hours';
+  const totalAmount =
+    localizationText('Common', 'totalAmount') || 'Total Amount';
+  const forText = localizationText('Common', 'for') || 'For';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const noOrdersToShow =
+    localizationText('Common', 'noOrdersToShow') || 'No orders to show';
+  const noOrdersDescription =
+    localizationText('Common', 'noOrdersDescription') || '';
 
   const getLocationAddress = locationId => {
     let result = locations.filter(location => location.id == locationId);
@@ -544,7 +600,7 @@ const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
               <View style={styles.packageMiddle}>
                 <Ionicons name="location-outline" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
-                  From{' '}
+                  {fromText}{' '}
                   <Text style={styles.Location}>
                     {getLocationAddress(item.pickup_location)}
                   </Text>
@@ -554,7 +610,7 @@ const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
               <View style={styles.packageMiddle}>
                 <MaterialIcons name="my-location" size={15} color="#717172" />
                 <Text style={styles.fromLocation}>
-                  To{' '}
+                  {toText}{' '}
                   <Text style={styles.Location}>
                     {getLocationAddress(item.dropoff_location)}
                   </Text>
@@ -562,15 +618,8 @@ const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
               </View>
 
               <View style={styles.footerCard}>
-                <Text
-                  style={[
-                    styles.orderActive,
-                    {color: colors.Completed, backgroundColor: '#27AE6012'},
-                  ]}>
-                  Active
-                </Text>
                 <Text style={styles.orderId}>
-                  Order ID: {item.order_number}
+                  {orderID}: {item.order_number}
                 </Text>
               </View>
 
@@ -602,6 +651,10 @@ function EnterpriseHistory({navigation}) {
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const [isShiftModalVisible, setShiftModalVisible] = useState(false);
+  const oneTime = localizationText('Common', 'oneTime') || 'One-Time';
+  const multiple = localizationText('Common', 'multiple') || 'Multiple';
+  const shifts = localizationText('Common', 'shifts') || 'Shifts';
+  const past = localizationText('Common', 'past') || 'Past';
 
   const toggleShiftModal = () => {
     setShiftModalVisible(!isShiftModalVisible);
@@ -768,7 +821,9 @@ function EnterpriseHistory({navigation}) {
         }}>
         {/* Your Search Bar */}
         <View style={styles.header}>
-          <Text style={styles.headerText}>History</Text>
+          <Text style={styles.headerText}>
+            {localizationText('Common', 'history')}
+          </Text>
           <View style={styles.actionCard}>
             <TouchableOpacity>
               <AntDesign name="download" size={25} color={colors.secondary} />
@@ -792,7 +847,7 @@ function EnterpriseHistory({navigation}) {
           />
           <TextInput
             style={styles.searchinput}
-            placeholder="Search your deliveries"
+            placeholder={localizationText('Common', 'searchYourDeliveries')}
             placeholderTextColor={colors.subText}
             value={searchText}
             onChangeText={value => {
@@ -824,7 +879,7 @@ function EnterpriseHistory({navigation}) {
             alignItems: 'center',
           },
         }}>
-        <Tab.Screen name="One-time">
+        <Tab.Screen name={oneTime}>
           {() => (
             <OneTimeList
               orders={enterpriseOrderList}
@@ -835,7 +890,7 @@ function EnterpriseHistory({navigation}) {
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Multiple">
+        <Tab.Screen name={multiple}>
           {() => (
             <MultipleList
               orders={enterpriseOrderList}
@@ -846,7 +901,7 @@ function EnterpriseHistory({navigation}) {
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Shifts">
+        <Tab.Screen name={shifts}>
           {() => (
             <ShiftsList
               orders={enterpriseOrderList}
@@ -857,7 +912,7 @@ function EnterpriseHistory({navigation}) {
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Past">
+        <Tab.Screen name={past}>
           {() => (
             <PastList
               orders={enterpriseOrderList}
@@ -1038,8 +1093,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-
-
 
   overViewCard: {
     flexDirection: 'row',

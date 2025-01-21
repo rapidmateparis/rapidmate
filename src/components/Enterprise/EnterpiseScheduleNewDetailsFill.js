@@ -22,6 +22,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
   localToUTC,
 } from '../../utils/common';
 import MapAddress from '../commonComponent/MapAddress';
@@ -41,14 +42,14 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [orderid, setOrderid] = useState('');
   const [number, setNumber] = useState('');
   const [promoEmails, setPromoEmails] = useState(false);
-  const [selectedRepeatMonth1, setSelectedRepeatMonth1] = useState('First');
+  const [selectedRepeatMonth1, setSelectedRepeatMonth1] = useState(first);
   const [selectedRepeatEvery, setSelectedRepeatEvery] = useState('1');
-  const [selectedRepeatType, setSelectedRepeatType] = useState('Day');
+  const [selectedRepeatType, setSelectedRepeatType] = useState(day);
   const [isFocusRepeatEvery, setIsFocusRepeatEvery] = useState(false);
   const [isFocusRepeatType, setIsFocusRepeatType] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
-  const [repeatOrder, setRepeatOrder] = useState('Daily');
+  const [repeatOrder, setRepeatOrder] = useState(daily);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
@@ -89,7 +90,6 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
   const [isInstantDate, setIsInstantDate] = useState(null);
 
-
   const handleDayPress = day => {
     let updatedSelectedDays;
 
@@ -110,16 +110,42 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const repeatType = [{label: 'Week', value: 'Week'}];
+  const daily = localizationText('Common', 'daily') || 'Daily';
+  const weekly = localizationText('Common', 'weekly') || 'Weekly';
+  const monthly = localizationText('Common', 'monthly') || 'Monthly';
+  const repeatEvery = localizationText('Common', 'repeatEvery') || '';
+  const until = localizationText('Common', 'until') || 'until';
+  const occursEveryDayUntil =
+    localizationText('Common', 'occursEveryDayUntil') || '';
+  const occursEvery =
+    localizationText('Common', 'occursEvery') || 'Occurs Every';
+  const week = localizationText('Common', 'week') || 'Week';
+  const day = localizationText('Common', 'day') || 'Day';
+  const first = localizationText('Common', 'first') || 'First';
+  const second = localizationText('Common', 'second') || 'Second';
+  const third = localizationText('Common', 'third') || 'Third';
+  const fourth = localizationText('Common', 'fourth') || 'Fourth';
+  const fifth = localizationText('Common', 'fifth') || 'Fifth';
+  const sunday = localizationText('Common', 'sunday') || 'Sunday';
+  const monday = localizationText('Common', 'monday') || 'Monday';
+  const tuesday = localizationText('Common', 'tuesday') || 'Tuesday';
+  const wednesday = localizationText('Common', 'wednesday') || 'Wednesday';
+  const thursday = localizationText('Common', 'thursday') || 'Thursday';
+  const friday = localizationText('Common', 'friday') || 'Friday';
+  const saturday = localizationText('Common', 'saturday') || 'Saturday';
+  const pickupDateText = localizationText('Common', 'pickupDate') || 'Pickup Date';
+  const pickupTimeText = localizationText('Common', 'pickupTime') || 'Pickup Date';
 
-  const weeklyDay = [{label: 'Day', value: 'Day'}];
+  const repeatType = [{label: week, value: week}];
+
+  const weeklyDay = [{label: day, value: day}];
 
   const monthValue1 = [
-    {label: 'First', value: 'First'},
-    {label: 'Second', value: 'Second'},
-    {label: 'Third', value: 'Third'},
-    {label: 'Fourth', value: 'Fourth'},
-    {label: 'Fifth', value: 'Fifth'},
+    {label: first, value: first},
+    {label: second, value: second},
+    {label: third, value: third},
+    {label: fourth, value: fourth},
+    {label: fifth, value: fifth},
   ];
 
   const monthDays = [
@@ -165,13 +191,13 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   ];
 
   const weekList = [
-    {label: 'Sunday', value: 'Sunday'},
-    {label: 'Monday', value: 'Monday'},
-    {label: 'Tuesday', value: 'Tusday'},
-    {label: 'Wednesday', value: 'Wednesday'},
-    {label: 'Thursday', value: 'Thursday'},
-    {label: 'Friday', value: 'Friday'},
-    {label: 'Saturday', value: 'Saturday'},
+    {label: sunday, value: sunday},
+    {label: monday, value: monday},
+    {label: tuesday, value: tuesday},
+    {label: wednesday, value: wednesday},
+    {label: thursday, value: thursday},
+    {label: friday, value: friday},
+    {label: saturday, value: saturday},
   ];
 
   const toggleModal = () => {
@@ -310,7 +336,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     var totalDistance = 0;
     var totalHours = 0;
     locations.forEach(element => {
-        if(element.destinationDescription && element?.distance){
+      if (element.destinationDescription && element?.distance) {
         var currentElement = {};
         currentElement.distance = element.distance.toFixed(2);
         totalDistance = totalDistance + element.distance;
@@ -328,7 +354,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             route.params.vehicle_type.base_price +
               route.params.vehicle_type.km_price * element.distance,
           );
-        currentElement.delivery_date = moment(localToUTC(new Date())).format('YYYY-MM-DD');
+        currentElement.delivery_date = moment(localToUTC(new Date())).format(
+          'YYYY-MM-DD',
+        );
         currentElement.destinationDescription = element.destinationDescription;
         branches.push(currentElement);
       }
@@ -423,9 +451,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           <MultpleMapAddress
             sourceLocation={routeParams.sourceBranch}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
-            onDestinationLocation={(location)=>{
-              onMultpleDestinationLocation(location)}
-            }
+            onDestinationLocation={location => {
+              onMultpleDestinationLocation(location);
+            }}
           />
         </View>
       ) : (
@@ -443,7 +471,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
         <View style={{paddingHorizontal: 15, paddingTop: 8}}>
           <View>
             <View style={{flex: 1}}>
-              <Text style={styles.textlable}>Company</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'companyName')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
@@ -454,7 +484,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             </View>
 
             <View>
-              <Text style={styles.textlable}>Phone number</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'phoneNumber')}
+              </Text>
               <View style={styles.mobileNumberInput}>
                 <View style={{width: 95}}>
                   <View style={styles.containerDropdown}>
@@ -504,7 +536,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             <TouchableOpacity
               onPress={toggleModal}
               style={{flex: 1, backgroundColor: '#fff'}}>
-              <Text style={styles.textlable}>Package photo</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'packagePhoto')}
+              </Text>
               <View style={styles.dottedLine}>
                 <Entypo
                   name="attachment"
@@ -512,7 +546,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   color="#131314"
                   style={{marginTop: 13}}
                 />
-                <Text style={styles.packagePhoto}>Package photo</Text>
+                <Text style={styles.packagePhoto}>
+                  {localizationText('Common', 'packagePhoto')}
+                </Text>
                 <View style={styles.packagePhotoPath}>
                   <Text style={styles.packagePhotoText}>{photoFileName}</Text>
                 </View>
@@ -520,7 +556,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             </TouchableOpacity>
 
             <View style={{flex: 1}}>
-              <Text style={styles.textlable}>Package ID</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'packageId')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
@@ -530,7 +568,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               />
             </View>
             <View style={{flex: 1}}>
-              <Text style={styles.textlable}>Pickup notes</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'pickupNotes')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 multiline={true}
@@ -545,8 +585,13 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
             <View>
               <View style={styles.bookAddress}>
-                <Text style={styles.cardTitle}>Is Instant Date</Text>
-                <TouchableOpacity onPress={()=>setIsInstantDate(isInstantDate ? null :new Date())}>
+                <Text style={styles.cardTitle}>
+                  {localizationText('Common', 'isInstantDateText')}
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    setIsInstantDate(isInstantDate ? null : new Date())
+                  }>
                   <MaterialCommunityIcons
                     name={isInstantDate ? 'toggle-switch' : 'toggle-switch-off'}
                     size={55}
@@ -554,97 +599,106 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   />
                 </TouchableOpacity>
               </View>
-            
-            {isInstantDate ?
-            
-            <Text style={styles.pickupDates}>Pickup date :{moment(isInstantDate).format('YYYY-MM-DD')+' '+moment(isInstantDate).format('hh:mm')}</Text>
-            :<View style={styles.datetimeCard}>
-              <View style={{width: '50%', marginRight: 8}}>
-                <Text style={styles.pickupDates}>Pickup date</Text>
-                <View style={styles.nameInputDiv}>
-                  <DatePicker
-                    modal
-                    open={dateOpen}
-                    date={date}
-                    mode="date"
-                    minimumDate={new Date()}
-                    onConfirm={date => {
-                      setDateOpen(false);
-                      setDate(date);
-                      setTime(date);
-                      setPickupDate(moment(date).format('DD/MM/YYYY'));
-                    }}
-                    onCancel={() => {
-                      setDateOpen(false);
-                    }}
-                  />
-                  <TextInput
-                    style={[
-                      styles.loginput,
-                      {fontFamily: 'Montserrat-Regular'},
-                    ]}
-                    placeholder="12/06/2024"
-                    placeholderTextColor="#999"
-                    editable={false}
-                    value={pickupDate}
-                  />
-                  <AntDesign
-                    name="calendar"
-                    size={20}
-                    onPress={() => setDateOpen(true)}
-                    color={colors.secondary}
-                    style={{marginTop: 13}}
-                  />
-                </View>
-              </View>
 
-              <View style={{width: '50%'}}>
-                <Text style={styles.pickupDates}>Pickup time</Text>
-                <View style={styles.nameInputDiv}>
-                  <DatePicker
-                    modal
-                    open={timeOpen}
-                    date={time}
-                    mode="time"
-                    onConfirm={date => {
-                      setTimeOpen(false);
-                      setTime(date);
-                      setPickupTime(moment(date).format('hh:mm A'));
-                    }}
-                    onCancel={() => {
-                      setTimeOpen(false);
-                    }}
-                  />
-                  <TextInput
-                    style={[
-                      styles.loginput,
-                      {fontFamily: 'Montserrat-Regular'},
-                    ]}
-                    placeholder="10:30 AM"
-                    placeholderTextColor="#999"
-                    editable={false}
-                    value={pickupTime}
-                  />
-                  <Ionicons
-                    name="time-outline"
-                    size={20}
-                    onPress={() => {
-                      setTimeOpen(true);
-                    }}
-                    color={colors.secondary}
-                    style={{marginTop: 13}}
-                  />
-                </View>
-              </View>
-            </View>}
+              {isInstantDate ? 
+                <Text style={styles.pickupDates}>
+                   {pickupDateText} :
+                  {moment(isInstantDate).format('YYYY-MM-DD') +
+                    ' ' +
+                    moment(isInstantDate).format('hh:mm')}
+                </Text>
+                : <View style={styles.datetimeCard}>
+                  <View style={{width: '50%', marginRight: 8}}>
+                    <Text style={styles.pickupDates}>
+                      {pickupDateText}
+                    </Text>
+                    <View style={styles.nameInputDiv}>
+                      <DatePicker
+                        modal
+                        open={dateOpen}
+                        date={date}
+                        mode="date"
+                        minimumDate={new Date()}
+                        onConfirm={date => {
+                          setDateOpen(false);
+                          setDate(date);
+                          setTime(date);
+                          setPickupDate(moment(date).format('DD/MM/YYYY'));
+                        }}
+                        onCancel={() => {
+                          setDateOpen(false);
+                        }}
+                      />
+                      <TextInput
+                        style={[
+                          styles.loginput,
+                          {fontFamily: 'Montserrat-Regular'},
+                        ]}
+                        placeholder="12/06/2024"
+                        placeholderTextColor="#999"
+                        editable={false}
+                        value={pickupDate}
+                      />
+                      <AntDesign
+                        name="calendar"
+                        size={20}
+                        onPress={() => setDateOpen(true)}
+                        color={colors.secondary}
+                        style={{marginTop: 13}}
+                      />
+                    </View>
+                  </View>
 
+                  <View style={{width: '50%'}}>
+                    <Text style={styles.pickupDates}>
+                      {pickupTimeText}
+                    </Text>
+                    <View style={styles.nameInputDiv}>
+                      <DatePicker
+                        modal
+                        open={timeOpen}
+                        date={time}
+                        mode="time"
+                        onConfirm={date => {
+                          setTimeOpen(false);
+                          setTime(date);
+                          setPickupTime(moment(date).format('hh:mm A'));
+                        }}
+                        onCancel={() => {
+                          setTimeOpen(false);
+                        }}
+                      />
+                      <TextInput
+                        style={[
+                          styles.loginput,
+                          {fontFamily: 'Montserrat-Regular'},
+                        ]}
+                        placeholder="10:30 AM"
+                        placeholderTextColor="#999"
+                        editable={false}
+                        value={pickupTime}
+                      />
+                      <Ionicons
+                        name="time-outline"
+                        size={20}
+                        onPress={() => {
+                          setTimeOpen(true);
+                        }}
+                        color={colors.secondary}
+                        style={{marginTop: 13}}
+                      />
+                    </View>
+                  </View>
+                </View>}
             </View>
           </View>
         </View>
 
         <View style={styles.addressCard}>
           <View style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Repeat this order</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'repeatThisOrder')}
+            </Text>
             <TouchableOpacity onPress={togglePromoEmails}>
               <MaterialCommunityIcons
                 name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}
@@ -657,63 +711,57 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             <View style={styles.mainDateCard}>
               <TouchableOpacity
                 onPress={() => {
-                  setRepeatOrder('Daily');
+                  setRepeatOrder(daily);
                   setSelectedRepeatType('Day');
                 }}
                 style={styles.datesCards}>
                 <FontAwesome
-                  name={
-                    repeatOrder === 'Daily' ? 'dot-circle-o' : 'circle-thin'
-                  }
+                  name={repeatOrder === daily ? 'dot-circle-o' : 'circle-thin'}
                   size={20}
-                  color={
-                    repeatOrder === 'Daily' ? colors.secondary : colors.text
-                  }
+                  color={repeatOrder === daily ? colors.secondary : colors.text}
                 />
-                <Text style={styles.deliveryDates}>Daily</Text>
+                <Text style={styles.deliveryDates}>{daily}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => {
                   setSelectedRepeatType('Day');
-                  setRepeatOrder('Weekly');
+                  setRepeatOrder(weekly);
                 }}
                 style={styles.datesCards}>
                 <FontAwesome
-                  name={
-                    repeatOrder === 'Weekly' ? 'dot-circle-o' : 'circle-thin'
-                  }
+                  name={repeatOrder === weekly ? 'dot-circle-o' : 'circle-thin'}
                   size={20}
                   color={
-                    repeatOrder === 'Weekly' ? colors.secondary : colors.text
+                    repeatOrder === weekly ? colors.secondary : colors.text
                   }
                 />
-                <Text style={styles.deliveryDates}>Weekly</Text>
+                <Text style={styles.deliveryDates}>{weekly}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => setRepeatOrder('Monthly')}
+                onPress={() => setRepeatOrder(monthly)}
                 style={styles.datesCards}>
                 <FontAwesome
                   name={
-                    repeatOrder === 'Monthly' ? 'dot-circle-o' : 'circle-thin'
+                    repeatOrder === monthly ? 'dot-circle-o' : 'circle-thin'
                   }
                   size={20}
                   color={
-                    repeatOrder === 'Monthly' ? colors.secondary : colors.text
+                    repeatOrder === monthly ? colors.secondary : colors.text
                   }
                 />
-                <Text style={styles.deliveryDates}>Monthly</Text>
+                <Text style={styles.deliveryDates}>{monthly}</Text>
               </TouchableOpacity>
             </View>
           )}
           <View>
-            {promoEmails && repeatOrder === 'Daily' && (
+            {promoEmails && repeatOrder === daily && (
               <View>
                 <View style={styles.dailyCardMain}>
                   <View style={styles.repeatdayCard}>
                     <AntDesign name="retweet" size={20} color={colors.text} />
-                    <Text style={styles.repeatEvery}>Repeat every</Text>
+                    <Text style={styles.repeatEvery}>{repeatEvery}</Text>
                   </View>
                   <View style={styles.containerCity}>
                     <Dropdown
@@ -738,7 +786,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 </View>
 
                 <View style={styles.untilDateCard}>
-                  <Text style={styles.untilDateText}>until</Text>
+                  <Text style={styles.untilDateText}>{until}</Text>
                   <View style={styles.dateUntilDiv}>
                     <DatePicker
                       modal
@@ -776,7 +824,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 </View>
                 <View>
                   <Text style={styles.untilDayOccurs}>
-                    Occurs every day until{' '}
+                    {occursEveryDayUntil}{' '}
                     <Text style={styles.untilDateOccurs}>
                       {moment(untilDate).format('MMMM DD, YYYY')}
                     </Text>
@@ -786,12 +834,12 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             )}
           </View>
 
-          {promoEmails && repeatOrder === 'Weekly' && (
+          {promoEmails && repeatOrder === weekly && (
             <View>
               <View style={styles.dailyCardMain}>
                 <View style={styles.repeatdayCard}>
                   <AntDesign name="retweet" size={20} color={colors.text} />
-                  <Text style={styles.repeatEvery}>Repeat every</Text>
+                  <Text style={styles.repeatEvery}>{repeatEvery}</Text>
                 </View>
                 <View style={styles.containerCity}>
                   <Dropdown
@@ -838,7 +886,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               </View>
 
               <View style={styles.untilDateCard}>
-                <Text style={styles.untilDateText}>until</Text>
+                <Text style={styles.untilDateText}>{until}</Text>
                 <View style={styles.dateUntilDiv}>
                   <DatePicker
                     modal
@@ -899,7 +947,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               </View>
               <View>
                 <Text style={styles.untilDayOccurs}>
-                  Occurs every <Text>Monday</Text> & <Text>Tuesday</Text> from{' '}
+                  {occursEvery} <Text>Monday</Text> & <Text>Tuesday</Text> from{' '}
                   <Text style={styles.untilDateOccurs}>11 AM</Text> to{' '}
                   <Text style={styles.untilDateOccurs}>4 PM</Text> unti{' '}
                   <Text style={styles.untilDateOccurs}>August 23, 2024</Text>
@@ -908,12 +956,12 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
             </View>
           )}
 
-          {promoEmails && repeatOrder === 'Monthly' && (
+          {promoEmails && repeatOrder === monthly && (
             <View>
               <View style={styles.dailyCardMain}>
                 <View style={styles.repeatdayCard}>
                   <AntDesign name="retweet" size={20} color={colors.text} />
-                  <Text style={styles.repeatEvery}>Repeat every</Text>
+                  <Text style={styles.repeatEvery}>{repeatEvery}</Text>
                 </View>
                 <View style={styles.containerCity}>
                   <Dropdown
@@ -1103,9 +1151,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 if (
                   company == '' ||
                   number == '' ||
-                  (
-                  !isInstantDate && (pickupDate == '' && pickupTime == '') 
-                  )
+                  (!isInstantDate && pickupDate == '' && pickupTime == '')
                 ) {
                   Alert.alert(
                     'Error Alert',
@@ -1139,10 +1185,13 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
-                      is_scheduled_order: isInstantDate ? 0 :1
+                      is_scheduled_order: isInstantDate ? 0 : 1,
                     };
                     // navigation.navigate('AddDropDetails', {props: params,component:'ENTERPRISE'});
-                    navigation.navigate('EnterpriseAddMultpleDropDetails', {props: params,component:'ENTERPRISE'});
+                    navigation.navigate('EnterpriseAddMultpleDropDetails', {
+                      props: params,
+                      component: 'ENTERPRISE',
+                    });
                     // navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
                     Alert.alert(
@@ -1179,16 +1228,22 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
-                      order_date: isInstantDate ? moment(isInstantDate).format('YYYY-MM-DD hh:mm'):'',
-                      schedule_date_time: moment(date).format('YYYY-MM-DD')+' '+moment(
-                        time,
-                        ).format('hh:mm'),
-                      is_scheduled_order: isInstantDate ? 0 :1
+                      order_date: isInstantDate
+                        ? moment(isInstantDate).format('YYYY-MM-DD hh:mm')
+                        : '',
+                      schedule_date_time:
+                        moment(date).format('YYYY-MM-DD') +
+                        ' ' +
+                        moment(time).format('hh:mm'),
+                      is_scheduled_order: isInstantDate ? 0 : 1,
                     };
                     console.log(imageViewId);
-                    console.log('Payload  ---------->',params);
+                    console.log('Payload  ---------->', params);
 
-                    navigation.navigate('AddDropDetails', {props: params,component:'ENTERPRISE'});
+                    navigation.navigate('AddDropDetails', {
+                      props: params,
+                      component: 'ENTERPRISE',
+                    });
                     // navigation.navigate('EnterprisePickupOrderPriview', params);
                   } else {
                     Alert.alert(
@@ -1200,7 +1255,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 }
               }}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-              <Text style={styles.buttonText}>Next</Text>
+              <Text style={styles.buttonText}>
+                {localizationText('Common', 'next')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1661,7 +1718,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   containerCity: {
-    width: '30%',
+    width: '20%',
     borderWidth: 1,
     borderColor: '#ccc',
     paddingVertical: 3,
@@ -1672,7 +1729,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   dateDropdown: {
-    fontSize: 12,
+    fontSize: 10,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },

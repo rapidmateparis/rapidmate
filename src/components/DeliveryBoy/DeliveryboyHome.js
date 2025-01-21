@@ -37,6 +37,9 @@ const DeliveryboyHome = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
   const noOrdersToShow = localizationText('Common', 'noOrdersToShow') || 'No Orders To Show';
   const noCompanyDetails = localizationText('Common', 'noCompanyDetails') || 'No Company Details';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const orderIdText = localizationText('Common', 'orderID') || 'Order ID';
 
   useEffect(() => {
     fetchData();
@@ -183,7 +186,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From{' '}
+          {fromText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.pickup_location_id)}
           </Text>
@@ -193,7 +196,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To{' '}
+          {toText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.dropoff_location_id)}
           </Text>
@@ -201,7 +204,7 @@ const DeliveryboyHome = ({navigation}) => {
       </View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>{orderIdText}: {item.order_number}</Text>
       </View>
     </View>
   );
@@ -216,7 +219,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From{' '}
+          {fromText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.pickup_location_id)}
           </Text>
@@ -226,7 +229,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To{' '}
+          {toText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.dropoff_location_id)}
           </Text>
@@ -234,7 +237,7 @@ const DeliveryboyHome = ({navigation}) => {
       </View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>{orderIdText}: {item.order_number}</Text>
       </View>
     </View>
   );

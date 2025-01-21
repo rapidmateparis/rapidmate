@@ -4,6 +4,7 @@ import {colors} from '../../colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {ScrollView} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {localizationText} from '../../utils/common';
 
 const ChooseDeliveryType = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -19,10 +20,10 @@ const ChooseDeliveryType = ({navigation}) => {
     <ScrollView>
       <View style={styles.contentContainer}>
         <Text style={[styles.logInText, {color: colors.text}]}>
-          How would you like to work?
+          {localizationText('Common', 'selectWorkType')}
         </Text>
         <Text style={styles.roleText}>
-          You can change this in settings later
+          {localizationText('Common', 'selectWorkTypeDescription')}
         </Text>
         <View style={{marginTop: 35}}>
           <TouchableOpacity
@@ -48,10 +49,11 @@ const ChooseDeliveryType = ({navigation}) => {
                   source={require('../../image/Calender-icon2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={styles.roleTypeText}>Shift wise</Text>
+                  <Text style={styles.roleTypeText}>
+                    {localizationText('Common', 'shiftWise')}
+                  </Text>
                   <Text style={styles.roleText}>
-                    You will set your availability for a time period on select
-                    days
+                    {localizationText('Common', 'shiftWiseDescription')}
                   </Text>
                 </View>
                 {selectedOption !== 'ShiftWise' && (
@@ -100,9 +102,11 @@ const ChooseDeliveryType = ({navigation}) => {
                   source={require('../../image/Location-Icon2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={styles.roleTypeText}>Pickup & Drop-off</Text>
+                  <Text style={styles.roleTypeText}>
+                    {localizationText('Common', 'pickupAndDropoff')}
+                  </Text>
                   <Text style={styles.roleText}>
-                    Accept deliveries any time of the day
+                    {localizationText('Common', 'pickupAndDropDescription')}
                   </Text>
                 </View>
                 {selectedOption !== 'PickupDrop' && (
@@ -151,9 +155,11 @@ const ChooseDeliveryType = ({navigation}) => {
                   source={require('../../image/Calender-Both2x.png')}
                 />
                 <View style={styles.profileText}>
-                  <Text style={styles.roleTypeText}>Both</Text>
+                  <Text style={styles.roleTypeText}>
+                    {localizationText('Common', 'both')}
+                  </Text>
                   <Text style={styles.roleText}>
-                    Work as shift wise and pickup/dropoff both
+                    {localizationText('Common', 'bothDescription')}
                   </Text>
                 </View>
                 {selectedOption !== 'Both' && (
@@ -249,7 +255,7 @@ const styles = StyleSheet.create({
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   profileCard: {
     marginBottom: 10,
