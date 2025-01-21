@@ -11,16 +11,20 @@ import DeliveryboySettings from './DeliverySettings/DeliveryboySettings';
 import Notifications from '../PickupDrop-off/Settings/Notifications';
 import RNExitApp from 'react-native-exit-app';
 import messaging from '@react-native-firebase/messaging';
-import {getLocations, getNotificationCount, getViewOrderDetail} from '../../data_manager';
+import {
+  getLocations,
+  getNotificationCount,
+  getViewOrderDetail,
+} from '../../data_manager';
 import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
 import {useLoader} from '../../utils/loaderContext';
 import {useLocationData, useUserDetails} from '../commonComponent/StoreContext';
-import { playNotificationSound, stopNotificationSound } from '../../utils/common';
+import {localizationText, playNotificationSound, stopNotificationSound} from '../../utils/common';
 
 const Bottom = createBottomTabNavigator();
 
 const DeliveryboyBottomNav = ({navigation}) => {
-  const {userDetails,saveUserDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
   const [
     isDeliveryBoyAcceptRejectModalModalVisible,
     setDeliveryBoyAcceptRejectModalModalVisible,
@@ -29,16 +33,19 @@ const DeliveryboyBottomNav = ({navigation}) => {
     useState();
   const {setLoading} = useLoader();
   const {saveLocationData} = useLocationData();
+  const homeText = localizationText('BottomTabNav', 'home');
+  const chatText = localizationText('BottomTabNav', 'chat');
+  const planningText = localizationText('BottomTabNav', 'planning');
+  const ordersText = localizationText('BottomTabNav', 'orders');
+  const accountText = localizationText('BottomTabNav', 'account');
 
-
-  const getNotification= async()=>{
-  const fcmToken = await messaging().getToken();
-  console.log('fcmToken =========>',fcmToken)
-  }
-
+  const getNotification = async () => {
+    const fcmToken = await messaging().getToken();
+    console.log('fcmToken =========>', fcmToken);
+  };
 
   useEffect(() => {
-    getNotification()
+    getNotification();
     getLocations(
       null,
       successResponse => {
@@ -55,59 +62,79 @@ const DeliveryboyBottomNav = ({navigation}) => {
     );
   }, []);
 
-
   const getNotificationAllCount = () => {
     getNotificationCount(
       userDetails.userDetails[0].ext_id,
       successResponse => {
-        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
-        userDetails.userDetails[0].notificationCount
-        const newUserDetails = userDetails.userDetails[0]
+        console.log(
+          'getNotificationAllCount==>successResponse',
+          '' + JSON.stringify(successResponse[0]._response.notificationCount),
+        );
+        userDetails.userDetails[0].notificationCount;
+        const newUserDetails = userDetails.userDetails[0];
         if (successResponse[0]?._response?.notificationCount) {
-          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
-        }else{
-          newUserDetails['notificationCount']=0
+          newUserDetails['notificationCount'] =
+            successResponse[0]._response.notificationCount;
+        } else {
+          newUserDetails['notificationCount'] = 0;
         }
-        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
         setLoading(false);
       },
       errorResponse => {
         setLoading(false);
-        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+        console.log(
+          'getNotificationAllCount==>errorResponse',
+          '' + errorResponse[0],
+        );
       },
     );
   };
 
-
-
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      console.log('remoteMessage *Delivery Boy*', JSON.stringify(remoteMessage));
-      getNotificationAllCount()
-      
-      const slotId=remoteMessage?.data?.slotId ? remoteMessage?.data?.slotId : ''
+      console.log(
+        'remoteMessage *Delivery Boy*',
+        JSON.stringify(remoteMessage),
+      );
+      getNotificationAllCount();
 
-      if((remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' || remoteMessage?.data?.orderStatus === 'ASSIGNED') && remoteMessage.data?.orderNumber && remoteMessage?.data?.orderStatus){
-        playNotificationSound()
+      const slotId = remoteMessage?.data?.slotId
+        ? remoteMessage?.data?.slotId
+        : '';
+
+      if (
+        (remoteMessage?.data?.orderStatus === 'ORDER_ALLOCATED' ||
+          remoteMessage?.data?.orderStatus === 'ASSIGNED') &&
+        remoteMessage.data?.orderNumber &&
+        remoteMessage?.data?.orderStatus
+      ) {
+        playNotificationSound();
         setDeliveryBoyAcceptRejectModalModalVisible(true);
-        console.log('slotId ***********>> ',slotId)
-        const param = remoteMessage.data?.orderNumber + '?slotid='+slotId
+        console.log('slotId ***********>> ', slotId);
+        const param = remoteMessage.data?.orderNumber + '?slotid=' + slotId;
         // param = param+slotId? '?slotid='+slotId:''
-        console.log('*****param data *******> ',JSON.stringify(param))
+        console.log('*****param data *******> ', JSON.stringify(param));
 
         getViewOrderDetail(
           param,
           successResponse => {
-            console.log('*****successResponse data *******> ',JSON.stringify(successResponse))
+            console.log(
+              '*****successResponse data *******> ',
+              JSON.stringify(successResponse),
+            );
 
             setLoading(false);
             if (successResponse[0]._success) {
-              console.log('*****notification data *******> ',successResponse[0]._response)
+              console.log(
+                '*****notification data *******> ',
+                successResponse[0]._response,
+              );
               setDeliveryBoyAcceptRejectMessage(successResponse[0]._response);
-              setTimeout(()=>{
-                stopNotificationSound()
+              setTimeout(() => {
+                stopNotificationSound();
                 setDeliveryBoyAcceptRejectModalModalVisible(false);
-              },30000)
+              }, 30000);
             }
           },
           errorResponse => {
@@ -116,7 +143,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               {
                 text: 'OK',
                 onPress: () => {
-                  stopNotificationSound()
+                  stopNotificationSound();
                   setDeliveryBoyAcceptRejectModalModalVisible(false);
                 },
               },
@@ -176,7 +203,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
         }}>
         <Bottom.Screen
           key="DeliveryboyHome"
-          name="Home"
+          name={homeText}
           component={DeliveryboyHome}
           options={{
             headerShown: false,
@@ -191,7 +218,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="Notifications"
-          name="Chat"
+          name={chatText}
           component={Notifications}
           options={{
             headerShown: false,
@@ -206,7 +233,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="Planning"
-          name="Planning"
+          name={planningText}
           component={Planning}
           options={{
             headerShown: false,
@@ -221,7 +248,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="DeliveryboyHistory"
-          name="Orders"
+          name={ordersText}
           component={DeliveryboyHistory}
           options={{
             headerShown: false,
@@ -236,7 +263,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="DeliveryboySettings"
-          name="Account"
+          name={accountText}
           component={DeliveryboySettings}
           options={{
             headerTitle: 'Account',
@@ -266,9 +293,9 @@ const DeliveryboyBottomNav = ({navigation}) => {
         isDeliveryBoyAcceptRejectModalModalVisible={
           isDeliveryBoyAcceptRejectModalModalVisible
         }
-        setDeliveryBoyAcceptRejectModalModalVisible={(flag)=>{
-          stopNotificationSound()
-          setDeliveryBoyAcceptRejectModalModalVisible(flag)
+        setDeliveryBoyAcceptRejectModalModalVisible={flag => {
+          stopNotificationSound();
+          setDeliveryBoyAcceptRejectModalModalVisible(flag);
         }}
         deliveryBoyAcceptRejectMessage={deliveryBoyAcceptRejectMessage}
       />

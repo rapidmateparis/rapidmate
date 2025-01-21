@@ -18,8 +18,9 @@ import {
 } from '../../commonComponent/StoreContext';
 import {updateUserProfile} from '../../../data_manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {localizationText} from '../../../utils/common';
 
-const { height: screenHeight } = Dimensions.get('window');
+const {height: screenHeight} = Dimensions.get('window');
 
 const DeliveryPreferance = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState({});
@@ -99,7 +100,7 @@ const DeliveryPreferance = ({navigation}) => {
     <ScrollView>
       <View style={styles.contentContainer}>
         <Text style={[styles.logInText, {color: colors.text}]}>
-          Select how would you like to work?
+          {localizationText('Common', 'selectDeliveryPreference')}
         </Text>
         <View style={{marginTop: 20}}>
           {deliveryPreferenceList.map(item => (
@@ -175,7 +176,7 @@ const DeliveryPreferance = ({navigation}) => {
               color: colors.text,
               fontFamily: 'Montserrat-Medium',
             }}>
-            Save
+            {localizationText('Common', 'save')}
           </Text>
         </TouchableOpacity>
       </View>

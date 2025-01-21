@@ -14,6 +14,7 @@ import {colors} from '../../../colors';
 import { useLoader } from '../../../utils/loaderContext';
 import { useUserDetails } from '../../commonComponent/StoreContext';
 import { getCityList, getCountryList, getDeliveryBoyBillingDetails, getStateList, updateDeliveryBoyBillingDetails } from '../../../data_manager';
+import { localizationText } from '../../../utils/common';
 
 const DeliveryboyBillingDetails = () => {
   const [accountType, setAccountType] = useState(1);
@@ -260,7 +261,7 @@ const DeliveryboyBillingDetails = () => {
             justifyContent: 'space-between',
           }}>
           <View style={[styles.nameInputDiv, {marginRight: 10}]}>
-            <Text style={styles.label}>First Name</Text>
+            <Text style={styles.label}>{localizationText('Common', 'firstName')}</Text>
             <TextInput
               style={styles.loginput}
               value={firstName}
@@ -268,7 +269,7 @@ const DeliveryboyBillingDetails = () => {
             />
           </View>
           <View style={styles.nameInputDiv}>
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>{localizationText('Common', 'lastName')}</Text>
             <TextInput
               style={styles.loginput}
               value={lastName}
@@ -278,7 +279,7 @@ const DeliveryboyBillingDetails = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>Address</Text>
+          <Text style={styles.label}>{localizationText('Common', 'address')}</Text>
           <TextInput
             style={styles.normalInput}
             value={address}
@@ -287,7 +288,7 @@ const DeliveryboyBillingDetails = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>Country</Text>
+          <Text style={styles.label}>{localizationText('Common', 'country')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
@@ -322,7 +323,7 @@ const DeliveryboyBillingDetails = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>State</Text>
+          <Text style={styles.label}>{localizationText('Common', 'state')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={stateList}
@@ -355,7 +356,7 @@ const DeliveryboyBillingDetails = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>City</Text>
+          <Text style={styles.label}>{localizationText('Common', 'city')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={cityList}
@@ -373,7 +374,7 @@ const DeliveryboyBillingDetails = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>Postal Code</Text>
+          <Text style={styles.label}>{localizationText('Common', 'postalCode')}</Text>
           <TextInput
             style={styles.normalInput}
             value={postalcode}
@@ -382,7 +383,7 @@ const DeliveryboyBillingDetails = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>DNI Number</Text>
+          <Text style={styles.label}>{localizationText('Common', 'dniNumber')}</Text>
           <TextInput
             style={styles.normalInput}
             value={dninumber}
@@ -393,7 +394,7 @@ const DeliveryboyBillingDetails = () => {
         <TouchableOpacity
           onPress={()=>updateBillingDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
