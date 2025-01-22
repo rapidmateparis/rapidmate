@@ -16,7 +16,7 @@ import Animated, {
 import {useLocationData} from './StoreContext';
 import {orderRequestAction, updateShiftOrderStatus} from '../../data_manager';
 import moment from 'moment';
-import { utcLocal } from '../../utils/common';
+import { localizationText, utcLocal } from '../../utils/common';
 
 function DeliveryBoyAcceptRejectModal({
   isDeliveryBoyAcceptRejectModalModalVisible,
@@ -28,6 +28,22 @@ function DeliveryBoyAcceptRejectModal({
   const {locationData} = useLocationData();
 
   console.log('deliveryBoyAcceptRejectMessage =====>',deliveryBoyAcceptRejectMessage)
+  const newDeliveryRequest = localizationText('Common', 'newDeliveryRequest') || 'New Delivery Request';
+  const estimatedCost = localizationText('Common', 'estimatedCost') || 'Estimated Cost';
+  const totalDistance = localizationText('Common', 'totalDistance') || 'Total Distance';
+  const orderIDText = localizationText('Common', 'orderID') || 'Order ID';
+  const pickupFrom = localizationText('Common', 'pickupFrom') || 'Pickup From';
+  const deliverTo = localizationText('Common', 'deliverTo') || 'Deliver To';
+  const swipeToAccept = localizationText('Common', 'swipeToAccept') || 'Swipe to accept';
+  const swipeToReject = localizationText('Common', 'swipeToReject') || 'Swipe to reject';
+  const awayText = localizationText('Common', 'away') || 'away';
+  const shiftText = localizationText('Common', 'shift') || 'Shift';
+  const totalDays = localizationText('Common', 'totalDays') || 'Total Days';
+  const totalHours = localizationText('Common', 'totalHours') || 'Total Hours';
+  const aproxEarning = localizationText('Common', 'aproxEarning') || 'Aprox Earning';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const forText = localizationText('Common', 'for') || 'For';
 
   const toggleModal = () => {
     setDeliveryBoyAcceptRejectModalModalVisible(
@@ -119,42 +135,42 @@ function DeliveryBoyAcceptRejectModal({
               style={{width: 25, height: 25}}
               source={require('../../image/Big-Calender.png')}
             />
-            <Text style={styles.deliveryTime}>Shift</Text>
+            <Text style={styles.deliveryTime}>{shiftText}</Text>
           </View>
 
           <View style={styles.overViewCard}>
             <View>
               <Text style={styles.requestOverview}>{deliveryBoyAcceptRejectMessage?.order.total_days ?deliveryBoyAcceptRejectMessage?.order.total_days :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total days</Text>
+              <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
             </View>
 
             <View>
               <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
-              <Text style={styles.requestOverviewInfo}>Total hours</Text>
+              <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
             </View>
 
             <View>
               <Text style={styles.requestOverview}>
                 €<Text>{item.delivery_boy_amount ? item.delivery_boy_amount.toFixed(2) :0}</Text>
               </Text>
-              <Text style={styles.requestOverviewInfo}>Aprox earning</Text>
+              <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
             </View>
           </View>
 
           <View style={styles.scheduleDateTimeCard}>
             <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.shift_from_date)).format('DD-MM-YYYY')}</Text>
+              {fromText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.shift_from_date)).format('DD-MM-YYYY')}</Text>
             </Text>
             <View style={styles.borderShowoff} />
             <Text style={styles.schaduleInfo}>
-              From <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+              {toText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.shift_tp_date)).format('DD-MM-YYYY')}</Text>
             </Text>
           </View>
 
           {/* <View style={styles.borderShow}></View> */}
 
           <View style={styles.footerCard}>
-            <Text style={styles.orderId}>For {deliveryBoyAcceptRejectMessage?.order.company_name}</Text>
+            <Text style={styles.orderId}>{forText} {deliveryBoyAcceptRejectMessage?.order.company_name}</Text>
             {/* <Text style={styles.valueMoney}>€34.00</Text> */}
           </View>
         </TouchableOpacity>
@@ -198,7 +214,7 @@ function DeliveryBoyAcceptRejectModal({
                    style={styles.loaderMap}
                    source={require('../../image/Big-Package.png')}
                  />
-                 <Text style={styles.maintext}>New delivery request!</Text>
+                 <Text style={styles.maintext}>{newDeliveryRequest}</Text>
                   
                </View>
 
@@ -211,7 +227,7 @@ function DeliveryBoyAcceptRejectModal({
                        <Text style={styles.subAddress}>
                          {deliveryBoyAcceptRejectMessage?.order?.address}
                        </Text>
-                       <Text style={styles.distance}>0.3 km away</Text>
+                       <Text style={styles.distance}>0.3 km {awayText}</Text>
                      </View>
                    </View>
                    <View>
@@ -284,23 +300,23 @@ function DeliveryBoyAcceptRejectModal({
                 style={styles.loaderMap}
                 source={require('../../image/Big-Package.png')}
               />
-              <Text style={styles.maintext}>New delivery request!</Text>
+              <Text style={styles.maintext}>{newDeliveryRequest}</Text>
                 <Text style={styles.subText}>
-                  Estimated cost:{' '}
+                  {estimatedCost}:{' '}
                   <Text
                     style={
                       styles.boldSubText
                     }>{`€${deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount}`}</Text>
                 </Text>
                 <Text style={styles.subText}>
-                  Total distance:{' '}
+                  {totalDistance}:{' '}
                   <Text
                     style={
                       styles.boldSubText
                     }>{`${deliveryBoyAcceptRejectMessage?.order?.distance}Km`}</Text>
                 </Text>
                 <Text style={styles.subText}>
-                  Order Number:{' '}
+                  {orderIDText}:{' '}
                   <Text style={styles.boldSubText}>
                     {deliveryBoyAcceptRejectMessage?.order?.order_number}
                   </Text>
@@ -310,14 +326,14 @@ function DeliveryBoyAcceptRejectModal({
               <View style={styles.devileryMap}>
                 <View style={styles.Delivering}>
                   <View style={{padding: 15}}>
-                    <Text style={styles.DeliveringText}>Pickup from</Text>
+                    <Text style={styles.DeliveringText}>{pickupFrom}</Text>
                     <Text style={styles.subAddress}>
                       {getLocationAddress(
                         deliveryBoyAcceptRejectMessage?.order
                           ?.pickup_location_id,
                       )}
                     </Text>
-                    <Text style={styles.distance}>0.3 km away</Text>
+                    <Text style={styles.distance}>0.3 km {awayText}</Text>
                   </View>
                 </View>
                 <View>
@@ -332,14 +348,14 @@ function DeliveryBoyAcceptRejectModal({
               <View style={styles.devileryMap}>
                 <View style={styles.Delivering}>
                   <View style={{padding: 15}}>
-                    <Text style={styles.DeliveringText}>Drop on</Text>
+                    <Text style={styles.DeliveringText}>{deliverTo}</Text>
                     <Text style={styles.subAddress}>
                       {getLocationAddress(
                         deliveryBoyAcceptRejectMessage?.order
                           ?.dropoff_location_id,
                       )}
                     </Text>
-                    <Text style={styles.distance}>0.3 km away</Text>
+                    <Text style={styles.distance}>0.3 km {awayText}</Text>
                   </View>
                 </View>
                 <View>
@@ -371,7 +387,7 @@ function DeliveryBoyAcceptRejectModal({
               </Animated.View>
             </PanGestureHandler>
 
-            <Text style={styles.text}>Swipe to accept</Text>
+            <Text style={styles.text}>{swipeToAccept}</Text>
             <Image
               style={{marginLeft: 10}}
               source={require('../../image/swipe_right.png')}
@@ -395,7 +411,7 @@ function DeliveryBoyAcceptRejectModal({
                 <AntDesign name="close" size={24} color="#fff" />
               </Animated.View>
             </PanGestureHandler>
-            <Text style={styles.text}>Swipe to reject</Text>
+            <Text style={styles.text}>{swipeToReject}</Text>
             <Image
               style={{marginLeft: 10}}
               source={require('../../image/swipe_right.png')}

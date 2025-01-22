@@ -10,6 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import {colors} from '../../colors';
+import { localizationText } from '../../utils/common';
 
 const EnterpriseOrderCancelled = ({navigation}) => {
   return (
@@ -28,9 +29,11 @@ const EnterpriseOrderCancelled = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/NotHappy-Img.png')}
           />
-          <Text style={styles.text}>Your order is cancelled</Text>
+          <Text style={styles.text}>
+            {localizationText('Common', 'yourOrderCancelled')}
+          </Text>
           <Text style={styles.subText}>
-            Sorry for the inconvenience, hope to see you soon!
+            {localizationText('Common', 'yourOrderCancelledDescription')}
           </Text>
         </View>
       </View>
@@ -38,13 +41,13 @@ const EnterpriseOrderCancelled = ({navigation}) => {
         <TouchableOpacity
           onPress={() => navigation.navigate('EnterpriseBottomNav')}
           style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Go home</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'goHome')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={() => navigation.navigate('EnterpriseBottomNav')}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Order again</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'orderAgain')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

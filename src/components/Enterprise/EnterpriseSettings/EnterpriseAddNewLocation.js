@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../../colors';
 import MapDeliveryDetails from '../../commonComponent/MapDeliveryDetails';
 import EnterpriseAddNewLocationsMap from '../../commonComponent/EnterpriseAddNewLocationsMap';
+import { localizationText } from '../../../utils/common';
 
 const EnterpriseAddNewLocation = ({route, navigation}) => {
   const [title, setTitle] = useState('');
@@ -41,16 +42,16 @@ const EnterpriseAddNewLocation = ({route, navigation}) => {
           </View>
         </View>
         <View>
-          <Text style={styles.locationtitle}>Add new location</Text>
+          <Text style={styles.locationtitle}>{localizationText('Common', 'addNewLocation')}</Text>
           <Text style={styles.locationsubTitle}>
-            Set your company’s location and save it to your profile
+          {localizationText('Common', 'addNewLocationDes')}
           </Text>
         </View>
         <View style={styles.nameInputDiv}>
-          <Text style={styles.searchLocation}>Location title</Text>
+          <Text style={styles.searchLocation}>{localizationText('Common', 'locationTitle')}</Text>
           <TextInput
             style={styles.loginput}
-            placeholder="Type here"
+            placeholder={localizationText('Common', 'typeHere')}
             placeholderTextColor="#999"
             value={title}
             onChangeText={text => setTitle(text)}

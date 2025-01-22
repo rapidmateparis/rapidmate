@@ -12,6 +12,7 @@ import {
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const {height: screenHeight} = Dimensions.get('window');
 
@@ -29,18 +30,19 @@ const PickupDeliveryCompleted = ({navigation}) => {
     setOverallExperienceRating(rating);
   };
 
-  const downloadInvoiceFile = () => {
-
-  }
+  const downloadInvoiceFile = () => {};
 
   return (
-    <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
+    <ScrollView
+      style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <View>
         <View>
-          <Text style={styles.mainTitle}>Delivery complete!</Text>
+          <Text style={styles.mainTitle}>
+            {localizationText('Common', 'deliveryComplete')}
+          </Text>
           <View style={styles.textContainer}>
             <Text style={styles.oderIdText}>
-              Please tell us about your experience
+              {localizationText('Common', 'deliveryCompleteDescription')}
             </Text>
           </View>
         </View>
@@ -61,7 +63,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
           <View style={{paddingTop: '10%', paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <Text style={styles.deliveryboyRate}>
-                How would you rate the delivery boy?
+                {localizationText('Common', 'rateDeliveryboyTitle')}
               </Text>
               <View style={styles.mainRatingCard}>
                 <TouchableOpacity
@@ -75,7 +77,9 @@ const PickupDeliveryCompleted = ({navigation}) => {
                       deliveryBoyRating >= 1 ? colors.primary : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Very poor</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'veryPoor')}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -89,7 +93,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
                     }
                   />
                   <Text style={[styles.ratingByCat, {marginLeft: 3}]}>
-                    Poor
+                    {localizationText('Common', 'poor')}
                   </Text>
                 </TouchableOpacity>
 
@@ -104,7 +108,9 @@ const PickupDeliveryCompleted = ({navigation}) => {
                       deliveryBoyRating >= 3 ? colors.primary : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Average</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'average')}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -117,7 +123,9 @@ const PickupDeliveryCompleted = ({navigation}) => {
                       deliveryBoyRating >= 4 ? colors.primary : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Good</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'good')}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -131,14 +139,16 @@ const PickupDeliveryCompleted = ({navigation}) => {
                       deliveryBoyRating >= 5 ? colors.primary : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Excellent</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'excellent')}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={styles.devileryMap}>
               <Text style={styles.deliveryboyRate}>
-                How would you rate the experience?
+                {localizationText('Common', 'consumerExperienceRateTitle')}
               </Text>
               <View style={styles.mainRatingCard}>
                 <TouchableOpacity
@@ -154,7 +164,9 @@ const PickupDeliveryCompleted = ({navigation}) => {
                         : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Very poor</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'veryPoor')}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -170,7 +182,7 @@ const PickupDeliveryCompleted = ({navigation}) => {
                     }
                   />
                   <Text style={[styles.ratingByCat, {marginLeft: 3}]}>
-                    Poor
+                    {localizationText('Common', 'poor')}
                   </Text>
                 </TouchableOpacity>
 
@@ -187,7 +199,9 @@ const PickupDeliveryCompleted = ({navigation}) => {
                         : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Average</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'average')}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -202,7 +216,9 @@ const PickupDeliveryCompleted = ({navigation}) => {
                         : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Good</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'good')}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -218,26 +234,36 @@ const PickupDeliveryCompleted = ({navigation}) => {
                         : colors.text
                     }
                   />
-                  <Text style={styles.ratingByCat}>Excellent</Text>
+                  <Text style={styles.ratingByCat}>
+                    {localizationText('Common', 'excellent')}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={styles.mainBtnCard}>
               <TouchableOpacity style={styles.remindlaterBtn}>
-                <Text style={styles.trackText}>Remind later</Text>
+                <Text style={styles.trackText}>
+                  {localizationText('Common', 'remindLater')}
+                </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigation.navigate('PickupFeedbackThanks')} style={styles.trackOrderBtn}>
-                <Text style={styles.trackText}>Submit</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('PickupFeedbackThanks')}
+                style={styles.trackOrderBtn}>
+                <Text style={styles.trackText}>
+                  {localizationText('Common', 'submit')}
+                </Text>
               </TouchableOpacity>
             </View>
 
             <View>
-              <TouchableOpacity style={styles.invoiceDownload} onPress={downloadInvoiceFile}>
+              <TouchableOpacity
+                style={styles.invoiceDownload}
+                onPress={downloadInvoiceFile}>
                 <AntDesign name="download" size={15} color={colors.text} />
                 <Text style={[styles.trackText, {marginLeft: 5}]}>
-                  Download invoice
+                  {localizationText('Common', 'downloadInvoice')}
                 </Text>
               </TouchableOpacity>
             </View>

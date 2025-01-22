@@ -10,6 +10,7 @@ import {
 import {colors} from '../../colors';
 import ScheduledDeliverySwipe from '../commonComponent/ScheduledDeliverySwipe';
 import DeliveryboyScheduleCancellationModal from './DeliveryboyScheduleCancellationModal';
+import {localizationText} from '../../utils/common';
 
 const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
   const [deliveryTime, setDeliveryTime] = useState(90 * 60); // 90 minutes in seconds
@@ -47,10 +48,13 @@ const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/Big-Calender.png')}
           />
-          <Text style={styles.maintext}>Scheduled delivery alert</Text>
+          <Text style={styles.maintext}>
+            {localizationText('Common', 'scheduledDeliveryAlert')}
+          </Text>
           <Text style={styles.subText}>
-            You have a scheduled delivery in
-            <Text style={styles.timerCount}> 1 hour</Text>, are you ready?
+            {localizationText('Common', 'scheduledDeliveryIn')}
+            <Text style={styles.timerCount}> 1 hour</Text>,{' '}
+            {localizationText('Common', 'areYouReady')}
           </Text>
         </View>
         <ImageBackground
@@ -60,11 +64,11 @@ const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
                 <View style={{padding: 15}}>
-                  <Text style={styles.DeliveringText}>Pickup from</Text>
+                  <Text style={styles.DeliveringText}>{localizationText('Common', 'pickupFrom')}</Text>
                   <Text style={styles.subAddress}>
                     1901 Thornridge Cir. Shiloh, California
                   </Text>
-                  <Text style={styles.distance}>0.3 km away</Text>
+                  <Text style={styles.distance}>0.3 km {localizationText('Common', 'away')}</Text>
                 </View>
               </View>
               <View>
@@ -76,7 +80,7 @@ const DeliveryboyScheduledDeliveryAlert = ({navigation}) => {
             </View>
           </View>
           <View style={{marginBottom: 40}}>
-            <ScheduledDeliverySwipe/>
+            <ScheduledDeliverySwipe />
           </View>
         </ImageBackground>
       </View>

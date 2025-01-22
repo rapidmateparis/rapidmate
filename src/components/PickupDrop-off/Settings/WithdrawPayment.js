@@ -12,6 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../../../colors';
+import {localizationText} from '../../../utils/common';
 
 const WithdrawPayment = ({navigation}) => {
   const [amount, setAmount] = useState('');
@@ -36,7 +37,7 @@ const WithdrawPayment = ({navigation}) => {
       <View style={{paddingHorizontal: 15}}>
         <View>
           <Text style={styles.admountWithdrawTitle}>
-            Enter amount to withdraw
+            {localizationText('Common', 'enterAmountWithdraw')}
           </Text>
           <View style={styles.withdrawAmountCard}>
             <TextInput
@@ -51,19 +52,23 @@ const WithdrawPayment = ({navigation}) => {
 
           <View>
             <Text style={styles.availableBalanceText}>
-              Available balance:{' '}
+              {localizationText('Common', 'availableBalance')}:{' '}
               <Text style={styles.availableBalanceAmount}>€250.85</Text>
             </Text>
           </View>
         </View>
 
         <View style={styles.addCardsHeader}>
-          <Text style={styles.subCardName}>Select Bank</Text>
+          <Text style={styles.subCardName}>
+            {localizationText('Common', 'selectBank')}
+          </Text>
           <View style={styles.addSection}>
             <TouchableOpacity>
               <AntDesign name="pluscircle" size={25} color="#FF0058" />
             </TouchableOpacity>
-            <Text style={styles.addCardText}>Add Bank</Text>
+            <Text style={styles.addCardText}>
+              {localizationText('Common', 'addBank')}
+            </Text>
           </View>
         </View>
 
@@ -92,7 +97,7 @@ const WithdrawPayment = ({navigation}) => {
         <View style={styles.securePayment}>
           <Feather name="send" size={25} color="#666" />
           <Text style={styles.paymentInfo}>
-            Your funds will take around 2 business days to process
+            {localizationText('Common', 'withdrawAmountTransferDes')}
           </Text>
         </View>
         <TouchableOpacity
@@ -101,7 +106,7 @@ const WithdrawPayment = ({navigation}) => {
             navigation.navigate('WithdrawAmountTransfered');
           }}>
           <Text style={styles.transferBtnAmountText}>
-            Transfer (<Text>€250.85</Text>)
+            {localizationText('Common', 'transfer')} (<Text>€250.85</Text>)
           </Text>
         </TouchableOpacity>
       </View>

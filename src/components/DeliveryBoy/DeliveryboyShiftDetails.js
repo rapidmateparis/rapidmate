@@ -33,6 +33,8 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
   const [delivered, setDelivered] = useState(false);
   const {setLoading} = useLoader();
   const {saveUserDetails, userDetails} = useUserDetails();
+  const swipeToStartShift =
+    localizationText('Common', 'swipeToStartShift') || 'Swipe to start shift';
 
   console.log('orderDetails ====>>', orderDetails);
   useEffect(() => {
@@ -264,7 +266,6 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
             </Text>
             {!!checkStartAction()?.id && (
               <>
-                <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
                 <SwipeButton
                   onSwipeFail={() =>
                     updateSwipeStatusMessage('Incomplete swipe!')
@@ -290,7 +291,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   title={
                     <View style={styles.swipeTitleComp}>
                       <Text style={{color: colors.text}}>
-                        Swipe to start shift
+                        {swipeToStartShift}
                       </Text>
                       <AntDesign
                         name="doubleright"

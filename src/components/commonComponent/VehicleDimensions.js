@@ -11,6 +11,7 @@ import VanImage from '../../image/Van-Modal.png';
 import MiniVanImage from '../../image/Pickup-Modal.png';
 import SemiTruckImage from '../../image/Truck-Modal.png';
 import OtherImage from '../../image/Other-Modal.png';
+import {localizationText} from '../../utils/common';
 
 const VehicleDimensionsModal = ({
   setModalVisible,
@@ -63,7 +64,9 @@ const VehicleDimensionsModal = ({
     <Modal isVisible={isModalVisible}>
       <View style={styles.modalContent}>
         <View style={styles.modalHeader}>
-          <Text style={styles.headerTitle}>Vehicle Dimensions</Text>
+          <Text style={styles.headerTitle}>
+            {localizationText('Common', 'vehicleDimensions')}
+          </Text>
           <TouchableOpacity onPress={toggleModal}>
             <AntDesign name="close" size={20} color="#000000" />
           </TouchableOpacity>
@@ -84,7 +87,7 @@ const VehicleDimensionsModal = ({
               <Text style={styles.countText}>1</Text>
             </View>
             <Text style={styles.infoText}>
-              Length{' '}
+              {localizationText('Common', 'length')}{' '}
               <Text style={styles.boldText}>
                 {vehicleDetails && vehicleDetails.length
                   ? vehicleDetails.length + ' feet'
@@ -98,7 +101,7 @@ const VehicleDimensionsModal = ({
               <Text style={styles.countText}>2</Text>
             </View>
             <Text style={styles.infoText}>
-              Height{' '}
+              {localizationText('Common', 'height')}{' '}
               <Text style={styles.boldText}>
                 {vehicleDetails && vehicleDetails.height
                   ? vehicleDetails.height + ' feet'
@@ -112,7 +115,7 @@ const VehicleDimensionsModal = ({
               <Text style={styles.countText}>3</Text>
             </View>
             <Text style={styles.infoText}>
-              Width{' '}
+              {localizationText('Common', 'width')}{' '}
               <Text style={styles.boldText}>
                 {vehicleDetails && vehicleDetails.width
                   ? vehicleDetails.width + ' feet'
@@ -123,7 +126,9 @@ const VehicleDimensionsModal = ({
         </View>
 
         <TouchableOpacity style={styles.okButton} onPress={toggleModal}>
-          <Text style={styles.okButtonText}>Ok</Text>
+          <Text style={styles.okButtonText}>
+            {localizationText('Common', 'okText')}
+          </Text>
         </TouchableOpacity>
       </View>
     </Modal>

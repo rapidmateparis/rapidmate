@@ -12,7 +12,7 @@ const languageList = {
 const initData = () => ({
   compatibilityJSON: 'v3',
   fallbackLng: 'en', 
-  lng: 'en', 
+  lng: 'fr', 
   debug: false,
   resources: languageList,
   interpolation: {

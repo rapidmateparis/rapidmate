@@ -28,6 +28,7 @@ import {
   deleteAddressBookforEnterprise,
 } from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
+import { localizationText } from '../../../utils/common';
 
 const AddressBook = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -424,7 +425,7 @@ const AddressBook = ({route, navigation}) => {
             fontSize: 16,
             color: colors.black,
           }}>
-          Address book
+         {localizationText('Common', 'addressBook')}
         </Text>
         <TouchableOpacity
           onPress={() => toggleModal(0)}

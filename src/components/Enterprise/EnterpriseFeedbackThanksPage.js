@@ -10,6 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import {colors} from '../../colors';
+import { localizationText } from '../../utils/common';
 
 const EnterpriseFeedbackThanksPage = ({navigation}) => {
   return (
@@ -31,23 +32,23 @@ const EnterpriseFeedbackThanksPage = ({navigation}) => {
           </View>
 
           <View>
-            <Text style={styles.mainTitle}>Thanks for your feedback!</Text>
+            <Text style={styles.mainTitle}>{localizationText('Common', 'thanksForFeedback')}</Text>
             <View style={styles.textContainer}>
               <Text style={styles.oderIdText}>
-                Thanks for sharing your experience
+              {localizationText('Common', 'thanksForFeedbackDes')}
               </Text>
             </View>
           </View>
 
           <View style={styles.mainBtnCard}>
             <TouchableOpacity onPress={() => navigation.navigate('EnterpriseBottomNav')} style={styles.remindlaterBtn}>
-              <Text style={styles.trackText}>Go home</Text>
+              <Text style={styles.trackText}>{localizationText('Common', 'goHome')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => navigation.navigate('')}
               style={styles.trackOrderBtn}>
-              <Text style={styles.trackText}>Order again</Text>
+              <Text style={styles.trackText}>{localizationText('Common', 'orderAgain')}</Text>
             </TouchableOpacity>
           </View>
         </View>
