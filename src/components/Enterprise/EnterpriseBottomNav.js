@@ -273,7 +273,7 @@ const EnterpriseBottomNav = ({navigation}) => {
           name={accountText}
           component={EnterprisesSettins}
           options={{
-            headerTitle: 'Settings',
+            headerTitle: `${localizationText('Common','settings')}`,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,

@@ -163,7 +163,19 @@ const AppNavigator = () => {
   const support = localizationText('NavHeaderTitles', 'support') || 'Support';
   const scheduleDetails = localizationText('NavHeaderTitles', 'scheduleDetails') || 'Schedule Details';
   const transactions = localizationText('Common', 'transactions') || 'Transactions';
-  const deliveryPreferance = localizationText('Common', 'deliveryPreferance') || 'Delivery Preferance';
+  const deliveryPreferance = localizationText('NavHeaderTitles', 'deliveryPreferance') || 'Delivery Preferance';
+  const companyLocations = localizationText('Common', 'companyLocations') || 'Company Locations';
+  const selectCompanyLocation = localizationText('NavHeaderTitles', 'selectCompanyLocation') || 'Select Company Location';
+  const createNewDelivery = localizationText('NavHeaderTitles', 'createNewDelivery') || 'Create New Delivery';
+  const createNewSchedule = localizationText('NavHeaderTitles', 'createNewSchedule') || 'Create New Schedule';
+  const preview = localizationText('NavHeaderTitles', 'preview') || 'Preview';
+  const shiftDetails = localizationText('NavHeaderTitles', 'shiftDetails') || 'Shift Details';
+  const activeDeliveries = localizationText('NavHeaderTitles', 'activeDeliveries') || 'Active Deliveries';
+  const locations = localizationText('NavHeaderTitles', 'locations') || 'Locations';
+  const add = localizationText('NavHeaderTitles', 'add') || 'Add';
+  const addNewLocations = localizationText('NavHeaderTitles', 'addNewLocations') || 'Add New Locations';
+  const manageAds = localizationText('NavHeaderTitles', 'manageAds') || 'Manage Ads';
+  const listNewAd = localizationText('NavHeaderTitles', 'listNewAd') || 'List New Ad';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -1305,7 +1317,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Shift Details',
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1785,7 +1797,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Active deliveries',
+                  headerTitle: activeDeliveries,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1813,7 +1825,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add new locations',
+                  headerTitle: addNewLocations,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1897,7 +1909,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Locations',
+                  headerTitle: locations,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1924,7 +1936,7 @@ const AppNavigator = () => {
                               color: colors.secondary,
                               marginRight: 5,
                             }}>
-                            Add
+                            {add}
                           </Text>
                           <AntDesign
                             name="plussquare"
@@ -2010,7 +2022,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Company locations',
+                  headerTitle: companyLocations,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2038,7 +2050,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage Ads',
+                  headerTitle: manageAds,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2077,7 +2089,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Shift Details',
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2118,7 +2130,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'John Doe’s shift',
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2146,7 +2158,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'List New Ad',
+                  headerTitle: listNewAd,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2202,7 +2214,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Create New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2230,7 +2242,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Select company location',
+                  headerTitle: selectCompanyLocation,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2258,7 +2270,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Create New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2286,7 +2298,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Create New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2314,7 +2326,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Create New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2342,7 +2354,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Create New Schedule',
+                  headerTitle: createNewSchedule,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2370,7 +2382,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Preview',
+                  headerTitle: preview,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2490,7 +2502,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Preview',
+                  headerTitle: preview,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

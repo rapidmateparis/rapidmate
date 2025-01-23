@@ -341,7 +341,18 @@
     "addPickup": "Add Pickup",
     "support": "Support",
     "scheduleDetails": "Schedule Details",
-    "deliveryPreferance": "Delivery preferance"
+    "deliveryPreferance": "Delivery preferance",
+    "selectCompanyLocation": "Select company location",
+    "createNewDelivery": "Create New Delivery",
+    "createNewSchedule": "Create New Schedule",
+    "preview": "Preview",
+    "shiftDetails": "Shift details",
+    "activeDeliveries": "Active deliveries",
+    "locations": "Locations",
+    "add": "Add",
+    "addNewLocations": "Add new locations",
+    "manageAds": "Manage Ads",
+    "listNewAd": "List New Ad"
   },
   "BottomTabNav": {
     "home": "Home",

@@ -266,7 +266,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
           name={accountText}
           component={DeliveryboySettings}
           options={{
-            headerTitle: 'Account',
+            headerTitle: `${localizationText('Common','settings')}`,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,
