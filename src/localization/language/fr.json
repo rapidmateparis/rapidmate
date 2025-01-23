@@ -321,7 +321,9 @@
     "addNewLocationDes": "Définissez la localisation de votre entreprise et enregistrez-la dans votre profil.",
     "locationTitle": "Titre du lieu",
     "saveLocationAddress": "Sauvegarder l'adresse du lieu",
-    "setLocationAddress": "Définir l'adresse de localisation"
+    "setLocationAddress": "Définir l'adresse de localisation",
+    "date": "Date",
+    "dateAndTimePicker": "Sélecteur de date et d'heure"
   },
   "NavHeaderTitles": {
     "takeSelfie": "Prendre un selfie",
