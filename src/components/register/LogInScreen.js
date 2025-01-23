@@ -124,6 +124,12 @@ const LogInScreen = ({navigation}) => {
                   userInfo: successResponse[0]._response.user?.idToken?.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
+                 saveUserDetailsInAsync({
+                      rapidToken: successResponse[0]._response.rapid_token,
+                      userInfo: successResponse[0]._response.user.idToken.payload,
+                      userDetails: successResponse[0]._response.user_profile,
+                 });
+                 saveRapidTokenInAsync(successResponse[0]._response.rapid_token);
                 console.log('userDetials===>', successResponse[0]._response);
                 if (
                   successResponse[0]._response.user_profile[0].role ==
@@ -150,12 +156,7 @@ const LogInScreen = ({navigation}) => {
                     navigation.navigate('EnterpriseBottomNav');
                   }
                 }
-                saveUserDetailsInAsync({
-                  rapidToken: successResponse[0]._response.rapid_token,
-                  userInfo: successResponse[0]._response.user.idToken.payload,
-                  userDetails: successResponse[0]._response.user_profile,
-                });
-                saveRapidTokenInAsync(successResponse[0]._response.rapid_token);
+
               }
             }
           } else {
