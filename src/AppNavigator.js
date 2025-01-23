@@ -155,6 +155,15 @@ const AppNavigator = () => {
   const wallet = localizationText('Common', 'wallet') || 'Wallet';
   const deliveryDetails = localizationText('NavHeaderTitles', 'deliveryDetails') || 'Delivery Details';
   const changePassword = localizationText('Common', 'changePassword') || 'Change Password';
+  const manageProfile = localizationText('NavHeaderTitles', 'manageProfile') || 'Manage Profile';
+  const billingDetails = localizationText('Common', 'billingDetails') || 'Billing Details';
+  const addVehicle = localizationText('NavHeaderTitles', 'addVehicle') || 'Add Vehicle';
+  const addPickup = localizationText('NavHeaderTitles', 'addPickup') || 'Add Pickup';
+  const setAvailability = localizationText('Common', 'setAvailability') || 'Set Availability';
+  const support = localizationText('NavHeaderTitles', 'support') || 'Support';
+  const scheduleDetails = localizationText('NavHeaderTitles', 'scheduleDetails') || 'Schedule Details';
+  const transactions = localizationText('Common', 'transactions') || 'Transactions';
+  const deliveryPreferance = localizationText('Common', 'deliveryPreferance') || 'Delivery Preferance';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -968,7 +977,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Pickup',
+                  headerTitle: addPickup,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1073,7 +1082,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Vehicle',
+                  headerTitle: addVehicle,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1140,7 +1149,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Support',
+                  headerTitle: support,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1409,7 +1418,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule Details',
+                  headerTitle: scheduleDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1465,7 +1474,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Take a selfie',
+                  headerTitle: takeSelfie,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1493,7 +1502,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery preferance',
+                  headerTitle: deliveryPreferance,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1549,7 +1558,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Transactions',
+                  headerTitle: transactions,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1610,7 +1619,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage Profile',
+                  headerTitle: manageProfile,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1638,7 +1647,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Set availability',
+                  headerTitle: setAvailability,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1686,7 +1695,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Billing Details',
+                  headerTitle: billingDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1715,7 +1724,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Take a selfie',
+                  headerTitle: takeSelfie,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1832,7 +1841,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage profile',
+                  headerTitle: manageProfile,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1860,7 +1869,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Billing Details',
+                  headerTitle: billingDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1943,7 +1952,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage profile',
+                  headerTitle: manageProfile,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2565,7 +2574,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Billing Details',
+                  headerTitle: billingDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

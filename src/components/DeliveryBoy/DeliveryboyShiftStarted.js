@@ -14,7 +14,7 @@ import {colors} from '../../colors';
 import SwipeButton from 'rn-swipe-button';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import StopShift from '../../image/stop-25.png';
-import { utcLocal } from '../../utils/common';
+import { localizationText, utcLocal } from '../../utils/common';
 import { useLoader } from '../../utils/loaderContext';
 import moment from 'moment';
 import { updateShiftOrderStatus } from '../../data_manager';
@@ -47,6 +47,11 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
   });
 
   const [time, setTime] = useState(0);
+  const companyDeliveryRequests = localizationText('Common', 'companyDeliveryRequests') || 'Company Delivery Requests';
+  const noPendingDelivery = localizationText('Common', 'noPendingDelivery') || 'No Pending Delivery';
+  const noOrdersDescription = localizationText('Common', 'noOrdersDescription') || 'No Orders Description';
+  const swipeToEndShift = localizationText('Common', 'swipeToEndShift') || 'Swipe to end shift';
+  const shiftElapsedTime = localizationText('Common', 'shiftElapsedTime') || 'Shift elapsed time';
 
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
@@ -200,11 +205,11 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
               .padStart(2, '0')}`} */}
               {formatTime(time)}
           </Text>
-          <Text style={styles.elapsedTime}>Shift elapsed time</Text>
+          <Text style={styles.elapsedTime}>{shiftElapsedTime}</Text>
         </View>
 
         <Text style={styles.deliveryRequestStatus}>
-          Company delivery requests (0)
+          {companyDeliveryRequests} (0)
         </Text>
       </View>
       <View style={styles.scrollViewContainer}>
@@ -214,9 +219,9 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
               style={styles.loaderMap}
               source={require('../../image/undraw_no_data.png')}
             />
-            <Text style={styles.text}>No pending delivery</Text>
+            <Text style={styles.text}>{noPendingDelivery}</Text>
             <Text style={styles.subText}>
-              If there is any active order, it will be shown here..
+              {noOrdersDescription}
             </Text>
           </View>
         </View>
@@ -227,10 +232,8 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
         <SafeAreaView>
           <View style={styles.container}>
             <Text style={styles.swipeInfo}>
-              If you are at company’s location and ready to start the shift,
-              please swipe below!
+              {shiftElapsedTime}
             </Text>
-            <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
             <SwipeButton
               onSwipeFail={() => {
                 updateSwipeStatusMessage('Incomplete swipe!');
@@ -255,7 +258,7 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
               thumbIconWidth={50}
               title={
                 <View style={styles.swipeTitleComp}>
-                  <Text>Swipe to end shift</Text>
+                  <Text>{swipeToEndShift}</Text>
                   <AntDesign
                     name="doubleright"
                     size={18}

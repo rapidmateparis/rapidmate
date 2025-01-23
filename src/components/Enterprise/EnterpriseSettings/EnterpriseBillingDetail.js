@@ -10,6 +10,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '../../../colors';
+import { localizationText } from '../../../utils/common';
 
 const EnterpriseBillingDetail = () => {
   const [firstName, setFirstName] = useState('John');
@@ -57,7 +58,7 @@ const EnterpriseBillingDetail = () => {
           }}
         >
           <View style={[styles.nameInputDiv, { marginRight: 10 }]}>
-            <Text style={styles.label}>First Name</Text>
+            <Text style={styles.label}>{localizationText('Common', 'firstName')}</Text>
             <TextInput
               style={styles.loginput}
               value={firstName}
@@ -65,7 +66,7 @@ const EnterpriseBillingDetail = () => {
             />
           </View>
           <View style={styles.nameInputDiv}>
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>{localizationText('Common', 'lastName')}</Text>
             <TextInput
               style={styles.loginput}
               value={lastName}
@@ -75,7 +76,7 @@ const EnterpriseBillingDetail = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>Address</Text>
+          <Text style={styles.label}>{localizationText('Common', 'address')}</Text>
           <TextInput
             style={styles.normalInput}
             value={address}
@@ -84,7 +85,7 @@ const EnterpriseBillingDetail = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>Country</Text>
+          <Text style={styles.label}>{localizationText('Common', 'country')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
@@ -102,7 +103,7 @@ const EnterpriseBillingDetail = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>State</Text>
+          <Text style={styles.label}>{localizationText('Common', 'state')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={stateList}
@@ -120,7 +121,7 @@ const EnterpriseBillingDetail = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>City</Text>
+          <Text style={styles.label}>{localizationText('Common', 'city')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={cityList}
@@ -138,7 +139,7 @@ const EnterpriseBillingDetail = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>Postal Code</Text>
+          <Text style={styles.label}>{localizationText('Common', 'postalCode')}</Text>
           <TextInput
             style={styles.normalInput}
             value={postalcode}
@@ -147,7 +148,7 @@ const EnterpriseBillingDetail = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>DNI Number</Text>
+          <Text style={styles.label}>{localizationText('Common', 'dniNumber')}</Text>
           <TextInput
             style={styles.normalInput}
             value={dninumber}
@@ -159,7 +160,7 @@ const EnterpriseBillingDetail = () => {
           onPress={() => updateBillingDetails()}
           style={[styles.logbutton, { backgroundColor: colors.primary }]}
         >
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

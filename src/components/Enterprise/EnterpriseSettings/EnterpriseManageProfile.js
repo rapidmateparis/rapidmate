@@ -16,6 +16,7 @@ import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
 import {updateUserProfile} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
+import { localizationText } from '../../../utils/common';
 
 const EnterpriseManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -141,7 +142,7 @@ const EnterpriseManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Name</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'name')}</Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -151,7 +152,7 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View>
         <View>
-          <Text style={styles.textlable}>Phone Number</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'phoneNumber')}</Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -208,7 +209,7 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View> */}
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Company Name</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'companyName')}</Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -218,7 +219,7 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View>
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Industry Type</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'industry')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={industryList}
@@ -250,7 +251,7 @@ const EnterpriseManageProfile = ({navigation}) => {
         </View>
         <View style={{flex: 1}}>
           <Text style={styles.textlable}>
-            Deliveries per month / Hours per month
+          {localizationText('Common', 'deliveriesPerMonth')}
           </Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -265,7 +266,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             updateProfile();
           }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

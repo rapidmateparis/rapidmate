@@ -33,6 +33,7 @@ import {
   getLocationId,
   updateEnterpriseBranch,
 } from '../../data_manager';
+import { localizationText } from '../../utils/common';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Custom Marker Components
@@ -53,6 +54,8 @@ const EnterpriseAddNewLocationsMap = props => {
   const navigation = useNavigation();
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
+  const saveLocationAddress = localizationText('Common', 'saveLocationAddress') || '';
+  const setLocationAddress = localizationText('Common', 'setLocationAddress') || '';
   const [location, setLocation] = useState(props.location);
   var sourceLocationText = '';
   if (location) {
@@ -167,7 +170,7 @@ const EnterpriseAddNewLocationsMap = props => {
                   },
                 }}
                 fetchDetails={true}
-                placeholder="Set location address"
+                placeholder={setLocationAddress}
                 onPress={(data, details = null) => {
                   let originCoordinates = {
                     latitude: details?.geometry?.location.lat,
@@ -195,7 +198,7 @@ const EnterpriseAddNewLocationsMap = props => {
                 onFail={() => console.error('Error')}
               />
 
-              <AntDesign name="arrowright" size={18} color="#000000" />
+              {/* <AntDesign name="arrowright" size={18} color="#000000" /> */}
             </View>
           </TouchableOpacity>
         </View>
@@ -236,7 +239,7 @@ const EnterpriseAddNewLocationsMap = props => {
           saveLocation();
         }}
         style={styles.trackOrderBtn}>
-        <Text style={styles.trackText}>Save location address</Text>
+        <Text style={styles.trackText}>{saveLocationAddress}</Text>
       </TouchableOpacity>
     </View>
   );

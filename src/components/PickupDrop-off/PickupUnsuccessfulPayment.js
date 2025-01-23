@@ -10,6 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import {colors} from '../../colors';
+import { localizationText } from '../../utils/common';
 
 const PickupUnsuccessfulPayment = ({navigation}) => {
   return (
@@ -28,9 +29,11 @@ const PickupUnsuccessfulPayment = ({navigation}) => {
             style={styles.paymentSuccuss}
             source={require('../../image/Payment-unsuccess.png')}
           />
-          <Text style={styles.text}>Payment unsuccessful!</Text>
+          <Text style={styles.text}>
+            {localizationText('Common', 'paymentUnsuccessful')}
+          </Text>
           <Text style={styles.subText}>
-            Your payment was successful, let’s look for a delivery boy now...
+            {localizationText('Common', 'paymentUnsuccessfulDescription')}
           </Text>
         </View>
       </View>
@@ -38,7 +41,7 @@ const PickupUnsuccessfulPayment = ({navigation}) => {
         <TouchableOpacity
           onPress={() => navigation.navigate('LoaderForDriver')}
           style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'continue')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

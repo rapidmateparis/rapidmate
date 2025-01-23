@@ -13,14 +13,17 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
+import {localizationText} from '../../utils/common';
 
 const EnterpriseShiftDetails = ({route, navigation}) => {
   const params = route.params;
   const {userDetails} = useUserDetails();
   const [totalHours, setTotalHours] = useState(0);
-  console.log(route ,"============")
+  console.log(route, '============');
   useEffect(() => {
-    var hours = params?.shiftItem?.total_hours ?params?.shiftItem?.total_hours.toFixed(2) :0
+    var hours = params?.shiftItem?.total_hours
+      ? params?.shiftItem?.total_hours.toFixed(2)
+      : 0;
     setTotalHours(hours);
   }, []);
   return (
@@ -68,20 +71,25 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
             />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>
-                Started {params.fromTime} to {params.toTime}
+                {localizationText('Common', 'started')} {params.fromTime} to{' '}
+                {params.toTime}
               </Text>
               <View>
                 <Text style={styles.franchiseSubTitle}>
-                  Total duration:{' '}
-                  <Text style={styles.boldTexts}>{totalHours} hours</Text>
+                  {localizationText('Common', 'totalDuration')}:{' '}
+                  <Text style={styles.boldTexts}>
+                    {totalHours} {localizationText('Common', 'hours')}
+                  </Text>
                 </Text>
                 <Text style={styles.franchiseSubTitle}>
-                  Total deliveries:{' '}
+                  {localizationText('Common', 'totalDays')}:{' '}
                   <Text style={styles.boldTexts}>
                     {params.shiftItem.slots.length}
                   </Text>
                 </Text>
-                <Text style={styles.franchiseSubTitle}>{params.vehicleType}</Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {params.vehicleType}
+                </Text>
               </View>
             </View>
           </View>

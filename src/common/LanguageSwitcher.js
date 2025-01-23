@@ -8,7 +8,7 @@ const languageOptions = [
   {value: 'en', label: 'English', flag: 'us'},
 ];
 
-const LanguageSwitcher = ({lang = 'en', switcher}) => {
+const LanguageSwitcher = ({lang = 'fr', switcher}) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(lang); // Default to 'fr'
   const [items, setItems] = useState(languageOptions);
