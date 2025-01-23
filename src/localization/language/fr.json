@@ -341,7 +341,18 @@
     "addPickup": "Ajouter un pick-up",
     "support": "Soutien",
     "scheduleDetails": "Détails de l'horaire",
-    "deliveryPreferance": "Préférence pour la livraison"
+    "deliveryPreferance": "Préférence pour la livraison",
+    "selectCompanyLocation": "Sélectionner le lieu de l'entreprise",
+    "createNewDelivery": "Créer une nouvelle livraison",
+    "createNewSchedule": "Créer un nouveau programme",
+    "preview": "Avant-première",
+    "shiftDetails": "Déplacement détails",
+    "activeDeliveries": "Livraisons actives",
+    "locations": "Localisation",
+    "add": "Ajouter",
+    "addNewLocations": "Ajouter de nouveaux lieux",
+    "manageAds": "Gérer les annonces",
+    "listNewAd": "Lister une nouvelle annonce"
   },
   "BottomTabNav": {
     "home": "Accueil",

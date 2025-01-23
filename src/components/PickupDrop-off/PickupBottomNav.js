@@ -34,6 +34,7 @@ const PickupBottomNav = ({navigation}) => {
   const requestsText = localizationText('BottomTabNav', 'requests');
   const ordersText = localizationText('BottomTabNav', 'orders');
   const accountText = localizationText('BottomTabNav', 'account');
+  const notifications = localizationText('Common', 'notifications');
 
   useEffect(() => {
     const onBackPress = () => {
@@ -197,7 +198,7 @@ const PickupBottomNav = ({navigation}) => {
           name={chatText}
           component={Notifications}
           options={{
-            headerTitle: 'Notifications',
+            headerTitle: notifications,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,
