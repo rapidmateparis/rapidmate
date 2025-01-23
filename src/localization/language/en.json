@@ -321,7 +321,9 @@
     "addNewLocationDes": "Set your company’s location and save it to your profile",
     "locationTitle": "Location title",
     "saveLocationAddress": "Save location address",
-    "setLocationAddress": "Set location address"
+    "setLocationAddress": "Set location address",
+    "date": "Date",
+    "dateAndTimePicker": "Date and Time Picker"
   },
   "NavHeaderTitles": {
     "takeSelfie": "Take a selfie",

@@ -55,6 +55,11 @@ const PickupAddress = ({route, navigation}) => {
   const isLargeScreen = width >= 400; // Large screen: width >= 500
   const isSmallScreen = width < 400; // Small screen: width < 350
 
+  const whenNeedIt = localizationText('Common', 'whenNeedIt') || 'When Need It';
+  const timeText = localizationText('Common', 'time') || 'Time';
+  const dateText = localizationText('Common', 'date') || 'Date';
+  const schedule = localizationText('Common', 'schedule') || 'Schedule';
+
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
@@ -284,7 +289,7 @@ const PickupAddress = ({route, navigation}) => {
           <View style={styles.dateCard}>
             <EvilIcons name="calendar" size={25} color="#000" />
             <Text style={styles.dateCardText}>
-              {localizationText('Common', 'whenNeedIt')}
+              {whenNeedIt}
               <Text>
                 {pickupDateTime.pickupDate && (
                   <Text
@@ -292,7 +297,7 @@ const PickupAddress = ({route, navigation}) => {
                       fontFamily: 'Montserrat-Medium',
                       color: colors.secondary,
                     }}>
-                    {'\n'}Date: {pickupDateTime.pickupDate}
+                    {'\n'}{dateText}: {pickupDateTime.pickupDate}
                   </Text>
                 )}
                 {pickupDateTime.pickupTime && (
@@ -302,7 +307,7 @@ const PickupAddress = ({route, navigation}) => {
                       color: colors.secondary,
                     }}>
                     {'\n'}
-                    {localizationText('Common', 'time')}{' '}
+                    {timeText}:{' '}
                     {pickupDateTime.pickupTime}
                   </Text>
                 )}
@@ -318,7 +323,7 @@ const PickupAddress = ({route, navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Montserrat-SemiBold',
                 }}>
-                {localizationText('Common', 'schedule')}
+                {schedule}
               </Text>
             </TouchableOpacity>
           </View>
