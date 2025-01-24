@@ -144,15 +144,17 @@ const PickupAddress = ({route, navigation}) => {
   }, [distanceTime]);
 
   const getDistancePrice = () => {
-    getDistancePriceList(
-      distanceTime?.distance,
-      successResponse => {
-        setDistancePriceList(successResponse[0]._response);
-      },
-      errorResponse => {
-        console.log('errorResponse==>', '' + errorResponse[0]);
-      },
-    );
+    if(distanceTime?.distance){
+      getDistancePriceList(
+        distanceTime?.distance,
+        successResponse => {console.log(successResponse[0]._response);
+          setDistancePriceList(successResponse[0]._response);
+        },
+        errorResponse => {
+          console.log('errorResponse==>', '' + errorResponse[0]);
+        },
+      );
+    }
   };
 
   const getPriceUsingVechicelType = vehicleTypeId => {

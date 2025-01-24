@@ -144,12 +144,12 @@ const AddPickupdetails = ({route, navigation}) => {
   };
 
   useEffect(() => {
+    console.log(userDetails);
+    let userDBData = userDetails?.userDetails[0];
+    console.log(userDBData);
     if (selectedId === '1') {
-      const updatedNumber = userDetails.userInfo.phone_number
-        ? userDetails.userInfo.phone_number.startsWith('+91')
-          ? userDetails.userInfo.phone_number.slice(3)
-          : userDetails.userInfo.phone_number
-        : null;
+      const updatedNumber = userDBData.phone
+        ?userDBData.phone: null;
       setName(
         userDetails.userDetails[0].first_name
           ? userDetails.userDetails[0].first_name
