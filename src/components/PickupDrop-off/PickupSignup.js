@@ -331,7 +331,7 @@ const PickupSignup = ({navigation}) => {
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={11}
+              maxLength={10}
               value={number}
               onChangeText={text => setNumber(text)}
             />
