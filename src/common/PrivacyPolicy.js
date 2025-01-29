@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, ScrollView, StyleSheet, Linking} from 'react-native';
 import {colors} from '../colors';
+import {localizationText} from '../utils/common';
 
 const PrivacyPolicy = () => {
   return (
@@ -8,30 +9,26 @@ const PrivacyPolicy = () => {
       <View style={styles.section}>
         <View style={styles.card}>
           <Text style={styles.title}>
-            Privacy <Text style={styles.highlight}>Policy</Text>
+            {localizationText('PrivacyPolicy', 'privacyPolicy')}
           </Text>
           <Text style={styles.date}>
-            Last Updated: <Text style={styles.highlight}>January 4, 2025</Text>
+            {localizationText('PrivacyPolicy', 'lastUpdated')}:{' '}
+            <Text style={styles.highlight}>
+              {localizationText('PrivacyPolicy', 'januaryPrivacyText')}
+            </Text>
           </Text>
           <Text style={styles.paragraph}>
-            Rapidmate ("we," "us," "our") is committed to protecting your data.
-            This Privacy Policy explains how we collect, use, share, and protect
-            your data and describes your rights under applicable laws, including
-            the General Data Protection Regulation (GDPR).
+            {localizationText('PrivacyPolicy', 'rapidmateCommitted')}
           </Text>
           <Text style={styles.paragraph}>
-            Please review this policy regularly, as it may be updated
-            periodically.
+            {localizationText('PrivacyPolicy', 'pleaseReviewPolicy')}
           </Text>
 
-          <Text style={styles.sectionTitle}>1. Who We Are</Text>
+          <Text style={styles.sectionTitle}>
+            1. {localizationText('PrivacyPolicy', 'whoWeAre')}
+          </Text>
           <Text style={styles.paragraph}>
-            Rapidmate provides logistics services, connecting businesses with
-            delivery professionals to ensure fast and reliable deliveries across
-            France. Rapidmate operates under its parent company, AJS GROUP,
-            which is responsible for issuing all invoices and bills related to
-            our services. For questions or concerns about your data, contact us
-            at:
+            {localizationText('PrivacyPolicy', 'rapidmateProvides')}
           </Text>
           <Text style={styles.contact}>
             Email:{' '}
@@ -42,331 +39,355 @@ const PrivacyPolicy = () => {
             </Text>
           </Text>
           <Text style={styles.contact}>
-            Postal Address:{' '}
+            {localizationText('PrivacyPolicy', 'postalAddress')}:{' '}
             <Text style={styles.highlight}>
               8 B Av. Danielle Casanova ,95210 Saint -Gratien
             </Text>
           </Text>
 
-          <Text style={styles.sectionTitle}>2. Data We Collect</Text>
-          <Text style={styles.subSectionTitle}>2.1. From Website Visitors</Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Data Collected:</Text> IP address, browser
-            type, cookies, and information provided via contact forms (name,
-            email, phone number).
+          <Text style={styles.sectionTitle}>
+            2. {localizationText('PrivacyPolicy', 'dataWeCollect')}
+          </Text>
+          <Text style={styles.subSectionTitle}>
+            2.1. {localizationText('PrivacyPolicy', 'fromWebsiteVisitors')}
           </Text>
           <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Purpose:</Text> Website functionality,
-            responding to inquiries, analytics, and marketing.
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'dataCollected')}:
+            </Text>
+            {localizationText('PrivacyPolicy', 'dataCollectedDescription')}
           </Text>
           <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Lawful Basis:</Text> Consent (for cookies)
-            and legitimate interests (analytics and communication).
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'purpose')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'purposeDescription')}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'lawfulBasis')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'lawfulBasisDescription')}
           </Text>
 
           <Text style={styles.subSectionTitle}>
-            2.2. From Registered Users (Businesses/Customers)
+            2.2. {localizationText('PrivacyPolicy', 'fromRegisteredUsers')}
           </Text>
           <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Data Collected:</Text>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'dataCollected')}:
+            </Text>
           </Text>
           <Text style={styles.paragraph}>
-            Personal identifiers (name, email, phone number, address).
+            {localizationText('PrivacyPolicy', 'personalIdentifiers')}
           </Text>
           <Text style={styles.paragraph}>
-            Payment details (processed securely via third-party providers).
+            {localizationText('PrivacyPolicy', 'paymentDetails')}
           </Text>
           <Text style={styles.paragraph}>
-            Delivery information (pickup and drop-off addresses, item
-            descriptions).
+            {localizationText('PrivacyPolicy', 'deliveryInformation')}
           </Text>
           <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Purpose: </Text>Service delivery, billing,
-            customer support, and dispute resolution.
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'purpose')}:{' '}
+            </Text>
+            {localizationText('PrivacyPolicy', 'serviceDelivery')}
           </Text>
           <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Lawful Basis: </Text>Contractual necessity
-            and legitimate interests.
-          </Text>
-          <Text style={styles.sectionTitle}>2.3. From Couriers:</Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Data Collected:</Text>
-          </Text>
-          <Text style={styles.paragraph}>
-            Personal identifiers (name, email, phone number, vehicle details).
-          </Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>SIRET number </Text> (for individual
-            entrepreneurs/self-employed couriers).
-          </Text>
-          <Text style={styles.paragraph}>
-            Financial details (bank account for payments).
-          </Text>
-          <Text style={styles.paragraph}>
-            Geolocation data (during active delivery periods).
-          </Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Purpose: </Text>Identity verification,
-            assignment of delivery tasks, payment processing, and safety and
-            Verification of delivery professional identity through photo
-            capture, ensuring the authenticity and security of the individual
-            handling the delivery.
-          </Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Lawful Basis: </Text>Contractual
-            necessity, legal obligations, and legitimate interests.
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'lawfulBasis')}:{' '}
+            </Text>
+            {localizationText('PrivacyPolicy', 'contractualNecessity')}
           </Text>
           <Text style={styles.sectionTitle}>
-            2.4. Cookies and Tracking Technologies
+            2.3. {localizationText('PrivacyPolicy', 'fromCouriers')}:
           </Text>
           <Text style={styles.paragraph}>
-            We use cookies to enhance your experience on our website. Cookies
-            are small text files that help us remember your preferences, improve
-            functionality, and provide analytics about website usage.
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'dataCollected')}:
+            </Text>
           </Text>
           <Text style={styles.paragraph}>
-            For more details about how we use cookies and how you can control
-            them, please refer to our Terms & Conditions.
+            {localizationText('PrivacyPolicy', 'personalIdentifiersCouriers')}
           </Text>
           <Text style={styles.paragraph}>
-            <Text style={styles.bold}>Lawful Basis: </Text>Consent (for
-            non-essential cookies).
-          </Text>
-          <Text style={styles.paragraph}>
-            We rely on your consent to use non-essential cookies. You have the
-            right to withdraw or modify your consent at any time through your
-            browser settings or the cookie preferences provided.
-          </Text>
-          <Text style={styles.paragraph}>
-            By continuing to use our website, you consent to the use of
-            non-essential cookies unless you opt-out using the options provided.
-          </Text>
-          <Text style={styles.paragraph}>
-            We use cookies to enhance user experience, provide analytics, and
-            ensure website functionality. Cookies are categorized into essential
-            and non-essential types. Essential cookies are necessary for the
-            basic operation of our platform, while non-essential cookies are
-            used for analytics and marketing purposes.
-          </Text>
-          <Text>
-            You can manage your cookie preferences via our dedicated cookie
-            settings page or by adjusting your browser settings. For
-            non-essential cookies, we rely on user consent, which can be
-            withdrawn or modified at any time.
-          </Text>
-          <Text style={styles.sectionTitle}>3. How We Use Your Data</Text>
-          <Text style={styles.paragraph}>
-            We use your personal data for the following purposes:
-          </Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>1. Service Provision:</Text> To process
-            orders, assign deliveries, and ensure timely logistics operations.
-          </Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>2. Customer Support:</Text> To address
-            inquiries, complaints, and disputes.
-          </Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>3. Marketing:</Text> To send promotional
-            materials (with your consent).
-          </Text>
-          <Text style={styles.paragraph}>
-            <Text style={styles.bold}>4. Analytics:</Text> To improve our
-            services through usage data analysis.
-          </Text>
-          <Text style={styles.sectionTitle}>4. Data Sharing</Text>
-          <Text style={styles.paragraph}>We may share your data with:</Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Service Providers:</Text> For hosting,
-            payment processing, and customer communication. These providers
-            include [Service Providers' Names], who ensure GDPR compliance and
-            data protection.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Couriers:</Text> Limited data (e.g.,
-            delivery addresses) necessary for completing deliveries.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Legal Authorities:</Text> As required by
-            law, including for tax and regulatory compliance.
-          </Text>
-          <Text style={styles.paragraph}>
-            Rapidmate does not sell your personal data to third parties.
-          </Text>
-
-          <Text style={styles.sectionTitle}>
-            5. International Data Transfers
-          </Text>
-          <Text style={styles.paragraph}>
-            If your data is transferred outside the European Economic Area
-            (EEA), we ensure compliance with GDPR through appropriate
-            safeguards, such as standard contractual clauses or equivalent
-            measures. For example, we use [Service Provider Names] for
-            hosting/payment processing, which adhere to GDPR-compliant data
-            protection practices.
-          </Text>
-
-          <Text style={styles.sectionTitle}>6. Data Retention</Text>
-          <Text style={styles.paragraph}>
-            We retain personal data for the following periods, which are aligned
-            with our operational and legal needs:
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Customer Data:</Text> Retained up to 3
-            years after your last activity on the platform. This ensures we have
-            a complete record of our transactions for customer support and legal
-            compliance.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Courier Data:</Text> Retained up to 5
-            years after account deactivation, in line with legal requirements
-            related to labor and transportation regulations.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Payment Records:</Text> Retained for 10
-            years to comply with tax and financial regulations.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Cookies and Analytics:</Text> Data is
-            retained for up to 1 year for tracking and improving our website and
-            services.
-          </Text>
-
-          <Text style={styles.sectionTitle}>7. Security Measures</Text>
-          <Text style={styles.paragraph}>
-            We employ robust technical and organizational measures to protect
-            your data, including:
-          </Text>
-          <Text style={styles.listItem}>Encryption of sensitive data.</Text>
-          <Text style={styles.listItem}>
-            Restricted access to personal data.
-          </Text>
-          <Text style={styles.listItem}>
-            Regular audits and breach response procedures.
-          </Text>
-
-          <Text style={styles.sectionTitle}>8. Your Rights</Text>
-          <Text style={styles.paragraph}>
-            Under GDPR, you have the following rights:
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Access:</Text> Request a copy of the
-            personal data we hold about you.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Rectification:</Text> Correct inaccurate
-            or incomplete data.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Erasure:</Text> Request deletion of your
-            data, subject to legal and contractual obligations.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Restriction:</Text> Limit processing of
-            your data under specific circumstances.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Portability:</Text> Transfer your data to
-            another service provider.
-          </Text>
-          <Text style={styles.listItem}>
-            <Text style={styles.bold}>Objection:</Text> Object to data
-            processing based on legitimate interests.
-          </Text>
-          <Text style={styles.paragraph}>
-            To exercise your rights, contact us at: contact@rapidmate.fr
-          </Text>
-
-          <Text style={styles.sectionTitle}>9.Account Deletion</Text>
-          <Text>
-            You may request the deletion of your account at any time by
-            contacting us through{' '}
-            <Text
-              style={styles.highlight}
-              onPress={() => Linking.openURL('mailto:contact@rapidmate.fr')}>
-              contact@rapidmate.fr
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'sIRETNumber')}{' '}
             </Text>{' '}
-            or using the support feature available on the platform. Upon
-            receiving your request, we will process the deletion of your account
-            in accordance with our policies.
+            {localizationText('PrivacyPolicy', 'individualEntrepreneurs')}
           </Text>
           <Text style={styles.paragraph}>
-            Once your account is deleted, you will no longer have access to any
-            of the services associated with your account. Please be aware that
-            account deletion is permanent and irreversible. After deletion, you
-            will lose access to any data, records, or content associated with
-            your account, except where we are required by law to retain certain
-            information.
+            {localizationText('PrivacyPolicy', 'financialDetails')}
           </Text>
           <Text style={styles.paragraph}>
-            We may retain certain information for legitimate business or legal
-            reasons, such as transaction history or records required for
-            compliance with applicable laws and regulations.
+            {localizationText('PrivacyPolicy', 'geolocationData')}
           </Text>
-          <Text>
-            If you have any questions about the account deletion process, please
-            contact us at{' '}
-            <Text
-              style={styles.highlight}
-              onPress={() => Linking.openURL('mailto:contact@rapidmate.fr')}>
-              contact@rapidmate.fr
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'purpose')}:{' '}
             </Text>
+            {localizationText('PrivacyPolicy', 'identityVerification')}
           </Text>
-          <Text style={styles.sectionTitle}>10. Complaints</Text>
           <Text style={styles.paragraph}>
-            If you believe your data rights have been violated, we encourage you
-            to first reach out to <Text style={styles.bold}>Rapidmate</Text>{' '}
-            directly to address and resolve the issue. You can contact us via
-            email at{' '}
-            <Text
-              style={styles.highlight}
-              onPress={() => Linking.openURL('mailto:contact@rapidmate.fr')}>
-              contact@rapidmate.fr
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'lawfulBasis')}:{' '}
             </Text>
+            {localizationText('PrivacyPolicy', 'contractualNecessitylegal')}
+          </Text>
+          <Text style={styles.sectionTitle}>
+            2.4.{' '}
+            {localizationText('PrivacyPolicy', 'cookiesTrackingTechnologies')}
           </Text>
           <Text style={styles.paragraph}>
-            If your concerns are not resolved to your satisfaction, you have the
-            right to file a complaint with:
+            {localizationText(
+              'PrivacyPolicy',
+              'cookiesTrackingTechnologiesDes',
+            )}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'cookiesForMoreDetails')}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'lawfulBasis')}:{' '}
+            </Text>
+            {localizationText('PrivacyPolicy', 'consentCookies')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'consentCookiesDescription')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'consentCookiescontinuing')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'enhanceUserExperience')}
+          </Text>
+          <Text>{localizationText('PrivacyPolicy', 'manageYourCookie')}</Text>
+          <Text style={styles.sectionTitle}>
+            3. {localizationText('PrivacyPolicy', 'howWeUseYourData')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'yourPersonalData')}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>
+              1. {localizationText('PrivacyPolicy', 'serviceProvision')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'serviceProvisionProcessOrders')}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>
+              2. {localizationText('PrivacyPolicy', 'customerSupport')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'customerSupportDes')}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>
+              3. {localizationText('PrivacyPolicy', 'marketing')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'promotionalMaterials')}
+          </Text>
+          <Text style={styles.paragraph}>
+            <Text style={styles.bold}>
+              4. {localizationText('PrivacyPolicy', 'analytics')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'analyticsDescription')}
+          </Text>
+          <Text style={styles.sectionTitle}>
+            4. {localizationText('PrivacyPolicy', 'dataSharing')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'weMayShare')}:
           </Text>
           <Text style={styles.listItem}>
-            Commission Nationale de l'Informatique et des Libertés (CNIL) via{' '}
-            <Text
-              style={styles.link}
-              onPress={() => Linking.openURL('https://www.cnil.fr')}>
-              cnil.fr
-            </Text>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'serviceProviders')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'serviceProvidersDesc')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'couriers')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'couriersDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'legalAuthorities')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'legalAuthoritiesDescription')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'rapidmateNoDataSell')}
           </Text>
 
-          <Text style={styles.sectionTitle}>11. Automated Decision-Making</Text>
+          <Text style={styles.sectionTitle}>
+            5. {localizationText('PrivacyPolicy', 'internationalDataTransfers')}
+          </Text>
           <Text style={styles.paragraph}>
-            We do not use your data for automated decision-making or profiling.
-            However, we may use data for logistical purposes, such as assigning
-            deliveries to the appropriate couriers, which is not considered
-            automated decision-making under GDPR.
+            {localizationText('PrivacyPolicy', 'internationalDataTransfersDes')}
           </Text>
 
-          <Text style={styles.sectionTitle}>12. Children’s Privacy</Text>
+          <Text style={styles.sectionTitle}>
+            6. {localizationText('PrivacyPolicy', 'dataRetention')}
+          </Text>
           <Text style={styles.paragraph}>
-            Our services are not directed towards individuals under the age of
-            16. We do not knowingly collect or process personal data from
-            children. If we become aware that we have inadvertently collected
-            personal data from a child without appropriate consent, we will take
-            steps to delete such information promptly.
+            {localizationText('PrivacyPolicy', 'dataRetentionDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'customerData')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'customerDataDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'courierData')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'courierDataDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'paymentRecords')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'paymentRecordsDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'cookiesAndAnalytics')}:
+            </Text>{' '}
+            {localizationText(
+              'PrivacyPolicy',
+              'cookiesAndAnalyticsDescription',
+            )}
           </Text>
 
-          <Text style={styles.sectionTitle}>13. Updates to This Policy</Text>
+          <Text style={styles.sectionTitle}>
+            7. {localizationText('PrivacyPolicy', 'securityMeasures')}
+          </Text>
           <Text style={styles.paragraph}>
-            This Privacy Policy may be updated periodically. The latest version
-            will always be available on our website, and any significant changes
-            will be communicated to you via email or through notifications.
+            {localizationText('PrivacyPolicy', 'securityMeasuresDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            {localizationText('PrivacyPolicy', 'encryptionSensitiveData')}
+          </Text>
+          <Text style={styles.listItem}>
+            {localizationText('PrivacyPolicy', 'restrictedPersonalData')}
+          </Text>
+          <Text style={styles.listItem}>
+            {localizationText('PrivacyPolicy', 'regularResponseProcedures')}
+          </Text>
+
+          <Text style={styles.sectionTitle}>
+            8. {localizationText('PrivacyPolicy', 'yourRights')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'underGDPR')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'access')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'accessDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'rectification')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'rectificationDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'erasure')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'erasureDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'restriction')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'restrictionDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'portability')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'portabilityDescription')}
+          </Text>
+          <Text style={styles.listItem}>
+            <Text style={styles.bold}>
+              {localizationText('PrivacyPolicy', 'objection')}:
+            </Text>{' '}
+            {localizationText('PrivacyPolicy', 'objectionDescription')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'exerciseRightsContact')}{' '}
+            contact@rapidmate.fr
+          </Text>
+
+          <Text style={styles.sectionTitle}>
+            9.{localizationText('PrivacyPolicy', 'accountDeletion')}
+          </Text>
+          <Text>
+            {localizationText('PrivacyPolicy', 'accountDeletionDescription')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'accountDeletionAfter')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'certainInformation')}
+          </Text>
+          <Text>
+            {localizationText('PrivacyPolicy', 'questionsDeletionProcess')}
+          </Text>
+          <Text style={styles.sectionTitle}>
+            10. {localizationText('PrivacyPolicy', 'complaints')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'complaintsDescription')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'satisfactionComplaint')}
+          </Text>
+          <Text style={styles.listItem}>
+            {localizationText('PrivacyPolicy', 'commissionNationale')}
+          </Text>
+
+          <Text style={styles.sectionTitle}>
+            11. {localizationText('PrivacyPolicy', 'automatedDecisionMaking')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText(
+              'PrivacyPolicy',
+              'automatedDecisionMakingDescription',
+            )}
+          </Text>
+
+          <Text style={styles.sectionTitle}>
+            12. {localizationText('PrivacyPolicy', 'childrenPrivacy')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'childrenPrivacyDescription')}
+          </Text>
+
+          <Text style={styles.sectionTitle}>
+            13. {localizationText('PrivacyPolicy', 'updatesThisPolicy')}
+          </Text>
+          <Text style={styles.paragraph}>
+            {localizationText('PrivacyPolicy', 'updatesThisPolicyDescription')}
           </Text>
           <Text style={styles.date}>
-            Last Updated: <Text style={styles.highlight}>January 4, 2025</Text>
+            {localizationText('PrivacyPolicy', 'lastUpdated')}:{' '}
+            <Text style={styles.highlight}>
+              {localizationText('PrivacyPolicy', 'januaryPrivacyText')}
+            </Text>
           </Text>
 
-          <Text style={styles.sectionTitle}>Contact Information</Text>
+          <Text style={styles.sectionTitle}>
+            {localizationText('PrivacyPolicy', 'contactInformation')}
+          </Text>
           <Text style={styles.paragraph}>
-            For any questions about this Privacy Policy, contact us at:
+            {localizationText('PrivacyPolicy', 'contactInformationDescription')}
           </Text>
           <Text style={styles.contact}>
             Email:{' '}
@@ -377,7 +398,7 @@ const PrivacyPolicy = () => {
             </Text>
           </Text>
           <Text style={styles.contact}>
-            Postal Address:{' '}
+            {localizationText('PrivacyPolicy', 'postalAddress')}:{' '}
             <Text style={styles.highlight}>
               8 B Av. Danielle Casanova ,95210 Saint -Gratien
             </Text>
