@@ -1,1 +1,1 @@
-export const MAPS_API_KEY = 'AIzaSyC_pj9pk_9fMHL0JDsgstUXlc67nqB97zw';
+export const MAPS_API_KEY = 'AIzaSyD2HroBo6MwnvdXqF6vziO0yaI_upgUPAM';
