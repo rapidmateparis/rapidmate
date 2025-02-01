@@ -637,7 +637,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>{orderFare}</Text>
               <Text style={styles.totalmoney}>
-                € {order.amount ? order.amount.toFixed(2) : '0.00'}
+                € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
@@ -649,14 +649,14 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{orderFare}</Text>
               <Text style={styles.value}>
-                € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
+                € {order.amount ? order.amount : '0.00'}
               </Text>
             </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{tax}</Text>
               <Text style={styles.value}>
-                € {getTaxAmount()}
+              {order.tax ? order.tax : '0.00'} %
               </Text>
             </View>
 
@@ -668,9 +668,16 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
 
             <View style={styles.cardHeader}>
+              <Text style={styles.orderFareValue}>Discount</Text>
+              <Text style={styles.value}>
+                {order.discount ? order.discount : '0'} %
+              </Text>
+            </View>
+
+            <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{amountCharged}</Text>
               <Text style={styles.value}>
-                € {order.amount ? order.amount.toFixed(2) : '0.00'}
+                € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 

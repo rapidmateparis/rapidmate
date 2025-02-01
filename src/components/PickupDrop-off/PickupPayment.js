@@ -258,6 +258,7 @@ const PickupPayment = ({route, navigation}) => {
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
         total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
         total_amount: parseFloat(paymentAmount),
+        order_amount : params.selectedVehiclePrice,
         discount: offerDiscount,
         pickup_notes: params.userDetails.pickupNotes,
         mobile: params.userDetails.number,
