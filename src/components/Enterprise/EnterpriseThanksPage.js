@@ -39,7 +39,7 @@ const EnterpriseThanksPage = ({navigation}) => {
             source={require('../../image/ThanksPage-Timer.png')}
           />
           <Text style={styles.text}>
-            {localizationText('Main', 'thankSigningTitle')}
+            {localizationText('Main', 'thankForSigningUp')}
           </Text>
           <Text style={styles.subText}>
             {localizationText('Main', 'thankSigningDescription')}
