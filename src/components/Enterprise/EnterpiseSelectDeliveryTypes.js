@@ -420,7 +420,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                         styles.chargeBatchTextStyle
                       }>{`€ ${selectedVehiclePrice.toFixed(2)}/${
                       route.params.delivery_type_id == 3 ? 'hrs' : 'km'
-                    }`}</Text>
+                    }`}{' '}Excl. VAT</Text>
                   </View>
                 )}
               </View>
@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   chargeBatchTextStyle: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Montserrat-Medium',
     color: colors.secondary,
   },
