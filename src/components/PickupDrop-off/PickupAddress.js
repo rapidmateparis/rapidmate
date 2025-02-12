@@ -352,9 +352,13 @@ const PickupAddress = ({route, navigation}) => {
               <Text style={styles.chooseVehicle}>
                 {localizationText('Common', 'chooseVehicle')}
               </Text>
-              <Text style={styles.selectedVehiclePrice}>
-                € {getPriceUsingVechicelType(selectedVehicleDetails?.id)}
+
+              {getPriceUsingVechicelType(selectedVehicleDetails?.id) && (
+                <Text style={styles.selectedVehiclePrice}>
+                € {getPriceUsingVechicelType(selectedVehicleDetails?.id)} {' '}Excl. VAT
               </Text>
+              )}
+              
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={{flexDirection: 'row'}}>
@@ -516,7 +520,7 @@ const styles = StyleSheet.create({
     width: 100,
   },
   selectedVehiclePrice: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-Medium',
     color: colors.secondary,
   },
