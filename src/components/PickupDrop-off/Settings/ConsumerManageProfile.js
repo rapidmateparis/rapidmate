@@ -155,7 +155,7 @@ const ConsumerManageProfile = ({navigation}) => {
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={10}
+              maxLength={9}
               value={number}
               onChangeText={text => setNumber(text)}
             />
