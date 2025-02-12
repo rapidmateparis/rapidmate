@@ -27,7 +27,6 @@ function DeliveryBoyAcceptRejectModal({
   const translateXReject = useSharedValue(0);
   const {locationData} = useLocationData();
 
-  console.log('deliveryBoyAcceptRejectMessage =====>',deliveryBoyAcceptRejectMessage)
   const newDeliveryRequest = localizationText('Common', 'newDeliveryRequest') || 'New Delivery Request';
   const estimatedCost = localizationText('Common', 'estimatedCost') || 'Estimated Cost';
   const totalDistance = localizationText('Common', 'totalDistance') || 'Total Distance';
@@ -57,7 +56,7 @@ function DeliveryBoyAcceptRejectModal({
     },
     onEnd: () => {
       if (translateXAccept.value > 100) {
-        console.log('Accept action triggered', translateXAccept);
+       
       }
       translateXAccept.value = withSpring(0);
     },
@@ -69,7 +68,7 @@ function DeliveryBoyAcceptRejectModal({
     },
     onEnd: () => {
       if (translateXReject.value > 100) {
-        console.log('Reject action triggered', translateXReject);
+       
       }
       translateXReject.value = withSpring(0); // Reset animation
     },
@@ -87,13 +86,20 @@ function DeliveryBoyAcceptRejectModal({
     };
   });
 
-  const getLocationAddress = locationId => {
-    let result = locationData.filter(location => location.id == locationId);
-    return result[0]?.address;
-  };
+  const getLocationAddress = (locationId) => {
+    let result = locationData.filter(location => location.id === Number(locationId));
+    
+    if (result.length > 0) {
+        let location = result[0];
+        return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    
+    return "Address not found";
+};
+
+
 
   const handleOrderRequest = value => {
-    console.log('deliveryBoyAcceptRejectMessage ======>',deliveryBoyAcceptRejectMessage)
     let params = {
       delivery_boy_ext_id: deliveryBoyAcceptRejectMessage?.deliveryBoy?.ext_id,
       order_number: deliveryBoyAcceptRejectMessage?.order?.order_number,
@@ -111,11 +117,9 @@ function DeliveryBoyAcceptRejectModal({
         //   orderItem: deliveryBoyAcceptRejectMessage.order,
         // });
         // TODO go to delivery details 
-        console.log('successResponse==>', JSON.stringify(successResponse));
         toggleModal();
       },
       errorResponse => {
-        console.log('errorResponse==>', JSON.stringify(errorResponse));
         toggleModal();
       },
     );
@@ -124,7 +128,6 @@ function DeliveryBoyAcceptRejectModal({
 
 
   const createShiftOrder=(item)=>{
-    console.log('item ====>',item)
 
     return( 
     
@@ -190,11 +193,9 @@ function DeliveryBoyAcceptRejectModal({
         parm,
         successRes=>{
           toggleModal()
-          console.log('successRes  =====>',successRes)
         },
         errorRes=>{
           toggleModal()
-          console.log('errorRes  =====>',errorRes)
         }
       )
     }
@@ -306,14 +307,14 @@ function DeliveryBoyAcceptRejectModal({
                   <Text
                     style={
                       styles.boldSubText
-                    }>{`€${deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount}`}</Text>
+                    }>{`€${Number(deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount).toFixed(2)}`}</Text>
                 </Text>
                 <Text style={styles.subText}>
                   {totalDistance}:{' '}
                   <Text
                     style={
                       styles.boldSubText
-                    }>{`${deliveryBoyAcceptRejectMessage?.order?.distance}Km`}</Text>
+                    }>{`${Number(deliveryBoyAcceptRejectMessage?.order?.distance).toFixed(2)} Km`}</Text>
                 </Text>
                 <Text style={styles.subText}>
                   {orderIDText}:{' '}
