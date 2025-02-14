@@ -59,6 +59,7 @@ const DeliveryDetails = ({navigation, route}) => {
   const vehicleText = localizationText('Common', 'vehicle') || 'Vehicle';
   const pickupOTP = localizationText('Common', 'pickupOTP') || 'Pickup OTP';
   const deliveredOTP = localizationText('Common', 'deliveredOTP') || 'Delivered OTP';
+  const totalOrderFare = localizationText('Common', 'totalOrderFare') || 'Total Order fare';
   const orderFare = localizationText('Common', 'orderFare') || 'Order fare';
   const travelled = localizationText('Common', 'travelled') || 'Travelled';
   const inText = localizationText('Common', 'inText') || 'in';
@@ -635,9 +636,9 @@ const DeliveryDetails = ({navigation, route}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>{orderFare}</Text>
+              <Text style={styles.orderFare}>{totalOrderFare}</Text>
               <Text style={styles.totalmoney}>
-                € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
+                € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
@@ -649,7 +650,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{orderFare}</Text>
               <Text style={styles.value}>
-                € {order.amount ? order.amount : '0.00'}
+                € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
@@ -677,7 +678,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{amountCharged}</Text>
               <Text style={styles.value}>
-                € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
+                € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
