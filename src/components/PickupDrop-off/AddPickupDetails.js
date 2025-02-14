@@ -173,7 +173,6 @@ const AddPickupdetails = ({route, navigation}) => {
   const validateForm = () => {
     if (
       !name ||
-      !lastname ||
       !email ||
       !number ||
       !dropdownValue ||
@@ -246,7 +245,7 @@ const AddPickupdetails = ({route, navigation}) => {
 
             <View style={{flex: 1, marginLeft: 10}}>
               <Text style={styles.textlable}>
-                {localizationText('Common', 'lastName')}*
+                {localizationText('Common', 'lastName')}
               </Text>
               <TextInput
                 style={styles.inputTextStyle}
@@ -359,7 +358,7 @@ const AddPickupdetails = ({route, navigation}) => {
           </TouchableOpacity>
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>
-              {localizationText('Common', 'packageId')}*
+              {localizationText('Common', 'packageId')}
             </Text>
             <TextInput
               style={styles.inputTextStyle}

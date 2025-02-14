@@ -168,7 +168,7 @@ const PickupHome = ({navigation}) => {
               {localizationText('Main', 'consumerRequestDropoff')}
             </Text>
             <Text style={styles.packageDiscription}>
-              {localizationText('Main', 'consumerRequestPickupDescription')}
+              {localizationText('Main', 'consumerRequestDropoffDescription')}
             </Text>
           </View>
         </TouchableOpacity>
@@ -218,7 +218,7 @@ const PickupHome = ({navigation}) => {
               {localizationText('Main', 'consumerScheduleDelivery')}
             </Text>
             <Text style={styles.packageDiscription}>
-              {localizationText('Main', 'consumerRequestPickupDescription')}
+              {localizationText('Main', 'consumerScheduleDeliveryDescription')}
             </Text>
             <View style={styles.specialDiscount}>
               <MaterialCommunityIcons
