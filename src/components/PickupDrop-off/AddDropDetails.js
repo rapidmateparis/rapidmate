@@ -50,7 +50,6 @@ const AddDropDetails = ({route, navigation}) => {
   const validateForm = () => {
     if (
       !name ||
-      !lastname ||
       !email ||
       !number ||
       !dropdownValue ||
@@ -97,7 +96,7 @@ const AddDropDetails = ({route, navigation}) => {
             </View>
 
             <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>{localizationText('Common', 'lastName')}*</Text>
+              <Text style={styles.textlable}>{localizationText('Common', 'lastName')}</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"

@@ -109,7 +109,7 @@ function SavedAddressModal({setModalVisible, isModalVisible, selectedAddress}) {
             <View style={{paddingHorizontal: 15, paddingTop: 5}}>
               <View style={styles.packageDetailCard}>
                 {addressList.length == 0 ? (
-                  <Text style={styles.listText}>No Record Found</Text>
+                  <Text style={styles.listText}>No favorites yet-add one now!</Text>
                 ) : (
                   <FlatList data={addressList} renderItem={renderItem} />
                 )}
@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
+    textAlign: 'center',
   },
 });
 
