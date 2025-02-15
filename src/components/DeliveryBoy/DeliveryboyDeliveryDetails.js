@@ -384,7 +384,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                       <Image
                         style={styles.packagePhoto}
                         source={{
-                          uri: order.order.package_photo,
+                          uri: API.viewImageUrl + order.order.package_photo,
                         }}
                       />
                     </TouchableOpacity>
