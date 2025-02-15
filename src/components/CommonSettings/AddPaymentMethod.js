@@ -47,7 +47,7 @@ const AddPaymentMethod = ({navigation}) => {
       cvv: cvvNumber,
       payment_method_type_id: 1,
     };
-
+  
     if (userDetails.userDetails[0].role == 'CONSUMER') {
       params.consumer_ext_id = userDetails.userDetails[0].ext_id;
       params.expiration_date = localToUTC(expiryDate);
@@ -56,7 +56,12 @@ const AddPaymentMethod = ({navigation}) => {
         successResponse => {
           setLoading(false);
           Alert.alert('Success', successResponse[0]._response.message, [
-            {text: 'OK', onPress: () => {}},
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.goBack(); 
+              },
+            },
           ]);
         },
         errorResponse => {
@@ -70,7 +75,6 @@ const AddPaymentMethod = ({navigation}) => {
       params.enterprise_ext = userDetails.userDetails[0].ext_id;
       params.is_del = 0;
       params.expiration_date = moment(expiryDate, 'MM/YY').format('YYYY-MM-DD');
-      console.log('params', params);
       addEnterprisePaymentMethod(
         params,
         successResponse => {
@@ -79,13 +83,12 @@ const AddPaymentMethod = ({navigation}) => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.pop();
+                navigation.goBack(); 
               },
             },
           ]);
         },
         errorResponse => {
-          console.log('errorResponse', errorResponse);
           setLoading(false);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
@@ -96,6 +99,7 @@ const AddPaymentMethod = ({navigation}) => {
       setLoading(false);
     }
   };
+  
 
   function formatExpiryDate(value) {
     let formattedValue = value.replace(/\D/g, '');
