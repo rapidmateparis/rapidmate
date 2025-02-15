@@ -61,21 +61,27 @@ const EnterpriseManageProfile = ({navigation}) => {
   }, [userDetails]);
 
   const updateProfile = () => {
+    if (number.length < 9) {
+      Alert.alert('Invalid Number', 'Phone number must be at least 9 digits long.');
+      return;
+    }
+  
     let usernamelist = userName.split(' ');
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       company_name: company,
-      // email: email,
       first_name: userName.split(' ')[0],
       phone: '+33' + number,
       industry_type_id: dropdownIndustryValue,
     };
+  
     if (userName.split.length > 1) {
       profileParams.last_name = usernamelist[1];
     }
     if (deliveryCount) {
       profileParams.deliveryMonthHours = deliveryCount;
     }
+  
     setLoading(true);
     updateUserProfile(
       userDetails.userDetails[0].role,
@@ -89,7 +95,6 @@ const EnterpriseManageProfile = ({navigation}) => {
             {
               ...userDetails.userDetails[0],
               company_name: profileParams.company_name,
-              email: profileParams.email,
               first_name: profileParams.first_name,
               phone: profileParams.phone,
               industry_type_id: profileParams.industry_type_id,
@@ -109,7 +114,7 @@ const EnterpriseManageProfile = ({navigation}) => {
         ]);
       },
     );
-  };
+  };  
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>

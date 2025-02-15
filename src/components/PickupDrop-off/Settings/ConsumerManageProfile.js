@@ -16,7 +16,7 @@ import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useLoader} from '../../../utils/loaderContext';
 import {updateUserProfile} from '../../../data_manager';
-import { localizationText } from '../../../utils/common';
+import {localizationText} from '../../../utils/common';
 
 const ConsumerManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -41,13 +41,17 @@ const ConsumerManageProfile = ({navigation}) => {
     {label: '+33', value: '+33'},
   ];
   const saveProfileDetails = () => {
+    if (number.length < 9) {
+      Alert.alert('Invalid Number', 'Phone number must be at least 9 digits.');
+      return;
+    }
+
     setLoading(true);
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       first_name: vehicleModel,
       last_name: '',
       phone: dropdownValue + number,
-      // email: email,
     };
     updateUserProfile(
       userDetails.userDetails[0].role,
@@ -60,12 +64,7 @@ const ConsumerManageProfile = ({navigation}) => {
         newUserDetails['phone'] = number;
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
         console.log('updateUserProfile response ', successResponse);
-        Alert.alert('Success', 'Profile updates duccessfully', [
-          {
-            text: 'OK',
-            onPress: () => {},
-          },
-        ]);
+        Alert.alert('Success', 'Profile updated successfully', [{text: 'OK'}]);
       },
       errorResponse => {
         setLoading(false);
@@ -103,7 +102,9 @@ const ConsumerManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>{localizationText('Common', 'name')}</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'name')}
+          </Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -113,7 +114,9 @@ const ConsumerManageProfile = ({navigation}) => {
           />
         </View>
         <View>
-          <Text style={styles.textlable}>{localizationText('Common', 'phoneNumber')}</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'phoneNumber')}
+          </Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -174,7 +177,9 @@ const ConsumerManageProfile = ({navigation}) => {
         <TouchableOpacity
           onPress={() => saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

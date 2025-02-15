@@ -24,7 +24,7 @@ const PickupTakeSelfie = ({route, navigation}) => {
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
-  const {userDetails,saveUserDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -86,9 +86,9 @@ const PickupTakeSelfie = ({route, navigation}) => {
           'print_data==>successResponseuploadDocumentsApi',
           '' + JSON.parse(successResponse).id,
         );
-        const newUserDetails = userDetails.userDetails[0]
-        newUserDetails['profile_pic']=JSON.parse(successResponse).id
-        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+        const newUserDetails = userDetails.userDetails[0];
+        newUserDetails['profile_pic'] = JSON.parse(successResponse).id;
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
 
         let profileParams = {
           ext_id: userDetails.userDetails[0].ext_id,
@@ -100,7 +100,7 @@ const PickupTakeSelfie = ({route, navigation}) => {
           profileParams,
           successResponse => {
             console.log('updateUserProfile', successResponse);
-            Alert.alert('Success', '' + successResponse[0]._response, [
+            Alert.alert('Success', 'Your Profile Updated Successfully', [
               {
                 text: 'OK',
                 onPress: () => {
@@ -152,7 +152,8 @@ const PickupTakeSelfie = ({route, navigation}) => {
             Please upload a Profile Picture
           </Text>
           <Text style={styles.statusSubtitle}>
-            Please see if this looks good, you can try once more if you want to.
+            Take a moment to choose your best shot. Not happy with it? You can
+            always change it later!
           </Text>
         </View>
 
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingVertical: 30,
-    marginTop: '30%',
+    marginTop: '20%',
   },
   logbutton: {
     width: '45%',
