@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 100,
+    marginTop: 60,
     marginBottom: 20,
   },
   PayText: {

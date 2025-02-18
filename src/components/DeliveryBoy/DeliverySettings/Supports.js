@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Linking,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
@@ -28,6 +29,10 @@ const Supports = () => {
   const lostSomethingDescription =
     localizationText('Common', 'lostSomethingDescription') || '';
 
+    const handlePress = () => {
+      Linking.openURL('https://rapidmate.fr/support-page');
+    };
+
   const renderCard = (option, iconSource, title, subtitle, imageStyle) => {
     return (
       <LinearGradient
@@ -36,7 +41,7 @@ const Supports = () => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+          onPress={handlePress}
           style={styles.addressCard}>
           <Image source={iconSource} style={styles.cardImage} />
           <View style={{flex: 1}}>
