@@ -130,20 +130,17 @@ export default function MapDeliveryDetails(probs = null) {
 
   useEffect(() => {
     if (multipleToAddress.length > 0) {
-      const deepCopyOfDropLocations = [...multipleToAddress]
-      // deepCopyOfDropLocations.pop()
-      const newList = deepCopyOfDropLocations.map((location) => {
-        return {
-          latitude: location.to_latitude,
-          longitude: location.to_longitude,
-        }
-      })
-
-      console.log('newList ---->',newList)
-
-      setDropLocations([...newList])
+      const newList = multipleToAddress.map((location) => ({
+        latitude: location.to_latitude,
+        longitude: location.to_longitude,
+      }));
+  
+      // Check if dropLocations are changed before updating it
+      if (JSON.stringify(newList) !== JSON.stringify(dropLocations)) {
+        setDropLocations(newList);
+      }
     }
-  }, [multipleToAddress])
+  }, [JSON.stringify(multipleToAddress)]);
 
   useEffect(() => {
     if (probs?.addressData) {
@@ -173,7 +170,7 @@ export default function MapDeliveryDetails(probs = null) {
       });
     }
     }
-  }, [probs?.addressData,multipleToAddress]);
+  }, [JSON.stringify(probs?.addressData), JSON.stringify(multipleToAddress)]);
 
   const polylineCoordinates = [
     {
