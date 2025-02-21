@@ -161,12 +161,12 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          {/* {pickUpLocation && dropOffLocation && <MapDeliveryDetails
+          {pickUpLocation && dropOffLocation && <MapDeliveryDetails
             addressData={{
               sourceAddress: pickUpLocation,
               destinationAddress: dropOffLocation,
             }}
-          />} */}
+          />}
         </View>
 
         <View style={styles.packageCard}>
