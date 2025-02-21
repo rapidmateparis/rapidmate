@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingVertical: 30,
-    marginTop: 100,
+    marginTop: 70,
   },
   logbutton: {
     width: '45%',

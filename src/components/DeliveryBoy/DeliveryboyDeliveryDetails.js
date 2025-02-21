@@ -291,6 +291,17 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     });
   };
 
+  const openInGoogleMaps = location => {
+    if (location) {
+      const {address, city, state} = location;
+      const formattedAddress = encodeURIComponent(
+        `${address}, ${city}, ${state}`,
+      );
+      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${formattedAddress}`;
+      Linking.openURL(googleMapsUrl);
+    }
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -307,8 +318,11 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 {localizationText('Main', 'pickupInformation')}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('TrackDelivery')}>
-                <Image source={require('../../image/Track-Icon.png')} />
+                onPress={() => openInGoogleMaps(pickUpLocation)}>
+                <Image
+                  style={styles.startIcon}
+                  source={require('../../image/Start-Icon.png')}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
@@ -331,7 +345,16 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 ) : order?.pickup_location_id ? null : null}
               </View>
               <View style={styles.contactInfoIcons}>
-                <TouchableOpacity style={{marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 10}}
+                  onPress={() => {
+                    const phoneNumber =
+                      order?.order?.is_my_self === 1
+                        ? order?.order?.consumer_mobile
+                        : order?.order?.mobile;
+
+                    Linking.openURL(`sms:${phoneNumber}`);
+                  }}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -364,9 +387,12 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
               </Text>
               <Text style={styles.subheadingOTP}>
                 {order.order
-                  ? moment(order.order.order_date).format(
-                      'MMM DD, YYYY hh:mm A',
-                    )
+                  ? moment().diff(moment(order.order.order_date), 'minutes') <=
+                    30
+                    ? 'Now'
+                    : moment(order.order.order_date).format(
+                        'MMM DD, YYYY hh:mm A',
+                      )
                   : ''}
               </Text>
             </View>
@@ -432,8 +458,11 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 {localizationText('Main', 'dropOffInformation')}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('TrackDelivery')}>
-                <Image source={require('../../image/Track-Icon.png')} />
+                onPress={() => openInGoogleMaps(dropOffLocation)}>
+                <Image
+                  style={styles.startIcon}
+                  source={require('../../image/Start-Icon.png')}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
@@ -453,7 +482,11 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 )}
               </View>
               <View style={styles.contactInfoIcons}>
-                <TouchableOpacity style={{marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 10}}
+                  onPress={() =>
+                    Linking.openURL(`sms:${order.order.drop_mobile}`)
+                  }>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -837,6 +870,10 @@ const styles = StyleSheet.create({
   packageManager: {
     width: 30,
     height: 30,
+  },
+  startIcon: {
+    height: 23,
+    width: 60,
   },
 });
 

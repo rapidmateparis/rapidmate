@@ -15,8 +15,10 @@ import { useLoader } from '../../../utils/loaderContext';
 import { useUserDetails } from '../../commonComponent/StoreContext';
 import { getCityList, getCountryList, getDeliveryBoyBillingDetails, getStateList, updateDeliveryBoyBillingDetails } from '../../../data_manager';
 import { localizationText } from '../../../utils/common';
+import { useNavigation } from '@react-navigation/native';
 
 const DeliveryboyBillingDetails = () => {
+  const navigation = useNavigation();
   const [accountType, setAccountType] = useState(1);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -213,7 +215,7 @@ const DeliveryboyBillingDetails = () => {
           {
             text: 'OK',
             onPress: () => {
-              // navigation.goBack();
+              navigation.goBack();
             },
           },
         ]);
