@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,85 +7,182 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Dropdown } from 'react-native-element-dropdown';
-import { colors } from '../../../colors';
-import { localizationText } from '../../../utils/common';
+import {Dropdown} from 'react-native-element-dropdown';
+import {colors} from '../../../colors';
+import {localizationText} from '../../../utils/common';
+import {useUserDetails} from '../../commonComponent/StoreContext';
+import {
+  getBillingAddressDetails,
+  updateBillingAddressDetails,
+} from '../../../data_manager';
+import {useLoader} from '../../../utils/loaderContext';
 
 const EnterpriseBillingDetail = () => {
-  const [firstName, setFirstName] = useState('John');
-  const [lastName, setLastName] = useState('Doe');
-  const [address, setAddress] = useState('123 Main Street');
-  const [postalcode, setPostalCode] = useState('12345');
-  const [dninumber, setDNINumber] = useState('A1234567');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address, setAddress] = useState('');
+  const [postalcode, setPostalCode] = useState('');
+  const [dninumber, setDNINumber] = useState('');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(1);
   const [dropdownStateValue, setDropdownStateValue] = useState(1);
   const [dropdownCityValue, setDropdownCityValue] = useState(1);
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+
+  const setBillingDetails = billingDetails => {
+    setFirstName(billingDetails.first_name);
+    setLastName(billingDetails.last_name);
+    setAddress(billingDetails?.address);
+    setDNINumber(billingDetails?.dni_number);
+    setDropdownStateValue(billingDetails?.state_id);
+    setDropdownCityValue(billingDetails?.city_id);
+    setDropdownCountryValue(billingDetails?.country_id);
+    setPostalCode(billingDetails?.postal_code);
+  };
+
+  const getBillingDetails = () => {
+    setLoading(true);
+    getBillingAddressDetails(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._response.length > 0) {
+          const billingDetails = successResponse[0]._response[0];
+          setBillingDetails(billingDetails);
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse Billing Details', errorResponse);
+        setLoading(false);
+      },
+    );
+  };
+
+  useEffect(() => {
+    getBillingDetails();
+  }, [userDetails.userDetails[0].ext_id]);
 
   const account = [
-    { label: 'Individual', value: 1 },
-    { label: 'Company', value: 2 },
+    {label: 'Individual', value: 1},
+    {label: 'Company', value: 2},
   ];
 
   const countryList = [
-    { label: 'USA', value: 1 },
-    { label: 'Canada', value: 2 },
+    {label: 'USA', value: 1},
+    {label: 'Canada', value: 2},
   ];
 
   const stateList = [
-    { label: 'California', value: 1 },
-    { label: 'Ontario', value: 2 },
+    {label: 'California', value: 1},
+    {label: 'Ontario', value: 2},
   ];
 
   const cityList = [
-    { label: 'Los Angeles', value: 1 },
-    { label: 'Toronto', value: 2 },
+    {label: 'Los Angeles', value: 1},
+    {label: 'Toronto', value: 2},
   ];
 
   const updateBillingDetails = () => {
-    // Here you can add a static success message or functionality if needed
-    console.log('Billing details updated');
+    if (!validateFields()) return;
+
+    setLoading(true);
+    const body = {
+      first_name: firstName,
+      last_name: lastName,
+      address,
+      postal_code: postalcode,
+      dni_number: dninumber,
+      country_id: dropdownCountryValue,
+      state_id: dropdownStateValue,
+      city_id: dropdownCityValue,
+      enterprise_ext_id: userDetails.userDetails[0].ext_id,
+    };
+
+    updateBillingAddressDetails(
+      userDetails.userDetails[0].ext_id,
+      body,
+      successResponse => {
+        setLoading(false);
+        const billingDetails = successResponse[0]._response;
+        setBillingDetails(billingDetails);
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('error message===>', JSON.stringify(errorResponse));
+      },
+    );
+  };
+
+  const validateFields = () => {
+    if (!firstName.trim()) {
+      Alert.alert('Validation Error', 'First name is required');
+      return false;
+    }
+    if (!lastName.trim()) {
+      Alert.alert('Validation Error', 'Last name is required');
+      return false;
+    }
+    if (!address.trim()) {
+      Alert.alert('Validation Error', 'Address is required');
+      return false;
+    }
+    if (!postalcode.trim()) {
+      Alert.alert('Validation Error', 'Postal code is required');
+      return false;
+    }
+    if (!dninumber.trim()) {
+      Alert.alert('Validation Error', 'DNI number is required');
+      return false;
+    }
+    return true;
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
-      <View style={{ paddingHorizontal: 15, marginVertical: 15 }}>
+    <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
+      <View style={{paddingHorizontal: 15, marginVertical: 15}}>
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-          }}
-        >
-          <View style={[styles.nameInputDiv, { marginRight: 10 }]}>
-            <Text style={styles.label}>{localizationText('Common', 'firstName')}</Text>
+          }}>
+          <View style={[styles.nameInputDiv, {marginRight: 10}]}>
+            <Text style={styles.label}>
+              {localizationText('Common', 'firstName')}
+            </Text>
             <TextInput
               style={styles.loginput}
               value={firstName}
-              onChangeText={(text) => setFirstName(text)}
+              onChangeText={text => setFirstName(text)}
             />
           </View>
           <View style={styles.nameInputDiv}>
-            <Text style={styles.label}>{localizationText('Common', 'lastName')}</Text>
+            <Text style={styles.label}>
+              {localizationText('Common', 'lastName')}
+            </Text>
             <TextInput
               style={styles.loginput}
               value={lastName}
-              onChangeText={(text) => setLastName(text)}
+              onChangeText={text => setLastName(text)}
             />
           </View>
         </View>
 
         <View>
-          <Text style={styles.label}>{localizationText('Common', 'address')}</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'address')}
+          </Text>
           <TextInput
             style={styles.normalInput}
             value={address}
-            onChangeText={(text) => setAddress(text)}
+            onChangeText={text => setAddress(text)}
           />
         </View>
 
         <View>
-          <Text style={styles.label}>{localizationText('Common', 'country')}</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'country')}
+          </Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
@@ -97,13 +194,15 @@ const EnterpriseBillingDetail = () => {
               labelField="label"
               valueField="value"
               value={dropdownCountryValue}
-              onChange={(item) => setDropdownCountryValue(item.value)}
+              onChange={item => setDropdownCountryValue(item.value)}
             />
           </View>
         </View>
 
         <View>
-          <Text style={styles.label}>{localizationText('Common', 'state')}</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'state')}
+          </Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={stateList}
@@ -115,7 +214,7 @@ const EnterpriseBillingDetail = () => {
               labelField="label"
               valueField="value"
               value={dropdownStateValue}
-              onChange={(item) => setDropdownStateValue(item.value)}
+              onChange={item => setDropdownStateValue(item.value)}
             />
           </View>
         </View>
@@ -133,34 +232,39 @@ const EnterpriseBillingDetail = () => {
               labelField="label"
               valueField="value"
               value={dropdownCityValue}
-              onChange={(item) => setDropdownCityValue(item.value)}
+              onChange={item => setDropdownCityValue(item.value)}
             />
           </View>
         </View>
 
         <View>
-          <Text style={styles.label}>{localizationText('Common', 'postalCode')}</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'postalCode')}
+          </Text>
           <TextInput
             style={styles.normalInput}
             value={postalcode}
-            onChangeText={(text) => setPostalCode(text)}
+            onChangeText={text => setPostalCode(text)}
           />
         </View>
 
         <View>
-          <Text style={styles.label}>{localizationText('Common', 'dniNumber')}</Text>
+          <Text style={styles.label}>
+            {localizationText('Common', 'dniNumber')}
+          </Text>
           <TextInput
             style={styles.normalInput}
             value={dninumber}
-            onChangeText={(text) => setDNINumber(text)}
+            onChangeText={text => setDNINumber(text)}
           />
         </View>
 
         <TouchableOpacity
           onPress={() => updateBillingDetails()}
-          style={[styles.logbutton, { backgroundColor: colors.primary }]}
-        >
-          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
+          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
