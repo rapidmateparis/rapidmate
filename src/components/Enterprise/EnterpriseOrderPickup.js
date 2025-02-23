@@ -20,8 +20,8 @@ import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 import {getLocations} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import {useUserDetails} from '../commonComponent/StoreContext';
-import { localizationText } from '../../utils/common';
+import {usePlacedOrderDetails, useUserDetails} from '../commonComponent/StoreContext';
+import {localizationText} from '../../utils/common';
 
 const {height: screenHeight} = Dimensions.get('window');
 const EnterpriseOrderPickup = ({navigation, route}) => {
@@ -36,6 +36,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   const [isCopied, setIsCopied] = useState(false);
   const [otpCopied, setOtpCopied] = useState(false);
   const [otpDeliveredCopied, setOtpDeliveredCopied] = useState(false);
+  const {placedOrderDetails} = usePlacedOrderDetails();
 
   const params = route.params;
 
@@ -198,7 +199,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
           style={{flex: 1, height: screenHeight}}
           source={require('../../image/DeliveryRequest-bg.png')}>
           <View style={styles.textContainer}>
-            <Text style={styles.oderIdText}>{localizationText('Common', 'orderID')}: </Text>
+            <Text style={styles.oderIdText}>
+              {localizationText('Common', 'orderID')}:{' '}
+            </Text>
             <TouchableOpacity onPress={handleCopyOrderId}>
               <Text style={styles.text}>{orderId}</Text>
             </TouchableOpacity>
@@ -213,7 +216,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
           </View>
           <View style={styles.textOtpContainer}>
             <View style={[styles.textContainer, {marginRight: 10}]}>
-              <Text style={styles.oderIdText}>{localizationText('Common', 'pickupOTP')}: </Text>
+              <Text style={styles.oderIdText}>
+                {localizationText('Common', 'pickupOTP')}:{' '}
+              </Text>
               <TouchableOpacity onPress={handleCopyOtp}>
                 <Text style={styles.text}>{otp}</Text>
               </TouchableOpacity>
@@ -228,7 +233,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.oderIdText}>{localizationText('Common', 'deliveredOTP')}: </Text>
+              <Text style={styles.oderIdText}>
+                {localizationText('Common', 'deliveredOTP')}:{' '}
+              </Text>
               <TouchableOpacity onPress={handleCopyDeliveredOtp}>
                 <Text style={styles.text}>{deliveredOtp}</Text>
               </TouchableOpacity>
@@ -255,7 +262,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
           <View style={{paddingTop: 30, paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>{localizationText('Common', 'pickupFrom')}</Text>
+                <Text style={styles.DeliveringText}>
+                  {localizationText('Common', 'pickupFrom')}
+                </Text>
                 <Text style={styles.subAddress}>
                   {getLocationAddress(driverDetails.order.pickup_location)}
                 </Text>
@@ -267,7 +276,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
 
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>{localizationText('Common', 'deliveringTo')}</Text>
+                <Text style={styles.DeliveringText}>
+                  {localizationText('Common', 'deliveringTo')}
+                </Text>
                 <Text style={styles.subAddress}>
                   {getLocationAddress(driverDetails.order.dropoff_location)}
                 </Text>
@@ -340,13 +351,22 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
               <TouchableOpacity
                 onPress={() => navigation.navigate('EnterpriseBottomNav')}
                 style={styles.trackOrderBtn}>
-                <Text style={styles.trackText}>{localizationText('Common', 'goHome')}</Text>
+                <Text style={styles.trackText}>
+                  {localizationText('Common', 'goHome')}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => navigation.navigate('EnterpriseBottomNav')}
+                onPress={() =>
+                  navigation.navigate('DeliveryDetails', {
+                    orderItem: placedOrderDetails[0],
+                    componentType: 'ENTERPRISE',
+                  })
+                }
                 style={styles.trackOrderBtn}>
-                <Text style={styles.trackText}>{localizationText('Common', 'viewOrderDetails')}</Text>
+                <Text style={styles.trackText}>
+                  {localizationText('Common', 'viewOrderDetails')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
