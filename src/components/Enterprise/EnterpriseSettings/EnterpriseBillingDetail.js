@@ -27,6 +27,7 @@ const EnterpriseBillingDetail = () => {
   const [dropdownStateValue, setDropdownStateValue] = useState(1);
   const [dropdownCityValue, setDropdownCityValue] = useState(1);
   const {userDetails} = useUserDetails();
+  const [id, setId] = useState(null);
   const {setLoading} = useLoader();
 
   const setBillingDetails = billingDetails => {
@@ -38,6 +39,7 @@ const EnterpriseBillingDetail = () => {
     setDropdownCityValue(billingDetails?.city_id);
     setDropdownCountryValue(billingDetails?.country_id);
     setPostalCode(billingDetails?.postal_code);
+    setId(billingDetails?.id);
   };
 
   const getBillingDetails = () => {
@@ -98,6 +100,10 @@ const EnterpriseBillingDetail = () => {
       enterprise_ext_id: userDetails.userDetails[0].ext_id,
     };
 
+    if (id) {
+      body.id = id;
+    }
+    
     updateBillingAddressDetails(
       userDetails.userDetails[0].ext_id,
       body,
