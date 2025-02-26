@@ -15,7 +15,7 @@ import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
 import SwipeButtonComponent from '../commonComponent/SwipeButton';
 
-const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
+const EnterpriseDeliveryboyAssigned = ({navigation}) => {
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -338,4 +338,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EnterpriseScheduleRequestSubmitted;
+export default EnterpriseDeliveryboyAssigned;
