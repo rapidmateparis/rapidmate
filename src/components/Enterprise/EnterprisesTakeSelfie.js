@@ -23,7 +23,7 @@ import {
   updateUserProfileEnterprise,
   uploadDocumentsApi,
 } from '../../data_manager';
-import { API } from '../../utils/constant';
+import {API} from '../../utils/constant';
 
 const EnterprisesTakeSelfie = ({navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
@@ -31,6 +31,8 @@ const EnterprisesTakeSelfie = ({navigation}) => {
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
   const {userDetails, saveUserDetails} = useUserDetails();
+  const tryAgain = localizationText('Common', 'tryAgain') || 'Try Again';
+  const useThis = localizationText('Common', 'useThis') || 'Use This';
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -97,11 +99,15 @@ const EnterprisesTakeSelfie = ({navigation}) => {
           updateUserProfileEnterprise(
             params,
             successResponseProfile => {
-              console.log('successResponseProfile', successResponseProfile,userDetails.userDetails.is_active);
+              console.log(
+                'successResponseProfile',
+                successResponseProfile,
+                userDetails.userDetails.is_active,
+              );
               setLoading(false);
-              if(userDetails?.userDetails[0].is_active === 0){
+              if (userDetails?.userDetails[0].is_active === 0) {
                 navigation.navigate('EnterpriseThanksPage');
-              }else{
+              } else {
                 navigation.navigate('EnterpriseManageProfile');
               }
             },
@@ -181,15 +187,16 @@ const EnterprisesTakeSelfie = ({navigation}) => {
             {localizationText('Main', 'uploadProfilePicDescription')}
           </Text>
         </View>
-
-        <View style={styles.buttonCard}>
-          <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
-            <Text style={styles.buttonText}>{localizationText('Common', 'tryAgain')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
-            <Text style={styles.okButton}>{localizationText('Common', 'useThis')}</Text>
-          </TouchableOpacity>
-        </View>
+        {image && (
+          <View style={styles.buttonCard}>
+            <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
+              <Text style={styles.buttonText}>{tryAgain}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
+              <Text style={styles.okButton}>{useThis}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       {/* -------------- Modal --------------------- */}
       <ChoosePhotoByCameraGallaryModal

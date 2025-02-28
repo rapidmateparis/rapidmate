@@ -92,7 +92,7 @@ const LoaderForDriver = ({navigation}) => {
                 if (reTryCount === 5) {
                   navigation.navigate('DriverNotAvailable', errorResponse);
                 }
-              }, 30000);
+              }, 10000);
             },
           );
         }
