@@ -1,7 +1,7 @@
 import axios from 'axios';
-import {DATE_FORMAT, apiHost} from './constant';
-import {PermissionsAndroid} from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { DATE_FORMAT, apiHost } from './constant';
+import { PermissionsAndroid } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 import Sound from 'react-native-sound'
@@ -169,10 +169,10 @@ export const requestNotificationPermission = async () => {
 export const getEstablishmentYear = () => {
   const currentYear = new Date().getFullYear();
   const startYear = currentYear - 100;
-  const yearRange = Array.from({length: 101}, (_, index) => startYear + index);
+  const yearRange = Array.from({ length: 101 }, (_, index) => startYear + index);
   let establishmentYearData = [];
   for (let i = 0; i < yearRange.length; i++) {
-    let tmp = {label: yearRange[i], value: yearRange[i]};
+    let tmp = { label: yearRange[i], value: yearRange[i] };
     establishmentYearData.push({
       label: `${yearRange[i]}`,
       value: `${yearRange[i]}`,
@@ -225,14 +225,26 @@ export const handleImageLibraryLaunchFunction = () => {
     };
     launchImageLibrary(options, response => {
       if (!response.didCancel && !response.error) {
-        const data = {
-          status: 'success',
-          data: response.assets[0],
-        };
-        resolve(data);
+        const image = response.assets[0]
+        console.log(image.fileSize, "photo size");
+        if (image.fileSize <= 1000 * 1024) {
+          const data = {
+            status: 'success',
+            data: response.assets[0],
+          };
+          resolve(data);
+        } else {
+          console.log("File size is to large")
+          const errorData = {
+            status: 'error',
+            message: "File size must be less than 1MB."
+          }
+          reject(errorData)
+        }
       } else {
         const errorData = {
           status: 'error',
+          message: 'Image selection canceled or failed.'
         };
         reject(errorData);
       }
@@ -321,24 +333,24 @@ export const handleImageLibraryLaunchFunction = () => {
 
 
 
-export const localToUTC=(date=new Date(),timezone,format='YYYY-MM-DD HH:mm:ss')=>{
-  return moment.tz(date,timezone || Intl.DateTimeFormat().resolvedOptions().timeZone).utc().format(format)
+export const localToUTC = (date = new Date(), timezone, format = 'YYYY-MM-DD HH:mm:ss') => {
+  return moment.tz(date, timezone || Intl.DateTimeFormat().resolvedOptions().timeZone).utc().format(format)
 }
 
-export const utcLocal=(date=new Date(),format='YYYY-MM-DD HH:mm:ss')=>{
+export const utcLocal = (date = new Date(), format = 'YYYY-MM-DD HH:mm:ss') => {
   return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(format);
 }
 
-export const titleFormat=(date=new Date())=>{
+export const titleFormat = (date = new Date()) => {
   return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(DATE_FORMAT.titleFormat);
 }
 
 
-export const localizationText=(parentKey,childKey)=>{
-  const {t} = useTranslation()
-  if(parentKey && childKey)
+export const localizationText = (parentKey, childKey) => {
+  const { t } = useTranslation()
+  if (parentKey && childKey)
     return t(`${parentKey}.${childKey}`)
-  else 
+  else
     return t(`${parentKey}`)
 }
 
@@ -346,7 +358,7 @@ export const localizationText=(parentKey,childKey)=>{
 
 let soundInstance;
 
-export const playNotificationSound =()=>{
+export const playNotificationSound = () => {
   soundInstance = new Sound('samplenotification.mp3', Sound.MAIN_BUNDLE, (error) => {
     if (error) {
       console.log('failed to load the sound', error);
@@ -356,14 +368,14 @@ export const playNotificationSound =()=>{
     console.log('duration in seconds: ' + soundInstance.getDuration() + 'number of channels: ' + soundInstance.getNumberOfChannels());
     soundInstance.setNumberOfLoops(-1)
     soundInstance.play((success) => {
-        if (success) {
-          console.log('successfully finished playing');
-        } else {
-          console.log('playback failed due to audio decoding errors');
-        }
-      });
+      if (success) {
+        console.log('successfully finished playing');
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+    });
 
-    
+
   });
 }
 
