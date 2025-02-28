@@ -130,6 +130,10 @@ import PrivacyPolicy from './common/PrivacyPolicy';
 import TermsAndConditions from './common/TermsOfService';
 import EnterpriseBillingDetail from './components/Enterprise/EnterpriseSettings/EnterpriseBillingDetail';
 import {localizationText} from './utils/common';
+import EnterpriseShiftRequestNewDelivery from './components/Enterprise/EnterpriseShiftRequestNewDelivery';
+import EnterpriseShiftAddDetsils from './components/Enterprise/EnterpriseShiftAddDetsils';
+import EnterpriseShiftOrderPreview from './components/Enterprise/EnterpriseShiftOrderPreview';
+import EnterpriseShiftDeliveryboyAssigned from './components/Enterprise/EnterpriseShiftDeliveryboyAssigned';
 
 const Stack = createStackNavigator();
 
@@ -2587,6 +2591,95 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: billingDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftRequestNewDelivery"
+                component={EnterpriseShiftRequestNewDelivery}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftAddDetsils"
+                component={EnterpriseShiftAddDetsils}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Add Pickup Details',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftOrderPreview"
+                component={EnterpriseShiftOrderPreview}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Order Preview',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftDeliveryboyAssigned"
+                component={EnterpriseShiftDeliveryboyAssigned}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Shift Details',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
