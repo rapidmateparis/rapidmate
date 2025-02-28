@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Linking,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
@@ -39,6 +40,10 @@ const Settings = ({navigation}) => {
     else return findLang.label
 
   }
+
+  const handlePress = () => {
+    Linking.openURL('https://rapidmate.fr/support-page');
+  };
 
 // 
   return (
@@ -157,7 +162,7 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress}>
+          <TouchableOpacity style={styles.bookAddress} onPress={handlePress}>
             <Text style={styles.cardTitle}>{localizationText('Common','help')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

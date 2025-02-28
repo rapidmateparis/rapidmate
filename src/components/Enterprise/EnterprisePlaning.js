@@ -192,10 +192,11 @@ const EnterprisePlanning = ({navigation}) => {
             </Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
+              style={styles.headerCommandeButton}
                 onPress={() =>
                   navigation.navigate('EnterpriseScheduleNewDelivery')
                 }>
-                <AntDesign name="pluscircle" size={25} color={colors.primary} />
+                <Text style={styles.headerCommande}>Commande</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -229,37 +230,6 @@ const EnterprisePlanning = ({navigation}) => {
             textDisabledColor: '#ccc',
           }}
         />
-      </View>
-      <View style={styles.mainColorCard}>
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.primary} />
-          <Text style={styles.colorWiseText}>
-            {localizationText('Common', 'restaurant')}
-          </Text>
-        </View>
-
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.MountainMeadow} />
-          <Text style={styles.colorWiseText}>
-            {localizationText('Common', 'supermarkets')}
-          </Text>
-        </View>
-
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.CuriousBlue} />
-          <Text style={styles.colorWiseText}>
-            {localizationText('Common', 'eCommerce')}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.mainColorCard}>
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.Wisteria} />
-          <Text style={styles.colorWiseText}>
-            {localizationText('Common', 'packersAndMovers')}
-          </Text>
-        </View>
       </View>
 
       {enterpriseBranches.length === 0 && (
@@ -583,6 +553,17 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 8,
     marginHorizontal: 4,
+  },
+  headerCommande: {
+    fontSize: 13,
+    fontFamily: 'Montserrat-Bold',
+    color: colors.white,
+  },
+  headerCommandeButton: {
+    backgroundColor: colors.secondary,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 15,
   },
 });
 
