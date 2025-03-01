@@ -97,24 +97,17 @@ function DeliveryBoyAcceptRejectModal({
     return "Address not found";
 };
 
-const getLocationAddressByOrder = (order, type) => {
-  // let result = locationData.filter(location => location.id === Number(locationId));
-  
-  // if (result.length > 0) {
-  //     let location = result[0];
-      
-  // }
-  if(type === "PICKUP"){
-    return `${order.pickup_location_address}, ${order.pickup_location_city}, ${order.pickup_location_state}, ${order.pickup_location_country}`;
-  }else{
-    return `${order.dropoff_location_address}, ${order.dropoff_location_city}, ${order.dropoff_location_state}, ${order.dropoff_location_country}`;
-  }
+const getLocationAddressByOrder = (address, city, state, country) => {
+  console.log("-----------------")
+  // console.log(orderLocation.address)
+  return `${address}, ${city}, ${state}, ${country}`;
 
 };
 
 
 
   const handleOrderRequest = value => {
+
     let params = {
       delivery_boy_ext_id: deliveryBoyAcceptRejectMessage?.deliveryBoy?.ext_id,
       order_number: deliveryBoyAcceptRejectMessage?.order?.order_number,
@@ -345,8 +338,10 @@ const getLocationAddressByOrder = (order, type) => {
                     <Text style={styles.DeliveringText}>{pickupFrom}</Text>
                     <Text style={styles.subAddress}>
                       {getLocationAddressByOrder(
-                        deliveryBoyAcceptRejectMessage?.order,"PICKUP"
-                          
+                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.address || "Fetching...",
+                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.city  || "",
+                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.state  || "",
+                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.country  || ""                       
                       )}
                     </Text>
                     <Text style={styles.distance}>0.3 km {awayText}</Text>
@@ -367,8 +362,10 @@ const getLocationAddressByOrder = (order, type) => {
                     <Text style={styles.DeliveringText}>{deliverTo}</Text>
                     <Text style={styles.subAddress}>
                     {getLocationAddressByOrder(
-                        deliveryBoyAcceptRejectMessage?.order,"DROP"
-                          
+                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.address  || "Fetching...",
+                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.city  || "",
+                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.state  || "",
+                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.country  || ""
                       )}
                     </Text>
                     <Text style={styles.distance}>0.3 km {awayText}</Text>
