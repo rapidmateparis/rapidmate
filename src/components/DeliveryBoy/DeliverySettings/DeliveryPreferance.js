@@ -51,7 +51,7 @@ const DeliveryPreferance = ({navigation}) => {
       case 2:
         return require('../../../image/Location-Icon2x.png');
       case 3:
-        return require('../../../image/Calender-icon2x.png');
+        return require('../../../image/Calender-Both2x.png');
     }
   };
 

@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Linking,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
@@ -37,6 +38,10 @@ const DeliveryboySettings = ({navigation}) => {
   const clearAsyncStorage = async () => {
     await AsyncStorage.clear();
     RNRestart.restart();
+  };
+
+  const handlePress = () => {
+    Linking.openURL('https://rapidmate.fr/support-page');
   };
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -185,7 +190,7 @@ const DeliveryboySettings = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('')}
+            onPress={handlePress}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>
               {localizationText('Common', 'help')}

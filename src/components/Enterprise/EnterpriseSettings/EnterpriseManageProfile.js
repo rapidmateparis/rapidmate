@@ -105,6 +105,9 @@ const EnterpriseManageProfile = ({navigation}) => {
             },
           ],
         });
+        Alert.alert('Success', 'Profile updated successfully', [
+          {text: 'Ok', onPress: () => navigation.goBack()},
+        ])
       },
       errorResponse => {
         setLoading(false);

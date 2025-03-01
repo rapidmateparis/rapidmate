@@ -324,7 +324,11 @@
     "saveLocationAddress": "Sauvegarder l'adresse du lieu",
     "setLocationAddress": "Définir l'adresse de localisation",
     "date": "Date",
-    "dateAndTimePicker": "Sélecteur de date et d'heure"
+    "dateAndTimePicker": "Sélecteur de date et d'heure",
+    "whoWeAre": "Qui sommes-nous ?",
+    "ourMission": "Notre mission",
+    "ourVision": "Notre vision",
+    "whyChooseUs": "Pourquoi nous choisir ?"
   },
   "NavHeaderTitles": {
     "takeSelfie": "Prendre un selfie",
@@ -402,7 +406,7 @@
     "uploadProfilePicDescription": "Prenez le temps de choisir votre meilleur cliché. Vous n'êtes pas satisfait ? Vous pourrez toujours la modifier plus tard !",
     "thankSigningTitle": "Voyez si cela vous convient, vous pouvez réessayer si vous le souhaitez.",
     "thankForSigningUp": "Merci de vous être inscrit",
-    "thankSigningDescription": "Nous examinons votre demande et nous vous informerons prochainement.",
+    "thankSigningDescription": "Nous examinons votre demande et vous informerons bientôt par e-mail ou par téléphone. Notre représentant commercial vous contactera dans les plus brefs délais.",
     "loginDescription": "Connectez-vous à votre compte et reprenez là où vous vous êtes arrêté !",
     "consumerWelcomeDescription": "Voici votre tableau de bord Rapidmate !",
     "consumerRequestPickup": "Demande d'enlèvement",
@@ -425,13 +429,17 @@
     "createNewDelivery": "Créer une nouvelle livraison",
     "createNewDeliveryDescription": "Programmation d'une heure ou de plusieurs heures",
     "oneTimeDelivery": "Livraison unique",
-    "oneTimeDeliveryDescription": "Bénéficier de n'importe quel service pour une durée et un lieu déterminés",
+    "oneTimeDeliveryDescription": "Bénéficiez de services de livraison à la commande à tout moment pour votre entreprise.",
     "multipleDeliveries": "Livraisons multiples",
-    "multipleDeliveriesDescription": "Répétition d'une livraison unique pour plusieurs jours",
+    "multipleDeliveriesDescription": "Bénéficiez facilement d'options de livraisons multiples ou récurrentes.",
     "createShift": "Créer un décalage",
     "createShiftDescription": "Bénéficier d'un service pour un créneau horaire de plusieurs heures",
     "selectServiceType": "Sélectionner le type de service",
-    "selectVehicleType": "Sélectionner le type de véhicule"
+    "selectVehicleType": "Sélectionner le type de véhicule",
+    "whoWeAreDescription": "Rapidmate est un fournisseur dynamique de solutions logistiques et de livraison, spécialisé dans une large gamme de services adaptés aux particuliers, aux entreprises et aux sociétés de tous secteurs. En mettant l'accent sur la fiabilité et l'efficacité, nous sommes votre partenaire de confiance pour des livraisons rapides, sûres et sans faille.",
+    "ourMissionDescription": "Notre mission est de redéfinir la logistique en offrant des solutions de livraison innovantes, flexibles et durables. Nous nous engageons à aider les entreprises à optimiser leurs opérations, à améliorer la satisfaction de leurs clients et à réussir grâce à des services rapides, fiables et respectueux de l'environnement.",
+    "ourVisionDescription": "Notre vision est de devenir le premier fournisseur de solutions logistiques intelligentes, permettant aux entreprises d'évoluer sans effort et de servir leurs clients avec excellence. Notre objectif est de révolutionner le paysage de la livraison grâce à une technologie de pointe, une intégration transparente et un service exceptionnel.",
+    "whyChooseUsDescription": "Nous fournissons des solutions logistiques exceptionnelles adaptées à votre entreprise, garantissant des opérations sans heurts et vous permettant de gagner du temps. Avec une approche centrée sur le client, nous donnons la priorité à des livraisons rapides et sûres et à un service rentable sans compromettre la qualité. Notre assistance complète garantit que chaque aspect de votre livraison est traité avec précision, vous offrant ainsi la tranquillité d'esprit."
   },
   "PrivacyPolicy": {
     "privacyPolicy": "Politique de confidentialité",

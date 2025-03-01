@@ -14,6 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
@@ -180,13 +181,12 @@ const EnterprisesTakeSelfie = ({navigation}) => {
 
         <View style={styles.titlesCard}>
           <Text style={styles.statusTitle}>
-            Please upload a Profile Picture
+            {localizationText('Main', 'uploadProfilePic')}
           </Text>
           <Text style={styles.statusSubtitle}>
-            Please see if this looks good, you can try once more if you want to.
+            {localizationText('Main', 'uploadProfilePicDescription')}
           </Text>
         </View>
-
         {image && (
           <View style={styles.buttonCard}>
             <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
