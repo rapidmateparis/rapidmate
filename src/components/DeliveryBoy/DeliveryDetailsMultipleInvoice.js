@@ -185,7 +185,7 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
                   </View>
                   <View style={styles.otpHeadCard}>
                     <Text style={styles.otpTitleText}>Deliverd OTP:</Text>
-                    <Text style={styles.otpText}>{location.delivered_otp}</Text>
+                    <Text style={styles.otpText}>{location.delivered_otp || "Gendrate if completed pickup" }</Text>
                   </View>
                 </View>
               </View>
