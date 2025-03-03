@@ -43,11 +43,13 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   const driverDetails = params?.driverDetails || {};
 
   const orderId = driverDetails.order.order_number;
-  const otp = driverDetails.order.otp;
-  // const deliveredOtp = driverDetails.order.delivered_otp;
-
+ 
   const [deliveredOtp, setDeliveredOtp] = useState(
     driverDetails.order.delivered_otp,
+  );
+
+  const [otp, setOtp] = useState(
+    driverDetails.order.otp,
   );
 
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -94,7 +96,8 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     userDetails.progressTypeId &&
       setCurrentPosition(userDetails.progressTypeId);
     userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);
-  }, [userDetails.progressTypeId, userDetails.delivered_otp]);
+    userDetails.otp && setOtp(userDetails.otp);
+  }, [userDetails.progressTypeId, userDetails.otp, userDetails.delivered_otp]);
 
   useEffect(() => {
     const onBackPress = () => true;

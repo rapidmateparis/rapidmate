@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,15 +7,16 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
-import {colors} from '../../../colors';
-import {localizationText} from '../../../utils/common';
-import {useUserDetails} from '../../commonComponent/StoreContext';
+import { Dropdown } from 'react-native-element-dropdown';
+import { colors } from '../../../colors';
+import { localizationText } from '../../../utils/common';
+import { useUserDetails } from '../../commonComponent/StoreContext';
 import {
   getBillingAddressDetails,
   updateBillingAddressDetails,
 } from '../../../data_manager';
-import {useLoader} from '../../../utils/loaderContext';
+import { useLoader } from '../../../utils/loaderContext';
+import { getCityList, getCountryList, getDeliveryBoyBillingDetails, getStateList, updateDeliveryBoyBillingDetails } from '../../../data_manager';
 
 const EnterpriseBillingDetail = () => {
   const [firstName, setFirstName] = useState('');
@@ -26,9 +27,103 @@ const EnterpriseBillingDetail = () => {
   const [dropdownCountryValue, setDropdownCountryValue] = useState(1);
   const [dropdownStateValue, setDropdownStateValue] = useState(1);
   const [dropdownCityValue, setDropdownCityValue] = useState(1);
-  const {userDetails} = useUserDetails();
+  const { userDetails } = useUserDetails();
   const [id, setId] = useState(null);
-  const {setLoading} = useLoader();
+  const { setLoading } = useLoader();
+
+  const [countryList, setCountryList] = useState([]);
+  const [masterStateList, setMasterStateList] = useState(null);
+  const [masterCityList, setMasterCityList] = useState(null);
+
+
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
+  const [billingDetails] = useState({});
+  useEffect(() => {
+    getCountryList(
+      {},
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                { text: 'OK', onPress: () => { } },
+              ]);
+            } else {
+              var formattedCountryList = [];
+              successResponse[0]._response.forEach(element => {
+                formattedCountryList.push({
+                  label: element.country_name,
+                  value: element.id,
+                });
+              });
+              setCountryList(formattedCountryList);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          { text: 'OK', onPress: () => { } },
+        ]);
+      },
+    );
+
+    getStateList(
+      {},
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                { text: 'OK', onPress: () => { } },
+              ]);
+            } else {
+              setMasterStateList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        console.log('errorResponse', errorResponse[0]._errors.message);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          { text: 'OK', onPress: () => { } },
+        ]);
+      },
+    );
+
+    getCityList(
+      null,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          if (successResponse[0]._response) {
+            if (successResponse[0]._response.name == 'NotAuthorizedException') {
+              Alert.alert('Error Alert', successResponse[0]._response.name, [
+                { text: 'OK', onPress: () => { } },
+              ]);
+            } else {
+              setMasterCityList(successResponse[0]._response);
+            }
+          }
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          { text: 'OK', onPress: () => { } },
+        ]);
+      },
+    );
+    
+  }, []);
+
+
 
   const setBillingDetails = billingDetails => {
     setFirstName(billingDetails.first_name);
@@ -64,26 +159,6 @@ const EnterpriseBillingDetail = () => {
     getBillingDetails();
   }, [userDetails.userDetails[0].ext_id]);
 
-  const account = [
-    {label: 'Individual', value: 1},
-    {label: 'Company', value: 2},
-  ];
-
-  const countryList = [
-    {label: 'USA', value: 1},
-    {label: 'Canada', value: 2},
-  ];
-
-  const stateList = [
-    {label: 'California', value: 1},
-    {label: 'Ontario', value: 2},
-  ];
-
-  const cityList = [
-    {label: 'Los Angeles', value: 1},
-    {label: 'Toronto', value: 2},
-  ];
-
   const updateBillingDetails = () => {
     if (!validateFields()) return;
 
@@ -103,7 +178,7 @@ const EnterpriseBillingDetail = () => {
     if (id) {
       body.id = id;
     }
-    
+
     updateBillingAddressDetails(
       userDetails.userDetails[0].ext_id,
       body,
@@ -118,7 +193,33 @@ const EnterpriseBillingDetail = () => {
       },
     );
   };
+  useEffect(()=>{
+    if(masterStateList?.length > 0){
+    var formattedStateList = [];
+    masterStateList.forEach(element => {
+        if (dropdownCountryValue == element.country_id) {
+          formattedStateList.push({
+            label: element.state_name,
+            value: element.id,
+          });
+        }
+      });
+      setStateList(formattedStateList);
+    }
 
+    if(masterCityList?.length > 0){
+      var formattedCityList = [];
+        masterCityList.forEach(element => {
+          if (dropdownStateValue == element.state_id) {
+            formattedCityList.push({
+              label: element.city_name,
+              value: element.id,
+            });
+          }
+        });
+        setCityList(formattedCityList);
+      }
+  },[billingDetails,masterCityList,masterStateList])
   const validateFields = () => {
     if (!firstName.trim()) {
       Alert.alert('Validation Error', 'First name is required');
@@ -144,15 +245,15 @@ const EnterpriseBillingDetail = () => {
   };
 
   return (
-    <ScrollView style={{flex: 1, backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15, marginVertical: 15}}>
+    <ScrollView style={{ flex: 1, backgroundColor: '#FBFAF5' }}>
+      <View style={{ paddingHorizontal: 15, marginVertical: 15 }}>
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <View style={[styles.nameInputDiv, {marginRight: 10}]}>
+          <View style={[styles.nameInputDiv, { marginRight: 10 }]}>
             <Text style={styles.label}>
               {localizationText('Common', 'firstName')}
             </Text>
@@ -186,9 +287,7 @@ const EnterpriseBillingDetail = () => {
         </View>
 
         <View>
-          <Text style={styles.label}>
-            {localizationText('Common', 'country')}
-          </Text>
+          <Text style={styles.label}>{localizationText('Common', 'country')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={countryList}
@@ -200,15 +299,30 @@ const EnterpriseBillingDetail = () => {
               labelField="label"
               valueField="value"
               value={dropdownCountryValue}
-              onChange={item => setDropdownCountryValue(item.value)}
+
+              onChange={item => {
+                setDropdownCountryValue(item.value);
+                // setIsFocus(false);
+                var formattedStateList = [];
+                masterStateList.forEach(element => {
+                  if (item.value == element.country_id) {
+                    formattedStateList.push({
+                      label: element.state_name,
+                      value: element.id,
+                    });
+                  }
+                });
+                setStateList(formattedStateList);
+              }}
+
+
+            // onChange={item => setDropdownCountryValue(item.value)}
             />
           </View>
         </View>
 
         <View>
-          <Text style={styles.label}>
-            {localizationText('Common', 'state')}
-          </Text>
+          <Text style={styles.label}>{localizationText('Common', 'state')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={stateList}
@@ -220,7 +334,22 @@ const EnterpriseBillingDetail = () => {
               labelField="label"
               valueField="value"
               value={dropdownStateValue}
-              onChange={item => setDropdownStateValue(item.value)}
+              // onChange={item => setDropdownStateValue(item.value)}
+              onChange={item => {
+                setDropdownStateValue(item.value);
+                // setIsFocus(false);
+                var formattedCityList = [];
+                masterCityList.forEach(element => {
+                  if (item.value == element.state_id) {
+                    formattedCityList.push({
+                      label: element.city_name,
+                      value: element.id,
+                    });
+                  }
+                });
+                setCityList(formattedCityList);
+              }}
+
             />
           </View>
         </View>
@@ -267,7 +396,7 @@ const EnterpriseBillingDetail = () => {
 
         <TouchableOpacity
           onPress={() => updateBillingDetails()}
-          style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+          style={[styles.logbutton, { backgroundColor: colors.primary }]}>
           <Text style={styles.buttonText}>
             {localizationText('Common', 'save')}
           </Text>
