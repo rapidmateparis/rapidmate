@@ -66,7 +66,7 @@ const DeliveryPackageRequest = ({navigation}) => {
                 <Text style={styles.subAddress}>
                   1901 Thornridge Cir. Shiloh, California
                 </Text>
-                <Text style={styles.distance}>0.3 km away</Text>
+                <Text style={styles.distance}>{" "}</Text>
               </View>
               <View>
                 <Image
@@ -82,7 +82,7 @@ const DeliveryPackageRequest = ({navigation}) => {
                 <Text style={styles.subAddress}>
                   1901 Thornridge Cir. Shiloh, California
                 </Text>
-                <Text style={styles.distance}>2.5 km away from pickup</Text>
+                <Text style={styles.distance}>{""}</Text>
               </View>
               <View>
                 <Image

@@ -236,7 +236,7 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                        <Text style={styles.subAddress}>
                          {deliveryBoyAcceptRejectMessage?.order?.address}
                        </Text>
-                       <Text style={styles.distance}>0.3 km {awayText}</Text>
+                       <Text style={styles.distance}>{""}</Text>
                      </View>
                    </View>
                    <View>
@@ -268,7 +268,7 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                              ?.pickup_location_id,
                          )}
                        </Text>
-                       <Text style={styles.distance}>0.3 km away</Text>
+                       <Text style={styles.distance}>{" "}</Text>
                      </View>
                    </View>
                    <View>
@@ -290,7 +290,7 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                              ?.dropoff_location_id,
                          )}
                        </Text>
-                       <Text style={styles.distance}>0.3 km away</Text>
+                       <Text style={styles.distance}>{" "}</Text>
                      </View>
                    </View>
                    <View>
@@ -344,7 +344,7 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                          deliveryBoyAcceptRejectMessage?.order?.pickup_details?.country  || ""                       
                       )}
                     </Text>
-                    <Text style={styles.distance}>0.3 km {awayText}</Text>
+                    <Text style={styles.distance}>{""}</Text>
                   </View>
                 </View>
                 <View>
@@ -368,7 +368,7 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                          deliveryBoyAcceptRejectMessage?.order?.drop_details?.country  || ""
                       )}
                     </Text>
-                    <Text style={styles.distance}>0.3 km {awayText}</Text>
+                    <Text style={styles.distance}>{""}</Text>
                   </View>
                 </View>
                 <View>

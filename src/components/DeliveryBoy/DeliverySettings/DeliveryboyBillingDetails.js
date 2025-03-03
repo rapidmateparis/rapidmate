@@ -31,12 +31,6 @@ const DeliveryboyBillingDetails = () => {
   const {setLoading} = useLoader();
   const {userDetails,saveUserDetails} = useUserDetails();
 
-  const account = [
-    {label: 'Individual', value: 1},
-    {label: 'Company', value: 2},
-  ];
-
-
   const [countryList, setCountryList] = useState([]);
   const [masterStateList, setMasterStateList] = useState(null);
   const [masterCityList, setMasterCityList] = useState(null);
