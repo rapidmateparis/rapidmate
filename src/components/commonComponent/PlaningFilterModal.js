@@ -288,7 +288,7 @@ function PlaningFilterModal({
             </View>
 
             <View style={styles.companyLogoCard}>
-              {companyList.length === 0 ? (
+              {companyList?.length === 0 ? (
                 <Text style={styles.userName}>{noCompanyDetails}</Text>
               ) : (
                 <FlatList
