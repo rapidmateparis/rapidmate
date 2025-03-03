@@ -55,7 +55,7 @@ function DeliveryboySubmitOTPModal({
                 // Use caretHidden={false} when users can't paste a text value, because context menu doesn't appear
                 value={value}
                 onChangeText={value1 => {
-                  if (value1.length == 4) {
+                  if (value1?.length == 4) {
                     setEnableBtn(true);
                     setError('');
                   } else {

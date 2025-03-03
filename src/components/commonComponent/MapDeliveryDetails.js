@@ -129,7 +129,7 @@ export default function MapDeliveryDetails(probs = null) {
   const multipleToAddress = probs?.multipleToAddress ?probs?.multipleToAddress :[]
 
   useEffect(() => {
-    if (multipleToAddress.length > 0) {
+    if (multipleToAddress?.length > 0) {
       const newList = multipleToAddress.map((location) => ({
         latitude: location.to_latitude,
         longitude: location.to_longitude,
@@ -153,7 +153,7 @@ export default function MapDeliveryDetails(probs = null) {
           : 2.3513877855537912,
       });
 
-      if(multipleToAddress.length > 0){
+      if(multipleToAddress?.length > 0){
         const lastDestination = multipleToAddress[multipleToAddress.length -1]
         setDestination({
           latitude: lastDestination.to_latitude,
@@ -275,7 +275,7 @@ export default function MapDeliveryDetails(probs = null) {
             strokeWidth={3}
             strokeColor={colors.secondary}
             mode="DRIVING"
-            waypoints={ dropLocations.length > 0 ? dropLocations :  []}
+            waypoints={ dropLocations?.length > 0 ? dropLocations :  []}
             // waypoints={ multipleToAddress.length > 2? multipleToAddress.slice(1, -1) :  []}
             // waypoints={ multipleToAddress}
           />

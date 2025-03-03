@@ -89,7 +89,7 @@ function DeliveryBoyAcceptRejectModal({
   const getLocationAddress = (locationId) => {
     let result = locationData.filter(location => location.id === Number(locationId));
     
-    if (result.length > 0) {
+    if (result?.length > 0) {
         let location = result[0];
         return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
     }
