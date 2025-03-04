@@ -92,9 +92,8 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   useEffect(() => {
     console.log('progressTypeId ====>', userDetails.progressTypeId);
     console.log('delivered_otp ====>', userDetails.delivered_otp);
-
-    userDetails.progressTypeId &&
-      setCurrentPosition(userDetails.progressTypeId);
+    console.log('delivered_otp ====>', userDetails.otp);
+    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId);
     userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);
     userDetails.otp && setOtp(userDetails.otp);
   }, [userDetails.progressTypeId, userDetails.otp, userDetails.delivered_otp]);
