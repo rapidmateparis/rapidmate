@@ -624,7 +624,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeaderValues}>
               <Text style={styles.orderFareValue}>{deliveredOTP }:</Text>
               <Text style={styles.value}>
-                {route.params?.orderItem?.delivered_otp?.length > 0 ? params?.orderItem?.delivered_otp : "****" }
+                {route.params?.orderItem?.delivered_otp?.length > 0 ? route.params?.orderItem?.delivered_otp : "****" }
               </Text>
             </View>
           </View>
