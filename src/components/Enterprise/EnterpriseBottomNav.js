@@ -153,6 +153,14 @@ const EnterpriseBottomNav = ({navigation}) => {
         });
       }
 
+      if (remoteMessage.data?.otp) {
+        saveUserDetails({
+          ...userDetails,
+          otp: remoteMessage.data?.otp,
+        });
+      }
+
+
       getNotificationAllCount();
       setDeliveryBoyAcceptRejectModalModalVisible(true);
       console.log('remoteMessage', JSON.stringify(remoteMessage));
