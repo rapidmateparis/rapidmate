@@ -771,6 +771,7 @@ function EnterpriseHistory({navigation}) {
   };
 
   const onOneTimeActive = () => {
+    console.log("onOneTimeActive - Tab - Loader");
     setSearchText('');
     let params = {
       tab_id: 1,
