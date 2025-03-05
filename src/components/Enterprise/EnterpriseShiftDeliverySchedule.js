@@ -126,7 +126,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
         <View style={styles.startDateCard}>
           <View style={{width: '48%'}}>
             <Text style={styles.pickupDates}>Start Date</Text>
-            <View style={styles.startScheduleDate}>
+            <TouchableOpacity onPress={() => setStartDateOpen(true)} style={styles.startScheduleDate}>
               <DatePicker
                 modal
                 open={startDateOpen}
@@ -156,16 +156,15 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
               <AntDesign
                 name="calendar"
                 size={20}
-                onPress={() => setStartDateOpen(true)}
                 color={colors.secondary}
                 style={{marginTop: 13}}
               />
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View style={{width: '48%'}}>
             <Text style={styles.pickupDates}>End Date</Text>
-            <View style={styles.startScheduleDate}>
+            <TouchableOpacity onPress={() => setEndDateOpen(true)} style={styles.startScheduleDate}>
               <DatePicker
                 modal
                 open={endDateOpen}
@@ -197,9 +196,8 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                 size={20}
                 color={colors.secondary}
                 style={{marginTop: 13}}
-                onPress={() => setEndDateOpen(true)}
               />
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
