@@ -114,7 +114,9 @@ const DeliveryDetails = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
+    console.log("ARUNS 1==>");
     if (componentType == 'ENTERPRISE') {
+      console.log("ARUNS 2==>");
       enterpriseOrderDetail();
     } else {
       orderDetail();
@@ -132,7 +134,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         if (successResponse[0]._success) {
           console.log('Enterprise new details  =====>',JSON.stringify(successResponse[0]._response))
-
+          console.log("ARUNS 3==>");
           let data = successResponse[0]._response.order;
           let orderLines = successResponse[0]._response.orderLines;
           if (orderLines && orderLines.length > 0) {
@@ -140,6 +142,7 @@ const DeliveryDetails = ({navigation, route}) => {
             setMultipleOrderLocation(orderLines)
           }
           setOrder(data);
+          console.log("ARUNS 4==>", data);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
           getSourceAddress(
             successResponse[0]._response.order.pickup_location,
@@ -480,7 +483,7 @@ const DeliveryDetails = ({navigation, route}) => {
         </View>
 
         <View>
-          {route.params?.orderItem?.is_delivery_boy_allocated === 1 ? (
+          {order?.is_delivery_boy_allocated === 1 ? (
             <View style={styles.driverCard}>
               <Image
                 style={styles.driverImage}
@@ -493,8 +496,8 @@ const DeliveryDetails = ({navigation, route}) => {
                 <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
-          ) : route.params?.orderItem?.service_type_id === 1 ? null : 
-          route.params?.orderItem?.is_delivery_boy_allocated === 0 ?
+          ) : order?.service_type_id === 1 ? null : 
+          order?.is_delivery_boy_allocated === 0 ?
           (
             <View style={{alignContent: 'flex-end'}}>
               <Button
@@ -624,7 +627,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.cardHeaderValues}>
               <Text style={styles.orderFareValue}>{deliveredOTP }:</Text>
               <Text style={styles.value}>
-                {route.params?.orderItem?.delivered_otp?.length > 0 ? route.params?.orderItem?.delivered_otp : "****" }
+                {order?.delivered_otp?.length > 0 ? order?.delivered_otp : "****" }
               </Text>
             </View>
           </View>
