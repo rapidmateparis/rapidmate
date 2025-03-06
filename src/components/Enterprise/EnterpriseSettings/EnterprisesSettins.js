@@ -31,8 +31,7 @@ const EnterprisesSettins = ({navigation}) => {
   const getCurrentSelectedLanguage = () => {
     const currentLanguage = i18n.language;
     const findLang = languages.find(lang => lang.key === currentLanguage);
-    if (!findLang) return '';
-    else return findLang.label;
+    return findLang ? findLang.label : '';
   };
 
   const clearAsyncStorage = async () => {
@@ -172,20 +171,23 @@ const EnterprisesSettins = ({navigation}) => {
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
           {showOptions &&
-            languages.map(lng => {
-              return (
-                <TouchableOpacity
-                  style={styles.bookAddress}
-                  onPress={() => {
-                    i18n.changeLanguage(lng.key);
-                    setShowOptions(false);
-                  }}>
-                  <Text style={styles.cardTitle}></Text>
-                  <Text style={styles.titleStatus}>{lng.label}</Text>
-                  <AntDesign name="right" size={13} color="#909090" />
-                </TouchableOpacity>
-              );
-            })}
+            languages
+              .filter(lng => lng.key !== i18n.language)
+              .map(lng => {
+                return (
+                  <TouchableOpacity
+                    key={lng.key}
+                    style={styles.bookAddress}
+                    onPress={() => {
+                      i18n.changeLanguage(lng.key);
+                      setShowOptions(false);
+                    }}>
+                    <Text style={styles.cardTitle}></Text>
+                    <Text style={styles.titleStatus}>{lng.label}</Text>
+                    <AntDesign name="right" size={13} color="#909090" />
+                  </TouchableOpacity>
+                );
+              })}
         </View>
 
         <View style={styles.addressCard}>
