@@ -29,59 +29,6 @@ const ChooseDeliveryType = ({navigation}) => {
           <TouchableOpacity
             style={styles.profileCard}
             onPress={() => {
-              handleOptionSelect('ShiftWise');
-            }}>
-            <LinearGradient
-              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
-              start={{x: 1, y: 0}}
-              end={{x: 0, y: 0}}
-              style={[
-                styles.container,
-                selectedOption === 'ShiftWise' && {
-                  backgroundColor: '#FFF8C9',
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                },
-              ]}>
-              <View style={styles.content}>
-                <Image
-                  style={{width: 40, height: 40}}
-                  source={require('../../image/Calender-icon2x.png')}
-                />
-                <View style={styles.profileText}>
-                  <Text style={styles.roleTypeText}>
-                    {localizationText('Common', 'shiftWise')}
-                  </Text>
-                  <Text style={styles.roleText}>
-                    {localizationText('Common', 'shiftWiseDescription')}
-                  </Text>
-                </View>
-                {selectedOption !== 'ShiftWise' && (
-                  <View style={styles.cricleRound} />
-                )}
-                {selectedOption === 'ShiftWise' && (
-                  <View
-                    style={{
-                      backgroundColor: colors.primary,
-                      width: 30,
-                      height: 30,
-                      padding: 3,
-                      borderRadius: 15,
-                    }}>
-                    <MaterialIcons
-                      name="check"
-                      size={24}
-                      color={colors.white}
-                    />
-                  </View>
-                )}
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.profileCard}
-            onPress={() => {
               handleOptionSelect('PickupDrop');
             }}>
             <LinearGradient
@@ -113,6 +60,59 @@ const ChooseDeliveryType = ({navigation}) => {
                   <View style={styles.cricleRound} />
                 )}
                 {selectedOption === 'PickupDrop' && (
+                  <View
+                    style={{
+                      backgroundColor: colors.primary,
+                      width: 30,
+                      height: 30,
+                      padding: 3,
+                      borderRadius: 15,
+                    }}>
+                    <MaterialIcons
+                      name="check"
+                      size={24}
+                      color={colors.white}
+                    />
+                  </View>
+                )}
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.profileCard}
+            onPress={() => {
+              handleOptionSelect('ShiftWise');
+            }}>
+            <LinearGradient
+              colors={['rgba(239, 176, 61, 0)', 'rgba(239, 176, 61, 0.08)']}
+              start={{x: 1, y: 0}}
+              end={{x: 0, y: 0}}
+              style={[
+                styles.container,
+                selectedOption === 'ShiftWise' && {
+                  backgroundColor: '#FFF8C9',
+                  borderWidth: 1,
+                  borderColor: colors.primary,
+                },
+              ]}>
+              <View style={styles.content}>
+                <Image
+                  style={{width: 40, height: 40}}
+                  source={require('../../image/Calender-icon2x.png')}
+                />
+                <View style={styles.profileText}>
+                  <Text style={styles.roleTypeText}>
+                    {localizationText('Common', 'shiftWise')}
+                  </Text>
+                  <Text style={styles.roleText}>
+                    {localizationText('Common', 'shiftWiseDescription')}
+                  </Text>
+                </View>
+                {selectedOption !== 'ShiftWise' && (
+                  <View style={styles.cricleRound} />
+                )}
+                {selectedOption === 'ShiftWise' && (
                   <View
                     style={{
                       backgroundColor: colors.primary,
