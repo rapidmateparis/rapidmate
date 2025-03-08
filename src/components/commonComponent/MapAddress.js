@@ -258,7 +258,7 @@ const MapAddress = props => {
             Distance: {distance} km
           </Text>
           <Text style={styles.distanceText}>
-            Time left: {time.toFixed(2)} min
+            Time: {time.toFixed(2)} min
           </Text>
         </View>
       )}

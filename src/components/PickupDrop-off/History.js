@@ -29,6 +29,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {color} from 'react-native-reanimated';
 import {localizationText, titleFormat, utcLocal} from '../../utils/common';
+import ConsumerOrderFilter from './ConsumerOrderFilter';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -541,6 +542,11 @@ const PastList = ({navigation, searchText}) => {
 function History({navigation}) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+
+  const toggleFilterModal = () => {
+    setFilterModalVisible(!isFilterModalVisible);
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -555,7 +561,7 @@ function History({navigation}) {
           <Text style={styles.headerText}>
             {localizationText('Common', 'history')}
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={toggleFilterModal}>
             <AntDesign name="filter" size={25} color={colors.secondary} />
           </TouchableOpacity>
         </View>
@@ -604,6 +610,12 @@ function History({navigation}) {
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}
+
+       {/* Modal Start Here  */}
+      <ConsumerOrderFilter
+        isFilterModalVisible={isFilterModalVisible}
+        setFilterModalVisible={setFilterModalVisible}
+      />
     </View>
   );
 }

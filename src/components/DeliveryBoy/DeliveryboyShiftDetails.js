@@ -10,6 +10,7 @@ import {
   StatusBar,
   SafeAreaView,
   Alert,
+  Linking,
 } from 'react-native';
 import {colors} from '../../colors';
 import SwipeButton from 'rn-swipe-button';
@@ -105,7 +106,12 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
     }
   }, []);
 
-  console.log('checkStartAction  =====>', checkStartAction());
+  const openGoogleMaps = (address) => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  };
+
+  console.log('checkStartAction  =====>', orderDetails);
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -119,23 +125,21 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                 {localizationText('Common', 'companyInformation')}
               </Text>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('DeliveryboyMainDeliveryDetails')
-                }>
-                <Image source={require('../../image/Track-Icon.png')} />
+                onPress={() => openGoogleMaps(orderDetails?.address ? orderDetails.address : '-')}>
+                <Image style={styles.startIcon} source={require('../../image/Start-Icon.png')} />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
                 <Text style={styles.companyInfo}>
-                  {orderDetails?.company_name
-                    ? orderDetails?.company_name
+                  {orderDetails?.branch_name
+                    ? orderDetails?.branch_name
                     : '-'}
                 </Text>
                 <Text style={styles.dropInfo}>
-                  {orderDetails?.company_address
-                    ? orderDetails.company_address
-                    : '22 Rue de la Liberté, Paris, Île-de-France.'}
+                  {orderDetails?.address
+                    ? orderDetails.address
+                    : '-'}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
@@ -596,6 +600,10 @@ const styles = StyleSheet.create({
   },
   swipeBt: {
     marginTop: '30%',
+  },
+  startIcon: {
+    height: 23,
+    width: 60,
   },
 });
 

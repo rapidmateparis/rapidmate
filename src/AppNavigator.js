@@ -134,6 +134,7 @@ import EnterpriseShiftRequestNewDelivery from './components/Enterprise/Enterpris
 import EnterpriseShiftAddDetsils from './components/Enterprise/EnterpriseShiftAddDetsils';
 import EnterpriseShiftOrderPreview from './components/Enterprise/EnterpriseShiftOrderPreview';
 import EnterpriseShiftDeliveryboyAssigned from './components/Enterprise/EnterpriseShiftDeliveryboyAssigned';
+import DeliveryboyMainShiftDetails from './components/DeliveryBoy/DeliveryboyMainShiftDetails';
 
 const Stack = createStackNavigator();
 
@@ -1712,6 +1713,34 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: billingDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="DeliveryboyMainShiftDetails"
+                component={DeliveryboyMainShiftDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
