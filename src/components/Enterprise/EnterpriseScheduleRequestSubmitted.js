@@ -13,6 +13,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
   return (
@@ -31,10 +32,11 @@ const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/ThanksPage-Timer.png')}
           />
-          <Text style={styles.text}>Schedule request submitted</Text>
+          <Text style={styles.text}>
+            {localizationText('Common', 'scheduleRequestSubmitted')}
+          </Text>
           <Text style={styles.subText}>
-            We are reviewing your request and we will notify you soon via email
-            or phone call
+            {localizationText('Common', 'scheduleRequestSubmittedDes')}
           </Text>
         </View>
       </View>
@@ -43,7 +45,9 @@ const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
           navigation.navigate('EnterpriseBottomNav');
         }}
         style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-        <Text style={styles.buttonText}>Ok</Text>
+        <Text style={styles.buttonText}>
+          {localizationText('Common', 'okText')}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );

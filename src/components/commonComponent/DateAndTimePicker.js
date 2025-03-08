@@ -12,6 +12,7 @@ import Modal from 'react-native-modal';
 import DatePicker from 'react-native-date-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
+import {localizationText} from '../../utils/common';
 
 const DateAndTimePickerModal = ({
   setScheduleModalVisible,
@@ -33,14 +34,18 @@ const DateAndTimePickerModal = ({
       <View style={styles.modalContent}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Date and Time Picker</Text>
+            <Text style={styles.headerTitle}>
+              {localizationText('Common', 'dateAndTimePicker')}
+            </Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
           </View>
           <View style={styles.datetimeCard}>
             <View style={{width: '90%'}}>
-              <Text style={styles.pickupDates}>Pickup date</Text>
+              <Text style={styles.pickupDates}>
+                {localizationText('Common', 'pickupDate')}
+              </Text>
               <View style={styles.nameInputDiv}>
                 <DatePicker
                   modal
@@ -74,7 +79,9 @@ const DateAndTimePickerModal = ({
             </View>
 
             <View style={{width: '90%'}}>
-              <Text style={styles.pickupDates}>Pickup time</Text>
+              <Text style={styles.pickupDates}>
+                {localizationText('Common', 'pickupTime')}
+              </Text>
               <View style={styles.nameInputDiv}>
                 <DatePicker
                   modal
@@ -116,7 +123,9 @@ const DateAndTimePickerModal = ({
                 setPickupTime('');
                 toggleModal();
               }}>
-              <Text style={styles.okButtonText}>Schedule Pickup</Text>
+              <Text style={styles.okButtonText}>
+                {localizationText('Common', 'schedule')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -13,6 +13,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const DeliveryboyThanksPage = ({navigation}) => {
   return (
@@ -31,10 +32,11 @@ const DeliveryboyThanksPage = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/ThanksPage-Timer.png')}
           />
-          <Text style={styles.text}>Thank you for signing up</Text>
+          <Text style={styles.text}>
+            {localizationText('Main', 'thankForSigningUp')}
+          </Text>
           <Text style={styles.subText}>
-            We are reviewing your request and we will update you about it
-            shortly.
+            {localizationText('Main', 'thankSigningDescription')}
           </Text>
         </View>
       </View>

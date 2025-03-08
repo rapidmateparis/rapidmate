@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Linking,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
@@ -24,7 +25,7 @@ const Settings = ({navigation}) => {
 
   const languages =[
     {label:'English', key:'en'},
-    {label:'Hindi', key:'hi'},
+    {label:'French', key:'fr'},
   ]
 
   const clearAsyncStorage = async () => {
@@ -32,13 +33,15 @@ const Settings = ({navigation}) => {
     RNRestart.restart();
   };
 
-  const getCurrentSelectedLanguage = ()=>{
+  const getCurrentSelectedLanguage = () => {
     const currentLanguage = i18n.language;
-    const findLang = languages.find(lang=>lang.key === currentLanguage)
-    if(!findLang) return ''
-    else return findLang.label
+    const findLang = languages.find(lang => lang.key === currentLanguage);
+    return findLang ? findLang.label : '';
+  };
 
-  }
+  const handlePress = () => {
+    Linking.openURL('https://rapidmate.fr/support-page');
+  };
 
 // 
   return (
@@ -96,14 +99,14 @@ const Settings = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('Wallet')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>{localizationText('Common','wallet')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity
@@ -139,25 +142,30 @@ const Settings = ({navigation}) => {
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
             {
-              showOptions && 
-              languages.map(lng=>{
-                return(
-                  <TouchableOpacity style={styles.bookAddress} onPress={()=>{
-                    i18n.changeLanguage(lng.key)
-                    setShowOptions(false)
-                  }}>
-                    <Text style={styles.cardTitle}></Text>
-                    <Text style={styles.titleStatus}>{lng.label}</Text>
-                    <AntDesign name="right" size={13} color="#909090" />
-                  </TouchableOpacity>
-                )
-              })  
+              showOptions &&
+              languages
+                .filter(lng => lng.key !== i18n.language)
+                .map(lng => {
+                  return (
+                    <TouchableOpacity
+                      key={lng.key}
+                      style={styles.bookAddress}
+                      onPress={() => {
+                        i18n.changeLanguage(lng.key);
+                        setShowOptions(false);
+                      }}>
+                      <Text style={styles.cardTitle}></Text>
+                      <Text style={styles.titleStatus}>{lng.label}</Text>
+                      <AntDesign name="right" size={13} color="#909090" />
+                    </TouchableOpacity>
+                  );
+                })
             }
 
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress}>
+          <TouchableOpacity style={styles.bookAddress} onPress={handlePress}>
             <Text style={styles.cardTitle}>{localizationText('Common','help')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>

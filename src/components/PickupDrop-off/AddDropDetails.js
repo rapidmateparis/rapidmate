@@ -14,6 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {uploadDocumentsApi} from '../../data_manager';
@@ -49,7 +50,6 @@ const AddDropDetails = ({route, navigation}) => {
   const validateForm = () => {
     if (
       !name ||
-      !lastname ||
       !email ||
       !number ||
       !dropdownValue ||
@@ -85,49 +85,49 @@ const AddDropDetails = ({route, navigation}) => {
         <View style={styles.logFormView}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
-              <Text style={styles.textlable}>First name*</Text>
+              <Text style={styles.textlable}>{localizationText('Common', 'firstName')}*</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                placeholder={localizationText('Common', 'typeHere')}
                 value={name}
                 onChangeText={text => setName(text)}
               />
             </View>
 
             <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>Last name*</Text>
+              <Text style={styles.textlable}>{localizationText('Common', 'lastName')}</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                placeholder={localizationText('Common', 'typeHere')}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
             </View>
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Company</Text>
+            <Text style={styles.textlable}>{localizationText('Common', 'companyName')}</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={company}
               onChangeText={text => setCompany(text)}
             />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Email*</Text>
+            <Text style={styles.textlable}>{localizationText('Common', 'email')}*</Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={email}
               onChangeText={text => setEmail(text)}
             />
           </View>
           <View>
-            <Text style={styles.textlable}>Phone number*</Text>
+            <Text style={styles.textlable}>{localizationText('Common', 'phoneNumber')}*</Text>
             <View style={styles.mobileNumberInput}>
               <View style={{width: 95}}>
                 <View style={styles.containerDropdown}>
@@ -174,13 +174,13 @@ const AddDropDetails = ({route, navigation}) => {
             </View>
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Drop notes*</Text>
+            <Text style={styles.textlable}>{localizationText('Common', 'dropNotes')}*</Text>
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
               numberOfLines={4} 
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               textAlignVertical="top"
               value={dropNotes}
               onChangeText={text => setDropNotes(text)}
@@ -189,7 +189,7 @@ const AddDropDetails = ({route, navigation}) => {
           <TouchableOpacity
             onPress={() => handleNextPress()}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{localizationText('Common', 'next')}</Text>
           </TouchableOpacity>
         </View>
       </View>

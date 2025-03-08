@@ -17,6 +17,8 @@ import moment from 'moment';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {planningSetupUpdate, getCurrentPlanningSetup} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import DatePicker from 'react-native-date-picker';
+import {localizationText} from '../../utils/common';
 
 const DeliveryboySetAvailability = ({navigation}) => {
   const [toggleAvailable24, setToggleAvailable24] = useState(false);
@@ -33,6 +35,8 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const [allWeeksSlots, setAllWeeksSlots] = useState([]);
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
+  const paste = localizationText('Common', 'paste') || 'Paste';
+  const copy = localizationText('Common', 'copy') || 'Copy';
 
   useEffect(() => {
     getCurrentTimeSlot();
@@ -61,10 +65,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
       params,
       successResponse => {
         if (successResponse[0]._success) {
-          console.log(
-            'getCurrentPlanningSetup==>',
-            successResponse[0],
-          );
+          console.log('getCurrentPlanningSetup==>', successResponse[0]);
           setToggleApplySameForAll(
             successResponse[0]._response.is_apply_for_all_days == 1
               ? true
@@ -95,7 +96,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
             });
             setTimeSlots(defaultTimeSlots);
           }
-          
         }
       },
       errorResponse => {
@@ -386,7 +386,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
               <Text style={styles.monthByYear}>
                 {moment().format('MMM YYYY')}
               </Text>
-              <Text style={styles.weekFillter}>Week {weekCount}</Text>
+              <Text style={styles.weekFillter}>
+                {localizationText('Common', 'week')} {weekCount}
+              </Text>
             </View>
 
             <TouchableOpacity
@@ -403,7 +405,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
               {backgroundColor: toggleApplySameForAll ? '#F0F0F0' : '#FBFAF5'},
             ]}
             pointerEvents={toggleApplySameForAll ? 'none' : 'auto'}>
-            <Text style={styles.applySlotText}>I am available 24/7</Text>
+            <Text style={styles.applySlotText}>
+              {localizationText('Common', 'availableAllTime')}
+            </Text>
             <TouchableOpacity onPress={toggleAvailable}>
               <MaterialCommunityIcons
                 name={toggleAvailable24 ? 'toggle-switch' : 'toggle-switch-off'}
@@ -420,7 +424,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
             ]}
             pointerEvents={toggleAvailable24 ? 'none' : 'auto'}>
             <Text style={styles.applySlotText}>
-              Apply same slots to all days
+              {localizationText('Common', 'applySameSlots')}
             </Text>
             <TouchableOpacity onPress={toggleApplySame}>
               <MaterialCommunityIcons
@@ -464,119 +468,213 @@ const DeliveryboySetAvailability = ({navigation}) => {
                     {toggleCheckBoxes[day] ? (
                       <View style={styles.bothActionBtn}>
                         <TouchableOpacity style={styles.enabledPasteBt}>
-                          <Text style={styles.enabledPasteText}>Paste</Text>
+                          <Text style={styles.enabledPasteText}>{paste}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.copyCardBt}>
-                          <Text style={styles.enabledPasteText}>Copy</Text>
+                          <Text style={styles.enabledPasteText}>{copy}</Text>
                         </TouchableOpacity>
                       </View>
                     ) : (
                       <View style={styles.bothActionBtn}>
                         <TouchableOpacity style={styles.disablePasteBt}>
-                          <Text style={styles.disablePasteText}>Paste</Text>
+                          <Text style={styles.disablePasteText}>{paste}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.disablePasteBt}>
-                          <Text style={styles.disablePasteText}>Copy</Text>
+                          <Text style={styles.disablePasteText}>{copy}</Text>
                         </TouchableOpacity>
                       </View>
                     )}
                   </View>
 
                   {timeSlots[day] &&
-                    timeSlots[day].map((slot, slotIndex) => (
-                      <View key={slotIndex} style={styles.selectTimeCard}>
-                        <View style={styles.textInputDiv}>
-                          <TextInput
-                            style={styles.loginput}
-                            placeholder="From HH:MM"
-                            placeholderTextColor="#999"
-                            value={slot.from_time}
-                            onChangeText={text =>
+                    timeSlots[day].map((slot, slotIndex) => {
+                      return (
+                        <View key={slotIndex} style={styles.selectTimeCard}>
+                          <DatePicker
+                            modal
+                            open={!!slot.showFromTimePicker}
+                            date={
+                              slot?.from_time
+                                ? moment(slot?.from_time, 'hh:mm A').toDate()
+                                : new Date()
+                            }
+                            mode="time"
+                            onConfirm={date => {
                               setTimeSlots({
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
                                   idx === slotIndex
-                                    ? {...s, from_time: formatTime(text)}
+                                    ? {
+                                        ...s,
+                                        from_time:
+                                          moment(date).format('hh:mm A'),
+                                        showFromTimePicker: false,
+                                      }
                                     : s,
                                 ),
-                              })
-                            }
-                          />
-                          <TouchableOpacity>
-                            <MaterialCommunityIcons
-                              name="clock-time-four"
-                              size={20}
-                              color={colors.secondary}
-                              style={{marginTop: 15}}
-                            />
-                          </TouchableOpacity>
-                        </View>
-
-                        <View style={styles.textInputDiv}>
-                          <TextInput
-                            style={styles.loginput}
-                            placeholder="To HH:MM"
-                            placeholderTextColor="#999"
-                            value={slot.to_time}
-                            onChangeText={text =>
+                              });
+                            }}
+                            onCancel={() => {
                               setTimeSlots({
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
                                   idx === slotIndex
-                                    ? {...s, to_time: formatTime(text)}
+                                    ? {...s, showFromTimePicker: false}
                                     : s,
                                 ),
-                              })
-                            }
+                              });
+                            }}
                           />
-                          <TouchableOpacity>
-                            <MaterialCommunityIcons
-                              name="clock-time-four"
-                              size={20}
-                              color={colors.secondary}
-                              style={{marginTop: 15}}
+                          <View style={styles.textInputDiv}>
+                            <TextInput
+                              style={styles.loginput}
+                              placeholder="From HH:MM"
+                              placeholderTextColor="#999"
+                              value={slot.from_time}
+                              editable={false}
+                              // onChangeText={text =>
+                              // setTimeSlots({
+                              //   ...timeSlots,
+                              //   [day]: timeSlots[day].map((s, idx) =>
+                              //     idx === slotIndex
+                              //       ? {...s, from_time: formatTime(text)}
+                              //       : s,
+                              //   ),
+                              // })
+                              // }
                             />
-                          </TouchableOpacity>
-                        </View>
-
-                        {slotIndex == 0 ? (
-                          <View style={styles.selectTimeCard}>
                             <TouchableOpacity
-                              style={[
-                                styles.plusNewCardDisabled,
-                                toggleCheckBoxes[day]
-                                  ? styles.plusNewCardEnabled
-                                  : styles.plusNewCardDisabled,
-                              ]}
-                              onPress={
-                                toggleCheckBoxes[day]
-                                  ? () => handleAddSlot(day)
-                                  : null
-                              }>
-                              <AntDesign
-                                name="plus"
+                              onPress={() => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {...s, showFromTimePicker: true}
+                                      : s,
+                                  ),
+                                });
+                              }}>
+                              <MaterialCommunityIcons
+                                name="clock-time-four"
                                 size={20}
-                                color="#000"
+                                color={colors.secondary}
                                 style={{marginTop: 15}}
                               />
                             </TouchableOpacity>
                           </View>
-                        ) : (
-                          <TouchableOpacity
-                            onPress={() => handleDeleteSlot(day, slotIndex)}
-                            style={styles.deleteCard}>
-                            <AntDesign
-                              name="delete"
-                              size={20}
-                              color="#FF0000"
-                              style={{marginTop: 15}}
+
+                          <View style={styles.textInputDiv}>
+                            <DatePicker
+                              modal
+                              open={!!slot.showToTimePicker}
+                              date={
+                                slot?.to_time
+                                  ? moment(slot?.to_time, 'hh:mm A').toDate()
+                                  : new Date()
+                              }
+                              mode="time"
+                              onConfirm={date => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {
+                                          ...s,
+                                          to_time:
+                                            moment(date).format('hh:mm A'),
+                                          showToTimePicker: false,
+                                        }
+                                      : s,
+                                  ),
+                                });
+                              }}
+                              onCancel={() => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {...s, showToTimePicker: false}
+                                      : s,
+                                  ),
+                                });
+                              }}
                             />
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    ))}
+                            <TextInput
+                              style={styles.loginput}
+                              placeholder="To HH:MM"
+                              placeholderTextColor="#999"
+                              value={slot.to_time}
+                              editable={false}
+                              // onChangeText={text =>
+                              //   setTimeSlots({
+                              //     ...timeSlots,
+                              //     [day]: timeSlots[day].map((s, idx) =>
+                              //       idx === slotIndex
+                              //         ? {...s, to_time: formatTime(text)}
+                              //         : s,
+                              //     ),
+                              //   })
+                              // }
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {...s, showToTimePicker: true}
+                                      : s,
+                                  ),
+                                });
+                              }}>
+                              <MaterialCommunityIcons
+                                name="clock-time-four"
+                                size={20}
+                                color={colors.secondary}
+                                style={{marginTop: 15}}
+                              />
+                            </TouchableOpacity>
+                          </View>
+
+                          {slotIndex == 0 ? (
+                            <View style={styles.selectTimeCard}>
+                              <TouchableOpacity
+                                style={[
+                                  styles.plusNewCardDisabled,
+                                  toggleCheckBoxes[day]
+                                    ? styles.plusNewCardEnabled
+                                    : styles.plusNewCardDisabled,
+                                ]}
+                                onPress={
+                                  toggleCheckBoxes[day]
+                                    ? () => handleAddSlot(day)
+                                    : null
+                                }>
+                                <AntDesign
+                                  name="plus"
+                                  size={20}
+                                  color="#000"
+                                  style={{marginTop: 15}}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          ) : (
+                            <TouchableOpacity
+                              onPress={() => handleDeleteSlot(day, slotIndex)}
+                              style={styles.deleteCard}>
+                              <AntDesign
+                                name="delete"
+                                size={20}
+                                color="#FF0000"
+                                style={{marginTop: 15}}
+                              />
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      );
+                    })}
                 </View>
               </View>
             ))}
@@ -586,10 +684,14 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
       <View style={styles.buttonCard}>
         <TouchableOpacity style={styles.logbutton}>
-          <Text style={styles.buttonText}>Cancel</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'cancel')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleSave} style={styles.saveBTn}>
-          <Text style={styles.okButton}>Save</Text>
+          <Text style={styles.okButton}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </>

@@ -14,6 +14,7 @@ import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from './StoreContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
+import { localizationText } from '../../utils/common';
 
 function SavedAddressModal({setModalVisible, isModalVisible, selectedAddress}) {
   const {setLoading} = useLoader();
@@ -99,7 +100,7 @@ function SavedAddressModal({setModalVisible, isModalVisible, selectedAddress}) {
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <View />
-            <Text style={styles.headerTitle}>Favorite Address</Text>
+            <Text style={styles.headerTitle}>{localizationText('Common', 'favoriteAddress')}</Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
@@ -108,7 +109,7 @@ function SavedAddressModal({setModalVisible, isModalVisible, selectedAddress}) {
             <View style={{paddingHorizontal: 15, paddingTop: 5}}>
               <View style={styles.packageDetailCard}>
                 {addressList.length == 0 ? (
-                  <Text style={styles.listText}>No Record Found</Text>
+                  <Text style={styles.listText}>No favorites yet-add one now!</Text>
                 ) : (
                   <FlatList data={addressList} renderItem={renderItem} />
                 )}
@@ -229,6 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
+    textAlign: 'center',
   },
 });
 

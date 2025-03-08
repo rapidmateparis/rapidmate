@@ -17,6 +17,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {RadioButton, RadioGroup} from 'react-native-radio-buttons-group';
 import {useUserDetails} from '../commonComponent/StoreContext';
@@ -41,17 +42,19 @@ const AddPickupdetails = ({route, navigation}) => {
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
   const {setLoading} = useLoader();
+  const mySelfText = localizationText('Common', 'mySelf') || 'My Self';
+  const othersText = localizationText('Common', 'others') || 'Others';
 
   const radioButtons = useMemo(
     () => [
       {
         id: '1',
-        label: 'My Self',
+        label: mySelfText,
         value: 'self',
       },
       {
         id: '2',
-        label: 'Others',
+        label: othersText,
         value: 'others',
       },
     ],
@@ -141,12 +144,12 @@ const AddPickupdetails = ({route, navigation}) => {
   };
 
   useEffect(() => {
+    console.log(userDetails);
+    let userDBData = userDetails?.userDetails[0];
+    console.log(userDBData);
     if (selectedId === '1') {
-      const updatedNumber = userDetails.userInfo.phone_number
-        ? userDetails.userInfo.phone_number.startsWith('+91')
-          ? userDetails.userInfo.phone_number.slice(3)
-          : userDetails.userInfo.phone_number
-        : null;
+      const updatedNumber = userDBData.phone
+        ?userDBData.phone: null;
       setName(
         userDetails.userDetails[0].first_name
           ? userDetails.userDetails[0].first_name
@@ -170,7 +173,6 @@ const AddPickupdetails = ({route, navigation}) => {
   const validateForm = () => {
     if (
       !name ||
-      !lastname ||
       !email ||
       !number ||
       !dropdownValue ||
@@ -229,49 +231,59 @@ const AddPickupdetails = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
-              <Text style={styles.textlable}>First name*</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'firstName')}*
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                placeholder={localizationText('Common', 'typeHere')}
                 value={name}
                 onChangeText={text => setName(text)}
               />
             </View>
 
             <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>Last name*</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'lastName')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                placeholder={localizationText('Common', 'typeHere')}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
             </View>
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Company</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'companyName')}
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={company}
               onChangeText={text => setCompany(text)}
             />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Email*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'email')}*
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={email}
               onChangeText={text => setEmail(text)}
             />
           </View>
           <View>
-            <Text style={styles.textlable}>Phone number*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'phoneNumber')}*
+            </Text>
             <View style={styles.mobileNumberInput}>
               <View style={{width: 95}}>
                 <View style={styles.containerDropdown}>
@@ -311,14 +323,16 @@ const AddPickupdetails = ({route, navigation}) => {
                 placeholder="00 00 00 00 00)"
                 placeholderTextColor="#999"
                 keyboardType="numeric"
-                maxLength={11}
+                maxLength={9}
                 value={number}
                 onChangeText={text => setNumber(text)}
               />
             </View>
           </View>
           <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
-            <Text style={styles.textlable}>Package photo</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'packagePhoto')}
+            </Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
@@ -326,7 +340,9 @@ const AddPickupdetails = ({route, navigation}) => {
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text style={styles.packagePhoto}>Package photo</Text>
+              <Text style={styles.packagePhoto}>
+                {localizationText('Common', 'packagePhoto')}
+              </Text>
               <View style={styles.packagePhotoPath}>
                 <Text style={styles.packagePhotoText}>{photoFileName}</Text>
                 <MaterialCommunityIcons
@@ -341,23 +357,27 @@ const AddPickupdetails = ({route, navigation}) => {
             </View>
           </TouchableOpacity>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Package ID*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'packageId')}
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={orderid}
               onChangeText={text => setOrderid(text)}
             />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Pickup notes*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'pickupNotes')}*
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
               numberOfLines={4}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               textAlignVertical="top"
               value={pickupNotes}
               onChangeText={text => setPickupNotes(text)}
@@ -368,7 +388,9 @@ const AddPickupdetails = ({route, navigation}) => {
               handleNextPress();
             }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'next')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

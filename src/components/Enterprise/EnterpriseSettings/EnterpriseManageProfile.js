@@ -16,6 +16,7 @@ import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
 import {updateUserProfile} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
+import { localizationText } from '../../../utils/common';
 
 const EnterpriseManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -60,21 +61,27 @@ const EnterpriseManageProfile = ({navigation}) => {
   }, [userDetails]);
 
   const updateProfile = () => {
+    if (number.length < 9) {
+      Alert.alert('Invalid Number', 'Phone number must be at least 9 digits long.');
+      return;
+    }
+  
     let usernamelist = userName.split(' ');
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       company_name: company,
-      email: email,
       first_name: userName.split(' ')[0],
       phone: '+33' + number,
       industry_type_id: dropdownIndustryValue,
     };
+  
     if (userName.split.length > 1) {
       profileParams.last_name = usernamelist[1];
     }
     if (deliveryCount) {
       profileParams.deliveryMonthHours = deliveryCount;
     }
+  
     setLoading(true);
     updateUserProfile(
       userDetails.userDetails[0].role,
@@ -88,7 +95,6 @@ const EnterpriseManageProfile = ({navigation}) => {
             {
               ...userDetails.userDetails[0],
               company_name: profileParams.company_name,
-              email: profileParams.email,
               first_name: profileParams.first_name,
               phone: profileParams.phone,
               industry_type_id: profileParams.industry_type_id,
@@ -99,6 +105,9 @@ const EnterpriseManageProfile = ({navigation}) => {
             },
           ],
         });
+        Alert.alert('Success', 'Profile updated successfully', [
+          {text: 'Ok', onPress: () => navigation.goBack()},
+        ])
       },
       errorResponse => {
         setLoading(false);
@@ -108,7 +117,7 @@ const EnterpriseManageProfile = ({navigation}) => {
         ]);
       },
     );
-  };
+  };  
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -141,7 +150,7 @@ const EnterpriseManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Name</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'name')}</Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -151,7 +160,7 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View>
         <View>
-          <Text style={styles.textlable}>Phone Number</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'phoneNumber')}</Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -191,13 +200,13 @@ const EnterpriseManageProfile = ({navigation}) => {
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={11}
+              maxLength={9}
               value={number}
               onChangeText={text => setNumber(text)}
             />
           </View>
         </View>
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -206,9 +215,9 @@ const EnterpriseManageProfile = ({navigation}) => {
             value={email}
             onChangeText={text => setEmail(text)}
           />
-        </View>
+        </View> */}
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Company Name</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'companyName')}</Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -218,7 +227,7 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View>
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Industry Type</Text>
+          <Text style={styles.textlable}>{localizationText('Common', 'industry')}</Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={industryList}
@@ -250,7 +259,7 @@ const EnterpriseManageProfile = ({navigation}) => {
         </View>
         <View style={{flex: 1}}>
           <Text style={styles.textlable}>
-            Deliveries per month / Hours per month
+          {localizationText('Common', 'deliveriesPerMonth')}
           </Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -265,7 +274,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             updateProfile();
           }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

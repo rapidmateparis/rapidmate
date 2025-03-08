@@ -10,6 +10,7 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
 import {colors} from '../../colors';
+import { localizationText } from '../../utils/common';
 
 function DeliveryboyScheduleCancellationModal({
   setModalVisible,
@@ -26,6 +27,8 @@ function DeliveryboyScheduleCancellationModal({
   const handleReasonSelect = reason => {
     setSelectedReason(reason);
   };
+  const deliveryboyLateReason = localizationText('Common', 'deliveryboyLateReason') || '';
+  const deliveryboyNotAvailableReason = localizationText('Common', 'deliveryboyNotAvailableReason') || '';
 
   const renderReason = reason => {
     const isSelected = selectedReason === reason;
@@ -48,24 +51,24 @@ function DeliveryboyScheduleCancellationModal({
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Cancellation reason</Text>
+            <Text style={styles.headerTitle}>{localizationText('Common', 'cancellationReason')}</Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
           </View>
           <View style={styles.CancellationReasonCard}>
             {[
-              'I will be late for this shift',
-              'I will not be available for this shift at all',
+              deliveryboyLateReason,
+              deliveryboyNotAvailableReason,
             ].map(reason => renderReason(reason))}
 
             <View>
-              <Text style={styles.textlable}>Write your message</Text>
+              <Text style={styles.textlable}>{localizationText('Common', 'writeYourMessage')}</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 multiline={true}
                 numberOfLines={4}
-                placeholder="Type here"
+                placeholder={localizationText('Common', 'typeHere')}
                 textAlignVertical="top"
                 value={message}
                 onChangeText={text => setMessage(text)}
@@ -76,7 +79,7 @@ function DeliveryboyScheduleCancellationModal({
           <TouchableOpacity
             onPress={() => navigation.navigate('')}
             style={styles.buttonCard}>
-            <Text style={styles.okButton}>Submit</Text>
+            <Text style={styles.okButton}>{localizationText('Common', 'submit')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>

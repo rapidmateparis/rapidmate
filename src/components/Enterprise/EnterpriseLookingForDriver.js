@@ -17,7 +17,8 @@ import {
   useUserDetails,
 } from '../commonComponent/StoreContext';
 import {getAllocatedEnterprise, getLocations} from '../../data_manager';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+import { localizationText } from '../../utils/common';
 
 const EnterpriseLookingForDriver = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -25,6 +26,7 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const params = route.params;
   const isVisible = useIsFocused();
+  const cancelRequestText = localizationText('Common', 'cancelRequest') || 'Cancel Request';
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -43,15 +45,20 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
           getAllocatedEnterprise(
             params,
             successResponse => {
-
               navigation.navigate('EnterpriseOrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
-              console.log('successResponseerrorReq <========>',JSON.stringify(params))
-              console.log('successResponseerrorResponse <========>',JSON.stringify(errorResponse))
+              console.log(
+                'successResponseerrorReq <========>',
+                JSON.stringify(params),
+              );
+              console.log(
+                'successResponseerrorResponse <========>',
+                JSON.stringify(errorResponse),
+              );
 
               navigation.navigate(
                 'EnterpriseDriverNotAvailable',
@@ -72,7 +79,7 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    if(isVisible){
+    if (isVisible) {
       getLocationsData();
     }
   }, [isVisible]);
@@ -97,10 +104,11 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
               style={styles.loaderMap}
               source={require('../../image/Driver-Looking-Map.png')}
             />
-            <Text style={styles.text}>Looking for driver</Text>
+            <Text style={styles.text}>
+              {localizationText('Common', 'lookingForDriver')}
+            </Text>
             <Text style={styles.subText}>
-              please wait, we are looking for a driver to pick up and deliver
-              your order..
+              {localizationText('Common', 'lookingForDriverDescription')}
             </Text>
           </View>
         </ImageBackground>
@@ -115,11 +123,11 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
           source={require('../../image/Driver-Bg2.png')}
         />
       </View>
-      { params?.cancellable && params?.cancellable == 1 ? (
+      {params?.cancellable && params?.cancellable == 1 ? (
         <TouchableOpacity
           onPress={() => toggleModal()}
           style={styles.requestTouch}>
-          <Text style={styles.cancelRequest}>Cancel request</Text>
+          <Text style={styles.cancelRequest}>{cancelRequestText}</Text>
         </TouchableOpacity>
       ) : null}
 

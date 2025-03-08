@@ -30,33 +30,36 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
   const [days, setDays] = useState([]);
   const [timeSlotIndex, setTimeSlotIndex] = useState(null);
   const [copiedValue, setCopiedValue] = useState([]);
-  
+
   const params = route.params;
 
+  useEffect(() => {
+    const newEndDate = new Date().setDate(new Date().getDate() + 14);
+    setEndDate(moment(newEndDate).toDate());
+    const sDate = moment(startDate).format('DD/MM/YYYY');
+    const eDate = moment(newEndDate).format('DD/MM/YYYY');
+    createSchedule(sDate, eDate);
+  }, []);
 
+  console.log('my dates === >', days);
+  useEffect(() => {
+    let updateDays = [...days];
 
-  useEffect(()=>{
-    const newEndDate =  new Date().setDate(new Date().getDate()+14)
-    setEndDate(moment(newEndDate).toDate())
-    const sDate = moment(startDate).format('DD/MM/YYYY')
-    const eDate = moment(newEndDate).format('DD/MM/YYYY')
-    createSchedule(sDate,eDate)
-  },[])
-
-console.log('my dates === >',days)
-  useEffect(()=>{
-    let updateDays = [...days]
-
-    updateDays = updateDays.map((dates)=>{return{...dates,timeslots:[
-      {
-        slot_date:dates.formattedDate,
-        day: dates.day,
-        from_time: '',
-        to_time: ''
-      }
-    ]}})
-    setDays([...updateDays])
-  },[days.length])
+    updateDays = updateDays.map(dates => {
+      return {
+        ...dates,
+        timeslots: [
+          {
+            slot_date: dates.formattedDate,
+            day: dates.day,
+            from_time: '',
+            to_time: '',
+          },
+        ],
+      };
+    });
+    setDays([...updateDays]);
+  }, [days.length]);
 
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
@@ -103,19 +106,17 @@ console.log('my dates === >',days)
     setDays(dates);
   };
 
-  const handleAddTimeSlot = (index,day,formattedDate) => {
+  const handleAddTimeSlot = (index, day, formattedDate) => {
+    console.log('');
 
-
-    console.log('')
-
-    const defaultValue= {
-      slot_date:formattedDate,
+    const defaultValue = {
+      slot_date: formattedDate,
       day: day,
       from_time: '',
-      to_time: ''
-    }
+      to_time: '',
+    };
     var curentInstance = [...days];
-    curentInstance[index].timeslots.push(defaultValue)
+    curentInstance[index].timeslots.push(defaultValue);
     setDays(curentInstance);
   };
 
@@ -125,7 +126,7 @@ console.log('my dates === >',days)
         <View style={styles.startDateCard}>
           <View style={{width: '48%'}}>
             <Text style={styles.pickupDates}>Start Date</Text>
-            <View style={styles.startScheduleDate}>
+            <TouchableOpacity onPress={() => setStartDateOpen(true)} style={styles.startScheduleDate}>
               <DatePicker
                 modal
                 open={startDateOpen}
@@ -155,16 +156,15 @@ console.log('my dates === >',days)
               <AntDesign
                 name="calendar"
                 size={20}
-                onPress={() => setStartDateOpen(true)}
                 color={colors.secondary}
                 style={{marginTop: 13}}
               />
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View style={{width: '48%'}}>
             <Text style={styles.pickupDates}>End Date</Text>
-            <View style={styles.startScheduleDate}>
+            <TouchableOpacity onPress={() => setEndDateOpen(true)} style={styles.startScheduleDate}>
               <DatePicker
                 modal
                 open={endDateOpen}
@@ -196,9 +196,8 @@ console.log('my dates === >',days)
                 size={20}
                 color={colors.secondary}
                 style={{marginTop: 13}}
-                onPress={() => setEndDateOpen(true)}
               />
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -242,20 +241,24 @@ console.log('my dates === >',days)
 
                     {item.isChecked ? (
                       <View style={styles.bothActionBtn}>
-                        <TouchableOpacity style={styles.enabledPasteBt} onPress={()=>{
-                          if(copiedValue.length > 0){
-                            var curentInstance = [...days];
-                            curentInstance[index].timeslots = [...copiedValue]
-                            setDays(curentInstance);
-                            setCopiedValue([])
-                          }
-                        }}>
+                        <TouchableOpacity
+                          style={styles.enabledPasteBt}
+                          onPress={() => {
+                            if (copiedValue.length > 0) {
+                              var curentInstance = [...days];
+                              curentInstance[index].timeslots = [
+                                ...copiedValue,
+                              ];
+                              setDays(curentInstance);
+                              setCopiedValue([]);
+                            }
+                          }}>
                           <Text style={styles.enabledPasteText}>Paste</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.copyCardBt} 
-                        onPress={()=>setCopiedValue(item.timeslots)}
-                        >
+                        <TouchableOpacity
+                          style={styles.copyCardBt}
+                          onPress={() => setCopiedValue(item.timeslots)}>
                           <Text style={styles.enabledPasteText}>Copy</Text>
                         </TouchableOpacity>
                       </View>
@@ -272,153 +275,159 @@ console.log('my dates === >',days)
                     )}
                   </View>
 
-                      <DatePicker
-                        modal
-                        open={item.fromTimeOpen}
-                        date={
-                          item.toTimeText
-                            ? moment(item.toTimeText, 'hh:mm A').toDate()
-                            : new Date()
-                        }
-                        mode="time"
-                        onConfirm={date => {
-                          var curentInstance = [...days];
-                          curentInstance[index].fromTimeOpen = false;
+                  <DatePicker
+                    modal
+                    open={item.fromTimeOpen}
+                    date={
+                      item.toTimeText
+                        ? moment(item.toTimeText, 'hh:mm A').toDate()
+                        : new Date()
+                    }
+                    mode="time"
+                    onConfirm={date => {
+                      var curentInstance = [...days];
+                      curentInstance[index].fromTimeOpen = false;
 
-                          curentInstance[index].timeslots[timeSlotIndex].from_time =
-                            moment(date).format('hh:mm A');
-                          setDays(curentInstance);
-                          setTimeSlotIndex(null)
-                        }}
-                        onCancel={() => {
-                          setTimeSlotIndex(null)
-                          var curentInstance = [...days];
-                          curentInstance[index].fromTimeOpen = false;
-                          setDays(curentInstance);
-                        }}
-                      />
+                      curentInstance[index].timeslots[timeSlotIndex].from_time =
+                        moment(date).format('hh:mm A');
+                      setDays(curentInstance);
+                      setTimeSlotIndex(() => {
+                        setDays(curentInstance);
+                        return null;
+                      });
+                    }}
+                    onCancel={() => {
+                      setTimeSlotIndex(null);
+                      var curentInstance = [...days];
+                      curentInstance[index].fromTimeOpen = false;
+                      setDays(curentInstance);
+                    }}
+                  />
 
-<DatePicker
-                        modal
-                        open={item.toTimeOpen}
-                        date={
-                          item.toTimeText
-                            ? moment(item.toTimeText, 'hh:mm A').toDate()
-                            : new Date()
-                        }
-                        mode="time"
-                        onConfirm={date => {
-                          var curentInstance = [...days];
-                          curentInstance[index].toTimeOpen = false;
-                          curentInstance[index].timeslots[timeSlotIndex].to_time = 
-                            moment(date).format('hh:mm A');
-                          setDays(curentInstance);
-                        }}
-                        onCancel={() => {
-                          var curentInstance = [...days];
-                          curentInstance[index].toTimeOpen = false;
-                          setDays(curentInstance);
-                        }}
-                      />
+                  <DatePicker
+                    modal
+                    open={item.toTimeOpen}
+                    date={
+                      item.toTimeText
+                        ? moment(item.toTimeText, 'hh:mm A').toDate()
+                        : new Date()
+                    }
+                    mode="time"
+                    onConfirm={date => {
+                      var curentInstance = [...days];
+                      curentInstance[index].toTimeOpen = false;
+                      curentInstance[index].timeslots[timeSlotIndex].to_time =
+                        moment(date).format('hh:mm A');
+                      setDays(curentInstance);
+                    }}
+                    onCancel={() => {
+                      var curentInstance = [...days];
+                      curentInstance[index].toTimeOpen = false;
+                      setDays(curentInstance);
+                    }}
+                  />
                   {item.timeslots.map((slot, timeSlotIndex) => {
-                    return(
-                    <View key={timeSlotIndex} style={styles.selectTimeCard}>
-                      <View style={styles.textInputDiv}>
-
-                        <TextInput
-                          style={styles.loginput}
-                          placeholder="From HH:MM"
-                          placeholderTextColor="#999"
-                          value={slot.from_time}
-                          editable={false}
-                        />
-                         <TouchableOpacity disabled={!item.isChecked}
-                          onPress={() => {
-                            // if (item.isChecked) {
+                    return (
+                      <View key={timeSlotIndex} style={styles.selectTimeCard}>
+                        <View style={styles.textInputDiv}>
+                          <TextInput
+                            style={styles.loginput}
+                            placeholder="From HH:MM"
+                            placeholderTextColor="#999"
+                            value={slot.from_time}
+                            editable={false}
+                          />
+                          <TouchableOpacity
+                            disabled={!item.isChecked}
+                            onPress={() => {
+                              // if (item.isChecked) {
                               var curentInstance = [...days];
-                              setTimeSlotIndex(timeSlotIndex)
+                              setTimeSlotIndex(timeSlotIndex);
                               curentInstance[index].fromTimeOpen = true;
                               setDays(curentInstance);
-                            // }
-                          }}
-                         >
-                        <MaterialCommunityIcons
-                          name="clock-time-four"
-                          size={20}
-                          color={item.isChecked ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
-                          style={{marginTop: 15}}
-                         
-                        />
-                      </TouchableOpacity>
-                      </View>
+                              // }
+                            }}>
+                            <MaterialCommunityIcons
+                              name="clock-time-four"
+                              size={20}
+                              color={item.isChecked ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
+                              style={{marginTop: 15}}
+                            />
+                          </TouchableOpacity>
+                        </View>
 
-                      <View style={styles.textInputDiv}>
-                        <TextInput
-                          style={styles.loginput}
-                          placeholder="To HH:MM"
-                          placeholderTextColor="#999"
-                          value={slot.to_time}
-                          editable={false}
-                        />
+                        <View style={styles.textInputDiv}>
+                          <TextInput
+                            style={styles.loginput}
+                            placeholder="To HH:MM"
+                            placeholderTextColor="#999"
+                            value={slot.to_time}
+                            editable={false}
+                          />
 
-                      <TouchableOpacity disabled={!item.isChecked}>
-                        <MaterialCommunityIcons
-                          name="clock-time-four"
-                          size={20}
-                          color={item.isChecked ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
-                          style={{marginTop: 15}}
-                          onPress={() => {
-                            if (item.isChecked) {
-                              setTimeSlotIndex(timeSlotIndex)
+                          <TouchableOpacity disabled={!item.isChecked}>
+                            <MaterialCommunityIcons
+                              name="clock-time-four"
+                              size={20}
+                              color={item.isChecked ? '#FF0058' : '#D4D4D4'} // Adjust color based on checkbox state
+                              style={{marginTop: 15}}
+                              onPress={() => {
+                                if (item.isChecked) {
+                                  setTimeSlotIndex(timeSlotIndex);
+                                  var curentInstance = [...days];
+                                  curentInstance[index].toTimeOpen = true;
+                                  setDays(curentInstance);
+                                }
+                              }}
+                            />
+                          </TouchableOpacity>
+                        </View>
+
+                        {timeSlotIndex === 0 ? (
+                          <TouchableOpacity
+                            style={[
+                              styles.plusNewCardDisabled,
+                              item.isChecked
+                                ? styles.plusNewCardEnabled
+                                : styles.plusNewCardDisabled,
+                            ]}
+                            onPress={() => {
+                              handleAddTimeSlot(
+                                index,
+                                item.day,
+                                item.formattedDate,
+                              );
+                            }}>
+                            <AntDesign
+                              name="plus"
+                              size={20}
+                              color="#000"
+                              style={{marginTop: 15}}
+                            />
+                          </TouchableOpacity>
+                        ) : (
+                          <TouchableOpacity
+                            style={styles.deleteCard}
+                            onPress={() => {
                               var curentInstance = [...days];
-                              curentInstance[index].toTimeOpen = true;
+                              curentInstance[index].timeslots = curentInstance[
+                                index
+                              ].timeslots.filter(
+                                (_, idx) => idx !== timeSlotIndex,
+                              );
                               setDays(curentInstance);
-                            }
-                          }}
-                        />
-                      </TouchableOpacity>
+                            }}>
+                            <AntDesign
+                              name="delete"
+                              size={20}
+                              color="#FF0058"
+                              style={{marginTop: 15}}
+                            />
+                          </TouchableOpacity>
+                        )}
                       </View>
-
-                      {
-                        timeSlotIndex === 0 ?
-                         <TouchableOpacity
-                         style={[
-                           styles.plusNewCardDisabled,
-                           item.isChecked
-                             ? styles.plusNewCardEnabled
-                             : styles.plusNewCardDisabled,
-                         ]}
-                         onPress={() => {
-                             handleAddTimeSlot(index,item.day,item.formattedDate);
-                         }}>
-                         <AntDesign
-                           name="plus"
-                           size={20}
-                           color="#000"
-                           style={{marginTop: 15}}
-                         />
-                       </TouchableOpacity>
-                       :
-                        
-                        <TouchableOpacity
-                        style={styles.deleteCard}
-                        onPress={() => {
-                          var curentInstance = [...days];
-                          curentInstance[index].timeslots = curentInstance[
-                            index
-                          ].timeslots.filter((_, idx) => idx !== timeSlotIndex);
-                          setDays(curentInstance);
-                        }}>
-                        <AntDesign
-                          name="delete"
-                          size={20}
-                          color="#FF0058"
-                          style={{marginTop: 15}}
-                        />
-                      </TouchableOpacity>}
-                    </View>
-                  )}
-                  )}
+                    );
+                  })}
                 </View>
                 <View style={styles.borderShowOff} />
               </View>
@@ -428,9 +437,11 @@ console.log('my dates === >',days)
       </ScrollView>
 
       <View style={styles.buttonCard}>
-        <TouchableOpacity onPress={() => {
-          navigation.goBack()
-        }} style={styles.logbutton}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+          style={styles.logbutton}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -629,12 +640,12 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   dateForShift: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
   },
   dayWiseShift: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
@@ -646,7 +657,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   disablePasteText: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Montserrat-Medium',
     color: '#D4D4D4',
   },
@@ -709,7 +720,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   enabledPasteText: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
   },
@@ -743,7 +754,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    paddingVertical: 30,
+    paddingVertical: 15,
     backgroundColor: colors.white,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {

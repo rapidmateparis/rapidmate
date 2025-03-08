@@ -14,6 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../../commonComponent/ChoosePhotoBy
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../../utils/common';
 import {useLoader} from '../../../utils/loaderContext';
 import {uploadDocumentsApi, updateUserProfile} from '../../../data_manager';
@@ -25,7 +26,9 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
-  const {userDetails,saveUserDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
+  const tryAgain = localizationText('Common', 'tryAgain') || 'Try Again';
+  const useThis = localizationText('Common', 'useThis') || 'Use This';
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -96,25 +99,28 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
           userDetails.userDetails[0].role,
           profileParams,
           updatesuccessResponse => {
+            const newUserDetails = userDetails.userDetails[0];
+            newUserDetails['profile_pic'] = JSON.parse(successResponse).id;
+            saveUserDetails({...userDetails, userDetails: [newUserDetails]});
 
-            const newUserDetails = userDetails.userDetails[0]
-            newUserDetails['profile_pic']=JSON.parse(successResponse).id
-            saveUserDetails({...userDetails,userDetails:[newUserDetails]});
-    
             console.log('updateUserProfile', updatesuccessResponse);
             if (route.params) {
               navigation.navigate('AddVehicle', {
                 delivery_boy_details: route.params.delivery_boy_details,
               });
             } else {
-              Alert.alert('Success', '' + updatesuccessResponse[0]._response.message, [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    navigation.goBack();
+              Alert.alert(
+                'Success',
+                '' + updatesuccessResponse[0]._response.message,
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      navigation.goBack();
+                    },
                   },
-                },
-              ]);
+                ],
+              );
             }
           },
           errorResponse => {
@@ -157,21 +163,23 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
 
         <View style={styles.titlesCard}>
           <Text style={styles.statusTitle}>
-            Please upload a Profile Picture
+            {localizationText('Main', 'uploadProfilePic')}
           </Text>
           <Text style={styles.statusSubtitle}>
-            Please see if this looks good, you can try once more if you want to.
+            {localizationText('Main', 'uploadProfilePicDescription')}
           </Text>
         </View>
 
-        <View style={styles.buttonCard}>
-          <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
-            <Text style={styles.buttonText}>Try again</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
-            <Text style={styles.okButton}>Use this</Text>
-          </TouchableOpacity>
-        </View>
+        {image && (
+          <View style={styles.buttonCard}>
+            <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
+              <Text style={styles.buttonText}>{tryAgain}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
+              <Text style={styles.okButton}>{useThis}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       {/* -------------- Modal --------------------- */}
       <ChoosePhotoByCameraGallaryModal
@@ -219,7 +227,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingVertical: 30,
-    marginTop: 100,
+    marginTop: 70,
   },
   logbutton: {
     width: '45%',

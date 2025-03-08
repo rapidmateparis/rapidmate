@@ -20,10 +20,13 @@ import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 import {getLocations} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import {usePlacedOrderDetails, useUserDetails} from '../commonComponent/StoreContext';
+import {localizationText} from '../../utils/common';
 
 const {height: screenHeight} = Dimensions.get('window');
 const EnterpriseOrderPickup = ({navigation, route}) => {
   const {setLoading} = useLoader();
+  const {userDetails} = useUserDetails();
 
   const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
     useState(false);
@@ -33,25 +36,33 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   const [isCopied, setIsCopied] = useState(false);
   const [otpCopied, setOtpCopied] = useState(false);
   const [otpDeliveredCopied, setOtpDeliveredCopied] = useState(false);
+  const {placedOrderDetails} = usePlacedOrderDetails();
 
   const params = route.params;
 
   const driverDetails = params?.driverDetails || {};
 
   const orderId = driverDetails.order.order_number;
-  const otp = driverDetails.order.otp;
-  const deliveredOtp = driverDetails.order.delivered_otp;
+ 
+  const [deliveredOtp, setDeliveredOtp] = useState(
+    driverDetails.order.delivered_otp,
+  );
+
+  const [otp, setOtp] = useState(
+    driverDetails.order.otp,
+  );
 
   const [currentPosition, setCurrentPosition] = useState(0);
 
-  const stepCount = 4;
+  const stepCount = 5;
 
   // Labels for each step in the step indicator
   const labels = [
-    'A driver is assigned to you!',
+    'Driver assigned',
     'Pickup in Progress',
-    'Your order has been picked up for delivery',
+    'Order picked up',
     'Order arriving soon!',
+    'Completed',
   ];
 
   const customStyles = {
@@ -77,6 +88,15 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     labelSize: 12,
     currentStepLabelColor: '#fe7013',
   };
+
+  useEffect(() => {
+    console.log('progressTypeId ====>', userDetails.progressTypeId);
+    console.log('delivered_otp ====>', userDetails.delivered_otp);
+    console.log('delivered_otp ====>', userDetails.otp);
+    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId);
+    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);
+    userDetails.otp && setOtp(userDetails.otp);
+  }, [userDetails.progressTypeId, userDetails.otp, userDetails.delivered_otp]);
 
   useEffect(() => {
     const onBackPress = () => true;
@@ -158,9 +178,12 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     )}`;
   };
   const getLocationAddress = locationId => {
-    if (!locationList?.length) return '';
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const handleCall = phoneNumber => {
@@ -178,7 +201,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
           style={{flex: 1, height: screenHeight}}
           source={require('../../image/DeliveryRequest-bg.png')}>
           <View style={styles.textContainer}>
-            <Text style={styles.oderIdText}>Order ID: </Text>
+            <Text style={styles.oderIdText}>
+              {localizationText('Common', 'orderID')}:{' '}
+            </Text>
             <TouchableOpacity onPress={handleCopyOrderId}>
               <Text style={styles.text}>{orderId}</Text>
             </TouchableOpacity>
@@ -193,7 +218,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
           </View>
           <View style={styles.textOtpContainer}>
             <View style={[styles.textContainer, {marginRight: 10}]}>
-              <Text style={styles.oderIdText}>Pickup OTP: </Text>
+              <Text style={styles.oderIdText}>
+                {localizationText('Common', 'pickupOTP')}:{' '}
+              </Text>
               <TouchableOpacity onPress={handleCopyOtp}>
                 <Text style={styles.text}>{otp}</Text>
               </TouchableOpacity>
@@ -208,7 +235,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.oderIdText}>Delivered OTP: </Text>
+              <Text style={styles.oderIdText}>
+                {localizationText('Common', 'deliveredOTP')}:{' '}
+              </Text>
               <TouchableOpacity onPress={handleCopyDeliveredOtp}>
                 <Text style={styles.text}>{deliveredOtp}</Text>
               </TouchableOpacity>
@@ -235,7 +264,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
           <View style={{paddingTop: 30, paddingHorizontal: 20}}>
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>Pickup from</Text>
+                <Text style={styles.DeliveringText}>
+                  {localizationText('Common', 'pickupFrom')}
+                </Text>
                 <Text style={styles.subAddress}>
                   {getLocationAddress(driverDetails.order.pickup_location)}
                 </Text>
@@ -247,7 +278,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
 
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>Delivering to</Text>
+                <Text style={styles.DeliveringText}>
+                  {localizationText('Common', 'deliveringTo')}
+                </Text>
                 <Text style={styles.subAddress}>
                   {getLocationAddress(driverDetails.order.dropoff_location)}
                 </Text>
@@ -263,7 +296,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
                 currentPosition={currentPosition}
                 labels={labels}
                 stepCount={stepCount}
-                onPress={position => setCurrentPosition(position)}
+                // onPress={position => setCurrentPosition(position)}
               />
             </View>
 
@@ -273,7 +306,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
                   style={{width: 50, height: 50, borderRadius: 30}}
                   source={require('../../image/driver.jpeg')}
                 />
-                <Image
+                {/* <Image
                   style={{
                     position: 'absolute',
                     bottom: 0,
@@ -283,7 +316,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
                     borderRadius: 30,
                   }}
                   source={require('../../image/Drivers-Truck.jpg')}
-                />
+                /> */}
               </View>
               <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>
@@ -311,17 +344,31 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
               </View>
             </View>
 
-            <View style={{flexDirection: 'row', paddingVertical: 10,justifyContent:'space-evenly'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingVertical: 10,
+                justifyContent: 'space-evenly',
+              }}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('EnterpriseBottomNav')}
                 style={styles.trackOrderBtn}>
-                <Text style={styles.trackText}>Go To Home</Text>
+                <Text style={styles.trackText}>
+                  {localizationText('Common', 'goHome')}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => navigation.navigate('EnterpriseBottomNav')}
+                onPress={() =>
+                  navigation.navigate('DeliveryDetails', {
+                    orderItem: placedOrderDetails[0],
+                    componentType: 'ENTERPRISE',
+                  })
+                }
                 style={styles.trackOrderBtn}>
-                <Text style={styles.trackText}>View Order Detail</Text>
+                <Text style={styles.trackText}>
+                  {localizationText('Common', 'viewOrderDetails')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -434,7 +481,7 @@ const styles = StyleSheet.create({
   },
   trackText: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     textAlign: 'center',
   },

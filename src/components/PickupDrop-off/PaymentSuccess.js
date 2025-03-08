@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,10 @@ import {
   Image,
   BackHandler,
 } from 'react-native';
-import { colors } from '../../colors';
+import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
-const PaymentSuccess = ({ navigation, route }) => {
+const PaymentSuccess = ({navigation, route}) => {
   const params = route.params;
 
   useEffect(() => {
@@ -41,27 +42,27 @@ const PaymentSuccess = ({ navigation, route }) => {
       clearTimeout(timer);
     };
   }, [navigation, params]);
-  
-  useEffect(()=>{
-    setTimeout(() =>{
-      reDirectToNextPage()
-    }, 2000);
-  },[])
 
-  const reDirectToNextPage=()=>{
-    if(params.serviceTypeId === 1){
-      navigation.navigate('ScheduleOrderSuccess',{
+  useEffect(() => {
+    setTimeout(() => {
+      reDirectToNextPage();
+    }, 2000);
+  }, []);
+
+  const reDirectToNextPage = () => {
+    if (params.serviceTypeId === 1) {
+      navigation.navigate('ScheduleOrderSuccess', {
         schedule_date_time: params.schedule_date_time,
-        serviceTypeId:params.serviceTypeId
-      })
-    }else{
-      navigation.navigate('LoaderForDriver')
+        serviceTypeId: params.serviceTypeId,
+      });
+    } else {
+      navigation.navigate('LoaderForDriver');
     }
-  }
+  };
 
   return (
     <ScrollView
-      style={{ width: '100%', height: '100%', backgroundColor: '#FBFAF5' }}
+      style={{width: '100%', height: '100%', backgroundColor: '#FBFAF5'}}
       contentContainerStyle={styles.scrollViewContainer}>
       <View
         style={{
@@ -71,12 +72,14 @@ const PaymentSuccess = ({ navigation, route }) => {
         }}>
         <View style={styles.container}>
           <Image
-            style={{ width: 100, height: 100 }}
+            style={{width: 100, height: 100}}
             source={require('../../image/payment_success.png')}
           />
-          <Text style={styles.text}>Payment Successful!</Text>
+          <Text style={styles.text}>
+            {localizationText('Common', 'paymentSuccessful')}
+          </Text>
           <Text style={styles.subText}>
-            Your payment was successful, let’s look for a delivery boy now...
+            {localizationText('Common', 'paymentSuccessfulDescription')}
           </Text>
         </View>
       </View>

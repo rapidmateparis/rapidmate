@@ -11,7 +11,8 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {Dropdown} from 'react-native-element-dropdown';
-import { ScrollView } from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
+import {localizationText} from '../../utils/common';
 
 function AddOrEditAddressModal({
   modalVisible,
@@ -31,6 +32,12 @@ function AddOrEditAddressModal({
   const [dropdownValue, setDropdownValue] = useState('+33');
   const [isFocus, setIsFocus] = useState(false);
   const [id, setID] = useState();
+  const deleteText = localizationText('Common', 'deleteText') || 'Delete';
+  const save = localizationText('Common', 'save') || 'Save';
+  const addNewAddress =
+    localizationText('Common', 'addNewAddress') || 'Add New Address';
+  const editAddress =
+    localizationText('Common', 'editAddress') || 'Edit address';
 
   useEffect(() => {
     setName(addressData?.item.first_name);
@@ -64,7 +71,7 @@ function AddOrEditAddressModal({
         <ScrollView style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerTitle}>
-              {addressId == 0 ? 'Add new address' : 'Edit address'}
+              {addressId == 0 ? addNewAddress : editAddress}
             </Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
@@ -73,7 +80,9 @@ function AddOrEditAddressModal({
 
           <View style={styles.logFormView}>
             <View>
-              <Text style={styles.textlable}>Address</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'address')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
@@ -84,7 +93,9 @@ function AddOrEditAddressModal({
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <View style={{flex: 1, marginRight: 10}}>
-                <Text style={styles.textlable}>First name*</Text>
+                <Text style={styles.textlable}>
+                  {localizationText('Common', 'firstName')}*
+                </Text>
                 <TextInput
                   style={styles.inputTextStyle}
                   placeholderTextColor="#999"
@@ -95,7 +106,9 @@ function AddOrEditAddressModal({
               </View>
 
               <View style={{flex: 1, marginLeft: 10}}>
-                <Text style={styles.textlable}>Last name</Text>
+                <Text style={styles.textlable}>
+                  {localizationText('Common', 'lastName')}
+                </Text>
                 <TextInput
                   style={styles.inputTextStyle}
                   placeholderTextColor="#999"
@@ -106,7 +119,9 @@ function AddOrEditAddressModal({
               </View>
             </View>
             <View>
-              <Text style={styles.textlable}>Company</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'companyName')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
@@ -116,7 +131,9 @@ function AddOrEditAddressModal({
               />
             </View>
             <View>
-              <Text style={styles.textlable}>Phone number</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'phoneNumber')}
+              </Text>
               <View style={styles.mobileNumberInput}>
                 <View style={{width: 95}}>
                   <View style={styles.containerDropdown}>
@@ -156,14 +173,16 @@ function AddOrEditAddressModal({
                   placeholder="00 00 00 00 00)"
                   placeholderTextColor="#999"
                   keyboardType="numeric"
-                  maxLength={11}
+                  maxLength={9}
                   value={number}
                   onChangeText={text => setNumber(text)}
                 />
               </View>
             </View>
             <View>
-              <Text style={styles.textlable}>Email</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'email')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
@@ -173,12 +192,14 @@ function AddOrEditAddressModal({
               />
             </View>
             <View>
-              <Text style={styles.textlable}>Comments</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'comments')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 multiline={true}
                 placeholderTextColor="#999"
-                numberOfLines={4} 
+                numberOfLines={4}
                 placeholder="Type here"
                 textAlignVertical="top"
                 value={comments}
@@ -203,7 +224,7 @@ function AddOrEditAddressModal({
                   clearAddressData();
                 }}
                 style={styles.logbutton}>
-                <Text style={styles.buttonText}>Delete</Text>
+                <Text style={styles.buttonText}>{deleteText}</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
@@ -221,7 +242,7 @@ function AddOrEditAddressModal({
                 });
                 clearAddressData();
               }}>
-              <Text style={styles.okButton}>Save</Text>
+              <Text style={styles.okButton}>{save}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

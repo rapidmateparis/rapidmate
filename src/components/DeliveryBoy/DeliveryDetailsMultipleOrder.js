@@ -16,7 +16,7 @@ import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 import DeliveryboySubmitOTPModal from '../commonComponent/DeliveryboySubmitOTPModal';
 import { useUserDetails } from '../commonComponent/StoreContext';
-import { orderOPTVerify, orderOPTVerifyForDelivery, orderStatusUpdate } from '../../data_manager';
+import { orderOPTVerify, orderOPTVerifyForDelivery, orderRequestAction, orderStatusUpdate } from '../../data_manager';
 import { useLoader } from '../../utils/loaderContext';
 
 const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
@@ -115,11 +115,14 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
 
   
   const handleStatusUpdated = (updateStatus,location) => {
+    console.log('location.id ----<>',updateStatus,location.id)
+
     if (updateStatus == 'Enter OTP') {
       setLineId(location.id)
       toggleModalOTP();
       setIsOTP(true);
     } else if (updateStatus == 'Enter Delivered OTP') {
+      console.log('location.id ---->',location.id)
       setLineId(location.id)
       toggleModalOTP();
       setIsOTP(false);
@@ -148,6 +151,24 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
     }
   };
 
+  const handleOrderRequest = value => {
+    let params = {
+      delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
+      order_number: orderDetails.order_number,
+      status: value ? 'Accepted' : 'Rejected',
+    };
+    orderRequestAction(
+      params,
+      successResponse => {
+        console.log('successResponse==>', JSON.stringify(successResponse));
+        navigation.goBack();
+      },
+      errorResponse => {
+        console.log('errorResponse==>', JSON.stringify(errorResponse));
+        navigation.goBack();
+      },
+    );
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -178,10 +199,10 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity style={{marginRight: 10}}>
-                  <Image source={require('../../image/chat-icon.png')} />
+                  <Image style={{width: 32, height: 32,}} source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Image source={require('../../image/call-icon.png')} />
+                  <Image style={{width: 32, height: 32,}} source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -225,10 +246,10 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                       </View>
                       <View style={styles.contactInfoIcons}>
                         <TouchableOpacity style={{marginRight: 10}}>
-                          <Image source={require('../../image/chat-icon.png')} />
+                          <Image style={{width: 32, height: 32,}} source={require('../../image/chat-icon.png')} />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                          <Image source={require('../../image/call-icon.png')} />
+                          <Image style={{width: 32, height: 32,}} source={require('../../image/call-icon.png')} />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -270,6 +291,35 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                   </View>
                 </View>
 
+              {
+                route.params.orderItem.order_status == 'ORDER_ALLOCATED' ?
+                null
+              //   <View
+              //   style={{
+              //     flexDirection: 'row',
+              //     justifyContent: 'space-evenly',
+              //     marginTop: 7,
+              //     marginBottom: 10,
+              //   }}>
+              //   <TouchableOpacity
+              //     onPress={() => {
+              //       handleOrderRequest(true);
+              //     }}
+              //     style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
+              //     <Text style={styles.buttonText}>Accept</Text>
+              //   </TouchableOpacity>
+              //   <View style={{width: '1%'}} />
+              //   <TouchableOpacity
+              //     onPress={() => {
+              //       handleOrderRequest(false);
+              //     }}
+              //     style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
+              //     <Text style={styles.buttonText}>Reject</Text>
+              //   </TouchableOpacity>
+              // </View>
+              
+              :
+              
                 <View style={styles.deliveryStatusCard}>
                   <View style={styles.deliveryinfo}>
                     <View style={styles.statusAboutDelivery}>
@@ -289,17 +339,17 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                           updateStatus == 'Ready to pickup' || updateStatus === null ? '#D9D9D9' : '#FF0058'
                         }
                       />
-                      <Text style={styles.statusInfo}>Going to Pickupd</Text>
+                      <Text style={styles.statusInfo}>Going to Pickup</Text>
                     </View>
                     <View style={styles.borderStyle} />
 
                     <View style={styles.statusAboutDelivery}>
                       {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
                       <Octicons
-                        name={updateStatus == 'Reached'|| updateStatus === null ? 'dot-fill' : 'check'}
+                        name={updateStatus == 'Reached'|| updateStatus == 'Ready to pickup'|| updateStatus === null ? 'dot-fill' : 'check'}
                         size={15}
                         color={
-                          updateStatus == 'Reached' || updateStatus === null? '#D9D9D9' : '#FF0058'
+                          updateStatus == 'Reached' || updateStatus == 'Ready to pickup'|| updateStatus === null? '#D9D9D9' : '#FF0058'
                         }
                       />
                       <Text style={styles.statusInfo}>Reached</Text>
@@ -332,10 +382,42 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                     </TouchableOpacity>
                   )}
                 </View>
+          }
               </View>
             )
           })
         }
+
+{
+                route.params.orderItem.order_status == 'ORDER_ALLOCATED' ?
+                <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                  marginTop: 7,
+                  marginBottom: 10,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleOrderRequest(true);
+                  }}
+                  style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
+                  <Text style={styles.buttonText}>Accept</Text>
+                </TouchableOpacity>
+                <View style={{width: '1%'}} />
+                <TouchableOpacity
+                  onPress={() => {
+                    handleOrderRequest(false);
+                  }}
+                  style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
+                  <Text style={styles.buttonText}>Reject</Text>
+                </TouchableOpacity>
+              </View>
+              
+              :
+              null
+          }
+
         {/* <View>
           <View style={styles.packageCard}>
             <View style={{width: '10%'}}>
@@ -687,7 +769,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   subheadingOTP: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-Regular',
     color: colors.text,
   },
@@ -732,11 +814,12 @@ const styles = StyleSheet.create({
   borderStyle: {
     borderWidth: 1,
     borderColor: '#f1f1f1',
-    width: 20,
+    width: 15,
   },
   deliveryinfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   statusInfo: {
     fontSize: 12,
@@ -746,8 +829,7 @@ const styles = StyleSheet.create({
   },
   statusAboutDelivery: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingHorizontal: 5,
+    justifyContent: 'space-between',
   },
   logbutton: {
     width: '100%',
@@ -780,6 +862,13 @@ const styles = StyleSheet.create({
   packageManager: {
     width: 30,
     height: 30,
+  },
+  acceptOrReject: {
+    width: '48%',
+    borderRadius: 5,
+    padding: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

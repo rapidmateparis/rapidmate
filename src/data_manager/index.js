@@ -681,7 +681,6 @@ export const updateAddressBookforConsumer = (
   );
 };
 
-
 export const updateAddressBookforDeliveryBoy = (
   param,
   successCallback,
@@ -797,9 +796,12 @@ export const downloadInvoiceOrder = (
   successCallback,
   errorCallback,
 ) => {
-  console.log('print_data==> invoice', API.downloadInvoice + params+'/'+type+'?show=true');
+  console.log(
+    'print_data==> invoice',
+    API.downloadInvoice + params + '/' + type + '?show=true',
+  );
   axiosCall(
-    API.downloadInvoice + params+'/'+type+'?show=true',
+    API.downloadInvoice + params + '/' + type + '?show=true',
     HTTPMethod.GET,
     {},
     response => {
@@ -1120,7 +1122,10 @@ export const getEnterpriseDashboardInfo = (
   successCallback,
   errorCallback,
 ) => {
-  console.log('Dash board info enterprise ===>',API.enterpriseDashboardUrl + param)
+  console.log(
+    'Dash board info enterprise ===>',
+    API.enterpriseDashboardUrl + param,
+  );
   axiosCall(
     API.enterpriseDashboardUrl + param,
     HTTPMethod.GET,
@@ -1345,9 +1350,13 @@ export const getCalendarPlanDate = (params, successCallback, errorCallback) => {
   );
 };
 
-export const getNotificationCount = (params, successCallback, errorCallback) => {
+export const getNotificationCount = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
   axiosCall(
-    API.notificationCount+params,
+    API.notificationCount + params,
     HTTPMethod.GET,
     {},
     response => {
@@ -1359,8 +1368,12 @@ export const getNotificationCount = (params, successCallback, errorCallback) => 
   );
 };
 
-export const updateDeliveryBoyBillingDetails = (params, successCallback, errorCallback) => {
-  console.log(params,API.deliveryBoyBillingAddressUpdate)
+export const updateDeliveryBoyBillingDetails = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(params, API.deliveryBoyBillingAddressUpdate);
   axiosCall(
     API.deliveryBoyBillingAddressUpdate,
     HTTPMethod.POST,
@@ -1374,10 +1387,14 @@ export const updateDeliveryBoyBillingDetails = (params, successCallback, errorCa
   );
 };
 
-export const getDeliveryBoyBillingDetails = (params, successCallback, errorCallback) => {
-  console.log('URL ',API.deliveryBoyBillingAddressGet+params)
+export const getDeliveryBoyBillingDetails = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('URL ', API.deliveryBoyBillingAddressGet + params);
   axiosCall(
-    API.deliveryBoyBillingAddressGet+params,
+    API.deliveryBoyBillingAddressGet + params,
     HTTPMethod.GET,
     {},
     response => {
@@ -1389,8 +1406,8 @@ export const getDeliveryBoyBillingDetails = (params, successCallback, errorCallb
   );
 };
 
-export const getTaxDetails = (successCallback, errorCallback) => {
-  console.log('URL ',API.vechicleTaxList)
+export const getTaxDetails = (params, successCallback, errorCallback) => {
+  console.log('URL ', API.vechicleTaxList);
   axiosCall(
     API.vechicleTaxList,
     HTTPMethod.GET,
@@ -1404,4 +1421,79 @@ export const getTaxDetails = (successCallback, errorCallback) => {
   );
 };
 
+export const updateShiftOrderStatus = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log(params, API.changeCreateShiftStatus);
+  axiosCall(
+    API.changeCreateShiftStatus,
+    HTTPMethod.PUT,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getDeliveryBoyOrderSlots = (
+  params,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('URL ===', API.deliveryBoyOrderSlots + params);
+  axiosCall(
+    API.deliveryBoyOrderSlots + params,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const getBillingAddressDetails = (
+  param,
+  successCallback,
+  errorCallback,
+) => {
+  console.log('billing address details:', API.billingAddressDetails, param);
+  axiosCall(
+    API.billingAddressDetails + param,
+    HTTPMethod.GET,
+    {},
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const updateBillingAddressDetails = (
+  params,
+  body,
+  successCallback,
+  errorCallback,
+) => {
+  axiosCall(
+    API.billingAddressDetailsUpdate,
+    HTTPMethod.POST,
+    body,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
 

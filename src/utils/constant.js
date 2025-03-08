@@ -116,7 +116,10 @@ export const API = {
   deliveryBoyBillingAddressGet: BASE_URL + 'deliveryboy/billing/address/get/',
   downloadInvoice: BASE_URL + 'admin/invoice/view/',
   vechicleTaxList: BASE_URL + 'vehicletypes/tax/list',
-
+  changeCreateShiftStatus:BASE_URL + 'order/update/shift/status',
+  deliveryBoyOrderSlots:BASE_URL + 'order/deliveryboy/myslots/',
+  billingAddressDetails: BASE_URL+'enterprise/billing/address/',
+  billingAddressDetailsUpdate: BASE_URL+'enterprise/billing/address/create'
 };
 
 export const DATE_FORMAT ={

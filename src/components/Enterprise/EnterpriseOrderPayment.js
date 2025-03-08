@@ -23,9 +23,11 @@ import BigTruckImage from '../../image/Big-Package.png';
 import {useLoader} from '../../utils/loaderContext';
 import {
   addPayment,
+  checkPromoCode,
   createEnterpriseOrder,
   createPickupOrder,
   getEnterprisePaymentMethod,
+  getTaxDetails,
 } from '../../data_manager';
 import {
   usePlacedOrderDetails,
@@ -33,8 +35,8 @@ import {
 } from '../commonComponent/StoreContext';
 import {useStripe} from '@stripe/stripe-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { localToUTC } from '../../utils/common';
-import { API } from '../../utils/constant';
+import {localizationText, localToUTC} from '../../utils/common';
+import {API} from '../../utils/constant';
 
 const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
@@ -47,6 +49,16 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [paymentMethod, setPaymentMethod] = useState([]);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
+  const [vechicleTax, setVechicleTax] = useState(20);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [paymentAmount, setPaymentAmount] = useState(totalAmount);
+  const [promoCodeResponse, setPromoCodeResponse] = useState();
+  const toText = localizationText('Common', 'to') || 'To';
+  const discountText = localizationText('Common', 'discount') || 'Discount';
+  const payLaterText = localizationText('Common', 'payLater') || 'Pay Later';
+  const creditDebitCards = localizationText('Common', 'creditDebitCards') || '';
+
+  console.log('params =====>,', params);
 
   const getVechicleImage = vehicleTypeId => {
     switch (vehicleTypeId) {
@@ -80,6 +92,19 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       }
     }
   }, [orderNumber]);
+
+  useEffect(() => {
+    getTaxDetails(
+      success => {
+        if (success[0]._response[0].tax_value) {
+          setVechicleTax(parseFloat(success[0]._response[0].tax_value));
+        }
+      },
+      error => {
+        console.log('error ====== ===== ', error);
+      },
+    );
+  }, []);
 
   useEffect(() => {
     console.log(userDetails.userDetails[0]);
@@ -117,7 +142,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            amount: params.amount * 100, // Amount in cents
+            amount: parseInt(paymentAmount * 100),
+            // amount: params.amount * 100, // Amount in cents
             currency: 'EUR',
             //payment_method_types: ['card', 'google_pay']
           }).toString(),
@@ -188,87 +214,163 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
     //     {text: 'OK', onPress: () => {}},
     //   ]);
     // } else {
-      placeEnterpriseOrder();
+    placeEnterpriseOrder();
     // }
   };
 
   const placeEnterpriseOrder = async () => {
-    let requestParams = {
-      enterprise_ext_id: userDetails.userDetails[0].ext_id,
-      branch_id: params.branch_id,
-      delivery_type_id: params.delivery_type_id,
-      service_type_id: 2,
-      vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      pickup_location_id: params.pickup_location_id,
-      dropoff_location_id: params.dropoff_location_id,
-      is_repeat_mode: params.is_repeat_mode,
-      repeat_day: '',
-      is_my_self: 1,
-      first_name: userDetails.userDetails[0].first_name,
-      last_name: userDetails.userDetails[0].last_name,
-      company_name: params.company_name,
-      email: userDetails.userDetails[0].email,
-      mobile: params.mobile,
-      package_id: params.package_id,
-      pickup_notes: params.pickup_notes,
-      is_same_dropoff_location: 0,
-      repeat_dropoff_location_id: '',
-      distance: parseFloat(params.distance).toFixed(1),
-      total_amount: parseFloat(params.amount),
-      package_photo: API.imageViewUrl + params.imageId, //'https://example.com/package.jpg',
-      repeat_mode: params.repeat_mode,
-      repeat_every: params.repeat_every,
-      repeat_until: params.repeat_until,
-      // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
-      // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
-      is_scheduled_order:params.is_scheduled_order
-    };
-
-    if(params?.drop_details){
-      requestParams={...requestParams,
-        drop_first_name: params.drop_details.drop_first_name,
-        drop_last_name: params.drop_details.drop_last_name,
-        drop_mobile: params.drop_details.drop_mobile,
-        drop_notes: params.drop_details.drop_notes,
-        drop_email: params.drop_details.drop_email,
-        drop_company_name: params.drop_details.drop_company_name,
-      }
-    }else if(params?.dropDetails && params?.dropDetails.length > 0){
-      requestParams={...requestParams,
-        branches:params?.dropDetails
-      }
-    }
-
-    if(params.order_date){
-      requestParams={...requestParams,order_date:localToUTC(params.order_date)}
-    }else{
-      // requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
-      requestParams={...requestParams,order_date:localToUTC(params.schedule_date_time)}
-    }
-
-    // if (params.branches) {
-    //   requestParams.branches = params.branches;
-    // }
+    console.log('total_duration ====>');
     console.log('requestParams from props ******', params);
-    console.log('requestParams ******', requestParams);
-    setLoading(true);
-    createEnterpriseOrder(
-      requestParams,
-      successResponse => {
-        if (successResponse[0]._success) {
-          console.log('createEnterpriseOrder', successResponse[0]._response);
-          savePlacedOrderDetails(successResponse[0]._response);
-          setOrderResponse(successResponse[0]._response[0]);
+    // paymentAmount
+    try {
+      const time = params?.distanceTime?.time
+        ? parseFloat(params.distanceTime.time).toFixed(2)
+        : 0;
+
+      let requestParams = {
+        enterprise_ext_id: userDetails.userDetails[0].ext_id,
+        branch_id: params.branch_id,
+        delivery_type_id: params.delivery_type_id,
+        service_type_id: 2,
+        vehicle_type_id: params.vehicle_type.vehicle_type_id,
+        pickup_location_id: params.pickup_location_id,
+        dropoff_location_id: params.dropoff_location_id,
+        is_repeat_mode: params.is_repeat_mode,
+        repeat_day: '',
+        is_my_self: 1,
+        first_name: userDetails.userDetails[0].first_name,
+        last_name: userDetails.userDetails[0].last_name,
+        company_name: params.company_name,
+        email: userDetails.userDetails[0].email,
+        mobile: params.mobile,
+        package_id: params.package_id,
+        pickup_notes: params.pickup_notes,
+        is_same_dropoff_location: 0,
+        repeat_dropoff_location_id: '',
+        distance: parseFloat(params.distance).toFixed(1),
+        total_duration: time,
+
+        total_amount: parseFloat(paymentAmount),
+        package_photo: API.imageViewUrl + params.imageId, //'https://example.com/package.jpg',
+        repeat_mode: params.repeat_mode,
+        repeat_every: params.repeat_every,
+        repeat_until: params.repeat_until,
+        // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
+        // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
+        is_scheduled_order: params.is_scheduled_order,
+      };
+
+      if (params?.drop_details) {
+        requestParams = {
+          ...requestParams,
+          drop_first_name: params.drop_details.drop_first_name,
+          drop_last_name: params.drop_details.drop_last_name,
+          drop_mobile: params.drop_details.drop_mobile,
+          drop_notes: params.drop_details.drop_notes,
+          drop_email: params.drop_details.drop_email,
+          drop_company_name: params.drop_details.drop_company_name,
+        };
+      } else if (params?.dropDetails && params?.dropDetails.length > 0) {
+        requestParams = {...requestParams, branches: params?.dropDetails};
+      }
+
+      if (params.order_date) {
+        requestParams = {
+          ...requestParams,
+          order_date: localToUTC(params.order_date),
+        };
+      } else {
+        // requestParams={...requestParams,schedule_date_time:localToUTC(params.schedule_date_time)}
+        requestParams = {
+          ...requestParams,
+          order_date: localToUTC(params.schedule_date_time),
+        };
+      }
+      if (promoCodeResponse) {
+        requestParams.promo_code = promoCodeResponse.promoCode;
+        requestParams.promo_value = promoCodeResponse.discount;
+        requestParams.order_amount = parseFloat(totalAmount);
+      }
+
+      // if (params.branches) {
+      //   requestParams.branches = params.branches;
+      // }
+      console.log('requestParams from props ******', params);
+      console.log('requestParams ******', requestParams);
+      setLoading(true);
+      createEnterpriseOrder(
+        requestParams,
+        successResponse => {
+          if (successResponse[0]._success) {
+            console.log('createEnterpriseOrder', successResponse[0]._response);
+            savePlacedOrderDetails(successResponse[0]._response);
+            setOrderResponse(successResponse[0]._response[0]);
+            setLoading(false);
+            setOrderNumber(successResponse[0]._response[0].order_number);
+          }
+        },
+        errorResponse => {
           setLoading(false);
-          setOrderNumber(successResponse[0]._response[0].order_number);
+          console.log(
+            'createEnterpriseOrder==>errorResponse',
+            errorResponse[0],
+          );
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
+    } catch (error) {
+      console.log('error==>errorResponse', error);
+    }
+  };
+
+  const getTaxAmount = () => {
+    const amount =
+      typeof params.amount === 'number'
+        ? params.amount.toFixed(2)
+        : parseFloat(params.amount);
+    console.log('amount is ', amount, 'and vechile tax is ', vechicleTax);
+    const taxAmount = (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+    return taxAmount ? taxAmount.toFixed(2) : 0;
+  };
+  useEffect(() => {
+    const amount =
+      typeof params.amount === 'number'
+        ? params.amount.toFixed(2)
+        : parseFloat(params.amount);
+    console.log('amount is ', amount, 'and vechile tax is ', vechicleTax);
+    const taxAmount = (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
+    const total_Amount = parseFloat(amount) + taxAmount;
+    if (total_Amount) {
+      setTotalAmount(total_Amount.toFixed(2));
+      setPaymentAmount(total_Amount.toFixed(2));
+    }
+  }, [vechicleTax]);
+
+  const applyPromoCode = () => {
+    let params = {
+      promoCode: promoCode,
+      orderAmount: paymentAmount,
+    };
+    checkPromoCode(
+      params,
+      successResponse => {
+        console.log(
+          'applyPromoCode==>successResponse',
+          JSON.stringify(successResponse),
+        );
+        if (successResponse[0]._success) {
+          const promoResponse = successResponse[0]._response[0];
+          setPromoCodeResponse(promoResponse);
+          setPaymentAmount(successResponse[0]._response[0].totalAmount);
         }
       },
       errorResponse => {
-        setLoading(false);
-        console.log('createEnterpriseOrder==>errorResponse', errorResponse[0]);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        console.log(
+          'applyPromoCode==>errorResponse',
+          JSON.stringify(errorResponse),
+        );
       },
     );
   };
@@ -285,7 +387,9 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
               />
             </View>
             <View>
-              <Text style={styles.vehicleName}>Order Summary</Text>
+              <Text style={styles.vehicleName}>
+                {localizationText('Common', 'orderSummary')}
+              </Text>
               <Text style={styles.vehicleCapacity}>
                 {params.vehicle_type.vehicle_type}
               </Text>
@@ -300,22 +404,50 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           <View style={styles.distanceTime}>
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
-              From - {params.pickup_location.sourceDescription}
+              {localizationText('Common', 'from')} -{' '}
+              {params.pickup_location.sourceDescription}
             </Text>
           </View>
 
-          <View style={styles.distanceTime}>
-            <EvilIcons name="location" size={18} color="#606060" />
-            <Text style={styles.vehicleCapacity}>
-              To - {params.dropoff_location.destinationDescription}
-            </Text>
-          </View>
+          {params?.dropDetails?.length > 0 ? (
+            params?.dropDetails.map(dropLocation => {
+              return (
+                <View style={styles.distanceTime}>
+                  <EvilIcons name="location" size={18} color="#606060" />
+                  <Text style={styles.vehicleCapacity}>
+                    {toText} - {dropLocation.destinationDescription}
+                  </Text>
+                </View>
+              );
+            })
+          ) : (
+            <View style={styles.distanceTime}>
+              <EvilIcons name="location" size={18} color="#606060" />
+              <Text style={styles.vehicleCapacity}>
+                {toText} - {params.dropoff_location.destinationDescription}
+              </Text>
+            </View>
+          )}
 
           <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'orderFare')}
+            </Text>
             <Text style={styles.totalAmount}>
               <Text>€</Text> {params.amount}
             </Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'tax')} {vechicleTax}%
+            </Text>
+            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'totalAmount')}
+            </Text>
+            <Text style={styles.totalAmount}>€ {totalAmount}</Text>
           </View>
         </View>
 
@@ -323,99 +455,137 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           <Image source={require('../../image/ticket-discount.png')} />
           <TextInput
             style={styles.input}
-            placeholder="Promo code"
+            placeholder={localizationText('Common', 'promoCode')}
             placeholderTextColor="#999"
           />
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.secondary,
-              paddingHorizontal: 20,
-              paddingVertical: 13,
-              borderTopRightRadius: 10,
-              borderBottomEndRadius: 10,
-            }}>
-            <AntDesign name="check" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
 
-        {paymentMethod.length > 0 && 
-        <>
-        <View>
-          <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
-        </View>
-
-        <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
-          {paymentMethod.map((item, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  setSelectedOptionIndex(index);
-                }}
-                style={{
-                  flexDirection: 'row',
-                  padding: 15,
-                  width: '100%',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image
-                    style={{marginRight: 20}}
-                    source={require('../../image/logos_mastercard.png')}
-                  />
-                  <Text style={[styles.selectPaymentMethod, {marginRight: 10}]}>
-                    {item.card_holder_name}
-                  </Text>
-                  <Text style={styles.selectPaymentMethod}>
-                    {item.card_number}
-                  </Text>
-                </View>
-
-                {selectedOptionIndex == index ? (
-                  <FontAwesome
-                    name="dot-circle-o"
-                    size={25}
-                    color={colors.secondary}
-                  />
-                ) : (
-                  <FontAwesome
-                    name="circle-thin"
-                    size={25}
-                    color={colors.text}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
-          {userDetails.userDetails[0].is_pay_later == 1 ? (
+          {promoCodeResponse ? (
             <TouchableOpacity
-              onPress={() => {
-                setSelectedOptionIndex(99);
-              }}
               style={{
-                flexDirection: 'row',
-                padding: 15,
-                width: '100%',
-                justifyContent: 'space-between',
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={() => {
+                setPromoCodeResponse(null);
+                setPaymentAmount(totalAmount);
               }}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.selectPaymentMethod}>Pay Later</Text>
-              </View>
-
-              {selectedOptionIndex == 99 ? (
-                <FontAwesome
-                  name="dot-circle-o"
-                  size={25}
-                  color={colors.secondary}
-                />
-              ) : (
-                <FontAwesome name="circle-thin" size={25} color={colors.text} />
-              )}
+              <AntDesign name="close" size={20} color="#fff" />
             </TouchableOpacity>
-          ) : null}
+          ) : (
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.secondary,
+                paddingHorizontal: 20,
+                paddingVertical: 13,
+                borderTopRightRadius: 10,
+                borderBottomEndRadius: 10,
+              }}
+              onPress={applyPromoCode}>
+              <AntDesign name="check" size={20} color="#fff" />
+            </TouchableOpacity>
+          )}
         </View>
-        </>
-        }
+
+        {promoCodeResponse && (
+          <Text
+            style={[
+              styles.discountInfo,
+              {fontSize: 16, alignSelf: 'flex-end'},
+            ]}>
+            {discountText}: € {promoCodeResponse.discount}
+          </Text>
+        )}
+
+        {paymentMethod.length > 0 && (
+          <>
+            <View>
+              <Text style={styles.selectPaymentMethod}>
+                {creditDebitCards}
+              </Text>
+            </View>
+
+            <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
+              {paymentMethod.map((item, index) => {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                      setSelectedOptionIndex(index);
+                    }}
+                    style={{
+                      flexDirection: 'row',
+                      padding: 15,
+                      width: '100%',
+                      justifyContent: 'space-between',
+                    }}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Image
+                        style={{marginRight: 20}}
+                        source={require('../../image/logos_mastercard.png')}
+                      />
+                      <Text
+                        style={[styles.selectPaymentMethod, {marginRight: 10}]}>
+                        {item.card_holder_name}
+                      </Text>
+                      <Text style={styles.selectPaymentMethod}>
+                        {item.card_number}
+                      </Text>
+                    </View>
+
+                    {selectedOptionIndex == index ? (
+                      <FontAwesome
+                        name="dot-circle-o"
+                        size={25}
+                        color={colors.secondary}
+                      />
+                    ) : (
+                      <FontAwesome
+                        name="circle-thin"
+                        size={25}
+                        color={colors.text}
+                      />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+              {userDetails.userDetails[0].is_pay_later == 1 ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedOptionIndex(99);
+                  }}
+                  style={{
+                    flexDirection: 'row',
+                    padding: 15,
+                    width: '100%',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={styles.selectPaymentMethod}>
+                      {payLaterText}
+                    </Text>
+                  </View>
+
+                  {selectedOptionIndex == 99 ? (
+                    <FontAwesome
+                      name="dot-circle-o"
+                      size={25}
+                      color={colors.secondary}
+                    />
+                  ) : (
+                    <FontAwesome
+                      name="circle-thin"
+                      size={25}
+                      color={colors.text}
+                    />
+                  )}
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </>
+        )}
 
         <View style={styles.discountCard}>
           <Image
@@ -423,16 +593,18 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             source={require('../../image/Group.png')}
           />
           <Text style={styles.discountInfo}>
-            20% off on city bank credit card!
+            20% {localizationText('Common', 'creditCardsOff')}
           </Text>
         </View>
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
             <Text>€</Text>
-            {params.amount}
+            {paymentAmount}
           </Text>
           <TouchableOpacity onPress={onPayment}>
-            <Text style={styles.PayText}>Proceed to pay</Text>
+            <Text style={styles.PayText}>
+              {localizationText('Common', 'proceedToPay')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

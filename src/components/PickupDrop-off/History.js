@@ -28,7 +28,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {color} from 'react-native-reanimated';
-import {titleFormat, utcLocal} from '../../utils/common';
+import {localizationText, titleFormat, utcLocal} from '../../utils/common';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -42,7 +42,16 @@ const TodayList = ({navigation, searchText}) => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [checkMoreData, setCheckMoreData] = useState(true);
-  const fadeAnim = useRef(new Animated.Value(1)).current; 
+  const noOrdersText = localizationText('Common', 'noOrdersToShow');
+  const noOrdersDescription = localizationText(
+    'Common',
+    'noOrdersToShowDescription',
+  );
+  const fromText = localizationText('Common', 'from');
+  const toText = localizationText('Common', 'to');
+  const activeText = localizationText('Common', 'active');
+  const orderIDText = localizationText('Common', 'orderID');
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const blinkingAnimation = Animated.loop(
@@ -157,7 +166,7 @@ const TodayList = ({navigation, searchText}) => {
           if (size === successResponse[0]._response.length) {
             setPage(page + 1);
             setCheckMoreData(true);
-          }else if(size > successResponse[0]._response.length ){
+          } else if (size > successResponse[0]._response.length) {
             setCheckMoreData(false);
           }
           let tempOrderList = successResponse[0]._response;
@@ -171,77 +180,77 @@ const TodayList = ({navigation, searchText}) => {
     );
   };
 
-  const renderCurrentOrderItem = currentOrderItem => (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate('DeliveryDetails', {
-          orderItem: currentOrderItem.item,
-        });
-      }}
-      style={styles.packageDetailCard}>
-      <View style={styles.packageHeader}>
-        <Image
-          style={styles.packageManage}
-          source={require('../../image/Big-Package.png')}
-        />
-        <Text style={styles.deliveryTime}>
-          {/* Delivered on{' '}
-          {moment(currentOrderItem.item.delivery_date).format('MMM DD, YYYY')}{' '}
-          at {moment(currentOrderItem.item.delivery_date).format('hh:mm A')} */}
-          {currentOrderItem.item.consumer_order_title}{' '}
-          {currentOrderItem.item.is_show_datetime_in_title == 1
-            ? currentOrderItem.item.order_status === 'ORDER_PLACED'
-              ? titleFormat(
-                  currentOrderItem.item.schedule_date_time ||
-                    currentOrderItem.item.order_date,
-                )
-              : titleFormat(currentOrderItem.item.updated_on)
-            : ''}
-        </Text>
-      </View>
-
-      <View style={styles.packageMiddle}>
-        <Ionicons name="location-outline" size={15} color="#717172" />
-        <Text style={styles.fromLocation}>
-          From{' '}
-          <Text style={styles.Location}>
-            {getLocationAddress(currentOrderItem.item.pickup_location_id)}
+  const renderCurrentOrderItem = currentOrderItem => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('DeliveryDetails', {
+            orderItem: currentOrderItem.item,
+          });
+        }}
+        style={styles.packageDetailCard}>
+        <View style={styles.packageHeader}>
+          <Image
+            style={styles.packageManage}
+            source={require('../../image/Big-Package.png')}
+          />
+          <Text style={styles.deliveryTime}>
+            {currentOrderItem.item.consumer_order_title}{' '}
+            {currentOrderItem.item.is_show_datetime_in_title == 1
+              ? currentOrderItem.item.order_status === 'ORDER_PLACED'
+                ? titleFormat(
+                    currentOrderItem.item.schedule_date_time ||
+                      currentOrderItem.item.order_date,
+                  )
+                : titleFormat(currentOrderItem.item.updated_on)
+              : ''}
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      <View style={styles.packageMiddle}>
-        <MaterialIcons name="my-location" size={15} color="#717172" />
-        <Text style={styles.fromLocation}>
-          To{' '}
-          <Text style={styles.Location}>
-            {getLocationAddress(currentOrderItem.item.dropoff_location_id)}
+        <View style={styles.packageMiddle}>
+          <Ionicons name="location-outline" size={15} color="#717172" />
+          <Text style={styles.fromLocation}>
+            {fromText}{' '}
+            <Text style={styles.Location}>
+              {getLocationAddress(currentOrderItem.item.pickup_location_id)}
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      <View style={styles.borderShow}></View>
+        <View style={styles.packageMiddle}>
+          <MaterialIcons name="my-location" size={15} color="#717172" />
+          <Text style={styles.fromLocation}>
+            {toText}{' '}
+            <Text style={styles.Location}>
+              {getLocationAddress(currentOrderItem.item.dropoff_location_id)}
+            </Text>
+          </Text>
+        </View>
 
-      <View style={{display: 'flex', alignItems: "flex-start", marginBottom: 5,}}>
-        <Animated.Text style={[styles.orderActive, {opacity: fadeAnim}]}>
-          Active
-        </Animated.Text>
-      </View>
+        <View style={styles.borderShow}></View>
 
-      <View style={styles.footerCard}>
-        <Text style={styles.orderId}>
-          Order ID: {currentOrderItem.item.order_number}
-        </Text>
-        <Text style={styles.valueMoney}>
-          {`€ ${
-            typeof currentOrderItem.item.amount === 'number'
-              ? currentOrderItem.item.amount.toFixed(2)
-              : currentOrderItem.item.amount
-          }`}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+        <View
+          style={{display: 'flex', alignItems: 'flex-start', marginBottom: 5}}>
+          <Animated.Text style={[styles.orderActive, {opacity: fadeAnim}]}>
+            {activeText}
+          </Animated.Text>
+        </View>
+
+        <View style={styles.footerCard}>
+          <Text style={styles.orderId}>
+            {orderIDText}: {currentOrderItem.item.order_number}
+          </Text>
+          <Text style={styles.valueMoney}>
+            {`€ ${
+              typeof currentOrderItem.item.amount === 'number'
+                ? currentOrderItem.item.amount.toFixed(2)
+                : currentOrderItem.item.amount
+            }`}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderFooter = () => {
     return (
@@ -280,10 +289,8 @@ const TodayList = ({navigation, searchText}) => {
                   style={styles.loaderMap}
                   source={require('../../image/No-Data-Table.png')}
                 />
-                <Text style={styles.text}>No orders to show</Text>
-                <Text style={styles.subText}>
-                  If there is any active order, it will be shown here.
-                </Text>
+                <Text style={styles.text}>{noOrdersText}</Text>
+                <Text style={styles.subText}>{noOrdersDescription}</Text>
               </View>
             </View>
           </View>
@@ -310,6 +317,14 @@ const PastList = ({navigation, searchText}) => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [checkMoreData, setCheckMoreData] = useState(true);
+  const noOrdersText = localizationText('Common', 'noOrdersToShow');
+  const noOrdersDescription = localizationText(
+    'Common',
+    'noOrdersToShowDescription',
+  );
+  const fromText = localizationText('Common', 'from');
+  const toText = localizationText('Common', 'to');
+  const orderIDText = localizationText('Common', 'orderID');
 
   useFocusEffect(
     useCallback(() => {
@@ -405,7 +420,7 @@ const PastList = ({navigation, searchText}) => {
           if (size === successResponse[0]._response.length) {
             setPage(page + 1);
             setCheckMoreData(true);
-          }else if(size > successResponse[0]._response.length ){
+          } else if (size > successResponse[0]._response.length) {
             setCheckMoreData(false);
           }
 
@@ -420,66 +435,64 @@ const PastList = ({navigation, searchText}) => {
     );
   };
 
-  const renderPastOrderItem = pastOrderItem => (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate('DeliveryDetails', {
-          orderItem: pastOrderItem.item,
-        });
-      }}
-      style={styles.packageDetailCard}>
-      <View style={styles.packageHeader}>
-        <Image
-          style={styles.packageManage}
-          source={require('../../image/Big-Package.png')}
-        />
-        <Text style={styles.deliveryTime}>
-          {pastOrderItem.item.consumer_order_title}{' '}
-          {pastOrderItem.item.is_show_datetime_in_title == 1
-            ? pastOrderItem.item.order_status === 'ORDER_PLACED'
-              ? titleFormat(
-                  pastOrderItem.item.schedule_date_time ||
-                    pastOrderItem.item.order_date,
-                )
-              : titleFormat(pastOrderItem.item.updated_on)
-            : ''}
-          {/* Delivered on{' '}
-          {moment(pastOrderItem.item.delivery_date).format(
-            'MMM DD, YYYY',
-          )} at {moment(pastOrderItem.item.delivery_date).format('hh:mm A')} */}
-        </Text>
-      </View>
-
-      <View style={styles.packageMiddle}>
-        <Ionicons name="location-outline" size={15} color="#717172" />
-        <Text style={styles.fromLocation}>
-          From{' '}
-          <Text style={styles.Location}>
-            {getLocationAddress(pastOrderItem.item.pickup_location_id)}{' '}
+  const renderPastOrderItem = pastOrderItem => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('DeliveryDetails', {
+            orderItem: pastOrderItem.item,
+          });
+        }}
+        style={styles.packageDetailCard}>
+        <View style={styles.packageHeader}>
+          <Image
+            style={styles.packageManage}
+            source={require('../../image/Big-Package.png')}
+          />
+          <Text style={styles.deliveryTime}>
+            {pastOrderItem.item.consumer_order_title}{' '}
+            {pastOrderItem.item.is_show_datetime_in_title == 1
+              ? pastOrderItem.item.order_status === 'ORDER_PLACED'
+                ? titleFormat(
+                    pastOrderItem.item.schedule_date_time ||
+                      pastOrderItem.item.order_date,
+                  )
+                : titleFormat(pastOrderItem.item.updated_on)
+              : ''}
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      <View style={styles.packageMiddle}>
-        <MaterialIcons name="my-location" size={15} color="#717172" />
-        <Text style={styles.fromLocation}>
-          To{' '}
-          <Text style={styles.Location}>
-            {getLocationAddress(pastOrderItem.item.dropoff_location_id)}
+        <View style={styles.packageMiddle}>
+          <Ionicons name="location-outline" size={15} color="#717172" />
+          <Text style={styles.fromLocation}>
+            {fromText}{' '}
+            <Text style={styles.Location}>
+              {getLocationAddress(pastOrderItem.item.pickup_location_id)}{' '}
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      <View style={styles.borderShow}></View>
+        <View style={styles.packageMiddle}>
+          <MaterialIcons name="my-location" size={15} color="#717172" />
+          <Text style={styles.fromLocation}>
+            {toText}{' '}
+            <Text style={styles.Location}>
+              {getLocationAddress(pastOrderItem.item.dropoff_location_id)}
+            </Text>
+          </Text>
+        </View>
 
-      <View style={styles.footerCard}>
-        <Text style={styles.orderId}>
-          Order ID: {pastOrderItem.item.order_number}
-        </Text>
-        <Text style={styles.valueMoney}>€{pastOrderItem.item.amount}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+        <View style={styles.borderShow}></View>
+
+        <View style={styles.footerCard}>
+          <Text style={styles.orderId}>
+            {orderIDText}: {pastOrderItem.item.order_number}
+          </Text>
+          <Text style={styles.valueMoney}>€{pastOrderItem.item.amount}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderFooter = () => {
     return (
@@ -517,10 +530,8 @@ const PastList = ({navigation, searchText}) => {
             style={styles.loaderMap}
             source={require('../../image/No-Data-Table.png')}
           />
-          <Text style={styles.text}>No orders to show</Text>
-          <Text style={styles.subText}>
-            If there is any active order, it will be shown here..
-          </Text>
+          <Text style={styles.text}>{noOrdersText}</Text>
+          <Text style={styles.subText}>{noOrdersDescription}</Text>
         </View>
       </View>
     </View>
@@ -541,7 +552,9 @@ function History({navigation}) {
         }}>
         {/* Your Search Bar */}
         <View style={styles.header}>
-          <Text style={styles.headerText}>History</Text>
+          <Text style={styles.headerText}>
+            {localizationText('Common', 'history')}
+          </Text>
           <TouchableOpacity>
             <AntDesign name="filter" size={25} color={colors.secondary} />
           </TouchableOpacity>
@@ -556,7 +569,7 @@ function History({navigation}) {
           <TextInput
             style={styles.searchinput}
             placeholderTextColor="#999"
-            placeholder="Search your deliveries"
+            placeholder={localizationText('Common', 'searchYourDeliveries')}
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -583,10 +596,10 @@ function History({navigation}) {
           tabBarIndicatorStyle: {backgroundColor: colors.secondary},
           tabBarStyle: {backgroundColor: '#fff'},
         }}>
-        <Tab.Screen name="Ongoing">
+        <Tab.Screen name={localizationText('Common', 'ongoing')}>
           {() => <TodayList navigation={navigation} searchText={searchText} />}
         </Tab.Screen>
-        <Tab.Screen name="Past">
+        <Tab.Screen name={localizationText('Common', 'past')}>
           {() => <PastList navigation={navigation} searchText={searchText} />}
         </Tab.Screen>
       </Tab.Navigator>

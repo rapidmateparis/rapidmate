@@ -14,6 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {useLoader} from '../../utils/loaderContext';
 import {updateUserProfile, uploadDocumentsApi} from '../../data_manager';
@@ -24,7 +25,9 @@ const PickupTakeSelfie = ({route, navigation}) => {
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
-  const {userDetails,saveUserDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
+  const tryAgain = localizationText('Common', 'tryAgain') || 'Try Again';
+  const useThis = localizationText('Common', 'useThis') || 'Use This';
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -86,9 +89,9 @@ const PickupTakeSelfie = ({route, navigation}) => {
           'print_data==>successResponseuploadDocumentsApi',
           '' + JSON.parse(successResponse).id,
         );
-        const newUserDetails = userDetails.userDetails[0]
-        newUserDetails['profile_pic']=JSON.parse(successResponse).id
-        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+        const newUserDetails = userDetails.userDetails[0];
+        newUserDetails['profile_pic'] = JSON.parse(successResponse).id;
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
 
         let profileParams = {
           ext_id: userDetails.userDetails[0].ext_id,
@@ -100,7 +103,7 @@ const PickupTakeSelfie = ({route, navigation}) => {
           profileParams,
           successResponse => {
             console.log('updateUserProfile', successResponse);
-            Alert.alert('Success', '' + successResponse[0]._response, [
+            Alert.alert('Success', 'Your Profile Updated Successfully', [
               {
                 text: 'OK',
                 onPress: () => {
@@ -149,21 +152,23 @@ const PickupTakeSelfie = ({route, navigation}) => {
 
         <View style={styles.titlesCard}>
           <Text style={styles.statusTitle}>
-            Please upload a Profile Picture
+            {localizationText('Main', 'uploadProfilePic')}
           </Text>
           <Text style={styles.statusSubtitle}>
-            Please see if this looks good, you can try once more if you want to.
+            {localizationText('Main', 'uploadProfilePicDescription')}
           </Text>
         </View>
 
-        <View style={styles.buttonCard}>
-          <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
-            <Text style={styles.buttonText}>Try again</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
-            <Text style={styles.okButton}>Use this</Text>
-          </TouchableOpacity>
-        </View>
+        {image && (
+          <View style={styles.buttonCard}>
+            <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
+              <Text style={styles.buttonText}>{tryAgain}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
+              <Text style={styles.okButton}>{useThis}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       {/* -------------- Modal --------------------- */}
       <ChoosePhotoByCameraGallaryModal
@@ -211,7 +216,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingVertical: 30,
-    marginTop: '30%',
+    marginTop: '20%',
   },
   logbutton: {
     width: '45%',

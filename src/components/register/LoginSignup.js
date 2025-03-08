@@ -12,9 +12,10 @@ import {
 import ExStyles from '../../style';
 import {colors} from '../../colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import LanguageSwitcher from '../../common/LanguageSwitcher';
+import {localizationText} from '../../utils/common';
 
 const LoginSignup = ({navigation}) => {
-
   return (
     <View style={{width: '100%', backgroundColor: colors.primary}}>
       <View>
@@ -34,33 +35,44 @@ const LoginSignup = ({navigation}) => {
             {width: '100%', height: '100%'},
           ]}>
           <View style={[styles.rotatedView, styles.shadowStyle]} />
+          <LanguageSwitcher />
           <TouchableOpacity
             onPress={() => navigation.navigate('ProfileChoose')}
             style={[styles.createAcBtn, {backgroundColor: colors.white}]}>
             <Text style={[styles.pageDirections, {color: colors.text}]}>
-              Create account
+              {localizationText('Main', 'createAccount')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('LogInScreen')}
             style={styles.loginAcBtn}>
             <Text style={[styles.pageDirections, {color: colors.white}]}>
-              Login with phone or email
+              {localizationText('Main', 'loginWithEmail')}
             </Text>
           </TouchableOpacity>
-          <View style={{marginTop: 20}}>
+          <View style={{marginTop: 10}}>
             <Text style={[styles.loginDisclemar, {color: colors.white}]}>
-              By logging in or registering, you agreed to the{' '}
-              <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}>
-                Terms & Conditions
-              </Text>{' '}
-              and{' '}
-              <Text
-                style={{textDecorationLine: 'underline', color: colors.white}}>
-                Privacy Policy
-              </Text>
-              .
+              {localizationText('Main', 'loggingRegisteringText')}
+            </Text>
+            <Text style={[styles.loginDisclemar, {color: colors.white}]}>
+              <TouchableOpacity
+                style={{paddingTop: 10}}
+                onPress={() => navigation.navigate('TermsAndConditions')}>
+                <Text style={styles.termServicesText}>
+                  {localizationText('Common', 'termsAndConditions')}
+                </Text>
+              </TouchableOpacity>{' '}
+              <TouchableOpacity>
+                <Text style={{color: colors.white, fontSize: 11,}}>
+                  {localizationText('Common', 'and')}{' '}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('PrivacyPolicy')}>
+                <Text style={styles.termServicesText}>
+                  {localizationText('Common', 'privacyPolicy')}
+                </Text>
+              </TouchableOpacity>
             </Text>
           </View>
         </View>
@@ -71,7 +83,7 @@ const LoginSignup = ({navigation}) => {
 
 const styles = StyleSheet.create({
   deliveryIconMain: {
-    marginVertical: 100,
+    marginVertical: 70,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -139,9 +151,13 @@ const styles = StyleSheet.create({
   loginDisclemar: {
     textAlign: 'center',
     fontSize: 12,
-    paddingHorizontal: 25,
     lineHeight: 20,
     fontFamily: 'Montserrat-Medium',
+  },
+  termServicesText: {
+    textDecorationLine: 'underline',
+    color: colors.white,
+    fontSize: 11,
   },
 });
 

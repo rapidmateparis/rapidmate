@@ -31,6 +31,7 @@ import {
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
+import {localizationText} from '../../utils/common';
 
 const {width} = Dimensions.get('window');
 
@@ -53,6 +54,11 @@ const PickupAddress = ({route, navigation}) => {
 
   const isLargeScreen = width >= 400; // Large screen: width >= 500
   const isSmallScreen = width < 400; // Small screen: width < 350
+
+  const whenNeedIt = localizationText('Common', 'whenNeedIt') || 'When Need It';
+  const timeText = localizationText('Common', 'time') || 'Time';
+  const dateText = localizationText('Common', 'date') || 'Date';
+  const schedule = localizationText('Common', 'schedule') || 'Schedule';
 
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
@@ -138,15 +144,17 @@ const PickupAddress = ({route, navigation}) => {
   }, [distanceTime]);
 
   const getDistancePrice = () => {
-    getDistancePriceList(
-      distanceTime?.distance,
-      successResponse => {
-        setDistancePriceList(successResponse[0]._response);
-      },
-      errorResponse => {
-        console.log('errorResponse==>', '' + errorResponse[0]);
-      },
-    );
+    if(distanceTime?.distance){
+      getDistancePriceList(
+        distanceTime?.distance,
+        successResponse => {console.log(successResponse[0]._response);
+          setDistancePriceList(successResponse[0]._response);
+        },
+        errorResponse => {
+          console.log('errorResponse==>', '' + errorResponse[0]);
+        },
+      );
+    }
   };
 
   const getPriceUsingVechicelType = vehicleTypeId => {
@@ -283,7 +291,7 @@ const PickupAddress = ({route, navigation}) => {
           <View style={styles.dateCard}>
             <EvilIcons name="calendar" size={25} color="#000" />
             <Text style={styles.dateCardText}>
-              When do you need it?
+              {whenNeedIt}
               <Text>
                 {pickupDateTime.pickupDate && (
                   <Text
@@ -291,7 +299,7 @@ const PickupAddress = ({route, navigation}) => {
                       fontFamily: 'Montserrat-Medium',
                       color: colors.secondary,
                     }}>
-                    {'\n'}Date: {pickupDateTime.pickupDate}
+                    {'\n'}{dateText}: {pickupDateTime.pickupDate}
                   </Text>
                 )}
                 {pickupDateTime.pickupTime && (
@@ -301,7 +309,8 @@ const PickupAddress = ({route, navigation}) => {
                       color: colors.secondary,
                     }}>
                     {'\n'}
-                    Time: {pickupDateTime.pickupTime}
+                    {timeText}:{' '}
+                    {pickupDateTime.pickupTime}
                   </Text>
                 )}
               </Text>
@@ -316,7 +325,7 @@ const PickupAddress = ({route, navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Montserrat-SemiBold',
                 }}>
-                Schedule
+                {schedule}
               </Text>
             </TouchableOpacity>
           </View>
@@ -340,10 +349,16 @@ const PickupAddress = ({route, navigation}) => {
                   ? styles.largeVehicleNameCard
                   : styles.mediumVehicleNameCard
               }>
-              <Text style={styles.chooseVehicle}>Choose a Vehicle</Text>
-              <Text style={styles.selectedVehiclePrice}>
-                € {getPriceUsingVechicelType(selectedVehicleDetails?.id)}
+              <Text style={styles.chooseVehicle}>
+                {localizationText('Common', 'chooseVehicle')}
               </Text>
+
+              {getPriceUsingVechicelType(selectedVehicleDetails?.id) && (
+                <Text style={styles.selectedVehiclePrice}>
+                € {getPriceUsingVechicelType(selectedVehicleDetails?.id)} {' '}Excl. VAT
+              </Text>
+              )}
+              
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={{flexDirection: 'row'}}>
@@ -413,7 +428,9 @@ const PickupAddress = ({route, navigation}) => {
             ? styles.largeContinueBtn
             : styles.mediumContinueBtn
         }>
-        <Text style={styles.continueText}>Continue to order details</Text>
+        <Text style={styles.continueText}>
+          {localizationText('Common', 'continueOrderDetails')}
+        </Text>
         <AntDesign name="arrowright" size={25} color="#000000" />
       </TouchableOpacity>
 
@@ -503,7 +520,7 @@ const styles = StyleSheet.create({
     width: 100,
   },
   selectedVehiclePrice: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-Medium',
     color: colors.secondary,
   },
