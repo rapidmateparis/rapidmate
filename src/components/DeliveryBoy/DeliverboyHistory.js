@@ -557,7 +557,9 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         onPress={() => {
           console.log('delivery_type_id ====>', item);
           if (item?.delivery_type_id === 3) {
-            navigation.navigate('DeliveryboyShiftDetails');
+            navigation.navigate('DeliveryboyShiftDetails', {
+              orderItem: item,
+            });
           } else if (
             item?.delivery_type_id === 2 &&
             item?.locations &&
@@ -656,7 +658,9 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
               onPress={() => {
                 console.log('delivery_type_id ====>', item?.item);
                 if (item?.item?.delivery_type_id === 3) {
-                  navigation.navigate('DeliveryboyShiftDetails');
+                  navigation.navigate('DeliveryboyShiftDetails', {
+                    orderItem: item.item,
+                  });
                 } else if (
                   item?.item?.delivery_type_id === 2 &&
                   item?.item?.locations &&

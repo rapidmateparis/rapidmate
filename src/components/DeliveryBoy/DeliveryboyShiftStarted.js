@@ -30,13 +30,13 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
   const {setLoading} = useLoader();
   const {saveUserDetails,userDetails} = useUserDetails();
 
-  useEffect(() => {
+ /* useEffect(() => {
     const interval = setInterval(
       () => setSwipeStatusMessage(defaultStatusMessage),
       5000,
     );
     return () => clearInterval(interval);
-  }, [defaultStatusMessage]);
+  }, [defaultStatusMessage]);*/
 
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
   const [startTimerChange, setStartTimerChange] = useState(true);
@@ -53,27 +53,30 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
   const swipeToEndShift = localizationText('Common', 'swipeToEndShift') || 'Swipe to end shift';
   const shiftElapsedTime = localizationText('Common', 'shiftElapsedTime') || 'Shift elapsed time';
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     setTime(time+1);
-  //     console.log('prevTime ===',time)
-  //   }, 1000);
+  useEffect(() => {
+   /*  const intervalId = setInterval(() => {
+       setTime(time+1);
+       console.log('prevTime ===',time)
+     }
+  , 1000)*/
+  });
 
   //   return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  // }, []);
+   
 
   const formatTime = (timer) => {
     // const hours = Math.floor(timer / 3600);
     // const minutes = Math.floor((timer % 3600) / 60);
     // const seconds = timer % 60;
-
+    console.log("timer----------------------------", timer);
     // return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    return getTotalHoursForOneSlot(startTime,new Date())
+    console.log("orderDetails.slots[0]----------------------------", orderDetails.slots[0]);
+    return getTotalHoursForOneSlot(orderDetails.slots[0].shift_started_on,new Date())
   };
 
 
   const runTimer = useCallback(() => {
-    const interval = setInterval(() => {
+    /*const interval = setInterval(() => {
       setTimer(prevTimer => {
         const newCentiseconds = prevTimer.centiseconds + 1;
         if (newCentiseconds === 100) {
@@ -112,15 +115,16 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
         }
       });
     }, 10);
-
+  */
     const intervalId = setInterval(() => {
-      setTime(time+1);
-      console.log('prevTime ===',time)
+      //setTime(time+1);
+      //console.log('prevTime ===',time)
     }, 1000);
 
-    return () => {
+   return () => {
       clearInterval(intervalId)
-      clearInterval(interval)};
+      //clearInterval(interval)
+    };
   }, []);
 
   useEffect(() => {
@@ -140,27 +144,27 @@ const DeliveryboyShiftStarted = ({navigation,route}) => {
     return getSlot
   }
 
-  const getTotalHoursForOneSlot=(from_time,to_time)=>{
+  const getTotalHoursForOneSlot=(from_time,current_time)=>{
+    if(!from_time){
+      from_time = new Date()
+    }
     const start = moment(from_time);
-    const end = moment(to_time);
+    const end = moment(current_time);
     const diffMinutes = end.diff(start, 'minutes');
     const diffSeconds = end.diff(start, 'seconds');
     const totalHours = Math.floor(diffMinutes / 60).toString().padStart(2, '0');
     const remainingMinutes = (diffMinutes % 60).toString().padStart(2, '0');
     const remainingSeconds = (diffSeconds % 60).toString().padStart(2, '0');
-    return totalHours+':'+remainingMinutes+':'+remainingSeconds
+    return isNanCheck(totalHours) + ':' + isNanCheck(remainingMinutes) + ':' + isNanCheck(remainingSeconds);
 }
-
+const isNanCheck = (content) => {
+  return isNaN(content)? "00" : content;
+}
 
 const createShiftOrder = userDetails.createShiftOrder
 const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.start_time):null
-
-
-
   const endCreateShiftOrder=()=>{
     if(checkStartAction() && startTime){
-
-
       setLoading(true);
       updateShiftOrderStatus(
         {
@@ -174,7 +178,7 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
           saveUserDetails({...userDetails,createShiftOrder:null});
 
           setLoading(false);
-          navigation.navigate('DeliveryboyShiftStaredRequest',{orderItem:orderDetails});
+          navigation.navigate('DeliveryboyHistory',{orderItem:orderDetails});
           console.log('successRes  =====>',successRes)
         },
         errorRes=>{
@@ -203,7 +207,7 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
               .padStart(2, '0')}:${timer.centiseconds
               .toString()
               .padStart(2, '0')}`} */}
-              {formatTime(time)}
+              {formatTime(orderDetails.slots[0].shift_started_on)}
           </Text>
           <Text style={styles.elapsedTime}>{shiftElapsedTime}</Text>
         </View>

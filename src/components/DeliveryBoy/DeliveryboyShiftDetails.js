@@ -37,13 +37,14 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
     localizationText('Common', 'swipeToStartShift') || 'Swipe to start shift';
 
   console.log('orderDetails ====>>', orderDetails);
-  useEffect(() => {
-    const interval = setInterval(
-      () => setSwipeStatusMessage(defaultStatusMessage),
-      5000,
-    );
-    return () => clearInterval(interval);
-  }, [defaultStatusMessage]);
+  console.log('route?.params ====>>', route?.params);
+  // useEffect(() => {
+  //   const interval = setInterval(
+  //     () => setSwipeStatusMessage(defaultStatusMessage),
+  //     5000,
+  //   );
+  //   return () => clearInterval(interval);
+  // }, [defaultStatusMessage]);
 
   const startCreateShiftOrder = () => {
     if (checkStartAction()) {
@@ -91,7 +92,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
         moment(utcLocal(slot.slot_date)).format('DD/MM/YYYY') === todayDate,
     );
 
-    const getSlot = todayList.length > 0 ? todayList[0] : null;
+    const getSlot = todayList.length > 0 ? todayList[0] : [];
     return getSlot;
   };
   useEffect(() => {
@@ -165,7 +166,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
               <View style={styles.overViewCard}>
                 <View>
                   <Text style={styles.requestOverview}>
-                    {orderDetails.total_days ? orderDetails.total_days : 0}
+                    {orderDetails?.total_days ? orderDetails.total_days : 0}
                   </Text>
                   <Text style={styles.requestOverviewInfo}>
                     {localizationText('Common', 'totalDays')}
@@ -174,7 +175,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
 
                 <View>
                   <Text style={styles.requestOverview}>
-                    {orderDetails.total_hours
+                    {orderDetails?.total_hours
                       ? orderDetails.total_hours.toFixed(2)
                       : 0}
                   </Text>
@@ -187,7 +188,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.requestOverview}>
                     €
                     <Text>
-                      {orderDetails.total_amount
+                      {orderDetails?.total_amount
                         ? orderDetails.total_amount.toFixed(2)
                         : 0}
                     </Text>
@@ -203,7 +204,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'from')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails.shift_from_date)).format(
+                      {moment(utcLocal(orderDetails?.shift_from_date)).format(
                         'DD-MM-YYYY',
                       )}
                     </Text>
@@ -212,7 +213,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'to')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails.shift_tp_date)).format(
+                      {moment(utcLocal(orderDetails?.shift_tp_date)).format(
                         'DD-MM-YYYY',
                       )}
                     </Text>
@@ -244,7 +245,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                 {localizationText('Common', 'vehicleRequested')}
               </Text>
               <Text style={styles.orderdetails}>
-                {orderDetails.vehicle_type}
+                {orderDetails?.vehicle_type}
               </Text>
             </View>
             <View>
