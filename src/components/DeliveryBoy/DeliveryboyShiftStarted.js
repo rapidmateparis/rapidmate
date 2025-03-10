@@ -164,7 +164,7 @@ const isNanCheck = (content) => {
 const createShiftOrder = userDetails.createShiftOrder
 const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.start_time):null
   const endCreateShiftOrder=()=>{
-    if(checkStartAction() && startTime){
+   // if(checkStartAction() && startTime){
       setLoading(true);
       updateShiftOrderStatus(
         {
@@ -174,7 +174,6 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
           "total_duration_text" : getTotalHoursForOneSlot(startTime,new Date())
         },
         successRes=>{
-
           saveUserDetails({...userDetails,createShiftOrder:null});
 
           setLoading(false);
@@ -186,10 +185,12 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
           console.log('errorRes  =====>',errorRes)
         }
       )
-    }
+   // }
 
   }
-
+  const swipeStatus=(content)=>{
+    console.log("Swipe End block----------------------->", content);
+  }
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -241,15 +242,17 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
             <SwipeButton
               onSwipeFail={() => {
                 updateSwipeStatusMessage('Incomplete swipe!');
-                setStartTimerChange(true);
+                //setStartTimerChange(true);
               }}
               onSwipeStart={() => {
-                updateSwipeStatusMessage('Swipe started!');
-                setStartTimerChange(false);
+                //updateSwipeStatusMessage('Swipe started!');
+                //setStartTimerChange(false);
+                swipeStatus("Start");
               }}
               onSwipeSuccess={() => {
-                updateSwipeStatusMessage('Request rejected');
-                endCreateShiftOrder()
+                //updateSwipeStatusMessage('Request rejected');
+                swipeStatus("End");
+                endCreateShiftOrder();
               }}
               thumbIconImageSource={StopShift}
               railBackgroundColor="#BA1A1A0A"

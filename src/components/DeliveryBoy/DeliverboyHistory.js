@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   Image,
   Switch,
 } from 'react-native';
-import {FlatList, ActivityIndicator} from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 import {
   Menu,
   MenuOptions,
@@ -19,26 +19,26 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../colors';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {useFocusEffect} from '@react-navigation/native';
+import { colors } from '../../colors';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   getDeliveryBoyViewOrdersList,
   getDeliveryBoyViewOrdersListBySearch,
   getLocations,
 } from '../../data_manager';
-import {useUserDetails} from '../commonComponent/StoreContext';
-import {useLoader} from '../../utils/loaderContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
 import moment from 'moment';
-import {localizationText, titleFormat, utcLocal} from '../../utils/common';
+import { localizationText, titleFormat, utcLocal } from '../../utils/common';
 const Tab = createMaterialTopTabNavigator();
 
-const TodayList = ({navigation, filterCriteria, searchText}) => {
+const TodayList = ({ navigation, filterCriteria, searchText }) => {
   const [index, setIndex] = useState(0);
   const [currentOrderList, setCurrentOrderList] = useState([]);
-  const {userDetails} = useUserDetails();
+  const { userDetails } = useUserDetails();
   const [locationList, setLocationList] = useState([]);
-  const {setLoading} = useLoader();
+  const { setLoading } = useLoader();
   const timeout = React.useRef(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
@@ -178,7 +178,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
   };
 
   const createShiftOrder = item => {
-    console.log('item ====>', item);
+    console.log('createShiftOrder ====>', item);
 
     return (
       <TouchableOpacity
@@ -205,17 +205,25 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         }}
         style={styles.packageDetailCard}>
         <View style={styles.packageHeader}>
-          <Image
-            style={{width: 25, height: 25}}
-            source={require('../../image/Big-Calender.png')}
-          />
-          <Text style={styles.deliveryTime}>{shift}</Text>
+          <View style={styles.packageHeader}>
+            <Image
+              style={{ width: 25, height: 25 }}
+              source={require('../../image/Big-Calender.png')}
+            />
+            <Text style={styles.deliveryTime}>{shift}</Text>
+          </View>
+
+          <View style={styles.packageHeader}>
+            <Text style={styles.esordernumber}>{item?.order_number}</Text>
+          </View>
+
         </View>
 
         <View style={styles.overViewCard}>
           <View>
             <Text style={styles.requestOverview}>
-              {item.total_days ? item.total_days : 0}
+              {/* {item.total_days ? item.total_days : 0} */}
+              1
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
           </View>
@@ -242,14 +250,14 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
           <Text style={styles.schaduleInfo}>
             {fromText}{' '}
             <Text style={styles.schaduleDateTime}>
-              {moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}
+              {moment(utcLocal(item?.slots ? item.slots[0]?.slot_date : new Date())).format('DD-MM-YYYY')}
             </Text>
           </Text>
           <View style={styles.borderShowoff} />
           <Text style={styles.schaduleInfo}>
             {toText}{' '}
             <Text style={styles.schaduleDateTime}>
-              {moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}
+              {moment(utcLocal(item?.slots ? item.slots[0]?.slot_date : new Date())).format('DD-MM-YYYY')}
             </Text>
           </Text>
         </View>
@@ -267,7 +275,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
   };
 
   const renderItem = item => (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           paddingHorizontal: 15,
@@ -311,8 +319,8 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
                 {item.item.is_show_datetime_in_title == 1
                   ? item.item.order_status === 'ORDER_PLACED'
                     ? titleFormat(
-                        item.item.schedule_date_time || item.item.order_date,
-                      )
+                      item.item.schedule_date_time || item.item.order_date,
+                    )
                     : titleFormat(item.item.updated_on)
                   : ''}
                 {/* Scheduled on{' '}
@@ -367,7 +375,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
   const renderFooter = () => {
     return (
-      <View style={{padding: 10}}>
+      <View style={{ padding: 10 }}>
         <ActivityIndicator size="small" color="#d8d8d8" />
       </View>
     );
@@ -408,11 +416,11 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
   );
 };
 
-const PastList = ({navigation, filterCriteria, searchText}) => {
+const PastList = ({ navigation, filterCriteria, searchText }) => {
   const [pastOrderList, setPastOrderList] = useState([]);
-  const {userDetails} = useUserDetails();
+  const { userDetails } = useUserDetails();
   const [locationList, setLocationList] = useState([]);
-  const {setLoading} = useLoader();
+  const { setLoading } = useLoader();
   const timeout = React.useRef(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
@@ -578,7 +586,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         style={styles.packageDetailCard}>
         <View style={styles.packageHeader}>
           <Image
-            style={{width: 25, height: 25}}
+            style={{ width: 25, height: 25 }}
             source={require('../../image/Big-Calender.png')}
           />
           <Text style={styles.deliveryTime}>{shift}</Text>
@@ -587,7 +595,8 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         <View style={styles.overViewCard}>
           <View>
             <Text style={styles.requestOverview}>
-              {item.total_days ? item.total_days : 0}
+              {/* {item.total_days ? item.total_days : 0} */}
+              1
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
           </View>
@@ -644,7 +653,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
       item?.item?.delivery_type_id,
     );
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <View
           style={{
             paddingHorizontal: 15,
@@ -687,8 +696,8 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
                   {item.item.is_show_datetime_in_title == 1
                     ? item.item.order_status === 'ORDER_PLACED'
                       ? titleFormat(
-                          item.item.schedule_date_time || item.item.order_date,
-                        )
+                        item.item.schedule_date_time || item.item.order_date,
+                      )
                       : titleFormat(item.item.updated_on)
                     : ''}
                   {/* Scheduled on{' '}
@@ -791,7 +800,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
   const renderFooter = () => {
     return (
-      <View style={{padding: 10}}>
+      <View style={{ padding: 10 }}>
         <ActivityIndicator size="small" color="#d8d8d8" />
       </View>
     );
@@ -830,7 +839,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
 const Ongoing = () => {
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <TodayList />
     </View>
   );
@@ -838,12 +847,12 @@ const Ongoing = () => {
 
 const Past = () => {
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <PastList />
     </View>
   );
 };
-const DeliveryboyHistory = ({navigation}) => {
+const DeliveryboyHistory = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [filterCriteria, setFilterCriteria] = useState('N');
   const [isEnabled, setIsEnabled] = useState(false);
@@ -860,9 +869,9 @@ const DeliveryboyHistory = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
-        style={{paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#fff'}}>
+        style={{ paddingHorizontal: 15, paddingTop: 5, backgroundColor: '#fff' }}>
         {/* Search Bar */}
         <View style={styles.header}>
           <Text style={styles.headerText}>
@@ -900,7 +909,7 @@ const DeliveryboyHistory = ({navigation}) => {
           {localizationText('Common', 'showEnterpriseOrders')}
         </Text>
         <Switch
-          trackColor={{false: '#767577', true: '#FFC72B'}}
+          trackColor={{ false: '#767577', true: '#FFC72B' }}
           thumbColor={isEnabled ? '#f4f3f4' : '#f4f3f4'}
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleSwitch}
@@ -913,9 +922,9 @@ const DeliveryboyHistory = ({navigation}) => {
         screenOptions={{
           tabBarActiveTintColor: colors.secondary,
           tabBarInactiveTintColor: colors.subText,
-          tabBarLabelStyle: {fontSize: 12, fontFamily: 'Montserrat-Regular'},
-          tabBarIndicatorStyle: {backgroundColor: colors.secondary},
-          tabBarStyle: [{display: 'flex', backgroundColor: '#fff'}],
+          tabBarLabelStyle: { fontSize: 12, fontFamily: 'Montserrat-Regular' },
+          tabBarIndicatorStyle: { backgroundColor: colors.secondary },
+          tabBarStyle: [{ display: 'flex', backgroundColor: '#fff' }],
         }}>
         <Tab.Screen name={ongoing}>
           {() => (
@@ -1001,6 +1010,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,
+  },
+  esordernumber: {
+    fontSize: 13,
+    color: colors.text,
+    fontFamily: 'Montserrat-SemiBold',
+    marginLeft: 10,
+    textAlign : 'right'
   },
   fromLocation: {
     color: colors.subText,
