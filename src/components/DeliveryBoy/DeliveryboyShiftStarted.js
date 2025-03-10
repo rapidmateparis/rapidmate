@@ -178,7 +178,7 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
           saveUserDetails({...userDetails,createShiftOrder:null});
 
           setLoading(false);
-          navigation.navigate('DeliveryboyHistory',{orderItem:orderDetails});
+          navigation.navigate('DeliveryboyMainShiftDetails',{orderItem:orderDetails});
           console.log('successRes  =====>',successRes)
         },
         errorRes=>{

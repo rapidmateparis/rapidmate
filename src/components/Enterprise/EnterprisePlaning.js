@@ -42,6 +42,7 @@ const EnterprisePlanning = ({navigation}) => {
   const {setLoading} = useLoader();
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+  const [enterpriseFetchData, setEnterpriseFetchData] = useState(false);
   const noBranches = localizationText('Common', 'noBranches') || 'No Branches';
   const noPlannings =
     localizationText('Common', 'noPlannings') || 'No Plannings';
@@ -59,6 +60,18 @@ const EnterprisePlanning = ({navigation}) => {
       getBranchesList();
     }, []),
   );
+
+  useEffect(() => {
+    console.log('enterpriseBranches', enterpriseBranches);
+    console.log('enterpriseFetchData', enterpriseFetchData);
+    if (enterpriseBranches?.length === 0 && enterpriseFetchData) {
+      Alert.alert(
+        'Action Required',
+        "Please add branches in 'Manage Company Locations' and add 'Payment Methoad' to proceed.",
+        [{text: 'OK', onPress: () => {}}],
+      );
+    }
+  }, [enterpriseFetchData, enterpriseBranches]);
 
   const getEnterprisePlans = dateString => {
     let params = {
@@ -140,6 +153,7 @@ const EnterprisePlanning = ({navigation}) => {
               //   {text: 'OK', onPress: () => {}},
               // ]);
               setEnterpriseBranches([]);
+              setEnterpriseFetchData(true);
             } else {
               var branches = [];
               for (
@@ -152,6 +166,7 @@ const EnterprisePlanning = ({navigation}) => {
                 branches.push(element);
               }
               setEnterpriseBranches(branches);
+              setEnterpriseFetchData(true);
             }
           }
         }
@@ -160,6 +175,7 @@ const EnterprisePlanning = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         setEnterpriseBranches([]);
+        setEnterpriseFetchData(true);
         // Alert.alert('Error Alert*', errorResponse[0]._errors.message, [
         //   {text: 'OK', onPress: () => {}},
         // ]);
@@ -192,7 +208,7 @@ const EnterprisePlanning = ({navigation}) => {
             </Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
-              style={styles.headerCommandeButton}
+                style={styles.headerCommandeButton}
                 onPress={() =>
                   navigation.navigate('EnterpriseScheduleNewDelivery')
                 }>

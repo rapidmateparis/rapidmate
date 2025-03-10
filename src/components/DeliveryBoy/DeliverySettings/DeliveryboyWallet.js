@@ -64,7 +64,7 @@ const DeliveryboyWallet = ({navigation}) => {
               </Text>
             </View>
             <View style={styles.actionCard}>
-              {/* <TouchableOpacity
+              <TouchableOpacity
                 style={styles.actionsBt}
                 onPress={() => {
                   navigation.navigate('WithdrawPayment');
@@ -72,13 +72,13 @@ const DeliveryboyWallet = ({navigation}) => {
                 <Text style={styles.btnText}>
                   {localizationText('NavHeaderTitles', 'withdraw')}
                 </Text>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
 
-              <TouchableOpacity style={styles.actionsBt}>
+              {/* <TouchableOpacity style={styles.actionsBt}>
                 <Text style={styles.btnText}>
                   {localizationText('Common', 'addFunds')}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </ImageBackground>

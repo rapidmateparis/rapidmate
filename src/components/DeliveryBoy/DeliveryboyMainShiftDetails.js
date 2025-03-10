@@ -15,10 +15,13 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import {localizationText} from '../../utils/common';
 
-const EnterpriseShiftDetails = ({route, navigation}) => {
+const DeliveryboyMainShiftDetails = ({route, navigation}) => {
   const params = route.params;
   const {userDetails} = useUserDetails();
   const [totalHours, setTotalHours] = useState(0);
+  const orderClosedEarned =
+    localizationText('Common', 'orderClosedEarned') ||
+    'This order is closed, you earned';
   console.log(route, '============');
   useEffect(() => {
     var hours = params?.shiftItem?.total_hours
@@ -36,30 +39,10 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
               source={require('../../image/home.png')}
             />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>{params.branchName}</Text>
+              <Text style={styles.franchiseStreet}>North Street Franchise</Text>
               <View style={styles.locationCard}>
                 <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.franchiseSubTitle}>
-                  {params.branchAddress}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.franchiseCard}>
-            <Image
-              style={styles.driverCard}
-              source={require('../../image/driver.jpeg')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>
-                {userDetails.userDetails[0].first_name}{' '}
-                {userDetails.userDetails[0].last_name}
-              </Text>
-              <View style={styles.locationCard}>
-                <Text style={styles.franchiseSubTitle}>
-                  {params.vehicleType}
-                </Text>
+                <Text style={styles.franchiseSubTitle}>North Street, ABC</Text>
               </View>
             </View>
           </View>
@@ -71,21 +54,18 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
             />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>
-                {localizationText('Common', 'started')} {params.fromTime} to{' '}
-                {params.toTime}
+                {localizationText('Common', 'started')} 11 AM to 8 PM
               </Text>
               <View>
                 <Text style={styles.franchiseSubTitle}>
                   {localizationText('Common', 'totalDuration')}:{' '}
                   <Text style={styles.boldTexts}>
-                    {totalHours} {localizationText('Common', 'hours')}
+                    12 {localizationText('Common', 'hours')}
                   </Text>
                 </Text>
                 <Text style={styles.franchiseSubTitle}>
-                  {localizationText('Common', 'totalDays')}:{' '}
-                  <Text style={styles.boldTexts}>
-                    {params.shiftItem.slots.length}
-                  </Text>
+                  {localizationText('Common', 'totalDeliveries')}:{' '}
+                  <Text style={styles.boldTexts}>12</Text>
                 </Text>
                 <Text style={styles.franchiseSubTitle}>
                   {params.vehicleType}
@@ -93,44 +73,16 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
               </View>
             </View>
           </View>
-
-          <View style={styles.invoiceCard}>
-            <View>
-              <Image source={require('../../image/order-fare.png')} />
-            </View>
-            <View style={{marginLeft: 10}}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFare}>Order fare</Text>
-                <Text style={styles.totalmoney}>€34.00</Text>
-              </View>
-
-              <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
-
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Order fare</Text>
-                <Text style={styles.value}>€30.00</Text>
-              </View>
-
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Waiting</Text>
-                <Text style={styles.value}>€03.00</Text>
-              </View>
-
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Platform fee</Text>
-                <Text style={styles.value}>€01.00</Text>
-              </View>
-
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Amount charged</Text>
-                <Text style={styles.value}>€34.00</Text>
-              </View>
-
-              <View style={styles.masterCard}>
-                <Image source={require('../../image/logos_mastercard.png')} />
-                <Text style={styles.paidWith}>Paid with mastercard</Text>
-              </View>
-            </View>
+          <View style={styles.earningCard}>
+            <Text style={styles.boyEarning}>
+              {orderClosedEarned}{' '}
+              <Text style={styles.earnedMoney}>
+                €{' '}
+                {parseFloat(route.params.orderItem.delivery_boy_amount).toFixed(
+                  2,
+                )}
+              </Text>
+            </Text>
           </View>
         </View>
       </View>
@@ -414,6 +366,23 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginVertical: 5,
   },
+  boyEarning: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
+    color: colors.text,
+  },
+  earnedMoney: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: colors.secondary,
+  },
+  earningCard: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    marginVertical: 10,
+    padding: 13,
+  },
 });
 
-export default EnterpriseShiftDetails;
+export default DeliveryboyMainShiftDetails;

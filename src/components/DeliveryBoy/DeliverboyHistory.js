@@ -557,7 +557,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         onPress={() => {
           console.log('delivery_type_id ====>', item);
           if (item?.delivery_type_id === 3) {
-            navigation.navigate('DeliveryboyShiftDetails', {
+            navigation.navigate('DeliveryboyMainShiftDetails', {
               orderItem: item,
             });
           } else if (

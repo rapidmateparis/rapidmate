@@ -164,6 +164,7 @@
     "shift": "Shift",
     "totalDays": "Total days",
     "totalHours": "Total hours",
+    "totalDeliveries": "Total Deliveries",
     "aproxEarning": "Aprox earning",
     "for": "For",
     "noOrdersDescription": "If there is any active order, it will be shown here..",
