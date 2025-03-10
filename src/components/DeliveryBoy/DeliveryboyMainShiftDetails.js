@@ -78,11 +78,20 @@ const DeliveryboyMainShiftDetails = ({route, navigation}) => {
               {orderClosedEarned}{' '}
               <Text style={styles.earnedMoney}>
                 €{' '}
-                {parseFloat(route.params.orderItem.delivery_boy_amount).toFixed(
+                {parseFloat(route.params?.orderItem?.delivery_boy_amount || 0).toFixed(
                   2,
                 )}
               </Text>
             </Text>
+          </View>
+          <View style={styles.earningCard}>
+             <TouchableOpacity
+                  onPress={() => navigation.navigate('DeliveryboyHistory', {
+                    orderItem: route.params?.orderItem,
+                  })}
+                  style={styles.nextBt}>
+                  <Text style={styles.btnText}>View Orders</Text>
+              </TouchableOpacity>
           </View>
         </View>
       </View>

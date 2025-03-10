@@ -613,7 +613,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 <Text style={styles.earnedMoney}>
                   €{' '}
                   {parseFloat(
-                    route.params.orderItem.delivery_boy_amount,
+                    route.params.orderItem?.delivery_boy_amount || 0,
                   ).toFixed(2)}
                 </Text>
               </Text>

@@ -170,7 +170,8 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
               <View style={styles.overViewCard}>
                 <View>
                   <Text style={styles.requestOverview}>
-                    {orderDetails?.total_days ? orderDetails.total_days : 0}
+                    {/* {orderDetails?.total_days ? orderDetails.total_days : 0} */}
+                    1
                   </Text>
                   <Text style={styles.requestOverviewInfo}>
                     {localizationText('Common', 'totalDays')}
@@ -208,7 +209,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'from')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails?.shift_from_date)).format(
+                      {moment(utcLocal(orderDetails?.slots?orderDetails.slots[0].slot_date:new Date())).format(
                         'DD-MM-YYYY',
                       )}
                     </Text>
@@ -217,9 +218,26 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'to')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails?.shift_tp_date)).format(
+                      {moment(utcLocal(orderDetails?.slots?orderDetails.slots[0].slot_date:new Date())).format(
                         'DD-MM-YYYY',
                       )}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+              <View>
+                <View style={styles.scheduleDateTimeCard}>
+                  <Text style={styles.schaduleInfo}>
+                    {localizationText('Common', 'from')}{' '}
+                    <Text style={styles.schaduleDateTime}>
+                      {orderDetails?.slots?orderDetails.slots[0].from_time:""}
+                    </Text>
+                  </Text>
+                  <View style={styles.borderShowoff} />
+                  <Text style={styles.schaduleInfo}>
+                    {localizationText('Common', 'to')}{' '}
+                    <Text style={styles.schaduleDateTime}>
+                      {orderDetails?.slots?orderDetails.slots[0].to_time:""}
                     </Text>
                   </Text>
                 </View>
