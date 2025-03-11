@@ -427,6 +427,7 @@
     "couldntFindDriver": "Impossible de trouver le pilote",
     "couldntFindDriverDescription": "No drivers available in your area for now, please try again later",
     "shiftDetailsSwipeDescription": "Si vous êtes sur le site de l'entreprise et prêt(e) à commencer le travail, veuillez cliquer ci-dessous !",
+    "shiftSwipeEndDescription": "Si vous avez terminé votre service aujourd'hui, veuillez glisser ci-dessous pour mettre fin à votre service.",
     "createNewDelivery": "Créer une nouvelle livraison",
     "createNewDeliveryDescription": "Programmation d'une heure ou de plusieurs heures",
     "oneTimeDelivery": "Livraison unique",

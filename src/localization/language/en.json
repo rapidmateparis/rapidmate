@@ -427,6 +427,7 @@
     "couldntFindDriver": "Couldn’t find driver",
     "couldntFindDriverDescription": "No drivers available in your area for now, please try again later",
     "shiftDetailsSwipeDescription": "If you are at company’s location and ready to start the shift, please swipe below!",
+    "shiftSwipeEndDescription": "If you are done with your shift today, please swipe below to end the shift",
     "createNewDelivery": "Create New Delivery",
     "createNewDeliveryDescription": "Schedule for one time or for multiple hours",
     "oneTimeDelivery": "One time delivery",

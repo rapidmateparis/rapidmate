@@ -237,7 +237,7 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
         <SafeAreaView>
           <View style={styles.container}>
             <Text style={styles.swipeInfo}>
-              {shiftElapsedTime}
+              {localizationText('Main', 'shiftSwipeEndDescription')}
             </Text>
             <SwipeButton
               onSwipeFail={() => {
@@ -265,7 +265,7 @@ const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.star
               thumbIconWidth={50}
               title={
                 <View style={styles.swipeTitleComp}>
-                  <Text>{swipeToEndShift}</Text>
+                  <Text style={{color: colors.text}}>{swipeToEndShift}</Text>
                   <AntDesign
                     name="doubleright"
                     size={18}

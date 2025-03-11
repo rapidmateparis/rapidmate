@@ -86,11 +86,11 @@ const DeliveryboyMainShiftDetails = ({route, navigation}) => {
           </View>
           <View style={styles.earningCard}>
              <TouchableOpacity
-                  onPress={() => navigation.navigate('DeliveryboyHistory', {
+                  onPress={() => navigation.navigate('DeliveryboyBottomNav', {
                     orderItem: route.params?.orderItem,
                   })}
                   style={styles.nextBt}>
-                  <Text style={styles.btnText}>View Orders</Text>
+                  <Text style={styles.btnText}>Go Home</Text>
               </TouchableOpacity>
           </View>
         </View>
