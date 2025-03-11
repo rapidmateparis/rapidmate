@@ -213,7 +213,7 @@ const TodayList = ({ navigation, filterCriteria, searchText }) => {
             <Text style={styles.deliveryTime}>{shift}</Text>
           </View>
 
-          <View style={styles.packageHeader}>
+          <View style={styles.packageShiftOrderIdCard}>
             <Text style={styles.esordernumber}>{item?.order_number}</Text>
           </View>
 
@@ -585,11 +585,16 @@ const PastList = ({ navigation, filterCriteria, searchText }) => {
         }}
         style={styles.packageDetailCard}>
         <View style={styles.packageHeader}>
-          <Image
+           <View style={styles.packageHeader}>
+             <Image
             style={{ width: 25, height: 25 }}
             source={require('../../image/Big-Calender.png')}
-          />
-          <Text style={styles.deliveryTime}>{shift}</Text>
+             />
+            <Text style={styles.deliveryTime}>{shift}</Text>
+           </View>
+          <View style={styles.packageShiftOrderIdCard}>
+            <Text style={styles.esordernumber}>{item?.order_number}</Text>
+          </View>
         </View>
 
         <View style={styles.overViewCard}>
@@ -1013,10 +1018,8 @@ const styles = StyleSheet.create({
   },
   esordernumber: {
     fontSize: 13,
-    color: colors.text,
+    color: colors.secondary,
     fontFamily: 'Montserrat-SemiBold',
-    marginLeft: 10,
-    textAlign : 'right'
   },
   fromLocation: {
     color: colors.subText,
@@ -1151,6 +1154,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
+  },
+  packageShiftOrderIdCard: {
+    marginLeft: 'auto',
   },
 });
 
