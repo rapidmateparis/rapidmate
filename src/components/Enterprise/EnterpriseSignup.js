@@ -314,7 +314,7 @@ const EnterpriseSignup = ({navigation}) => {
           </View>
           <Image
             style={{width: 45, height: 45}}
-            source={require('../../image/home.png')}
+            source={require('../../image/Enterprise-Bulding.png')}
           />
         </View>
         <View style={styles.logFormView}>
