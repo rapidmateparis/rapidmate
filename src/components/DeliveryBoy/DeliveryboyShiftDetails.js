@@ -23,6 +23,14 @@ import {localizationText, utcLocal} from '../../utils/common';
 import moment from 'moment';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import BicycleImage from '../../image/Cycle-Icon.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Icon.png';
+import PartnerImage from '../../image/Partner-icon.png';
+import VanImage from '../../image/Van-Icon.png';
+import PickupImage from '../../image/Pickup-Icon.png';
+import TruckImage from '../../image/Truck-Icon.png';
+import BigTruckImage from '../../image/Big-Package.png';
 
 const DeliveryboyShiftDetails = ({navigation, route}) => {
   const defaultStatusMessage = 'Swipe to accept the request';
@@ -106,12 +114,33 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
     }
   }, []);
 
-  const openGoogleMaps = (address) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  const openGoogleMaps = address => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      address,
+    )}`;
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
   };
 
-  console.log('checkStartAction  =====>', orderDetails);
+  const getVechicleImage = vehicleTypeId => {
+    switch (vehicleTypeId) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return VanImage;
+      case 6:
+        return PickupImage;
+      case 7:
+        return TruckImage;
+      default:
+        return BigTruckImage;
+    }
+  };
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -125,21 +154,24 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                 {localizationText('Common', 'companyInformation')}
               </Text>
               <TouchableOpacity
-                onPress={() => openGoogleMaps(orderDetails?.address ? orderDetails.address : '-')}>
-                <Image style={styles.startIcon} source={require('../../image/Start-Icon.png')} />
+                onPress={() =>
+                  openGoogleMaps(
+                    orderDetails?.address ? orderDetails.address : '-',
+                  )
+                }>
+                <Image
+                  style={styles.startIcon}
+                  source={require('../../image/Start-Icon.png')}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
                 <Text style={styles.companyInfo}>
-                  {orderDetails?.branch_name
-                    ? orderDetails?.branch_name
-                    : '-'}
+                  {orderDetails?.branch_name ? orderDetails?.branch_name : '-'}
                 </Text>
                 <Text style={styles.dropInfo}>
-                  {orderDetails?.address
-                    ? orderDetails.address
-                    : '-'}
+                  {orderDetails?.address ? orderDetails.address : '-'}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
@@ -209,18 +241,26 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'from')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails?.slots?orderDetails.slots[0].slot_date:new Date())).format(
-                        'DD-MM-YYYY',
-                      )}
+                      {moment(
+                        utcLocal(
+                          orderDetails?.slots
+                            ? orderDetails.slots[0].slot_date
+                            : new Date(),
+                        ),
+                      ).format('DD-MM-YYYY')}
                     </Text>
                   </Text>
                   <View style={styles.borderShowoff} />
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'to')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails?.slots?orderDetails.slots[0].slot_date:new Date())).format(
-                        'DD-MM-YYYY',
-                      )}
+                      {moment(
+                        utcLocal(
+                          orderDetails?.slots
+                            ? orderDetails.slots[0].slot_date
+                            : new Date(),
+                        ),
+                      ).format('DD-MM-YYYY')}
                     </Text>
                   </Text>
                 </View>
@@ -230,14 +270,16 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'from')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {orderDetails?.slots?orderDetails.slots[0].from_time:""}
+                      {orderDetails?.slots
+                        ? orderDetails.slots[0].from_time
+                        : ''}
                     </Text>
                   </Text>
                   <View style={styles.borderShowoff} />
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'to')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {orderDetails?.slots?orderDetails.slots[0].to_time:""}
+                      {orderDetails?.slots ? orderDetails.slots[0].to_time : ''}
                     </Text>
                   </Text>
                 </View>
@@ -272,8 +314,8 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
             </View>
             <View>
               <Image
-                style={{width: 45, height: 30}}
-                source={require('../../image/Delivery-PickupTruck-Icon.png')}
+                style={{width: 55, height: 45, resizeMode: 'contain'}}
+                source={getVechicleImage(route.params.orderItem.vehicle_type_id)}
               />
             </View>
           </View>
