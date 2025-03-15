@@ -128,7 +128,7 @@ const EnterpriseShiftRequestNewDelivery = ({route, navigation}) => {
 
   return (
     <ScrollView>
-      <View style={{height: 500, position: 'relative'}}>
+      <View style={{height: 600, position: 'relative'}}>
         <MapAddress
           onFetchDistanceAndTime={onFetchDistanceAndTime}
           onSourceLocation={onSourceLocation}
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.primary,
     paddingHorizontal: 20,
-    paddingTop: 15,
-    paddingBottom: 15,
+    paddingTop: 25,
+    paddingBottom: 25,
     marginBottom: 10,
   },
 });
