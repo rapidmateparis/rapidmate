@@ -14,6 +14,7 @@ import {colors} from '../../colors';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import {localizationText} from '../../utils/common';
+import AssignDelivery from '../../image/AssignDelivery.png';
 
 const EnterpriseShiftDetails = ({route, navigation}) => {
   const params = route.params;
@@ -46,20 +47,32 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
             </View>
           </View>
 
-          <View style={styles.franchiseCard}>
-            <Image
-              style={styles.driverCard}
-              source={require('../../image/driver.jpeg')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>
-                {userDetails.userDetails[0].first_name}{' '}
-                {userDetails.userDetails[0].last_name}
-              </Text>
-              <View style={styles.locationCard}>
-                <Text style={styles.franchiseSubTitle}>
-                  {params.vehicleType}
-                </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={styles.franchiseCard}>
+              <Image
+                style={styles.driverCard}
+                source={require('../../image/driver.jpeg')}
+              />
+              <View style={styles.driverHeaderMainCard}>
+                <View>
+                  <Text style={styles.franchiseStreet}>
+                    {userDetails.userDetails[0].first_name}{' '}
+                    {userDetails.userDetails[0].last_name}
+                  </Text>
+                  <View style={styles.locationCard}>
+                    <Text style={styles.franchiseSubTitle}>
+                      {params.vehicleType}
+                    </Text>
+                  </View>
+                </View>
+                <View style={{marginLeft: 'auto'}}>
+                  <TouchableOpacity onPress={() => navigation.navigate('EnterpriseShiftDeliveryboyAssigned')}>
+                    <Image
+                      style={{width: 120, height: 20}}
+                      source={AssignDelivery}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
@@ -272,6 +285,11 @@ const styles = StyleSheet.create({
     width: '87%',
     marginLeft: 10,
   },
+  driverHeaderMainCard: {
+    flexDirection: 'row',
+    width: '87%',
+    marginLeft: 10,
+  },
   franchiseStreet: {
     fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
@@ -345,7 +363,6 @@ const styles = StyleSheet.create({
   },
   locationCard: {
     flexDirection: 'row',
-    marginVertical: 5,
   },
   driverCard: {
     width: 35,

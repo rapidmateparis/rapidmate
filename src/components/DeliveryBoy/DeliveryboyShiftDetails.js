@@ -212,9 +212,8 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
 
                 <View>
                   <Text style={styles.requestOverview}>
-                    {orderDetails?.total_hours
-                      ? orderDetails.total_hours.toFixed(2)
-                      : 0}
+                  {orderDetails?.slots ? orderDetails.slots[0]?.total_hours.toFixed(2) : 0}
+
                   </Text>
                   <Text style={styles.requestOverviewInfo}>
                     {localizationText('Common', 'totalHours')}
@@ -225,9 +224,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.requestOverview}>
                     €
                     <Text>
-                      {orderDetails?.total_amount
-                        ? orderDetails.total_amount.toFixed(2)
-                        : 0}
+                    {orderDetails?.slots ? orderDetails.slots[0]?.total_amount.toFixed(2) : 0}
                     </Text>
                   </Text>
                   <Text style={styles.requestOverviewInfo}>
@@ -268,7 +265,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
               <View>
                 <View style={styles.scheduleDateTimeCard}>
                   <Text style={styles.schaduleInfo}>
-                    {localizationText('Common', 'from')}{' '}
+                    {localizationText('Common', 'fromTime')}{' '}
                     <Text style={styles.schaduleDateTime}>
                       {orderDetails?.slots
                         ? orderDetails.slots[0].from_time
@@ -277,7 +274,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   </Text>
                   <View style={styles.borderShowoff} />
                   <Text style={styles.schaduleInfo}>
-                    {localizationText('Common', 'to')}{' '}
+                    {localizationText('Common', 'toTime')}{' '}
                     <Text style={styles.schaduleDateTime}>
                       {orderDetails?.slots ? orderDetails.slots[0].to_time : ''}
                     </Text>
