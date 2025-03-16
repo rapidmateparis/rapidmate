@@ -33,6 +33,7 @@ import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 import {debounce} from 'lodash';
 import {localizationText, localToUTC} from '../../utils/common';
+import moment from 'moment';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -242,7 +243,7 @@ const PickupPayment = ({route, navigation}) => {
       console.log('params.schedule_date_time', params.schedule_date_time);
       if (params.serviceTypeId == 1) {
         var scheduleParam = {
-          schedule_date_time: localToUTC(params.schedule_date_time),
+          schedule_date_time: localToUTC(moment(params.schedule_date_time, 'YYYY-MM-DD hh:mm A').toDate()),
         };
       }
       let requestParams = {
