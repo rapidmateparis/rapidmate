@@ -141,6 +141,25 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
         return BigTruckImage;
     }
   };
+
+  const handleCallPress = () => {
+    const phoneNumber = orderDetails?.enterpirse_mobile;
+    if (phoneNumber) {
+      Linking.openURL(`tel:${phoneNumber}`);
+    } else {
+      Alert.alert('Error', 'Phone number not available');
+    }
+  };
+
+  const handleChatPress = () => {
+    const phoneNumber = orderDetails?.enterpirse_mobile;
+    if (phoneNumber) {
+      Linking.openURL(`sms:${phoneNumber}`);
+    } else {
+      Alert.alert('Error', 'Phone number not available');
+    }
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -175,10 +194,10 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
-                <TouchableOpacity style={{marginRight: 10}}>
+                <TouchableOpacity style={{marginRight: 10}} onPress={handleChatPress}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleCallPress}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -224,7 +243,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.requestOverview}>
                     €
                     <Text>
-                    {orderDetails?.slots ? orderDetails.slots[0]?.total_amount.toFixed(2) : 0}
+                    {orderDetails?.slots ? orderDetails.slots[0]?.delivery_boy_amount.toFixed(2) : 0}
                     </Text>
                   </Text>
                   <Text style={styles.requestOverviewInfo}>

@@ -89,8 +89,7 @@ const DeliveryboyMainShiftDetails = ({route, navigation}) => {
                   {localizationText('Common', 'totalDuration')}:{' '}
                   <Text style={styles.boldTexts}>
                     {orderDetails?.slots
-                      ? orderDetails.slots[0].total_hours
-                      : ''}{' '}
+                      ? orderDetails.slots[0].total_hours.toFixed(2) : 0}{' '}
                     {localizationText('Common', 'hours')}
                   </Text>
                 </Text>
@@ -124,7 +123,7 @@ const DeliveryboyMainShiftDetails = ({route, navigation}) => {
               {orderClosedEarned}{' '}
               <Text style={styles.earnedMoney}>
                 €{' '}
-                {orderDetails?.slots ? orderDetails.slots[0]?.total_amount.toFixed(2) : 0}
+                {orderDetails?.slots ? orderDetails.slots[0]?.delivery_boy_amount.toFixed(2) : 0}
               </Text>
             </Text>
           </View>

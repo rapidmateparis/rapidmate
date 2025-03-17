@@ -133,6 +133,8 @@ const getLocationAddressByOrder = (address, city, state, country) => {
     );
   };
 
+  console.log("first",deliveryBoyAcceptRejectMessage);
+
 
 
   const createShiftOrder=(item)=>{
@@ -151,7 +153,7 @@ const getLocationAddressByOrder = (address, city, state, country) => {
 
           <View style={styles.overViewCard}>
             <View>
-              <Text style={styles.requestOverview}>{deliveryBoyAcceptRejectMessage?.order.total_days ?deliveryBoyAcceptRejectMessage?.order.total_days :0}</Text>
+              <Text style={styles.requestOverview}>1</Text>
               <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
             </View>
 
@@ -170,11 +172,11 @@ const getLocationAddressByOrder = (address, city, state, country) => {
 
           <View style={styles.scheduleDateTimeCard}>
             <Text style={styles.schaduleInfo}>
-              {fromText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.shift_from_date)).format('DD-MM-YYYY')}</Text>
+              {fromText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.slot_date)).format('DD-MM-YYYY')}</Text>
             </Text>
             <View style={styles.borderShowoff} />
             <Text style={styles.schaduleInfo}>
-              {toText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.shift_tp_date)).format('DD-MM-YYYY')}</Text>
+              {toText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.slot_date)).format('DD-MM-YYYY')}</Text>
             </Text>
           </View>
 
