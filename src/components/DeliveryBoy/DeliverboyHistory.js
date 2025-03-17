@@ -618,7 +618,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.requestOverview}>
               €
               <Text>
-                {item?.slots ? item.slots[0]?.total_amount.toFixed(2) : 0}
+                {item?.slots ? item.slots[0]?.delivery_boy_amount.toFixed(2) : 0}
               </Text>
             </Text>
             <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
