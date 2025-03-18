@@ -373,11 +373,16 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
                 navigation.navigate('EnterpriseShiftDetails', {...props});
               }}>
               <View style={styles.packageHeader}>
-                <Image
-                  style={{width: 25, height: 25}}
-                  source={require('../../image/Big-Calender.png')}
-                />
-                <Text style={styles.deliveryTime}>{shift}</Text>
+                <View style={styles.packageHeader}>
+                  <Image
+                    style={{width: 25, height: 25}}
+                    source={require('../../image/Big-Calender.png')}
+                  />
+                  <Text style={styles.deliveryTime}>{shift}</Text>
+                </View>
+                <View style={styles.packageShiftOrderIdCard}>
+                  <Text style={styles.esordernumber}>{item?.order_number}</Text>
+                </View>
               </View>
 
               <View style={styles.overViewCard}>
@@ -428,9 +433,8 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
 
               <View style={styles.footerCard}>
                 <Text style={styles.orderId}>
-                  {forText} {item?.company_name ? item?.company_name : '-'}
+                  {forText} : {getBranchName(item.branch_id)}
                 </Text>
-                {/* <Text style={styles.valueMoney}>€34.00</Text> */}
               </View>
             </TouchableOpacity>
           </View>
@@ -771,7 +775,7 @@ function EnterpriseHistory({navigation}) {
   };
 
   const onOneTimeActive = () => {
-    console.log("onOneTimeActive - Tab - Loader");
+    console.log('onOneTimeActive - Tab - Loader');
     setSearchText('');
     let params = {
       tab_id: 1,
@@ -1132,6 +1136,14 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     width: 20,
     marginHorizontal: 5,
+  },
+  esordernumber: {
+    fontSize: 13,
+    color: colors.secondary,
+    fontFamily: 'Montserrat-SemiBold',
+  },
+  packageShiftOrderIdCard: {
+    marginLeft: 'auto',
   },
 });
 

@@ -458,7 +458,7 @@ const PickupPayment = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
-              {localizationText('Common', 'discount')} {offerDiscount}%
+              {localizationText('Common', 'discount')} {offerDiscount}
             </Text>
             <Text style={styles.totalAmount}>
               € {getDiscountAmount(params.selectedVehiclePrice)}
@@ -466,7 +466,7 @@ const PickupPayment = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
-              Tax {vechicleTax}%
+              Tax
             </Text>
             <Text style={styles.totalAmount}>
               € {getTaxAmount(params.selectedVehiclePrice)}

@@ -49,8 +49,6 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const {saveLookupData, lookupData} = useLookupData();
 
-  console.log('lookupData ====>', lookupData);
-
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);

@@ -20,8 +20,12 @@ import GoogleMapScreen from '../commonComponent/MapAddress';
 import {colors} from '../../colors';
 import {getLocations} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import {usePlacedOrderDetails, useUserDetails} from '../commonComponent/StoreContext';
+import {
+  usePlacedOrderDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
 import {localizationText} from '../../utils/common';
+import {API} from '../../utils/constant';
 
 const {height: screenHeight} = Dimensions.get('window');
 const EnterpriseOrderPickup = ({navigation, route}) => {
@@ -43,14 +47,12 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   const driverDetails = params?.driverDetails || {};
 
   const orderId = driverDetails.order.order_number;
- 
+
   const [deliveredOtp, setDeliveredOtp] = useState(
     driverDetails.order.delivered_otp,
   );
 
-  const [otp, setOtp] = useState(
-    driverDetails.order.otp,
-  );
+  const [otp, setOtp] = useState(driverDetails.order.otp);
 
   const [currentPosition, setCurrentPosition] = useState(0);
 
@@ -90,10 +92,9 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    console.log('progressTypeId ====>', userDetails.progressTypeId);
-    console.log('delivered_otp ====>', userDetails.delivered_otp);
-    console.log('delivered_otp ====>', userDetails.otp);
-    userDetails.progressTypeId && setCurrentPosition(userDetails.progressTypeId);
+    console.log('progressTypeId ====>', driverDetails.deliveryBoy);
+    userDetails.progressTypeId &&
+      setCurrentPosition(userDetails.progressTypeId);
     userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);
     userDetails.otp && setOtp(userDetails.otp);
   }, [userDetails.progressTypeId, userDetails.otp, userDetails.delivered_otp]);
@@ -304,26 +305,20 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
               <View style={{position: 'relative'}}>
                 <Image
                   style={{width: 50, height: 50, borderRadius: 30}}
-                  source={require('../../image/driver.jpeg')}
-                />
-                {/* <Image
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 30,
-                    height: 30,
-                    width: 30,
-                    borderRadius: 30,
+                  source={{
+                    uri:
+                      API.viewImageUrl + driverDetails.deliveryBoy.profile_pic,
                   }}
-                  source={require('../../image/Drivers-Truck.jpg')}
-                /> */}
+                />
               </View>
               <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>
-                  {driverDetails.deliveryBoy.first_name}
+                  {driverDetails.deliveryBoy.first_name} {''}
                   {driverDetails.deliveryBoy.last_name}
                 </Text>
-                <Text style={styles.truckName}>{}</Text>
+                <Text style={styles.truckName}>
+                  {driverDetails?.vehicle?.plat_no}
+                </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
