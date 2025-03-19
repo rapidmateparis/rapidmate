@@ -13,14 +13,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
-import {localizationText} from '../../utils/common';
+import {localizationText, utcLocal} from '../../utils/common';
 import AssignDelivery from '../../image/AssignDelivery.png';
 
 const EnterpriseShiftDetails = ({route, navigation}) => {
   const params = route.params;
   const {userDetails} = useUserDetails();
   const [totalHours, setTotalHours] = useState(0);
-  console.log(route, '============');
+  console.log('first_name', params);
   useEffect(() => {
     var hours = params?.shiftItem?.total_hours
       ? params?.shiftItem?.total_hours.toFixed(2)
@@ -56,8 +56,8 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
               <View style={styles.driverHeaderMainCard}>
                 <View>
                   <Text style={styles.franchiseStreet}>
-                    {userDetails.userDetails[0].first_name}{' '}
-                    {userDetails.userDetails[0].last_name}
+                    Jhon{' '}
+                    Dou
                   </Text>
                   <View style={styles.locationCard}>
                     <Text style={styles.franchiseSubTitle}>
@@ -66,7 +66,10 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                   </View>
                 </View>
                 <View style={{marginLeft: 'auto'}}>
-                  <TouchableOpacity onPress={() => navigation.navigate('EnterpriseShiftDeliveryboyAssigned')}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('EnterpriseShiftDeliveryboyAssigned')
+                    }>
                     <Image
                       style={{width: 120, height: 20}}
                       source={AssignDelivery}
@@ -89,6 +92,26 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
               </Text>
               <View>
                 <Text style={styles.franchiseSubTitle}>
+                  {localizationText('Common', 'from')}{' '}
+                  <Text style={styles.boldTexts}>
+                    {moment(
+                      utcLocal(
+                        params?.shiftItem ? params.shiftItem?.shift_from_date : new Date(),
+                      ),
+                    ).format('DD-MM-YYYY')}
+                  </Text>
+                </Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {localizationText('Common', 'to')}{' '}
+                  <Text style={styles.boldTexts}>
+                    {moment(
+                      utcLocal(
+                        params?.shiftItem ? params.shiftItem?.shift_tp_date : new Date(),
+                      ),
+                    ).format('DD-MM-YYYY')}
+                  </Text>
+                </Text>
+                <Text style={styles.franchiseSubTitle}>
                   {localizationText('Common', 'totalDuration')}:{' '}
                   <Text style={styles.boldTexts}>
                     {totalHours} {localizationText('Common', 'hours')}
@@ -101,7 +124,10 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                   </Text>
                 </Text>
                 <Text style={styles.franchiseSubTitle}>
+                  Requested Vehicle:{' '}
+                  <Text style={styles.boldTexts}>
                   {params.vehicleType}
+                  </Text>
                 </Text>
               </View>
             </View>
@@ -113,30 +139,37 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
             </View>
             <View style={{marginLeft: 10}}>
               <View style={styles.cardHeader}>
-                <Text style={styles.orderFare}>Order fare</Text>
-                <Text style={styles.totalmoney}>€34.00</Text>
+                <Text style={styles.orderFare}>Total Order fare</Text>
+                <Text style={styles.totalmoney}>
+                  €{params.shiftItem.total_amount}
+                </Text>
               </View>
-
-              <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Order fare</Text>
-                <Text style={styles.value}>€30.00</Text>
+                <Text style={styles.value}>€00.00</Text>
               </View>
 
               <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Waiting</Text>
-                <Text style={styles.value}>€03.00</Text>
+                <Text style={styles.orderFareValue}>Tax</Text>
+                <Text style={styles.value}>€00.00</Text>
               </View>
 
               <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Platform fee</Text>
-                <Text style={styles.value}>€01.00</Text>
+                <Text style={styles.orderFareValue}>Promo</Text>
+                <Text style={styles.value}>€00.00</Text>
+              </View>
+
+              <View style={styles.cardHeader}>
+                <Text style={styles.orderFareValue}>Discount</Text>
+                <Text style={styles.value}>€00.00</Text>
               </View>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Amount charged</Text>
-                <Text style={styles.value}>€34.00</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.total_amount}
+                </Text>
               </View>
 
               <View style={styles.masterCard}>
@@ -390,6 +423,7 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between', // Add this line
   },
   orderFare: {
