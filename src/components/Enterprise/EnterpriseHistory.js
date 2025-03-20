@@ -671,28 +671,32 @@ function EnterpriseHistory({navigation}) {
   }, []);
 
   const getVehicleTypes = () => {
+    setLoading(true)
     getAllVehicleTypes(
       null,
       successResponse => {
         if (successResponse[0]._success) {
-          setLoading(false);
+          // setLoading(false);
           setVehicleTypeList(successResponse[0]._response);
         }
+        setLoading(false);
       },
       errorResponse => {
-        setLoading(false);
+        // setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
+         setLoading(false);
       },
     );
   };
 
   const getBranchesList = () => {
+    setLoading(true);
     getEnterpriseBranch(
       userDetails.userDetails[0].ext_id,
       successResponse => {
-        setLoading(false);
+        // setLoading(false);
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
@@ -714,6 +718,7 @@ function EnterpriseHistory({navigation}) {
             }
           }
         }
+        setLoading(false);
       },
       errorResponse => {
         console.log('errorResponse', errorResponse[0]._errors.message);
@@ -721,6 +726,7 @@ function EnterpriseHistory({navigation}) {
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
+        setLoading(false);
       },
     );
   };
@@ -743,6 +749,7 @@ function EnterpriseHistory({navigation}) {
         if (errorResponse[0]._errors.message) {
           setLocationList([]);
         }
+        setLoading(false);
       },
     );
   };
@@ -754,7 +761,7 @@ function EnterpriseHistory({navigation}) {
       params,
       successResponse => {
         console.log('one time responce ===>', JSON.stringify(successResponse));
-        setLoading(false);
+        // setLoading(false);
         if (successResponse[0]._success) {
           if (params.tab_id == 2) {
             setEnterpriseOrderList(
@@ -766,10 +773,12 @@ function EnterpriseHistory({navigation}) {
             setEnterpriseOrderList(successResponse[0]._response);
           }
         }
+        setLoading(false)
       },
       errorResponse => {
-        setLoading(false);
+       
         setEnterpriseOrderList([]);
+        setLoading(false);
       },
     );
   };
