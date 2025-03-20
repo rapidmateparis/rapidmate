@@ -57,15 +57,6 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
               });
             },
             errorResponse => {
-              console.log(
-                'successResponseerrorReq <========>',
-                JSON.stringify(params),
-              );
-              console.log(
-                'successResponseerrorResponse <========>',
-                JSON.stringify(errorResponse),
-              );
-
               timeout.current = setTimeout(() => {
                 updateReTryCount(reTryCount + 1);
                 if (reTryCount === 5) {
