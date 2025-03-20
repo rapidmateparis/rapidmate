@@ -228,7 +228,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
           <View>
             <Text style={styles.requestOverview}>
-              {item?.slots ? item.slots[0]?.total_hours.toFixed(2) : 0}
+              {item?.slots ? Number(item.slots[0]?.total_hours).toFixed(2) : 0}
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
           </View>
@@ -237,7 +237,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.requestOverview}>
               €
               <Text>
-                {item?.slots ? item.slots[0]?.total_amount.toFixed(2) : 0}
+                {item?.slots ? Number(item.slots[0]?.total_amount).toFixed(2) : 0}
               </Text>
             </Text>
             <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
@@ -609,7 +609,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
           <View>
             <Text style={styles.requestOverview}>
-              {item?.slots ? item.slots[0]?.total_hours.toFixed(2) : 0}
+              {item?.slots ? Number(item.slots[0]?.total_hours).toFixed(2) : 0}
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
           </View>
@@ -618,7 +618,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.requestOverview}>
               €
               <Text>
-                {item?.slots ? item.slots[0]?.delivery_boy_amount.toFixed(2) : 0}
+                {item?.slots ? Number(item.slots[0]?.delivery_boy_amount).toFixed(2) : 0}
               </Text>
             </Text>
             <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
