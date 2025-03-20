@@ -17,6 +17,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {updateUserProfile} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import { localizationText } from '../../../utils/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EnterpriseManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -47,7 +48,7 @@ const EnterpriseManageProfile = ({navigation}) => {
   useEffect(() => {
     console.log('userDetails.userDetails[0]', userDetails.userDetails[0]);
     setCompany(userDetails.userDetails[0].company_name);
-    setNumber(userDetails.userDetails[0].phone.substring(3));
+    setNumber(userDetails.userDetails[0].phone);
     setEmail(userDetails.userDetails[0].email);
     setUserName(
       userDetails.userDetails[0].first_name +
@@ -59,7 +60,9 @@ const EnterpriseManageProfile = ({navigation}) => {
       setDeliveryCount(userDetails.userDetails[0].deliveryMonthHours);
     }
   }, [userDetails]);
-
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
   const updateProfile = () => {
     if (number.length < 9) {
       Alert.alert('Invalid Number', 'Phone number must be at least 9 digits long.');
@@ -71,7 +74,8 @@ const EnterpriseManageProfile = ({navigation}) => {
       ext_id: userDetails.userDetails[0].ext_id,
       company_name: company,
       first_name: userName.split(' ')[0],
-      phone: '+33' + number,
+      phone: number,
+      phoneCode: dropdownValue,
       industry_type_id: dropdownIndustryValue,
     };
   
@@ -88,23 +92,17 @@ const EnterpriseManageProfile = ({navigation}) => {
       profileParams,
       successResponse => {
         setLoading(false);
-        console.log('updateUserProfile success', '' + successResponse);
-        saveUserDetails({
-          userInfo: userDetails.userInfo,
-          userDetails: [
-            {
-              ...userDetails.userDetails[0],
-              company_name: profileParams.company_name,
-              first_name: profileParams.first_name,
-              phone: profileParams.phone,
-              industry_type_id: profileParams.industry_type_id,
-              last_name: profileParams.last_name ? profileParams.last_name : '',
-              deliveryMonthHours: profileParams.deliveryMonthHours
-                ? profileParams.deliveryMonthHours
-                : '',
-            },
-          ],
-        });
+        const newUserDetails = userDetails.userDetails[0];
+        newUserDetails['company_name'] = profileParams.company_name;
+        newUserDetails['first_name'] = profileParams.first_name;
+        newUserDetails['last_name'] = profileParams.last_name ? profileParams.last_name : '';
+        newUserDetails['phone'] = profileParams.phone;
+        newUserDetails['industry_type_id'] = profileParams.industry_type_id;
+        newUserDetails['deliveryMonthHours'] = profileParams.deliveryMonthHours || 0;
+
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        saveUserDetailsInAsync(userDetails);
+        console.log(userDetails);
         Alert.alert('Success', 'Profile updated successfully', [
           {text: 'Ok', onPress: () => navigation.goBack()},
         ])
@@ -266,6 +264,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             placeholder="Type here"
             placeholderTextColor={'#999'}
             value={deliveryCount}
+            maxLength={3}
             onChangeText={text => setDeliveryCount(text)}
           />
         </View>

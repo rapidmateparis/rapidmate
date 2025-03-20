@@ -287,7 +287,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    setNumber(userDetails.userDetails[0].phone.substring(3));
+    setNumber(userDetails.userDetails[0].phone);
     setCompany(userDetails.userDetails[0].company_name);
     if (deliveryType == 2) {
       onBranchSourceLocation(routeParams.sourceBranch);
