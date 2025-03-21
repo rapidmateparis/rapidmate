@@ -331,7 +331,7 @@ export const handleImageLibraryLaunchFunction = () => {
             status: 'error',
             message: "Compressed file is still larger than 1MB"
           }
-
+         console.log('git problem')
           return reject(errorData)
         }
       } catch (error) {
