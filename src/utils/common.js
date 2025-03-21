@@ -5,6 +5,8 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 import Sound from 'react-native-sound'
+import ImageResizer from '@bam.tech/react-native-image-resizer';
+import RNFS from 'react-native-fs';
 
 export const formatDate = date => {
   var d = new Date(date),
@@ -184,34 +186,90 @@ export const getEstablishmentYear = () => {
 export const handleCameraLaunchFunction = async () => {
   return new Promise(async (resolve, reject) => {
     let permission = await requestCameraPermission();
-    if (permission) {
-      const options = {
-        mediaType: 'photo',
-        includeBase64: true,
-        maxHeight: 1500,
-        maxWidth: 1500,
-      };
-      launchCamera(options, response => {
-        if (!response.didCancel && !response.error) {
+    if (!permission) {
+      const errorData = { status: 'error', message: 'Camera permission not granted' };
+      return reject(errorData);
+    }
+
+    const options = {
+      mediaType: 'photo',
+      includeBase64: true,
+      maxHeight: 1500,
+      maxWidth: 1500,
+    };
+
+    launchCamera(options, async response => {
+      if (response.didCancel) {
+        const errorData = { status: 'error', message: 'Camera capture canceled.' };
+        return reject(errorData);
+      }
+      if (response.error || !response.assets || response.assets.length === 0) {
+        const errorData = { status: 'error', message: 'Failed to capture image.' };
+        return reject(errorData);
+      }
+
+      let image = response.assets[0];
+      console.log(image.fileSize, 'Original photo size');
+      console.log(image, 'Original photo size');
+      const base64Data = await RNFS.readFile(image.uri, 'base64');
+      if (image.fileSize <= 1000 * 1024) {
+        const data = {
+          status: "success",
+          data: {
+            base64: base64Data,
+            fileName: image.fileName,
+            fileSize: image.fileSize,
+            height: image.height,
+            originalPath: image.originalPath,
+            type: "image/jpeg",
+            uri: image.uri,
+            width: image.width,
+            status: 'success'
+          }
+        }
+        console.log(data,'=======================>>>>>>>>>>>>>.data')
+        return resolve(data);
+      }
+
+      try {
+        const compressedImage = await ImageResizer.createResizedImage(image.uri, 1000, 1000, 'JPEG', 80, 0)
+        console.log(compressedImage.size, "Compressed Image size");
+        console.log(compressedImage, "Compressed Image size");
+        const base64Data = await RNFS.readFile(compressedImage.uri, 'base64');
+        if (compressedImage.size <= 1000 * 1024) {
           const data = {
-            status: 'success',
-            data: response.assets[0],
-          };
-          resolve(data);
+            status: "success",
+            data: {
+              base64: base64Data,
+              fileName: compressedImage.name,
+              fileSize: compressedImage.size,
+              height: compressedImage.height,
+              originalPath: compressedImage.path,
+              type: "image/jpeg",
+              uri: compressedImage.uri,
+              width: compressedImage.width,
+              status: 'success'
+            }
+          }
+          console.log('Smaller')
+          return resolve(data)
         } else {
           const errorData = {
             status: 'error',
-          };
-          reject(errorData);
+            message: "Compressed file is still larger than 1MB"
+          }
+
+          return reject(errorData)
         }
-      });
-    } else {
-      const errorData = {
-        status: 'error',
-        message: 'Camera permission not granted',
-      };
-      reject(errorData);
-    }
+      } catch (error) {
+        const errorData = {
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
+      }
+    })
+
   });
 };
 
@@ -223,31 +281,67 @@ export const handleImageLibraryLaunchFunction = () => {
       maxHeight: 1500,
       maxWidth: 1500,
     };
-    launchImageLibrary(options, response => {
-      if (!response.didCancel && !response.error) {
-        const image = response.assets[0]
-        console.log(image.fileSize, "photo size");
-        if (image.fileSize <= 1000 * 1024) {
+    launchImageLibrary(options, async response => {
+      if (response.didCancel) {
+        const errorData = { status: 'error', message: 'Image selection canceled.' }
+        return reject(errorData);
+      }
+
+      if (response.error || !response.assets || response.assets.length === 0) {
+        const errorData = { status: 'error', message: 'Failed to select an image.' }
+        return reject(errorData);
+      }
+
+      let image = response.assets[0];
+      console.log(image.fileSize, 'Original photo size');
+
+      if (image.fileSize <= 1000 * 1024) {
+        const data = {
+          status: 'success',
+          data: image,
+        }
+        return resolve(data);
+      }
+
+      try {
+
+        const compressedImage = await ImageResizer.createResizedImage(image.uri, 1000, 1000, 'JPEG', 80, 0)
+        console.log(compressedImage.size, "Compressed Image size");
+        console.log(compressedImage, "Compressed Image size");
+        const base64Data = await RNFS.readFile(compressedImage.uri, 'base64');
+        if (compressedImage.size <= 1000 * 1024) {
           const data = {
-            status: 'success',
-            data: response.assets[0],
-          };
-          resolve(data);
+            status: "success",
+            data: {
+              base64: base64Data,
+              fileName: compressedImage.name,
+              fileSize: compressedImage.size,
+              height: compressedImage.height,
+              originalPath: compressedImage.path,
+              type: "image/jpeg",
+              uri: compressedImage.uri,
+              width: compressedImage.width,
+              status: 'success'
+            }
+          }
+          console.log('Smaller')
+          return resolve(data)
         } else {
-          console.log("File size is to large")
           const errorData = {
             status: 'error',
-            message: "File size must be less than 1MB."
+            message: "Compressed file is still larger than 1MB"
           }
-          reject(errorData)
+
+          return reject(errorData)
         }
-      } else {
+      } catch (error) {
         const errorData = {
-          status: 'error',
-          message: 'Image selection canceled or failed.'
-        };
-        reject(errorData);
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
       }
+
     });
   });
 };
