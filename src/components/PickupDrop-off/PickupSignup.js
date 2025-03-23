@@ -30,9 +30,8 @@ const PickupSignup = ({navigation}) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
-  const [dropdownValue, setDropdownValue] = useState('75');
-  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] =
-    useState('75');
+  const [dropdownValue, setDropdownValue] = useState('33');
+  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] = useState('33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();

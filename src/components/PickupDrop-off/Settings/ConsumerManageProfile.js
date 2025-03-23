@@ -17,6 +17,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {useLoader} from '../../../utils/loaderContext';
 import {updateUserProfile} from '../../../data_manager';
 import {localizationText} from '../../../utils/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ConsumerManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -40,6 +41,11 @@ const ConsumerManageProfile = ({navigation}) => {
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
+
   const saveProfileDetails = () => {
     if (number.length < 9) {
       Alert.alert('Invalid Number', 'Phone number must be at least 9 digits.');
@@ -63,6 +69,7 @@ const ConsumerManageProfile = ({navigation}) => {
         newUserDetails['first_name'] = vehicleModel;
         newUserDetails['phone'] = number;
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        saveUserDetailsInAsync(userDetails);
         console.log('updateUserProfile response ', successResponse);
         Alert.alert('Success', 'Profile updated successfully', [{text: 'OK'}]);
       },

@@ -207,28 +207,37 @@ export const handleCameraLaunchFunction = async () => {
         const errorData = { status: 'error', message: 'Failed to capture image.' };
         return reject(errorData);
       }
-
-      let image = response.assets[0];
-      console.log(image.fileSize, 'Original photo size');
-      console.log(image, 'Original photo size');
-      const base64Data = await RNFS.readFile(image.uri, 'base64');
-      if (image.fileSize <= 1000 * 1024) {
-        const data = {
-          status: "success",
-          data: {
-            base64: base64Data,
-            fileName: image.fileName,
-            fileSize: image.fileSize,
-            height: image.height,
-            originalPath: image.originalPath,
-            type: "image/jpeg",
-            uri: image.uri,
-            width: image.width,
-            status: 'success'
+      try {
+        let image = response.assets[0];
+        console.log(image.fileSize, 'Original photo size');
+        console.log(image, 'Original photo size');
+        const base64Data = await RNFS.readFile(image.uri, 'base64');
+        if (image.fileSize <= 1000 * 1024) {
+          const data = {
+            status: "success",
+            data: {
+              base64: base64Data,
+              fileName: image.fileName,
+              fileSize: image.fileSize,
+              height: image.height,
+              originalPath: image.originalPath,
+              type: "image/jpeg",
+              uri: image.uri,
+              width: image.width,
+              status: 'success'
+            }
           }
+          return resolve(data);
         }
-        console.log(data,'=======================>>>>>>>>>>>>>.data')
-        return resolve(data);
+
+      } catch (error) {
+        console.log("------------------Block 1-------------------------------------");
+        console.log(error);
+        const errorData = {
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
       }
 
       try {
@@ -262,6 +271,8 @@ export const handleCameraLaunchFunction = async () => {
           return reject(errorData)
         }
       } catch (error) {
+        console.log("---------------------Block 2----------------------------------");
+        console.log(error);
         const errorData = {
           status: "error",
           message: "Image compression failed."
@@ -294,14 +305,24 @@ export const handleImageLibraryLaunchFunction = () => {
 
       let image = response.assets[0];
       console.log(image.fileSize, 'Original photo size');
-
-      if (image.fileSize <= 1000 * 1024) {
-        const data = {
-          status: 'success',
-          data: image,
+      try{
+        if (image.fileSize <= 1000 * 1024) {
+          const data = {
+            status: 'success',
+            data: image,
+          }
+          return resolve(data);
         }
-        return resolve(data);
+      }catch (error) {
+        console.log("--------------------Block 3-----------------------------------");
+        console.log(error);
+        const errorData = {
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
       }
+      
 
       try {
 
@@ -331,10 +352,12 @@ export const handleImageLibraryLaunchFunction = () => {
             status: 'error',
             message: "Compressed file is still larger than 1MB"
           }
-         console.log('git problem')
+          console.log('git problem')
           return reject(errorData)
         }
       } catch (error) {
+        console.log("--------------------Block 4-----------------------------------");
+        console.log(error);
         const errorData = {
           status: "error",
           message: "Image compression failed."

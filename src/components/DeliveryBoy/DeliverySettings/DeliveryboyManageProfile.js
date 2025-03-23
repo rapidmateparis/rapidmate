@@ -17,6 +17,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {updateUserProfile} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import {localizationText} from '../../../utils/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DeliveryboyManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -56,7 +57,9 @@ const DeliveryboyManageProfile = ({navigation}) => {
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
-
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
   const saveProfileDetails = () => {
     if (number.length < 9) {
       Alert.alert(
@@ -95,6 +98,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
         newUserDetails['variant'] = vehicleVariant;
 
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        saveUserDetailsInAsync(userDetails);
         console.log('updateUserProfile response ', successResponse);
         Alert.alert('Success', 'Profile updated successfully', [{text: 'OK'}]);
       },

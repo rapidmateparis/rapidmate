@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -18,9 +18,12 @@ import RNRestart from 'react-native-restart';
 import {localizationText} from '../../utils/common';
 
 const EnterpriseThanksPage = ({navigation}) => {
-  const clearAsyncStorage = async () => {
+  useEffect(() => {
+    clearUserDetailsInAsync();
+  }, []);
+
+  const clearUserDetailsInAsync = async () => {
     await AsyncStorage.clear();
-    RNRestart.restart();
   };
   return (
     <ScrollView
