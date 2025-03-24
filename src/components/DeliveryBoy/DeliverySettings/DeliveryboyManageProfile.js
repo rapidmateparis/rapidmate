@@ -53,13 +53,38 @@ const DeliveryboyManageProfile = ({navigation}) => {
     //setUserName(fullName);
   }, [userDetails]);
 
+  const loadUserDetails = async () => {
+    try {
+      const storedUserDetails = await AsyncStorage.getItem('userDetails');
+      if (storedUserDetails) {
+        saveUserDetails(JSON.parse(storedUserDetails)); 
+      }
+    } catch (error) {
+      console.error('Error loading user details:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadUserDetails();
+  }, []);
+
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
-  const saveUserDetailsInAsync = async userDetails => {
-    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  // const saveUserDetailsInAsync = async userDetails => {
+  //   await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  // };
+
+  const saveUserDetailsInAsync = async updatedUserDetails => {
+    try {
+      await AsyncStorage.setItem('userDetails', JSON.stringify(updatedUserDetails));
+      console.log('User details saved successfully');
+    } catch (error) {
+      console.error('Error saving user details:', error);
+    }
   };
+
   const saveProfileDetails = () => {
     if (number.length < 9) {
       Alert.alert(
@@ -82,23 +107,50 @@ const DeliveryboyManageProfile = ({navigation}) => {
       variant: vehicleVariant,
     };
 
+
+   
+
     updateUserProfile(
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
         setLoading(false);
-        const newUserDetails = userDetails.userDetails[0];
-        newUserDetails['email'] = email;
-        newUserDetails['first_name'] = firstName;
-        newUserDetails['last_name'] = lastName;
-        newUserDetails['phone'] = number;
-        newUserDetails['plat_no'] = vehicleNo;
-        newUserDetails['modal'] = vehicleModel;
-        newUserDetails['make'] = vehicleMake;
-        newUserDetails['variant'] = vehicleVariant;
+        // const newUserDetails = userDetails.userDetails[0];
+        // newUserDetails['email'] = email;
+        // newUserDetails['first_name'] = firstName;
+        // newUserDetails['last_name'] = lastName;
+        // newUserDetails['phone'] = number;
+        // newUserDetails['plat_no'] = vehicleNo;
+        // newUserDetails['modal'] = vehicleModel;
+        // newUserDetails['make'] = vehicleMake;
+        // newUserDetails['variant'] = vehicleVariant;
 
-        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
-        saveUserDetailsInAsync(userDetails);
+        const updatedUserDetails = {
+          ...userDetails, userDetails : [
+            {
+              ...userDetails.userDetails[0],
+              email,
+              first_name: firstName,
+              last_name: lastName,
+              phone: number,
+              plat_no: vehicleNo,
+              modal: vehicleModel,
+              make: vehicleMake,
+              variant: vehicleVariant,
+              profile_pic: successResponse?.profile_pic || userDetails.userDetails[0].profile_pic,
+            }
+          ]
+        }
+
+
+        console.log("Update profile TEST", updatedUserDetails)
+
+
+        saveUserDetails(updatedUserDetails);
+        saveUserDetailsInAsync(updatedUserDetails);
+
+        // saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        // saveUserDetailsInAsync(userDetails);
         console.log('updateUserProfile response ', successResponse);
         Alert.alert('Success', 'Profile updated successfully', [{text: 'OK'}]);
       },
