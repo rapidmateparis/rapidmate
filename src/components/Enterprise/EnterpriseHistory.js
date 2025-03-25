@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,9 +12,9 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../colors';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {useLoader} from '../../utils/loaderContext';
+import { colors } from '../../colors';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useLoader } from '../../utils/loaderContext';
 import {
   getAllVehicleTypes,
   getDeliveryBoyViewOrdersList,
@@ -23,10 +23,10 @@ import {
   getLocations,
   searchOrderApi,
 } from '../../data_manager';
-import {useUserDetails} from '../commonComponent/StoreContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
 import moment from 'moment';
 import EnterpriseShiftFillter from './EnterpriseShiftFillter';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   localizationText,
   localToUTC,
@@ -36,7 +36,7 @@ import {
 
 const Tab = createMaterialTopTabNavigator();
 
-const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
+const OneTimeList = ({ orders, locations, vehicles, navigation, onActive }) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   const fromText = localizationText('Common', 'from') || 'From';
@@ -65,7 +65,7 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
   );
 
   return (
-    <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
+    <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#FBFAF5' }}>
       {orders.length > 0 ? (
         orders.map((item, index) => (
           <View
@@ -121,7 +121,7 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
                 <Text
                   style={[
                     styles.orderActive,
-                    {color: colors.Completed, backgroundColor: '#27AE6012'},
+                    { color: colors.Completed, backgroundColor: '#27AE6012' },
                   ]}>
                   {activeText}
                 </Text>
@@ -166,7 +166,7 @@ const OneTimeList = ({orders, locations, vehicles, navigation, onActive}) => {
   );
 };
 
-const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
+const MultipleList = ({ orders, locations, vehicles, navigation, onActive }) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   const fromText = localizationText('Common', 'from') || 'From';
@@ -195,7 +195,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
   );
 
   return (
-    <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
+    <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#FBFAF5' }}>
       {orders.length > 0 ? (
         orders.map((item, index) => (
           <View
@@ -258,7 +258,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
                 <Text
                   style={[
                     styles.orderActive,
-                    {color: colors.Completed, backgroundColor: '#27AE6012'},
+                    { color: colors.Completed, backgroundColor: '#27AE6012' },
                   ]}>
                   {activeText}
                 </Text>
@@ -303,7 +303,7 @@ const MultipleList = ({orders, locations, vehicles, navigation, onActive}) => {
   );
 };
 
-const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
+const ShiftsList = ({ orders, branches, vehicles, navigation, onActive }) => {
   const shift = localizationText('Common', 'shift') || 'Shift';
   const totalDays = localizationText('Common', 'totalDays') || 'Total days';
   const totalHours = localizationText('Common', 'totalHours') || 'Total hours';
@@ -344,7 +344,7 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
   };
 
   return (
-    <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
+    <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#FBFAF5' }}>
       {orders.length > 0 ? (
         orders.map((item, index) => (
           <View
@@ -370,12 +370,12 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
                   shiftItem: item,
                   vehicleType: getVehicleType(item.vehicle_type_id),
                 };
-                navigation.navigate('EnterpriseShiftDetails', {...props});
+                navigation.navigate('EnterpriseShiftDetails', { ...props });
               }}>
               <View style={styles.packageHeader}>
                 <View style={styles.packageHeader}>
                   <Image
-                    style={{width: 25, height: 25}}
+                    style={{ width: 25, height: 25 }}
                     source={require('../../image/Big-Calender.png')}
                   />
                   <Text style={styles.deliveryTime}>{shift}</Text>
@@ -535,7 +535,7 @@ const ShiftsList = ({orders, branches, vehicles, navigation, onActive}) => {
   );
 };
 
-const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
+const PastList = ({ orders, locations, vehicles, navigation, onActive }) => {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
   const shift = localizationText('Common', 'shift') || 'Shift';
@@ -569,8 +569,8 @@ const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
   );
 
   return (
-    <ScrollView style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
-      {orders.map((item, index) => {
+    <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#FBFAF5' }}>
+      {orders.length > 0 ? (orders.map((item, index) => {
         return (
           <View
             key={index}
@@ -640,16 +640,34 @@ const PastList = ({orders, locations, vehicles, navigation, onActive}) => {
             </TouchableOpacity>
           </View>
         );
-      })}
+      })) : (<View style={styles.scrollViewContainer}>
+        <View
+          style={{
+            width: 350,
+            height: 350,
+            position: 'relative',
+            marginVertical: 40,
+          }}>
+          <View style={styles.container}>
+            <Image
+              style={styles.loaderMap}
+              source={require('../../image/No-Data-Table.png')}
+            />
+            <Text style={styles.text}>{noOrdersToShow}</Text>
+            <Text style={styles.subText}>{noOrdersDescription}</Text>
+          </View>
+        </View>
+      </View>)}
+
     </ScrollView>
   );
 };
 
-function EnterpriseHistory({navigation}) {
+function EnterpriseHistory({ navigation }) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
-  const {setLoading} = useLoader();
-  const {userDetails} = useUserDetails();
+  const { setLoading } = useLoader();
+  const { userDetails } = useUserDetails();
   const [enterpriseOrderList, setEnterpriseOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
@@ -671,117 +689,146 @@ function EnterpriseHistory({navigation}) {
   }, []);
 
   const getVehicleTypes = () => {
-    setLoading(true)
+    setLoading(true);
+
     getAllVehicleTypes(
       null,
       successResponse => {
-        if (successResponse[0]._success) {
-          // setLoading(false);
-          setVehicleTypeList(successResponse[0]._response);
+        if (successResponse?.[0]?._success) {
+          setVehicleTypeList(successResponse[0]._response || []);
+        } else {
+          console.log('API call succeeded, but _success is false.');
         }
+
         setLoading(false);
       },
       errorResponse => {
-        // setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-         setLoading(false);
-      },
+        console.log('Error fetching vehicle types:', errorResponse?.[0]?._errors?.message || 'Unknown error');
+
+        if (!errorResponse?.[0]?._errors?.message === "No items found") {
+          Alert.alert('Error Alert', errorResponse?.[0]?._errors?.message || 'Something went wrong', [
+            { text: 'OK', onPress: () => { } },
+          ]);
+        }
+        setLoading(false);
+      }
     );
   };
 
+
+
   const getBranchesList = () => {
     setLoading(true);
+
     getEnterpriseBranch(
-      userDetails.userDetails[0].ext_id,
+      userDetails?.userDetails?.[0]?.ext_id,
       successResponse => {
-        // setLoading(false);
-        if (successResponse[0]._success) {
-          if (successResponse[0]._response) {
-            if (successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else {
-              var branches = [];
-              for (
-                let index = 0;
-                index < successResponse[0]._response.length;
-                index++
-              ) {
-                const element = successResponse[0]._response[index];
-                element.isSelected = false;
-                branches.push(element);
-              }
-              setEnterpriseBranches(branches);
-            }
+        if (successResponse?.[0]?._success) {
+          const response = successResponse[0]._response;
+
+          if (response?.name === 'NotAuthorizedException') {
+            Alert.alert('Error Alert', response.name, [{ text: 'OK', onPress: () => { } }]);
+          } else {
+            const branches = response?.map(branch => ({
+              ...branch,
+              isSelected: false,
+            })) || [];
+
+            setEnterpriseBranches(branches);
           }
+        } else {
+          console.log('API call successful but _success is false.');
         }
+
         setLoading(false);
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse[0]._errors.message);
+        console.log('Error fetching branches:', errorResponse?.[0]?._errors?.message || 'Unknown error');
+
+        if (!errorResponse?.[0]?._errors?.message === "No items found") {
+          Alert.alert('Error Alert', errorResponse?.[0]?._errors?.message || 'Something went wrong', [
+            { text: 'OK', onPress: () => { } },
+          ]);
+        }
+
         setLoading(false);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-        setLoading(false);
-      },
+      }
     );
   };
+
+
+
 
   const getLocationsData = () => {
     setLoading(true);
     setLocationList([]);
+
     getLocations(
       null,
       successResponse => {
-        console.log('list of all location ', successResponse[0]);
-        if (successResponse[0]._success) {
-          let tempOrderList = successResponse[0]._response;
-          setLocationList(tempOrderList);
+        console.log('List of all locations:', successResponse?.[0]);
+
+        if (successResponse?.[0]?._success) {
+          setLocationList(successResponse[0]._response || []);
+        } else {
+          console.log('API call successful but _success is false.');
         }
+
         setLoading(false);
       },
       errorResponse => {
-        setLoading(false);
-        if (errorResponse[0]._errors.message) {
-          setLocationList([]);
+        console.log('Error fetching locations:', errorResponse?.[0]?._errors?.message || 'Unknown error');
+
+        if (!errorResponse?.[0]?._errors?.message === "No items found") {
+          Alert.alert('Error Alert', errorResponse?.[0]?._errors?.message || 'Something went wrong', [
+            { text: 'OK', onPress: () => { } },
+          ]);
         }
+
         setLoading(false);
-      },
+      }
     );
   };
 
+
   const searchFunction = params => {
-    params.enterprise_ext_id = userDetails.userDetails[0].ext_id;
+    params.enterprise_ext_id = userDetails?.userDetails?.[0]?.ext_id;
     setLoading(true);
+
     searchOrderApi(
       params,
       successResponse => {
-        console.log('one time responce ===>', JSON.stringify(successResponse));
-        // setLoading(false);
-        if (successResponse[0]._success) {
-          if (params.tab_id == 2) {
-            setEnterpriseOrderList(
-              successResponse[0]._response.filter(
-                item => item.locations.length > 0,
-              ),
-            );
+        console.log('One time response:', JSON.stringify(successResponse));
+
+        if (successResponse?.[0]?._success) {
+          const responseList = successResponse[0]._response || [];
+
+          if (params?.tab_id === 2) {
+            setEnterpriseOrderList(responseList.filter(item => item?.locations?.length > 0));
           } else {
-            setEnterpriseOrderList(successResponse[0]._response);
+            setEnterpriseOrderList(responseList);
           }
+        } else {
+          console.log('API call was successful, but  success is false.');
         }
-        setLoading(false)
-      },
-      errorResponse => {
-       
-        setEnterpriseOrderList([]);
+
         setLoading(false);
       },
+      errorResponse => {
+        console.log('Error fetching orders:', errorResponse?.[0]?._errors?.message || 'Unknown error');
+
+        if (!errorResponse?.[0]?._errors?.message === "No items found") {
+          Alert.alert('Error Alert', errorResponse?.[0]?._errors?.message || 'Something went wrong', [
+            { text: 'OK', onPress: () => { } },
+          ]);
+        }
+
+        setEnterpriseOrderList([]);
+        setLoading(false);
+      }
     );
   };
+
 
   const onOneTimeActive = () => {
     console.log('onOneTimeActive - Tab - Loader');
@@ -826,7 +873,7 @@ function EnterpriseHistory({navigation}) {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           paddingHorizontal: 15,
@@ -844,7 +891,7 @@ function EnterpriseHistory({navigation}) {
             </TouchableOpacity>
             <TouchableOpacity onPress={toggleShiftModal}>
               <AntDesign
-                style={{marginLeft: 10}}
+                style={{ marginLeft: 10 }}
                 name="filter"
                 size={25}
                 color={colors.secondary}
@@ -884,9 +931,9 @@ function EnterpriseHistory({navigation}) {
         screenOptions={{
           tabBarActiveTintColor: colors.secondary,
           tabBarInactiveTintColor: colors.subText,
-          tabBarLabelStyle: {fontSize: 14},
-          tabBarIndicatorStyle: {backgroundColor: colors.secondary},
-          tabBarStyle: {backgroundColor: '#fff'},
+          tabBarLabelStyle: { fontSize: 14 },
+          tabBarIndicatorStyle: { backgroundColor: colors.secondary },
+          tabBarStyle: { backgroundColor: '#fff' },
           tabBarScrollEnabled: true,
           tabBarItemStyle: {
             width: 120,
