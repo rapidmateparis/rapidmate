@@ -53,6 +53,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
+  const [promoCode, setPromoCode] = useState('')
   const toText = localizationText('Common', 'to') || 'To';
   const discountText = localizationText('Common', 'discount') || 'Discount';
   const payLaterText = localizationText('Common', 'payLater') || 'Pay Later';
@@ -457,6 +458,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             style={styles.input}
             placeholder={localizationText('Common', 'promoCode')}
             placeholderTextColor="#999"
+            editable={promoCodeResponse ? false : true}
+            onChangeText={text => setPromoCode(text)}
           />
 
           {promoCodeResponse ? (
