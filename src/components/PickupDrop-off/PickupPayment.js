@@ -169,45 +169,55 @@ const PickupPayment = ({route, navigation}) => {
     }
   };
 
+  
   const checkout = async () => {
-    const {error} = await presentPaymentSheet();
-    console.log('érror', error);
+    const { error } = await presentPaymentSheet();
+    console.log('Error:', error);
+    
     if (!error) {
-      createPayment();
+        createPayment();
     } else {
-      Alert.alert('Error Alert', error.message, [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Go Home',
-          onPress: () => {
-            setLoading(true);
-            let params = {
-              order_number: orderNumber,
-              status: 'Payment Failed',
-            };
-            console.log('params ===>', JSON.stringify(params));
+        setLoading(false); 
+        
+        Alert.alert('Error Alert', error.message, [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            {
+                text: 'Go Home',
+                onPress: () => {
+                    setLoading(true);
+                    
+                    let params = {
+                        order_number: orderNumber,
+                        status: 'Payment Failed',
+                    };
+                    
+                    console.log('params ===>', JSON.stringify(params));
 
-            orderStatusUpdate(
-              params,
-              successResponse => {
-                setLoading(false);
-                console.log('message===>', JSON.stringify(successResponse));
-                navigation.navigate('PickupBottomNav');
-              },
-              errorResponse => {
-                setLoading(false);
-                console.log('message===>', JSON.stringify(errorResponse));
-              },
-            );
-          },
-        },
-      ]);
+                    orderStatusUpdate(
+                        params,
+                        successResponse => {
+                            console.log('message===>', JSON.stringify(successResponse));
+                            
+                            setTimeout(() => {
+                                setLoading(false); 
+                                navigation.navigate('PickupBottomNav');
+                            }, 200);
+                        },
+                        errorResponse => {
+                            setLoading(false); 
+                            console.log('message===>', JSON.stringify(errorResponse));
+                        }
+                    );
+                },
+            },
+        ]);
     }
-  };
+};
+
 
   const getCurrentDateAndTime = () => {
     // return format like YYYY-MM-DD HH:mm:ss
@@ -239,27 +249,32 @@ const PickupPayment = ({route, navigation}) => {
   };
 
   const placePickUpOrder = async () => {
-    if (userDetails.userDetails[0]) {
-      console.log('params.schedule_date_time', params.schedule_date_time);
-      if (params.serviceTypeId == 1) {
-        var scheduleParam = {
-          schedule_date_time: localToUTC(moment(params.schedule_date_time, 'YYYY-MM-DD hh:mm A').toDate()),
+   
+    if (!userDetails?.userDetails?.[0]) {
+        Alert.alert('Error Alert', 'Consumer extended ID missing', [{ text: 'OK' }]);
+        return; 
+    }
+
+    console.log('params.schedule_date_time', params.schedule_date_time);
+
+   
+    let scheduleParam = {};
+    if (params.serviceTypeId == 1) {
+        scheduleParam = {
+            schedule_date_time: localToUTC(moment(params.schedule_date_time, 'YYYY-MM-DD hh:mm A').toDate()),
         };
-      }
-      let requestParams = {
+    }
+
+    let requestParams = {
         consumer_ext_id: userDetails.userDetails[0].ext_id,
         service_type_id: params.serviceTypeId,
         vehicle_type_id: params.selectedVehicleDetails.id,
-        pickup_location_id: params.sourceLocationId
-          ? params.sourceLocationId
-          : 1,
-        dropoff_location_id: params.destinationLocationId
-          ? params.destinationLocationId
-          : 2,
+        pickup_location_id: params.sourceLocationId || 1,
+        dropoff_location_id: params.destinationLocationId || 2,
         distance: parseFloat(params.distanceTime.distance.toFixed(1)),
         total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
         total_amount: parseFloat(paymentAmount),
-        order_amount : params.selectedVehiclePrice,
+        order_amount: params.selectedVehiclePrice,
         discount: offerDiscount,
         pickup_notes: params.userDetails.pickupNotes,
         mobile: params.userDetails.number,
@@ -272,46 +287,116 @@ const PickupPayment = ({route, navigation}) => {
         drop_notes: params.drop_details.drop_notes,
         drop_email: params.drop_details.drop_email,
         drop_company_name: params.drop_details.drop_company_name,
-        // order_date: getCurrentDateAndTime()
         order_date: localToUTC(),
         package_photo: params.userDetails.package_photo,
         tax_value: vechicleTax,
-      };
+    };
 
-      console.log('LOCAL to UTC ==:', localToUTC());
-      if (promoCodeResponse) {
+    console.log('LOCAL to UTC ==:', localToUTC());
+
+    if (promoCodeResponse) {
         requestParams.promo_code = promoCodeResponse.promoCode;
         requestParams.promo_value = promoCodeResponse.discount;
         requestParams.order_amount = parseFloat(totalAmount);
-      }
+    }
 
-      setLoading(true);
-      createPickupOrder(
+    setLoading(true);
+
+    createPickupOrder(
         requestParams,
         successResponse => {
-          if (successResponse[0]._success) {
-            console.log('placePickUpOrder', successResponse[0]._response);
-            savePlacedOrderDetails(successResponse[0]._response);
-            setOrderResponse(successResponse[0]._response);
             setLoading(false);
-            setOrderNumber(successResponse[0]._response[0].order_number);
-          }
-          console.log('requestParams===', requestParams);
+            if (successResponse[0]._success) {
+                console.log('placePickUpOrder', successResponse[0]._response);
+                savePlacedOrderDetails(successResponse[0]._response);
+                setOrderResponse(successResponse[0]._response);
+                setOrderNumber(successResponse[0]._response[0].order_number);
+            }
+            console.log('requestParams===', requestParams);
         },
         errorResponse => {
-          setLoading(false);
-          console.log('createPickupOrder==>errorResponse', errorResponse[0]);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
-    } else {
-      Alert.alert('Error Alert', 'Consumer extended ID missing', [
-        {text: 'OK', onPress: () => {}},
-      ]);
-    }
-  };
+            console.log('createPickupOrder==>errorResponse', errorResponse[0]);
+            setLoading(false);
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [{ text: 'OK' }]);
+        }
+    );
+};
+
+
+  // const placePickUpOrder = async () => {
+  //   if (userDetails.userDetails[0]) {
+  //     console.log('params.schedule_date_time', params.schedule_date_time);
+  //     if (params.serviceTypeId == 1) {
+  //       var scheduleParam = {
+  //         schedule_date_time: localToUTC(moment(params.schedule_date_time, 'YYYY-MM-DD hh:mm A').toDate()),
+  //       };
+  //     }
+  //     let requestParams = {
+  //       consumer_ext_id: userDetails.userDetails[0].ext_id,
+  //       service_type_id: params.serviceTypeId,
+  //       vehicle_type_id: params.selectedVehicleDetails.id,
+  //       pickup_location_id: params.sourceLocationId
+  //         ? params.sourceLocationId
+  //         : 1,
+  //       dropoff_location_id: params.destinationLocationId
+  //         ? params.destinationLocationId
+  //         : 2,
+  //       distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+  //       total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
+  //       total_amount: parseFloat(paymentAmount),
+  //       order_amount : params.selectedVehiclePrice,
+  //       discount: offerDiscount,
+  //       pickup_notes: params.userDetails.pickupNotes,
+  //       mobile: params.userDetails.number,
+  //       company_name: params.userDetails.company,
+  //       ...scheduleParam,
+
+  //       drop_first_name: params.drop_details.drop_first_name,
+  //       drop_last_name: params.drop_details.drop_last_name,
+  //       drop_mobile: params.drop_details.drop_mobile,
+  //       drop_notes: params.drop_details.drop_notes,
+  //       drop_email: params.drop_details.drop_email,
+  //       drop_company_name: params.drop_details.drop_company_name,
+  //       // order_date: getCurrentDateAndTime()
+  //       order_date: localToUTC(),
+  //       package_photo: params.userDetails.package_photo,
+  //       tax_value: vechicleTax,
+  //     };
+
+  //     console.log('LOCAL to UTC ==:', localToUTC());
+  //     if (promoCodeResponse) {
+  //       requestParams.promo_code = promoCodeResponse.promoCode;
+  //       requestParams.promo_value = promoCodeResponse.discount;
+  //       requestParams.order_amount = parseFloat(totalAmount);
+  //     }
+
+  //     setLoading(true);
+  //     createPickupOrder(
+  //       requestParams,
+  //       successResponse => {
+  //         if (successResponse[0]._success) {
+  //           console.log('placePickUpOrder', successResponse[0]._response);
+  //           savePlacedOrderDetails(successResponse[0]._response);
+  //           setOrderResponse(successResponse[0]._response);
+  //           setLoading(false);
+  //           setOrderNumber(successResponse[0]._response[0].order_number);
+  //         }
+  //         console.log('requestParams===', requestParams);
+  //       },
+  //       errorResponse => {
+  //         setLoading(false);
+  //         console.log('createPickupOrder==>errorResponse', errorResponse[0]);
+  //         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+  //           {text: 'OK', onPress: () => {}},
+  //         ]);
+  //       },
+  //     );
+  //   } else {
+  //     Alert.alert('Error Alert', 'Consumer extended ID missing', [
+  //       {text: 'OK', onPress: () => {}},
+  //     ]);
+  //   }
+  // };
 
   const createPayment = async () => {
     let requestParams = {
@@ -331,6 +416,7 @@ const PickupPayment = ({route, navigation}) => {
         }
       },
       errorResponse => {
+        setLoading(false);
         Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
           {
             text: 'OK',
@@ -342,6 +428,7 @@ const PickupPayment = ({route, navigation}) => {
               orderStatusUpdate(
                 params,
                 successResponse => {
+                  setLoading(false);
                   console.log('message===>', JSON.stringify(successResponse));
                 },
                 errorResponse => {
