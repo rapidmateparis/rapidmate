@@ -216,7 +216,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
             ),
           }}
         />
-        <Bottom.Screen
+        {/* <Bottom.Screen
           key="Notifications"
           name={chatText}
           component={Notifications}
@@ -230,7 +230,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               />
             ),
           }}
-        />
+        /> */}
         <Bottom.Screen
           key="Planning"
           name={planningText}

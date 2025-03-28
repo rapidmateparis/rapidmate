@@ -228,7 +228,7 @@ const EnterpriseBottomNav = ({navigation}) => {
           }}
         />
 
-        <Bottom.Screen
+        {/* <Bottom.Screen
           key="Notifications"
           name={chatText}
           component={Notifications}
@@ -242,7 +242,7 @@ const EnterpriseBottomNav = ({navigation}) => {
               />
             ),
           }}
-        />
+        /> */}
 
         <Bottom.Screen
           key="EnterprisePlanning"

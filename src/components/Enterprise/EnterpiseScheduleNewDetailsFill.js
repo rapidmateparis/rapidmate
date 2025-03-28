@@ -798,7 +798,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
         </View>
 
         <View style={styles.addressCard}>
-          <View style={styles.bookAddress}>
+          {/* <View style={styles.bookAddress}>
             <Text style={styles.cardTitle}>
               {localizationText('Common', 'repeatThisOrder')}
             </Text>
@@ -809,7 +809,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                 color={promoEmails ? '#FFC72B' : '#D3D3D3'}
               />
             </TouchableOpacity>
-          </View>
+          </View> */}
           {promoEmails && (
             <View style={styles.mainDateCard}>
               <TouchableOpacity

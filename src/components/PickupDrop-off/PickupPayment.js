@@ -458,7 +458,7 @@ const PickupPayment = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
-              {localizationText('Common', 'discount')} {offerDiscount}
+              {localizationText('Common', 'discount')}
             </Text>
             <Text style={styles.totalAmount}>
               € {getDiscountAmount(params.selectedVehiclePrice)}
@@ -537,13 +537,13 @@ const PickupPayment = ({route, navigation}) => {
           </Text>
         )}
 
-        <View>
+        {/* <View>
           <Text style={styles.selectPaymentMethod}>
             {localizationText('Common', 'creditDebitCards')}
           </Text>
-        </View>
+        </View> */}
 
-        <View style={styles.discountCard}>
+        {/* <View style={styles.discountCard}>
           <Image
             style={{marginRight: 20}}
             source={require('../../image/Group.png')}
@@ -551,9 +551,9 @@ const PickupPayment = ({route, navigation}) => {
           <Text style={styles.discountInfo}>
             20% {localizationText('Common', 'creditCardsOff')}
           </Text>
-        </View>
+        </View> */}
 
-        {offerDiscount > 0 && (
+        {/* {offerDiscount > 0 && (
           <View style={styles.discountCard}>
             <Image
               style={{marginRight: 20}}
@@ -566,7 +566,7 @@ const PickupPayment = ({route, navigation}) => {
                 : 'Pickup&Drop Order'}
             </Text>
           </View>
-        )}
+        )} */}
 
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>

@@ -255,7 +255,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             />
           </View>
         </View>
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>
           {localizationText('Common', 'deliveriesPerMonth')}
           </Text>
@@ -267,7 +267,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             maxLength={3}
             onChangeText={text => setDeliveryCount(text)}
           />
-        </View>
+        </View> */}
         <TouchableOpacity
           onPress={() => {
             updateProfile();

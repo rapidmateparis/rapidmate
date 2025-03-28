@@ -886,9 +886,9 @@ function EnterpriseHistory({ navigation }) {
             {localizationText('Common', 'history')}
           </Text>
           <View style={styles.actionCard}>
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
               <AntDesign name="download" size={25} color={colors.secondary} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity onPress={toggleShiftModal}>
               <AntDesign
                 style={{ marginLeft: 10 }}

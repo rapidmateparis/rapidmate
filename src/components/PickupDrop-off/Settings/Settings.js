@@ -79,7 +79,7 @@ const Settings = ({navigation}) => {
           </View>
         </View>
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('AddressBook', {userDetails: userDetails})
@@ -88,16 +88,16 @@ const Settings = ({navigation}) => {
             <Text style={styles.cardTitle}>{localizationText('Common','addressBook')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('AddPaymentMethod')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>{localizationText('Common','paymentMethods')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* <View style={styles.addressCard}>
           <TouchableOpacity
@@ -108,14 +108,14 @@ const Settings = ({navigation}) => {
           </TouchableOpacity>
         </View> */}
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('PickupBillingDetails')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>{localizationText('Common','billingDetails')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity
@@ -180,14 +180,14 @@ const Settings = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('FAQs')}
             style={styles.bookAddress}>
             <Text style={styles.cardTitle}>{localizationText('Common','faqs')}</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity
