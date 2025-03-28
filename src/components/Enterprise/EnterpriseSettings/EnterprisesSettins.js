@@ -79,7 +79,7 @@ const EnterprisesSettins = ({navigation}) => {
           </View>
         </View>
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('AddressBook', {userDetails: userDetails})
@@ -90,7 +90,7 @@ const EnterprisesSettins = ({navigation}) => {
             </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity
@@ -103,7 +103,7 @@ const EnterprisesSettins = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('EnterpriseManageAds')}
             style={styles.bookAddress}>
@@ -112,9 +112,9 @@ const EnterprisesSettins = ({navigation}) => {
             </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('AddPaymentMethod')}
             style={styles.bookAddress}>
@@ -123,9 +123,9 @@ const EnterprisesSettins = ({navigation}) => {
             </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('EnterpriseBillingDetail')}
             style={styles.bookAddress}>
@@ -134,7 +134,7 @@ const EnterprisesSettins = ({navigation}) => {
             </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity

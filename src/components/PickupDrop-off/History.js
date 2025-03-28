@@ -561,9 +561,9 @@ function History({navigation}) {
           <Text style={styles.headerText}>
             {localizationText('Common', 'history')}
           </Text>
-          <TouchableOpacity onPress={toggleFilterModal}>
+          {/* <TouchableOpacity onPress={toggleFilterModal}>
             <AntDesign name="filter" size={25} color={colors.secondary} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={styles.searchContainer}>
           <AntDesign

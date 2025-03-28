@@ -79,7 +79,7 @@ const DeliveryboySettings = ({navigation}) => {
           </View>
         </View>
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('AddressBook', {userDetails: userDetails})
@@ -90,7 +90,7 @@ const DeliveryboySettings = ({navigation}) => {
             </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity
@@ -125,7 +125,7 @@ const DeliveryboySettings = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyBillingDetails')}
             style={styles.bookAddress}>
@@ -134,7 +134,7 @@ const DeliveryboySettings = ({navigation}) => {
             </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.addressCard}>
           <TouchableOpacity

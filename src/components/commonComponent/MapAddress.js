@@ -180,13 +180,13 @@ const MapAddress = props => {
               }}
               onFail={() => console.error('Error')}
             />
-            <MaterialIcons
+            {/* <MaterialIcons
               style={{marginTop: 15}}
               name="favorite-outline"
               size={18}
               color="#000000"
               onPress={() => toggleModal(0)}
-            />
+            /> */}
           </View>
 
           <View style={styles.borderDummy}></View>
@@ -239,13 +239,13 @@ const MapAddress = props => {
               }}
               onFail={() => console.error('Error')}
             />
-            <MaterialIcons
+            {/* <MaterialIcons
               style={{marginTop: 15}}
               name="favorite-outline"
               size={18}
               color="#000000"
               onPress={() => toggleModal(1)}
-            />
+            /> */}
           </View>
           <View style={styles.borderShowOff}></View>
         </View>

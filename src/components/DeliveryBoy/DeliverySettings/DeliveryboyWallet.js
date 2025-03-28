@@ -64,7 +64,7 @@ const DeliveryboyWallet = ({navigation}) => {
               </Text>
             </View>
             <View style={styles.actionCard}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.actionsBt}
                 onPress={() => {
                   navigation.navigate('WithdrawPayment');
@@ -72,7 +72,7 @@ const DeliveryboyWallet = ({navigation}) => {
                 <Text style={styles.btnText}>
                   {localizationText('NavHeaderTitles', 'withdraw')}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {/* <TouchableOpacity style={styles.actionsBt}>
                 <Text style={styles.btnText}>
@@ -83,7 +83,7 @@ const DeliveryboyWallet = ({navigation}) => {
           </View>
         </ImageBackground>
 
-        <View style={styles.addCardsHeader}>
+        {/* <View style={styles.addCardsHeader}>
           <Text style={styles.subCardName}>
             {localizationText('Common', 'cards')}
           </Text>
@@ -95,9 +95,9 @@ const DeliveryboyWallet = ({navigation}) => {
               {localizationText('Common', 'addCard')}
             </Text>
           </View>
-        </View>
+        </View> */}
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <Image source={require('../../../image/paypal-icon.png')} />
           <View style={{marginLeft: 5, flex: 1}}>
             <Text style={styles.paymentPlateform}>PayPal</Text>
@@ -117,7 +117,7 @@ const DeliveryboyWallet = ({navigation}) => {
           <TouchableOpacity>
             <Feather name="edit-2" size={20} color="#000" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.securePayment}>
           <FontAwesome name="shield" size={15} color="#1D1617" />
