@@ -52,23 +52,10 @@ const PickupBillingDetails = ({navigation}) => {
   ];
 
   useEffect(() => {
-
-    const pendingRequests = useRef(4);
-    setLoading(true); 
-
-    const checkLoading = () => {
-      pendingRequests.current -= 1; 
-      if (pendingRequests.current === 0) {
-        setLoading(false); 
-      }
-    };
-  
-
     getCountryList(
       {},
       successResponse => {
-        // setLoading(false);
-        checkLoading()
+        setLoading(false);
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
@@ -91,8 +78,7 @@ const PickupBillingDetails = ({navigation}) => {
       },
       errorResponse => {
         console.log('errorResponse', errorResponse[0]._errors.message);
-        // setLoading(false);
-        checkLoading()
+        setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -102,8 +88,7 @@ const PickupBillingDetails = ({navigation}) => {
     getStateList(
       {},
       successResponse => {
-        // setLoading(false);
-        checkLoading()
+        setLoading(false);
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
@@ -118,8 +103,7 @@ const PickupBillingDetails = ({navigation}) => {
       },
       errorResponse => {
         console.log('errorResponse', errorResponse[0]._errors.message);
-        // setLoading(false);
-        checkLoading()
+        setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -129,8 +113,7 @@ const PickupBillingDetails = ({navigation}) => {
     getCityList(
       null,
       successResponse => {
-        // setLoading(false);
-        checkLoading()
+        setLoading(false);
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
@@ -144,8 +127,7 @@ const PickupBillingDetails = ({navigation}) => {
         }
       },
       errorResponse => {
-        // setLoading(false);
-        checkLoading()
+        setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
@@ -155,7 +137,6 @@ const PickupBillingDetails = ({navigation}) => {
     getConsumerBillingDetails(
       userDetails.userDetails[0].ext_id,
       successResponse => {
-        checkLoading()
         let resultResponse = successResponse[0]._response;
         setFirstName(resultResponse.first_name);
         setLastName(resultResponse.last_name);
@@ -169,7 +150,6 @@ const PickupBillingDetails = ({navigation}) => {
         setBillingDetails(resultResponse);
       },
       errorResponse => {
-        checkLoading()
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
         ]);
