@@ -84,8 +84,10 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
 
   useEffect(() => {
     if (orderNumber) {
+      // setLoading(true)
       if (selectedOptionIndex != 99) {
         createPaymentIntent();
+        // setLoading(false)
       } else {
         navigation.navigate('EnterpriseLookingForDriver', {
           cancellable: orderResponse.is_enable_cancel_request,
@@ -124,14 +126,15 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       },
       errorResponse => {
         setLoading(false);
-        // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-        //   {text: 'OK', onPress: () => {}},
-        // ]);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
       },
     );
   };
 
   const createPaymentIntent = async () => {
+    setLoading(true)
     try {
       const response = await fetch(
         'https://api.stripe.com/v1/payment_intents',
@@ -158,6 +161,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       setup(data.client_secret);
     } catch (error) {
       // Alert.alert('Error', error.message);
+    }finally{
+      setLoading(false)
     }
   };
 

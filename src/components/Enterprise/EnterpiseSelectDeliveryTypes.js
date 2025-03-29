@@ -54,6 +54,8 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     setModalVisible(!isModalVisible);
   };
 
+  console.log("vechel type ", vehicleTypeList)
+
   useEffect(() => {
     if (vehicleTypeList?.length > 0) {
       const vehicle = vehicleTypeList.filter(
@@ -82,7 +84,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   }, [selectedOption]);
 
   useEffect(() => {
-    setLoading(true);
+   setLoading(true);
     getAllVehicleTypes(
       null,
       successResponse => {
@@ -359,7 +361,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
         {vehicleTypeList.map((vehicle, index) => (
           <TouchableOpacity
             disabled={disableVehicleType()}
-            key={index}
+            key={vehicle.id}
             onPress={() => {
               setTimeout(() => {
                 setSelectedVehicle(vehicle);

@@ -160,7 +160,7 @@ const EnterpriseBottomNav = ({navigation}) => {
         });
       }
 
-
+      setLoading(true)
       getNotificationAllCount();
       setDeliveryBoyAcceptRejectModalModalVisible(true);
       console.log('remoteMessage', JSON.stringify(remoteMessage));

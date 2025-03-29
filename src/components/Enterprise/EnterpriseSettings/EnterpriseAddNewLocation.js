@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ const EnterpriseAddNewLocation = ({route, navigation}) => {
   const [title, setTitle] = useState('');
   const params = route.params ? route.params.location : null
 
-  useState(()=>{
+  useEffect(()=>{
     if (params) {
       setTitle(params.branch_name)
     }
