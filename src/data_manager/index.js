@@ -323,7 +323,57 @@ export const uploadDocumentsApi = (params, successCallback, errorCallback) => {
   fetch(API.documentsUpload, requestOptions)
     .then(response => response.text())
     .then(result => successCallback(result))
-    .catch(error => errorCallback(error));
+    .catch(error => 
+      errorCallback(error)
+    );
+};
+
+export const uploadFileWithRetryProcess = async (params, retries = 3, timeout = 10000) => {
+ 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout); // Timeout after X ms
+
+  let attempt = 0;
+  let success = false;
+
+  // Retry loop for connection issues
+  while (attempt < retries && !success) {
+    try {
+      attempt++;
+      const response = await fetch(API.documentsUpload, {
+        method: 'POST',
+        body: params,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        signal: controller.signal, 
+        redirect: 'follow',
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const result = await response.json();
+      console.log('File uploaded successfully:', result);
+      return result;
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        Alert.alert('Timeout', 'The upload request timed out. Please try again.');
+        return null;
+      } else {
+        console.error('Error uploading file:', error);
+        if (attempt < retries) {
+          Alert.alert(`Retrying... Attempt ${attempt}`);
+        } else {
+          Alert.alert('Upload Failed', 'Failed to upload file after multiple attempts.');
+          return null;
+        }
+      }
+    }
+  }
+
+  clearTimeout(timeoutId); // Clear timeout after finishing the process
 };
 
 export const getAllVehicleTypes = (params, successCallback, errorCallback) => {

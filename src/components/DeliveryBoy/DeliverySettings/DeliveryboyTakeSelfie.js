@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,24 +9,24 @@ import {
   Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../../../colors';
+import { colors } from '../../../colors';
 import ChoosePhotoByCameraGallaryModal from '../../commonComponent/ChoosePhotoByCameraGallaryModal';
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
   localizationText,
 } from '../../../utils/common';
-import {useLoader} from '../../../utils/loaderContext';
-import {uploadDocumentsApi, updateUserProfile} from '../../../data_manager';
-import {useUserDetails} from '../../commonComponent/StoreContext';
-import {API} from '../../../utils/constant';
+import { useLoader } from '../../../utils/loaderContext';
+import { uploadDocumentsApi, updateUserProfile, uploadFileNew } from '../../../data_manager';
+import { useUserDetails } from '../../commonComponent/StoreContext';
+import { API } from '../../../utils/constant';
 
-const DeliveryboyTakeSelfie = ({route, navigation}) => {
+const DeliveryboyTakeSelfie = ({ route, navigation }) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [photoFileName, setPhotoFileName] = useState(''); // State for filename
   const [image, setImage] = useState(null); // State for photo
-  const {setLoading} = useLoader();
-  const {userDetails, saveUserDetails} = useUserDetails();
+  const { setLoading } = useLoader();
+  const { userDetails, saveUserDetails } = useUserDetails();
   const tryAgain = localizationText('Common', 'tryAgain') || 'Try Again';
   const useThis = localizationText('Common', 'useThis') || 'Use This';
 
@@ -82,17 +82,11 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
     const formdata = new FormData();
     formdata.append('file', photo);
     setLoading(true);
-    uploadDocumentsApi(
-      formdata,
-      successResponse => {
-        setLoading(false);
-        console.log(
-          'print_data==>successResponseuploadDocumentsApi',
-          '' + JSON.parse(successResponse).id,
-        );
+    await uploadFileWithRetryProcess(formdata).then((response) => {
+      if (response) {
         let profileParams = {
           ext_id: userDetails.userDetails[0].ext_id,
-          profile_pic: JSON.parse(successResponse).id,
+          profile_pic: response.id,
           work_type_id: 1,
         };
         updateUserProfile(
@@ -100,10 +94,8 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
           profileParams,
           updatesuccessResponse => {
             const newUserDetails = userDetails.userDetails[0];
-            newUserDetails['profile_pic'] = JSON.parse(successResponse).id;
-            saveUserDetails({...userDetails, userDetails: [newUserDetails]});
-
-            console.log('updateUserProfile', updatesuccessResponse);
+            newUserDetails['profile_pic'] = response.id;
+            saveUserDetails({ ...userDetails, userDetails: [newUserDetails] });
             if (route.params) {
               navigation.navigate('AddVehicle', {
                 delivery_boy_details: route.params.delivery_boy_details,
@@ -122,34 +114,43 @@ const DeliveryboyTakeSelfie = ({route, navigation}) => {
                 ],
               );
             }
+            setLoading(false);
           },
           errorResponse => {
+            setLoading(false);
             console.log('updateUserProfile', errorResponse);
           },
         );
-      },
-      errorResponse => {
-        console.log(
-          'print_data==>errorResponseuploadDocumentsApi',
-          '' + errorResponse,
-        );
+      } else {
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      },
-    );
+      }
+    })
+      .catch((error) => {
+        setLoading(false);
+        Alert.alert(
+          'Error',
+          'Unable to upload. Please try again' ,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.goBack();
+              },
+            },
+          ],
+        );
+      });
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
+    <ScrollView style={{ width: '100%', backgroundColor: '#FFF' }}>
       <View>
         <TouchableOpacity onPress={toggleModal} style={styles.profilePicCard}>
           <Image
             style={styles.profilePic}
             source={
               image
-                ? {uri: image.data.uri}
+                ? { uri: image.data.uri }
                 : require('../../../image/dummy-Selfie.jpg')
             }
           />
