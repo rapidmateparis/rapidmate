@@ -117,7 +117,7 @@ const EnterprisesTakeSelfie = ({navigation}) => {
                 '' + errorResponseProfile,
               );
               setLoading(false);
-              Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+              Alert.alert('Error Alert', 'Server busy. Please try again!!!' , [
                 {text: 'OK', onPress: () => {}},
               ]);
             },
@@ -129,7 +129,7 @@ const EnterprisesTakeSelfie = ({navigation}) => {
             '' + errorResponse,
           );
           setLoading(false);
-          Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          Alert.alert('Error Alert', 'Server busy. Please try again!!!' , [
             {text: 'OK', onPress: () => {}},
           ]);
         },

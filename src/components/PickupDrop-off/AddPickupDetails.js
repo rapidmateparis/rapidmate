@@ -98,7 +98,7 @@ const AddPickupdetails = ({route, navigation}) => {
           '' + errorResponse,
         );
         setLoading(false);
-        Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+        Alert.alert('Error Alert', 'Server busy. Please try again!!!', [
           {text: 'OK', onPress: () => {}},
         ]);
       },

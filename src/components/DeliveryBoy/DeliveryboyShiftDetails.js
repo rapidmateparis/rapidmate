@@ -19,7 +19,7 @@ import StartShift from '../../image/play-32.png';
 import {useNavigation} from '@react-navigation/native';
 import {API} from '../../utils/constant';
 import {updateShiftOrderStatus} from '../../data_manager';
-import {localizationText, utcLocal} from '../../utils/common';
+import {localizationText, utcLocal, saveCurrentUserDetailsInStore} from '../../utils/common';
 import moment from 'moment';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';

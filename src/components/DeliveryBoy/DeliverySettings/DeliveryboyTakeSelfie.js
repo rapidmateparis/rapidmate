@@ -14,10 +14,10 @@ import ChoosePhotoByCameraGallaryModal from '../../commonComponent/ChoosePhotoBy
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
-  localizationText,
+  localizationText,saveCurrentUserDetailsInStore
 } from '../../../utils/common';
 import { useLoader } from '../../../utils/loaderContext';
-import { uploadDocumentsApi, updateUserProfile, uploadFileNew } from '../../../data_manager';
+import { uploadDocumentsApi, updateUserProfile, uploadFileWithRetryProcess } from '../../../data_manager';
 import { useUserDetails } from '../../commonComponent/StoreContext';
 import { API } from '../../../utils/constant';
 
@@ -96,6 +96,7 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
             const newUserDetails = userDetails.userDetails[0];
             newUserDetails['profile_pic'] = response.id;
             saveUserDetails({ ...userDetails, userDetails: [newUserDetails] });
+            saveCurrentUserDetailsInStore(userDetails);
             if (route.params) {
               navigation.navigate('AddVehicle', {
                 delivery_boy_details: route.params.delivery_boy_details,

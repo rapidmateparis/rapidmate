@@ -25,7 +25,7 @@ import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import {useFocusEffect} from '@react-navigation/native';
-import {localizationText} from '../../utils/common';
+import {localizationText, saveCurrentUserDetailsInStore} from '../../utils/common';
 
 const DeliveryboyHome = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -136,6 +136,7 @@ const DeliveryboyHome = ({navigation}) => {
           newUserDetails['notificationCount'] = 0;
         }
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        saveCurrentUserDetailsInStore(userDetails);
       },
       errorResponse => {
         // setLoading(false);

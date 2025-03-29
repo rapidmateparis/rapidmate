@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import Sound from 'react-native-sound'
 import ImageResizer from '@bam.tech/react-native-image-resizer';
 import RNFS from 'react-native-fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const formatDate = date => {
   var d = new Date(date),
@@ -63,6 +64,9 @@ export const getData = async (url, data) => {
     });
   // console.log(" response ", response);
   // return response.data;
+};
+export const saveCurrentUserDetailsInStore = async userDetails => {
+  await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
 };
 
 export const postData = async (url, data) => {

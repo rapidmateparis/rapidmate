@@ -79,7 +79,7 @@ const EnterpriseShiftAddDetsils = ({route, navigation}) => {
           '' + errorResponse,
         );
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        Alert.alert('Error Alert', 'Server busy. Please try again!!!', [
           {text: 'OK', onPress: () => {}},
         ]);
       },

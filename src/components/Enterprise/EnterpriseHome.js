@@ -26,7 +26,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import {getEnterpriseDashboardInfo, getNotificationCount} from '../../data_manager';
 import {useFocusEffect} from '@react-navigation/native';
-import { localizationText } from '../../utils/common';
+import { localizationText, saveCurrentUserDetailsInStore } from '../../utils/common';
 const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
@@ -185,6 +185,7 @@ const EnterpriseHome = ({navigation}) => {
           newUserDetails['notificationCount']=0
         }
         saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+        saveCurrentUserDetailsInStore(userDetails);
       },
       errorResponse => {
         setLoading(false);

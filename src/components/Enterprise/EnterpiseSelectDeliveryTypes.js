@@ -57,6 +57,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   console.log("vechel type ", vehicleTypeList)
 
   useEffect(() => {
+    console.log("---------------------------Syszoo" + route.params.delivery_type_id);
     if (vehicleTypeList?.length > 0) {
       const vehicle = vehicleTypeList.filter(
         val => val.vehicle_type == 'Cycle',
@@ -189,6 +190,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
             ? lookupData?.enterpriseServiceType.map(serviceType => {
                 return (
                   <TouchableOpacity
+                   disabled={disableServiceType()}
                     style={[
                       styles.selectDeliveryboyTypeCard,
                       selectedOption === serviceType.id && {},

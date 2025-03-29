@@ -129,7 +129,7 @@ import EnterpriseAddMultpleDropDetails from './components/Enterprise/EnterpriseA
 import PrivacyPolicy from './common/PrivacyPolicy';
 import TermsAndConditions from './common/TermsOfService';
 import EnterpriseBillingDetail from './components/Enterprise/EnterpriseSettings/EnterpriseBillingDetail';
-import {localizationText} from './utils/common';
+import {localizationText, saveCurrentUserDetailsInStore} from './utils/common';
 import EnterpriseShiftRequestNewDelivery from './components/Enterprise/EnterpriseShiftRequestNewDelivery';
 import EnterpriseShiftAddDetsils from './components/Enterprise/EnterpriseShiftAddDetsils';
 import EnterpriseShiftOrderPreview from './components/Enterprise/EnterpriseShiftOrderPreview';
@@ -240,6 +240,7 @@ const AppNavigator = () => {
           saveUserDetails(JSON.parse(getUserDetails));
           let userDetails = JSON.parse(getUserDetails);
           setUserDetail(userDetails);
+          saveCurrentUserDetailsInStore(userDetails);
         }
         setIsLoading(false);
       } catch (error) {}

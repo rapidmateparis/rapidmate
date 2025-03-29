@@ -14,7 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
-  localizationText,
+  localizationText, saveCurrentUserDetailsInStore
 } from '../../utils/common';
 import {useLoader} from '../../utils/loaderContext';
 import {updateUserProfile, uploadDocumentsApi} from '../../data_manager';
@@ -92,7 +92,7 @@ const PickupTakeSelfie = ({route, navigation}) => {
         const newUserDetails = userDetails.userDetails[0];
         newUserDetails['profile_pic'] = JSON.parse(successResponse).id;
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
-
+        saveCurrentUserDetailsInStore(userDetails);
         let profileParams = {
           ext_id: userDetails.userDetails[0].ext_id,
           profile_pic: JSON.parse(successResponse).id,
@@ -123,7 +123,7 @@ const PickupTakeSelfie = ({route, navigation}) => {
           '' + errorResponse,
         );
         setLoading(false);
-        Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+        Alert.alert('Error Alert', 'Server busy. Please try again!!!', [
           {text: 'OK', onPress: () => {}},
         ]);
       },

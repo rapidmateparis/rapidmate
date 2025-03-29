@@ -295,9 +295,9 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
           }
         },
         errorResponse => {
-          console.error('Upload Error:', errorResponse);
+          console.error('Upload Error:', "Server busy. Please try again!!!");
           setLoading(false);
-          Alert.alert('Error Alert', String(errorResponse), [{ text: 'OK' }]);
+          Alert.alert('Error Alert', "Server busy. Please try again!!!", [{ text: 'OK' }]);
         }
       );
     } catch (apiError) {
