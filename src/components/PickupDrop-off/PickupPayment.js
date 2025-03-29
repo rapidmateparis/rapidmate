@@ -115,19 +115,23 @@ const PickupPayment = ({route, navigation}) => {
 
   useEffect(() => {}, [orderResponse]);
   useEffect(() => {
+    setLoading(true)
     getTaxDetails(
       success => {
+        setLoading(false)
         if (success[0]._response[0].tax_value) {
           setVechicleTax(parseFloat(success[0]._response[0].tax_value));
         }
       },
       error => {
+        setLoading(false)
         console.log('error ====== ===== ', error);
       },
     );
   }, []);
 
   const createPaymentIntent = async () => {
+    setLoading(true)
     try {
       const response = await fetch(
         'https://api.stripe.com/v1/payment_intents',
@@ -152,7 +156,10 @@ const PickupPayment = ({route, navigation}) => {
       setClientSecret(data.client_secret);
       setup(data.client_secret);
     } catch (error) {
+      setLoading(false)
       Alert.alert('Error', error.message);
+    }finally{
+      setLoading(false)
     }
   };
 
