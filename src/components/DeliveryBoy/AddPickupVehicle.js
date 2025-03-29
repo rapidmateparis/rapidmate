@@ -162,12 +162,12 @@ const AddPickupVehicle = ({route, navigation}) => {
         errorResponse => {
           console.log('print_data==>errorResponseuploadDocumentsApi', errorResponse);
           setLoading(false);
-          Alert.alert('Error Alert', String(errorResponse), [{ text: 'OK', onPress: () => {} }]);
+          Alert.alert('Error Alert', "Server busy. Please try again!!!", [{ text: 'OK', onPress: () => {} }]);
         }
       );
     } catch (error) {
       console.error('Upload failed:', error);
-      Alert.alert('Error Alert', 'Something went wrong while uploading.', [{ text: 'OK', onPress: () => {} }]);
+      Alert.alert('Error Alert', 'Server busy. Please try again!!!', [{ text: 'OK', onPress: () => {} }]);
       setLoading(false);
     }
 };

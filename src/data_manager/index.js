@@ -324,7 +324,7 @@ export const uploadDocumentsApi = (params, successCallback, errorCallback) => {
     .then(response => response.text())
     .then(result => successCallback(result))
     .catch(error => 
-      errorCallback(error)
+      errorCallback("Server busy. Please try again!!!")
     );
 };
 
