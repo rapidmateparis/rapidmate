@@ -106,13 +106,14 @@ const TodayList = ({navigation, searchText}) => {
     getConsumerViewOrdersListBySearch(
       postParams,
       successResponse => {
+        setLoading(false);
         console.log('successResponse ===> f ', JSON.stringify(successResponse));
 
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setOrderList(tempOrderList);
         }
-        setLoading(false);
+       
       },
       errorResponse => {
         setLoading(false);
@@ -129,11 +130,12 @@ const TodayList = ({navigation, searchText}) => {
     getLocations(
       null,
       successResponse => {
+        setLoading(false);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setLocationList(tempOrderList);
         }
-        setLoading(false);
+        
       },
       errorResponse => {
         setLoading(false);
@@ -162,7 +164,7 @@ const TodayList = ({navigation, searchText}) => {
       null,
       successResponse => {
         console.log('successResponse ===> f ', JSON.stringify(successResponse));
-
+        setLoading(false);
         if (successResponse[0]._success) {
           if (size === successResponse[0]._response.length) {
             setPage(page + 1);
@@ -173,7 +175,7 @@ const TodayList = ({navigation, searchText}) => {
           let tempOrderList = successResponse[0]._response;
           setOrderList([...orderList, ...tempOrderList]);
         }
-        setLoading(false);
+      
       },
       errorResponse => {
         setLoading(false);

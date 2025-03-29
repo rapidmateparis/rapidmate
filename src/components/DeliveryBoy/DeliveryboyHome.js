@@ -55,6 +55,7 @@ const DeliveryboyHome = ({navigation}) => {
   );
 
   const fetchData = async () => {
+    setLoading(true)
     try {
       await Promise.all([
         getLocationsData(),
@@ -66,6 +67,8 @@ const DeliveryboyHome = ({navigation}) => {
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -99,7 +102,7 @@ const DeliveryboyHome = ({navigation}) => {
   };
 
   const getLocationsData = () => {
-    setLoading(true);
+    // setLoading(true);
     getLocations(
       null,
       successResponse => {
@@ -109,18 +112,18 @@ const DeliveryboyHome = ({navigation}) => {
         }
       },
       errorResponse => {
-        setLoading(false);
+        // setLoading(false);
         console.log('getLocationsData==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
 
   const getNotificationAllCount = () => {
-    setLoading(true);
+    // setLoading(true);
     getNotificationCount(
       userDetails.userDetails[0].ext_id,
       successResponse => {
-        setLoading(false);
+        // setLoading(false);
         console.log(
           'getNotificationAllCount==>successResponse',
           '' + JSON.stringify(successResponse[0]._response.notificationCount),
@@ -135,7 +138,7 @@ const DeliveryboyHome = ({navigation}) => {
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
       },
       errorResponse => {
-        setLoading(false);
+        // setLoading(false);
         console.log(
           'getNotificationAllCount==>errorResponse',
           '' + errorResponse[0],

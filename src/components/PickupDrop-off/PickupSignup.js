@@ -96,6 +96,7 @@ const PickupSignup = ({navigation}) => {
   ];
 
   useEffect(() => {
+    setLoading(true)
     getCountryList(
       (param = {}),
       successResponse => {

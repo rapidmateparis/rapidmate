@@ -85,11 +85,12 @@ const PickupAddress = ({route, navigation}) => {
   }
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     getAllVehiclesType();
   }, []);
 
   const getAllVehiclesType = () => {
+    setLoading(true);
     getAllVehicleTypes(
       null,
       successResponse => {

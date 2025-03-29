@@ -537,16 +537,19 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
   };
 
   const getLocationsData = () => {
+    setLoading(true)
     setLocationList([]);
     getLocations(
       null,
       successResponse => {
+        setLoading(false)
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setLocationList(tempOrderList);
         }
       },
       errorResponse => {
+        setLoading(false)
         if (errorResponse[0]._errors.message) {
           setLocationList([]);
         }

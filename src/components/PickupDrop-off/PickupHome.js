@@ -26,13 +26,16 @@ const PickupHome = ({navigation}) => {
   const {setLoading} = useLoader();
 
   useEffect(() => {
+    setLoading(true)
     getServiceTypeApi(
       null,
       successResponse => {
+        setLoading(false)
         console.log('getServiceTypeApi===>', successResponse[0]._response);
         saveServiceTypeDetails(successResponse[0]._response);
       },
       errorResponse => {
+        setLoading(false)
         console.log('errorResponse', errorResponse);
       },
     );
