@@ -58,7 +58,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.sourceLocation.sourceDescription
+              {params.sourceLocation?.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : null}
             </Text>

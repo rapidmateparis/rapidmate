@@ -111,7 +111,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
 
   useEffect(() => {
     console.log(userDetails.userDetails[0]);
-    getPaymentMethod();
+    //getPaymentMethod();
   }, []);
 
   const getPaymentMethod = () => {
@@ -411,7 +411,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
               {localizationText('Common', 'from')} -{' '}
-              {params.pickup_location.sourceDescription}
+              {params.pickup_location?.sourceDescription}
             </Text>
           </View>
 

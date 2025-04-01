@@ -526,7 +526,7 @@ const PickupPayment = ({route, navigation}) => {
             <EvilIcons name="location" size={18} color="#606060" />
             <Text style={styles.vehicleCapacity}>
               {localizationText('Common', 'from')}{' '}
-              {params.sourceLocation.sourceDescription
+              {params.sourceLocation?.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : ''}{' '}
             </Text>
