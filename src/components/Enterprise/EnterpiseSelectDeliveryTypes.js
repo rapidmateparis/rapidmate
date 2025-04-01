@@ -57,7 +57,6 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   console.log("vechel type ", vehicleTypeList)
 
   useEffect(() => {
-    console.log("---------------------------Syszoo" + route.params.delivery_type_id);
     if (vehicleTypeList?.length > 0) {
       const vehicle = vehicleTypeList.filter(
         val => val.vehicle_type == 'Cycle',
@@ -360,7 +359,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           </View>
         </View>
 
-        {vehicleTypeList.map((vehicle, index) => (
+        {vehicleTypeList.map((vehicle, index) => 
+         vehicle.id !=8 &&
+         (
           <TouchableOpacity
             disabled={disableVehicleType()}
             key={vehicle.id}
@@ -371,7 +372,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                   ? serviceTypeId === 1
                     ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount)
                     : setSelectedVehiclePrice(vehicle.enterprise_wov_amount)
-                  : setSelectedVehiclePrice(vehicle.km_price);
+                  : setSelectedVehiclePrice(((vehicle.km_price * vehicle.percent)/100)+ vehicle.km_price);
               }, 500);
             }}
             style={[

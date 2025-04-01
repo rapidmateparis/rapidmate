@@ -233,7 +233,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
       if (imageData.status == 'success') {
         setPhotoFileName(getFileName(imageData.data.uri));
         uploadImage(imageData);
-        
+
       }
     } catch (error) {
       // Handle errors here
@@ -261,27 +261,27 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
       Alert.alert("Error", "Invalid image data");
       return;
     }
-  
+
     setLoading(true);
-  
+
     let photo = {
       uri: image.data.uri,
       type: image.data.type || 'image/jpeg',
       name: image.data.fileName || 'photo.jpg',
     };
-  
+
     console.log("Uploading Photo:", photo);
-  
+
     const formdata = new FormData();
     formdata.append('file', photo);
-  
+
     try {
       uploadDocumentsApi(
         formdata,
         successResponse => {
           console.log('Upload Success:', successResponse);
           setLoading(false);
-          
+
           try {
             let responseData = JSON.parse(successResponse);
             if (responseData?.id) {
@@ -306,7 +306,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
       Alert.alert("Error", "Something went wrong while uploading.");
     }
   };
-  
+
 
   // const uploadImage = async image => {
 
@@ -350,38 +350,38 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
   // };
 
   // setLoading(true)
-    // if (image != null) {
-    //   var photo = {
-    //     uri: image.data.uri,
-    //     type: image.data.type,
-    //     name: image.data.fileName,
-    //   };
-    //   const formdata = new FormData();
-    //   formdata.append('file', photo);
-    //   // setLoading(true);
-    //   uploadDocumentsApi(
-    //     formdata,
-    //     successResponse => {
-    //       console.log('success  response ============>',successResponse)
-    //       setLoading(false);
-    //       setImageViewId(JSON.parse(successResponse).id);
-    //     },
-    //     errorResponse => {
-    //       console.log(
-    //         'print_data==>errorResponseuploadDocumentsApi',
-    //         '' + errorResponse,
-    //       );
-    //       setLoading(false);
-    //       Alert.alert('Error Alert', '' + errorResponse, [
-    //         {text: 'OK', onPress: () => {}},
-    //       ]);
-    //     },
-    //   );
-    // } else {
-    //   Alert.alert('Error Alert', 'Please choose a picture', [
-    //     {text: 'OK', onPress: () => {}},
-    //   ]);
-    // }
+  // if (image != null) {
+  //   var photo = {
+  //     uri: image.data.uri,
+  //     type: image.data.type,
+  //     name: image.data.fileName,
+  //   };
+  //   const formdata = new FormData();
+  //   formdata.append('file', photo);
+  //   // setLoading(true);
+  //   uploadDocumentsApi(
+  //     formdata,
+  //     successResponse => {
+  //       console.log('success  response ============>',successResponse)
+  //       setLoading(false);
+  //       setImageViewId(JSON.parse(successResponse).id);
+  //     },
+  //     errorResponse => {
+  //       console.log(
+  //         'print_data==>errorResponseuploadDocumentsApi',
+  //         '' + errorResponse,
+  //       );
+  //       setLoading(false);
+  //       Alert.alert('Error Alert', '' + errorResponse, [
+  //         {text: 'OK', onPress: () => {}},
+  //       ]);
+  //     },
+  //   );
+  // } else {
+  //   Alert.alert('Error Alert', 'Please choose a picture', [
+  //     {text: 'OK', onPress: () => {}},
+  //   ]);
+  // }
 
   const onFetchDistanceAndTime = value => {
     console.log('onFetchDistanceAndTime', value);
@@ -391,7 +391,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
   useEffect(() => {
     setNumber(userDetails.userDetails[0].phone.substring(3));
     setCompany(userDetails.userDetails[0].company_name);
-    if (deliveryType == 2) {
+    if (deliveryType == 2 || deliveryType == 1) {
       onBranchSourceLocation(routeParams.sourceBranch);
     }
   }, []);
@@ -407,20 +407,16 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
       latitude: location.latitude,
       longitude: location.longitude,
     };
-    location.sourceDescription =
-      locationParams.address +
-      ', ' +
-      locationParams.city +
-      ', ' +
-      locationParams.country;
+    location.sourceDescription = locationParams.address + ', ' + locationParams.city + ', ' + locationParams.country; 
     setSourceLocation(location);
-    setLoading(true);
+    setSourceLocationId(location.location_id);
+    /*setLoading(true);
     getLocationId(
       locationParams,
       successResponse => {
         if (successResponse[0]._success) {
           setLoading(false);
-          setSourceLocationId(successResponse[0]._response.location_id);
+          setSourceLocationId(locatione.location_id);
         }
       },
       errorResponse => {
@@ -430,10 +426,11 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
         ]);
       },
     );
+    setSourceLocationId(location.location_id);*/
   };
 
   const onMultpleDestinationLocation = locations => {
-    console.log("Locations==========>",locations);
+    console.log("Locations==========>", locations);
     var branches = [];
     var totalAmount = 0;
     var totalDistance = 0;
@@ -494,7 +491,8 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
       latitude: location.originCoordinates.latitude,
       longitude: location.originCoordinates.longitude,
     };
-    setLoading(true);
+    setSourceLocationId(location.location_id);
+    /*setLoading(true);
     getLocationId(
       locationParams,
       successResponse => {
@@ -510,6 +508,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
         ]);
       },
     );
+    setSourceLocationId(routeParams.sourceBranch.location_id);*/
   };
 
   const onDestinationLocation = location => {
@@ -553,6 +552,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
         <View style={{ height: 400, position: 'relative' }}>
           <MultpleMapAddress
             sourceLocation={routeParams.sourceBranch}
+            sourceDisabled = {"none"}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
             onDestinationLocation={location => {
               onMultpleDestinationLocation(location);
@@ -562,7 +562,8 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
       ) : (
         <View style={{ height: 200, position: 'relative' }}>
           <MapAddress
-             sourceLocation={routeParams.sourceBranch}
+            sourceLocation={routeParams.sourceBranch}
+            sourceDisabled = {"none"}
             onFetchDistanceAndTime={onFetchDistanceAndTime}
             onSourceLocation={onSourceLocation}
             onDestinationLocation={onDestinationLocation}
@@ -1263,15 +1264,16 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                   );
                   return;
                 }
+                let sourceOfBranchLocationId = routeParams.sourceBranch.location_id;
                 if (deliveryType == 2) {
-                  if (sourceLocationId && destinationBranches.length > 0) {
+                  if (sourceOfBranchLocationId && destinationBranches.length > 0) {
                     let params = {
                       ...route.params,
                       delivery_type_id: deliveryType,
                       distanceTime: distanceTime,
                       pickup_location: sourceLocation,
                       dropoff_location: destinationLocation,
-                      pickup_location_id: sourceLocationId,
+                      pickup_location_id: sourceOfBranchLocationId,
                       dropoff_location_id: destinationLocationId,
                       mobile: number,
                       company_name: company,
@@ -1304,20 +1306,20 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                     );
                   }
                 } else {
-                  if (sourceLocationId && destinationLocationId) {
+                  if (sourceOfBranchLocationId && destinationLocationId) {
                     let params = {
                       ...route.params,
                       delivery_type_id: deliveryType,
                       distanceTime: distanceTime,
                       pickup_location: sourceLocation,
                       dropoff_location: destinationLocation,
-                      pickup_location_id: sourceLocationId,
+                      pickup_location_id: sourceOfBranchLocationId,
                       dropoff_location_id: destinationLocationId,
                       mobile: number,
                       company_name: company,
                       pickup_notes: pickupNotes,
                       pickup_date: moment(date).format('YYYY-MM-DD'),
-                      pickup_time: moment(time).format('HH:mm'), 
+                      pickup_time: moment(time).format('HH:mm'),
                       is_repeat_mode: promoEmails ? 1 : 0,
                       package_id: orderid,
                       amount: Math.round(
