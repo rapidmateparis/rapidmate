@@ -364,8 +364,8 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
               <Text style={styles.orderId}>{item.item.company_name}</Text>
               <Text style={styles.valueMoney}>
                 €
-                {item.item.commission_amount
-                  ? Number(item.item.commission_amount).toFixed(2)
+                {item.item.delivery_boy_amount
+                  ? Number(item.item.delivery_boy_amount).toFixed(2)
                   : '34.00'}
               </Text>
             </View>
@@ -750,7 +750,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
               <View style={styles.footerCard}>
                 <Text style={styles.orderId}>{item.item.company_name}</Text>
-                <Text style={styles.valueMoney}>€ {item.item.commission_amount}</Text>
+                <Text style={styles.valueMoney}>€ {item.item.delivery_boy_amount}</Text>
               </View>
             </TouchableOpacity>
           )}
