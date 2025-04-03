@@ -248,6 +248,15 @@ const EnterpriseSignup = ({navigation}) => {
   const handleSignUp = async () => {
     const isValid = validateForm();
 
+
+
+    if (!toggleCheckBoxFirst || !toggleCheckBoxSecond) {
+      Alert.alert('Error', 'You must agree to both conditions to proceed.', [
+        { text: 'OK', onPress: () => {} },
+      ]);
+      return;
+    }
+
     if (isValid) {
       let params = {
         info: {

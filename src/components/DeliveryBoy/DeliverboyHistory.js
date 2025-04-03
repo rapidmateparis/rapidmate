@@ -364,8 +364,8 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
               <Text style={styles.orderId}>{item.item.company_name}</Text>
               <Text style={styles.valueMoney}>
                 €
-                {item.item.amount
-                  ? Number(item.item.amount).toFixed(2)
+                {item.item.commission_amount
+                  ? Number(item.item.commission_amount).toFixed(2)
                   : '34.00'}
               </Text>
             </View>
@@ -660,6 +660,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
   };
 
   const renderItem = item => {
+    console.log("Item====================>render",item)
     console.log(
       'item?.item?.delivery_type_id === 3 ====',
       item?.item?.delivery_type_id,
@@ -749,7 +750,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
               <View style={styles.footerCard}>
                 <Text style={styles.orderId}>{item.item.company_name}</Text>
-                <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
+                <Text style={styles.valueMoney}>€ {item.item.commission_amount}</Text>
               </View>
             </TouchableOpacity>
           )}
