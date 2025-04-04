@@ -47,13 +47,6 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
 
   console.log('orderDetails ====>>', orderDetails);
   console.log('route?.params ====>>', route?.params);
-  // useEffect(() => {
-  //   const interval = setInterval(
-  //     () => setSwipeStatusMessage(defaultStatusMessage),
-  //     5000,
-  //   );
-  //   return () => clearInterval(interval);
-  // }, [defaultStatusMessage]);
 
   const startCreateShiftOrder = () => {
     if (checkStartAction()) {
@@ -104,13 +97,13 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
     const getSlot = todayList.length > 0 ? todayList[0] : [];
     return getSlot;
   };
+
   useEffect(() => {
     if (
       checkStartAction() &&
       checkStartAction()?.id &&
       checkStartAction()?.order_status == 'WORKING_INPROGRESS'
     ) {
-      navigation.navigate('DeliveryboyShiftStarted', {orderItem: orderDetails});
     }
   }, []);
 
@@ -355,10 +348,9 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                     updateSwipeStatusMessage('Swipe started!')
                   }
                   onSwipeSuccess={() => {
-                    // Alert.alert('swipe success---')
                     updateSwipeStatusMessage('Shift accepted');
                     startCreateShiftOrder();
-                    // navigation.navigate('DeliveryboyShiftStarted');
+                    navigation.navigate('DeliveryboyShiftStarted', {orderItem: orderDetails});
                   }}
                   thumbIconImageSource={StartShift}
                   railBackgroundColor="#27AE601F"
