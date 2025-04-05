@@ -37,6 +37,7 @@ const EnterpriseAddMultpleDropDetails = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
+  const [errors, setErrors] = useState({});
   const {setLoading} = useLoader();
   const component = route?.params?.component ? route?.params?.component : '';
   const branches =
@@ -77,22 +78,49 @@ const EnterpriseAddMultpleDropDetails = ({route, navigation}) => {
   ];
 
   const validateForm = () => {
-    if (
-      !name ||
-      !lastname ||
-      !email ||
-      !number ||
-      !dropdownValue ||
-      !dropNotes
-    ) {
-      Alert.alert('Validation Error', 'Please fill all the required fields.');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\d{9}$/; // Assuming 9-digit local number without country code
+  
+    let errors = {};
+    let hasError = false;
+  
+    branchList.forEach((location, index) => {
+      let dropErrors = {};
+  
+      if (!location.drop_first_name || location.drop_first_name.trim().length < 3) {
+        dropErrors.drop_first_name = 'First name is required and must be at least 3 characters.';
+      }
+  
+      if (!location.drop_email || !emailPattern.test(location.drop_email)) {
+        dropErrors.drop_email = 'Valid email is required.';
+      }
+  
+      if (!location.drop_mobile || !phonePattern.test(location.drop_mobile)) {
+        dropErrors.drop_mobile = 'Valid phone number (9 digits) is required.';
+      }
+  
+      if (!location.drop_notes || location.drop_notes.trim().length < 1) {
+        dropErrors.drop_notes = 'Drop notes are required.';
+      }
+  
+      if (Object.keys(dropErrors).length > 0) {
+        hasError = true;
+        errors[index] = dropErrors;
+      }
+    });
+  
+    setErrors(errors);
+  
+    if (hasError) {
+      Alert.alert('Validation Error', 'Please fill the correct details.');
       return false;
     }
+  
     return true;
   };
 
   const handleNextPress = () => {
-    // if (!validateForm()) return;
+    if (!validateForm()) return;
     const includeDropDetails = {
       ...route?.params,
       branches: branchList,
@@ -128,6 +156,7 @@ const EnterpriseAddMultpleDropDetails = ({route, navigation}) => {
                     <TextInput
                       style={styles.inputTextStyle}
                       placeholderTextColor="#999"
+                      maxLength={15}
                       placeholder={typeHereText}
                       value={loctaion.drop_first_name}
                       onChangeText={text => {
@@ -137,10 +166,11 @@ const EnterpriseAddMultpleDropDetails = ({route, navigation}) => {
                   </View>
 
                   <View style={{flex: 1, marginLeft: 5}}>
-                    <Text style={styles.textlable}>{lastNameText}*</Text>
+                    <Text style={styles.textlable}>{lastNameText}</Text>
                     <TextInput
                       style={styles.inputTextStyle}
                       placeholderTextColor="#999"
+                      maxLength={15}
                       placeholder={typeHereText}
                       value={loctaion.drop_last_name}
                       onChangeText={text =>

@@ -99,6 +99,7 @@ const ResetPassword = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'newPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={text => setPassword(text)}
@@ -118,6 +119,7 @@ const ResetPassword = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'confirmNewPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}

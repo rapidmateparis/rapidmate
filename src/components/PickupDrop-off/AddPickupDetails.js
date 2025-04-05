@@ -41,6 +41,7 @@ const AddPickupdetails = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
+  const [errors, setErrors] = useState({});
   const {setLoading} = useLoader();
   const mySelfText = localizationText('Common', 'mySelf') || 'My Self';
   const othersText = localizationText('Common', 'others') || 'Others';
@@ -148,8 +149,7 @@ const AddPickupdetails = ({route, navigation}) => {
     let userDBData = userDetails?.userDetails[0];
     console.log(userDBData);
     if (selectedId === '1') {
-      const updatedNumber = userDBData.phone
-        ?userDBData.phone: null;
+      const updatedNumber = userDBData.phone ? userDBData.phone : null;
       setName(
         userDetails.userDetails[0].first_name
           ? userDetails.userDetails[0].first_name
@@ -171,18 +171,41 @@ const AddPickupdetails = ({route, navigation}) => {
   }, [selectedId]);
 
   const validateForm = () => {
-    if (
-      !name ||
-      !email ||
-      !number ||
-      !dropdownValue ||
-      !orderid ||
-      !pickupNotes
-    ) {
-      Alert.alert('Validation Error', 'Please fill all the required fields.');
-      return false;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\+?\d{10,15}$/;
+
+    let errors = {};
+    if (!name.trim()) {
+      errors.name = 'Name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
     }
-    return true;
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    } else if (isNaN(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
+    }
+    if (!dropdownValue) {
+      errors.dropdownValue = 'Please select country';
+    }
+    if (!orderid.trim()) {
+      errors.orderid = 'Package Id is required';
+    } else if (orderid.length < 8) {
+      errors.orderid = 'package Id must be at least 8 characters long';
+    }
+    if (!pickupNotes.trim()) {
+      errors.pickupNotes = 'Pickup note is required';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
   };
 
   const handleNextPress = () => {
@@ -237,6 +260,7 @@ const AddPickupdetails = ({route, navigation}) => {
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
+                maxLength={15}
                 placeholder={localizationText('Common', 'typeHere')}
                 value={name}
                 onChangeText={text => setName(text)}
@@ -250,12 +274,16 @@ const AddPickupdetails = ({route, navigation}) => {
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
+                maxLength={15}
                 placeholder={localizationText('Common', 'typeHere')}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
             </View>
           </View>
+          {errors.name ? (
+            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+          ) : null}
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>
               {localizationText('Common', 'companyName')}
@@ -268,6 +296,9 @@ const AddPickupdetails = ({route, navigation}) => {
               onChangeText={text => setCompany(text)}
             />
           </View>
+          {errors.company ? (
+            <Text style={[{color: 'red'}]}>{errors.company}</Text>
+          ) : null}
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>
               {localizationText('Common', 'email')}*
@@ -280,6 +311,9 @@ const AddPickupdetails = ({route, navigation}) => {
               onChangeText={text => setEmail(text)}
             />
           </View>
+          {errors.email ? (
+            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+          ) : null}
           <View>
             <Text style={styles.textlable}>
               {localizationText('Common', 'phoneNumber')}*
@@ -329,6 +363,9 @@ const AddPickupdetails = ({route, navigation}) => {
               />
             </View>
           </View>
+          {errors.number ? (
+            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+          ) : null}
           <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
             <Text style={styles.textlable}>
               {localizationText('Common', 'packagePhoto')}
@@ -363,11 +400,15 @@ const AddPickupdetails = ({route, navigation}) => {
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
+              maxLength={8}
               placeholder={localizationText('Common', 'typeHere')}
               value={orderid}
               onChangeText={text => setOrderid(text)}
             />
           </View>
+          {errors.orderid ? (
+            <Text style={[{color: 'red'}]}>{errors.orderid}</Text>
+          ) : null}
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>
               {localizationText('Common', 'pickupNotes')}*
@@ -383,6 +424,9 @@ const AddPickupdetails = ({route, navigation}) => {
               onChangeText={text => setPickupNotes(text)}
             />
           </View>
+          {errors.pickupNotes ? (
+            <Text style={[{color: 'red'}]}>{errors.pickupNotes}</Text>
+          ) : null}
           <TouchableOpacity
             onPress={() => {
               handleNextPress();

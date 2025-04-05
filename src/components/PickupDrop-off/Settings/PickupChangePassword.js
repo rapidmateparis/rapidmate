@@ -98,6 +98,7 @@ const PickupChangePassword = ({navigation}) => {
               style={styles.input}
               placeholder="Current Password"
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!currentPasswordVisible}
               value={currentPassword}
               onChangeText={text => setCurrentPassword(text)}
@@ -132,6 +133,7 @@ const PickupChangePassword = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'newPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!newPasswordVisible}
               value={newPassword}
               onChangeText={text => setNewPassword(text)}
@@ -151,6 +153,7 @@ const PickupChangePassword = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'confirmNewPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmNewPassword}
               onChangeText={text => setConfirmNewPassword(text)}

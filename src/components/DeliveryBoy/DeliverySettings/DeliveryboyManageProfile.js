@@ -24,6 +24,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
 
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
+  const [errors, setErrors] = useState({});
   const [number, setNumber] = useState(
     userDetails?.userDetails[0]?.phone || '',
   );
@@ -57,7 +58,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
     try {
       const storedUserDetails = await AsyncStorage.getItem('userDetails');
       if (storedUserDetails) {
-        saveUserDetails(JSON.parse(storedUserDetails)); 
+        saveUserDetails(JSON.parse(storedUserDetails));
       }
     } catch (error) {
       console.error('Error loading user details:', error);
@@ -78,7 +79,10 @@ const DeliveryboyManageProfile = ({navigation}) => {
 
   const saveUserDetailsInAsync = async updatedUserDetails => {
     try {
-      await AsyncStorage.setItem('userDetails', JSON.stringify(updatedUserDetails));
+      await AsyncStorage.setItem(
+        'userDetails',
+        JSON.stringify(updatedUserDetails),
+      );
       console.log('User details saved successfully');
     } catch (error) {
       console.error('Error saving user details:', error);
@@ -86,17 +90,33 @@ const DeliveryboyManageProfile = ({navigation}) => {
   };
 
   const saveProfileDetails = () => {
-    if (number.length < 9) {
-      Alert.alert(
-        'Invalid Number',
-        'Phone number must be at least 9 digits.',
-        [{text: 'OK'}],
-      );
-      return;
+    let errors = {};
+
+    // Validation
+    if (!firstName.trim()) {
+      errors.firstName = 'Name is required';
+    } else if (firstName.length < 3) {
+      errors.firstName = 'Name must be at least 3 characters long';
+    }
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    } else if (isNaN(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
+    }
+    if (!dropdownValue) {
+      errors.dropdownValue = 'Please select country';
+    }
+    setErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return false; // Stop if there are validation errors
     }
 
     setLoading(true);
-    let profileParams = {
+
+    const profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       first_name: firstName,
       last_name: lastName,
@@ -107,26 +127,15 @@ const DeliveryboyManageProfile = ({navigation}) => {
       variant: vehicleVariant,
     };
 
-
-   
-
     updateUserProfile(
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
         setLoading(false);
-        // const newUserDetails = userDetails.userDetails[0];
-        // newUserDetails['email'] = email;
-        // newUserDetails['first_name'] = firstName;
-        // newUserDetails['last_name'] = lastName;
-        // newUserDetails['phone'] = number;
-        // newUserDetails['plat_no'] = vehicleNo;
-        // newUserDetails['modal'] = vehicleModel;
-        // newUserDetails['make'] = vehicleMake;
-        // newUserDetails['variant'] = vehicleVariant;
 
         const updatedUserDetails = {
-          ...userDetails, userDetails : [
+          ...userDetails,
+          userDetails: [
             {
               ...userDetails.userDetails[0],
               email,
@@ -137,21 +146,19 @@ const DeliveryboyManageProfile = ({navigation}) => {
               modal: vehicleModel,
               make: vehicleMake,
               variant: vehicleVariant,
-              profile_pic: successResponse?.profile_pic || userDetails.userDetails[0].profile_pic,
-            }
-          ]
-        }
+              profile_pic:
+                successResponse?.profile_pic ||
+                userDetails.userDetails[0].profile_pic,
+            },
+          ],
+        };
 
-
-        console.log("Update profile TEST", updatedUserDetails)
-
+        console.log('Update profile TEST', updatedUserDetails);
 
         saveUserDetails(updatedUserDetails);
         saveUserDetailsInAsync(updatedUserDetails);
 
-        // saveUserDetails({...userDetails, userDetails: [newUserDetails]});
-        // saveUserDetailsInAsync(userDetails);
-        console.log('updateUserProfile response ', successResponse);
+        console.log('updateUserProfile response', successResponse);
         Alert.alert('Success', 'Profile updated successfully', [{text: 'OK'}]);
       },
       errorResponse => {
@@ -159,6 +166,8 @@ const DeliveryboyManageProfile = ({navigation}) => {
         console.log('updateUserProfile', errorResponse);
       },
     );
+
+    return true;
   };
 
   return (
@@ -188,7 +197,9 @@ const DeliveryboyManageProfile = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-
+        {errors.firstName ? (
+          <Text style={[{color: 'red'}]}>{errors.firstName}</Text>
+        ) : null}
         <View style={{flex: 1}}>
           <Text style={styles.textlable}>
             {localizationText('Common', 'firstName')}
@@ -197,6 +208,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
             style={styles.inputTextStyle}
             placeholder={localizationText('Common', 'typeHere')}
             placeholderTextColor={'#999'}
+            maxLength={15}
             value={firstName}
             onChangeText={text => setFirstName(text)}
           />
@@ -209,10 +221,14 @@ const DeliveryboyManageProfile = ({navigation}) => {
             style={styles.inputTextStyle}
             placeholder={localizationText('Common', 'typeHere')}
             placeholderTextColor={'#999'}
+            maxLength={15}
             value={lastName}
             onChangeText={text => setLastName(text)}
           />
         </View>
+        {errors.number ? (
+          <Text style={[{color: 'red'}]}>{errors.number}</Text>
+        ) : null}
         <View>
           <Text style={styles.textlable}>
             {localizationText('Common', 'phoneNumber')}
