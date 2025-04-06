@@ -197,6 +197,8 @@ const EnterpriseSignup = ({navigation}) => {
     let errors = {};
     if (!name.trim()) {
       errors.name = 'First name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
     }
     if (!email.trim()) {
       errors.email = 'Email is required';
@@ -221,6 +223,8 @@ const EnterpriseSignup = ({navigation}) => {
       errors.number = 'Number is required';
     } else if (isNaN(number)) {
       errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
     }
     if (!companyName.trim()) {
       errors.companyName = 'Company name is required';
@@ -236,6 +240,12 @@ const EnterpriseSignup = ({navigation}) => {
     }
     if (!dropdownCityValue) {
       errors.dropdownCityValue = 'Please select a city';
+    }
+    if (!siret) {
+      errors.siret = 'Please enter siret number';
+    }
+    else if (siret.trim().length < 14) {
+      errors.siret = 'Invalid siret number';
     }
     if (!comments) {
       errors.comments = 'Please describe your projects';
@@ -274,7 +284,7 @@ const EnterpriseSignup = ({navigation}) => {
           city: dropdownCityValue.toString(),
           state: dropdownStateValue.toString(),
           country: dropdownCountryValue.toString(),
-          siretNo: '4352354',
+          siretNo: siret,
           termone: 1,
         },
       };
@@ -342,6 +352,7 @@ const EnterpriseSignup = ({navigation}) => {
                 style={styles.loginput}
                 placeholder={localizationText('Common', 'firstName')}
                 placeholderTextColor="#999"
+                maxLength={15}
                 value={name}
                 onChangeText={text => setName(text)}
               />
@@ -353,6 +364,7 @@ const EnterpriseSignup = ({navigation}) => {
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                 placeholder={localizationText('Common', 'lastName')}
                 placeholderTextColor="#999"
+                maxLength={15}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
@@ -380,6 +392,7 @@ const EnterpriseSignup = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={text => setPassword(text)}
@@ -402,6 +415,7 @@ const EnterpriseSignup = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}
@@ -651,12 +665,17 @@ const EnterpriseSignup = ({navigation}) => {
               />
             </View>
           </View>
+          {errors.siret ? (
+            <Text style={[{color: 'red'}]}>{errors.siret}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <MaterialIcons name="villa" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Siret"
               placeholderTextColor="#999"
+              keyboardType="numeric"
+              maxLength={14}
               value={siret}
               onChangeText={text => setSiret(text)}
             />

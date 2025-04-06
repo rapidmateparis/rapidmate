@@ -31,7 +31,8 @@ const PickupSignup = ({navigation}) => {
   const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
   const [dropdownValue, setDropdownValue] = useState('33');
-  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] = useState('33');
+  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] =
+    useState('33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
@@ -60,6 +61,8 @@ const PickupSignup = ({navigation}) => {
     let errors = {};
     if (!name.trim()) {
       errors.name = 'Name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
     }
     if (!email.trim()) {
       errors.email = 'Email is required';
@@ -81,6 +84,8 @@ const PickupSignup = ({navigation}) => {
       errors.number = 'Number is required';
     } else if (isNaN(number)) {
       errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
     }
     if (!dropdownCountryValue) {
       errors.dropdownCountryValue = 'Please select a country';
@@ -96,7 +101,7 @@ const PickupSignup = ({navigation}) => {
   ];
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     getCountryList(
       (param = {}),
       successResponse => {
@@ -229,6 +234,7 @@ const PickupSignup = ({navigation}) => {
               style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
               placeholder={localizationText('Common', 'fullName')}
               placeholderTextColor="#999"
+              maxLength={15}
               value={name}
               onChangeText={text => setName(text)}
             />
@@ -255,6 +261,7 @@ const PickupSignup = ({navigation}) => {
               style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
               placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={text => setPassword(text)}
@@ -277,6 +284,7 @@ const PickupSignup = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}

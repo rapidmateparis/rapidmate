@@ -174,6 +174,8 @@ const DeliveryBoySignup = ({navigation}) => {
     let errors = {};
     if (!name.trim()) {
       errors.name = 'First name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
     }
     if (!email.trim()) {
       errors.email = 'Email is required';
@@ -192,6 +194,8 @@ const DeliveryBoySignup = ({navigation}) => {
       errors.number = 'Number is required';
     } else if (isNaN(number)) {
       errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
     }
     if (!dropdownCountryValue) {
       errors.dropdownCountryValue = 'Please select a country';
@@ -202,7 +206,12 @@ const DeliveryBoySignup = ({navigation}) => {
     if (!dropdownCityValue) {
       errors.dropdownCityValue = 'Please select a city';
     }
-    console.log("toggleCheckBox=======", toggleCheckBox);
+    if (!siret) {
+      errors.siret = 'Please enter siret number';
+    } else if (siret.trim().length < 14) {
+      errors.siret = 'Invalid siret number';
+    }
+    console.log('toggleCheckBox=======', toggleCheckBox);
     if (!toggleCheckBox) {
       errors.toggleCheckBox = 'Please accept the terms & conditions';
     }
@@ -227,7 +236,7 @@ const DeliveryBoySignup = ({navigation}) => {
           city: dropdownCityValue.toString(),
           state: dropdownStateValue.toString(),
           country: dropdownCountryValue.toString(),
-          siretNo: '4352354',
+          siretNo: siret,
           termone: 1,
         },
       };
@@ -311,6 +320,7 @@ const DeliveryBoySignup = ({navigation}) => {
               <TextInput
                 style={styles.loginput}
                 placeholder={localizationText('Common', 'firstName')}
+                maxLength={15}
                 placeholderTextColor="#999"
                 value={name}
                 onChangeText={text => setName(text)}
@@ -328,6 +338,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 style={styles.loginput}
                 placeholder={localizationText('Common', 'lastName')}
                 placeholderTextColor="#999"
+                maxLength={15}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
@@ -360,6 +371,7 @@ const DeliveryBoySignup = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={text => setPassword(text)}
@@ -382,6 +394,7 @@ const DeliveryBoySignup = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}
@@ -565,6 +578,9 @@ const DeliveryBoySignup = ({navigation}) => {
               />
             </View>
           </View>
+          {errors.siret ? (
+            <Text style={[{color: 'red'}]}>{errors.siret}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <Ionicons
               name="location-outline"
@@ -576,6 +592,8 @@ const DeliveryBoySignup = ({navigation}) => {
               style={styles.loginput}
               placeholder="Siret"
               placeholderTextColor="#999"
+              maxLength={14}
+              keyboardType="numeric"
               value={siret}
               onChangeText={text => setSiret(text)}
             />
