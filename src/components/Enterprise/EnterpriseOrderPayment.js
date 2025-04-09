@@ -42,6 +42,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
   const {setLoading} = useLoader();
   const [orderNumber, setOrderNumber] = useState(null);
+  const [isScheduledOrder, setIsScheduledOrder] = useState(0);
+  const [scheduledDateTime, setScheduledDateTime] = useState(null);
   const {savePlacedOrderDetails} = usePlacedOrderDetails();
   const [orderResponse, setOrderResponse] = useState();
   const [clientSecret, setClientSecret] = useState(null);
@@ -89,12 +91,22 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         createPaymentIntent();
         // setLoading(false)
       } else {
-        navigation.navigate('EnterpriseLookingForDriver', {
-          cancellable: orderResponse.is_enable_cancel_request,
-        });
+        if (isScheduledOrder && isScheduledOrder === 1) {
+          navigation.navigate('ScheduleOrderSuccess', {
+            schedule_date_time: scheduledDateTime,
+            serviceTypeId: 1,
+          });
+        } else {
+          navigation.navigate('EnterpriseLookingForDriver', {
+            cancellable: orderResponse.is_enable_cancel_request,
+          });
+        }
+        // navigation.navigate('EnterpriseLookingForDriver', {
+        //   cancellable: orderResponse.is_enable_cancel_request,
+        // });
       }
     }
-  }, [orderNumber]);
+  }, [orderNumber, scheduledDateTime, isScheduledOrder]);
 
   useEffect(() => {
     getTaxDetails(
@@ -193,16 +205,23 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       amount: params.amount,
       order_type: 2,
     };
-    console.log('requestParams', requestParams);
+    console.log('requestParams', params);
     setLoading(true);
     addPayment(
       requestParams,
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('EnterpriseLookingForDriver', {
-            cancellable: orderResponse.is_enable_cancel_request,
-          });
+          if (params.is_scheduled_order === 1 && params.schedule_date_time) {
+            navigation.navigate('ScheduleOrderSuccess', {
+              schedule_date_time: params.schedule_date_time,
+              serviceTypeId: params.delivery_type_id,
+            });
+          } else {
+            navigation.navigate('EnterpriseLookingForDriver', {
+              cancellable: orderResponse.is_enable_cancel_request,
+            });
+          }
         }
       },
       errorResponse => {
@@ -313,6 +332,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             setOrderResponse(successResponse[0]._response[0]);
             setLoading(false);
             setOrderNumber(successResponse[0]._response[0].order_number);
+            setIsScheduledOrder(params.is_scheduled_order);
+            setScheduledDateTime(params.schedule_date_time);
           }
         },
         errorResponse => {
