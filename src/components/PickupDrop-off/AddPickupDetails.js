@@ -357,7 +357,7 @@ const AddPickupdetails = ({route, navigation}) => {
                 placeholder="00 00 00 00 00)"
                 placeholderTextColor="#999"
                 keyboardType="numeric"
-                maxLength={9}
+                maxLength={10}
                 value={number}
                 onChangeText={text => setNumber(text)}
               />

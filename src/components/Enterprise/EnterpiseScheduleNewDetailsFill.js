@@ -391,12 +391,17 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    setNumber(userDetails.userDetails[0].phone.substring(3));
+    // setNumber(userDetails.userDetails[0].phone.substring(3));
+     setNumber(userDetails.userDetails[0].phone);
+    //  console.log("Phone number",userDetails.userDetails[0].phone)
+    // console.log(userDetails.userDetails[0].phone.substring(3))
     setCompany(userDetails.userDetails[0].company_name);
     if (deliveryType == 2 || deliveryType == 1) {
       onBranchSourceLocation(routeParams.sourceBranch);
     }
   }, []);
+
+ 
 
   const onBranchSourceLocation = location => {
     let locationParams = {
@@ -664,7 +669,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   placeholder="00 00 00 00 00"
                   placeholderTextColor="#999"
                   keyboardType="numeric"
-                  maxLength={9}
+                  maxLength={10}
                   value={number}
                   onChangeText={text => setNumber(text)}
                 />
