@@ -290,7 +290,7 @@ const DeliveryBoySignup = ({navigation}) => {
               </Text>
             </Text>
             <Text style={styles.loginAccessText}>
-              {localizationText('Common', 'pickupDropSignupDescription')}
+              {localizationText('Main', 'pickupDropSignupDescription')}
             </Text>
           </View>
           <View style={styles.profilePhotoCard}>
