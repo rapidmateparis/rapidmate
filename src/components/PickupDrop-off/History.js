@@ -148,7 +148,11 @@ const TodayList = ({navigation, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const getOrderList = () => {
@@ -402,7 +406,11 @@ const PastList = ({navigation, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const getOrderList = () => {
@@ -698,7 +706,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ccc',
     width: '100%',
-    marginVertical: 15,
+    marginVertical: 8,
   },
   footerCard: {
     flexDirection: 'row',

@@ -319,6 +319,7 @@ const AddPickupVehicle = ({route, navigation}) => {
               style={styles.inputTextStyle}
               placeholder="Type here"
               placeholderTextColor={'#999'}
+              maxLength={10}
               value={vehicleNo}
               onChangeText={text => setVehicleNo(text)}
             />
@@ -334,6 +335,7 @@ const AddPickupVehicle = ({route, navigation}) => {
               style={styles.inputTextStyle}
               placeholder="Type here"
               placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleModel}
               onChangeText={text => setVehicleModel(text)}
             />
@@ -350,6 +352,7 @@ const AddPickupVehicle = ({route, navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
+                maxLength={18}
                 value={vehicleMake}
                 onChangeText={text => setVehicleMake(text)}
               />
@@ -365,6 +368,7 @@ const AddPickupVehicle = ({route, navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
+                maxLength={18}
                 value={vehicleVariant}
                 onChangeText={text => setVehicleVariant(text)}
               />

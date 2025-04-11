@@ -458,7 +458,7 @@ export const localToUTC = (date = new Date(), timezone, format = 'YYYY-MM-DD HH:
   return moment.tz(date, timezone || Intl.DateTimeFormat().resolvedOptions().timeZone).utc().format(format)
 }
 
-export const utcLocal = (date = new Date(), format = 'YYYY-MM-DD HH:mm:ss') => {
+export const utcLocal = (date = new Date(), format = 'DD-MM-YYYY HH:mm') => {
   return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(format);
 }
 

@@ -174,7 +174,11 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const createShiftOrder = item => {
@@ -559,7 +563,11 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const createShiftOrder = item => {

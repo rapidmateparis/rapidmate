@@ -343,6 +343,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                     {pickUpLocation?.state || ''}
                   </Text>
                 ) : order?.pickup_location_id ? null : null}
+                <Text style={styles.dropInfo}>
+                  {order.order ? order.order.pickup_notes : ''}
+                </Text>
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity
@@ -431,17 +434,6 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 )}
               </TouchableOpacity>
             </View>
-
-            <View style={styles.borderShowOff} />
-
-            <View>
-              <Text style={styles.headingOTP}>
-                {localizationText('Common', 'pickupNotes')}
-              </Text>
-              <Text style={styles.dropInfo}>
-                {order.order ? order.order.pickup_notes : ''}
-              </Text>
-            </View>
           </View>
         </View>
 
@@ -480,6 +472,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                     {dropOffLocation?.city || ''} {dropOffLocation?.state || ''}
                   </Text>
                 )}
+                <Text style={styles.dropInfo}>
+                  {order.order ? order.order.drop_notes : ''}
+                </Text>
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity
@@ -671,8 +666,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: 3,
+    marginTop: 3,
   },
   companyInfo: {
     fontSize: 14,

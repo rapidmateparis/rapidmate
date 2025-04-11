@@ -248,7 +248,7 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>Order fare</Text>
-              <Text style={styles.totalmoney}>€{orderDetails.amount}</Text>
+              <Text style={styles.totalmoney}>€{orderDetails.amount.toFixed(2)}</Text>
             </View>
 
             <Text style={styles.travel}>
@@ -256,8 +256,7 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
               {orderDetails.distance
                 ? orderDetails.distance.toFixed(2)
                 : '0.00'}{' '}
-              km in{' '}
-              {orderDetails.total_duration ? orderDetails.total_duration : '00'}
+              km
             </Text>
 
             <View style={styles.cardHeader}>
