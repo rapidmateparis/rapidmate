@@ -237,7 +237,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.requestOverview}>
               €
               <Text>
-                {item?.slots ? Number(item.slots[0]?.total_amount).toFixed(2) : 0}
+                {item?.slots ? Number(item.slots[0]?.delivery_boy_amount).toFixed(2) : 0}
               </Text>
             </Text>
             <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
@@ -264,13 +264,13 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
           </Text>
         </View>
 
-        {/* <View style={styles.borderShow}></View> */}
+        <View style={styles.borderShow}></View>
 
         <View style={styles.footerCard}>
           <Text style={styles.orderId}>
             {forText}: {item?.company_name ? item?.company_name : '-'}
           </Text>
-          {/* <Text style={styles.valueMoney}>€34.00</Text> */}
+          <Text style={styles.valueMoney}>€{Number(item?.slots[0]?.delivery_boy_amount).toFixed(2)}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -361,6 +361,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             <View style={styles.borderShow}></View>
 
             <View style={styles.footerCard}>
+            {console.log('ITEM DATA:', item)}
               <Text style={styles.orderId}>{item.item.company_name}</Text>
               <Text style={styles.valueMoney}>
                 €
@@ -654,6 +655,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           <Text style={styles.orderId}>
             {forText} {item?.company_name ? item?.company_name : '-'}
           </Text>
+          <Text style={styles.valueMoney}>€{Number(item?.slots[0]?.delivery_boy_amount).toFixed(2)}</Text>
         </View>
       </TouchableOpacity>
     );
