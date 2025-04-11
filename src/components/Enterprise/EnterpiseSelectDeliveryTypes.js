@@ -191,7 +191,53 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
 
           {lookupData?.enterpriseServiceType?.length > 0
             ? lookupData?.enterpriseServiceType.map(serviceType => {
-                return (
+
+              if(disableServiceType()){
+                  if(serviceType.id === 1){
+                    return (
+                      <TouchableOpacity
+                       disabled={disableServiceType()}
+                        style={[
+                          styles.selectDeliveryboyTypeCard,
+                          selectedOption === serviceType.id && {},
+                        ]}
+                        onPress={() =>
+                          handleOptionSelect(
+                            serviceType.id === 1
+                              ? vehicleTypeList.filter(
+                                  val => val.vehicle_type == 'Scooter',
+                                )[0]
+                              : '',
+                            serviceType,
+                          )
+                        }>
+                        {selectedOption === serviceType.id ? (
+                          <FontAwesome
+                            name="dot-circle-o"
+                            size={25}
+                            color={colors.secondary}
+                          />
+                        ) : (
+                          <FontAwesome
+                            name="circle-thin"
+                            size={25}
+                            color={colors.text}
+                          />
+                        )}
+                        <Text
+                          style={[
+                            styles.deliveryboyType,
+                            selectedOption === serviceType.id && {
+                              fontFamily: 'Montserrat-Bold',
+                            },
+                          ]}>
+                          {serviceType.service_type}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  }
+              }else{
+                  return (
                   <TouchableOpacity
                    disabled={disableServiceType()}
                     style={[
@@ -232,6 +278,50 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                     </Text>
                   </TouchableOpacity>
                 );
+
+              }
+              
+                // return (
+                //   <TouchableOpacity
+                //    disabled={disableServiceType()}
+                //     style={[
+                //       styles.selectDeliveryboyTypeCard,
+                //       selectedOption === serviceType.id && {},
+                //     ]}
+                //     onPress={() =>
+                //       handleOptionSelect(
+                //         serviceType.id === 1
+                //           ? vehicleTypeList.filter(
+                //               val => val.vehicle_type == 'Scooter',
+                //             )[0]
+                //           : '',
+                //         serviceType,
+                //       )
+                //     }>
+                //     {selectedOption === serviceType.id ? (
+                //       <FontAwesome
+                //         name="dot-circle-o"
+                //         size={25}
+                //         color={colors.secondary}
+                //       />
+                //     ) : (
+                //       <FontAwesome
+                //         name="circle-thin"
+                //         size={25}
+                //         color={colors.text}
+                //       />
+                //     )}
+                //     <Text
+                //       style={[
+                //         styles.deliveryboyType,
+                //         selectedOption === serviceType.id && {
+                //           fontFamily: 'Montserrat-Bold',
+                //         },
+                //       ]}>
+                //       {serviceType.service_type}
+                //     </Text>
+                //   </TouchableOpacity>
+                // );
               })
             : null}
 
