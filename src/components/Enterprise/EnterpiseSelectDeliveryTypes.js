@@ -71,12 +71,12 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   }, [vehicleTypeList]);
 
   useEffect(() => {
-    if (selectedOption !== 'Delivery boy with scooter') {
+    if (selectedOption !== 1) {
       setSelectedVehiclePrice(0);
     } else {
       route.params.delivery_type_id == 3
         ? serviceTypeId === 1
-          ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount)
+          ? setSelectedVehiclePrice(selectedVehicle.enterprise_wv_amount)
           : setSelectedVehiclePrice(selectedVehicle.enterprise_wov_amount)
         : setSelectedVehiclePrice(selectedVehicle.km_price);
       // selectedVehicle?.km_price && setSelectedVehiclePrice(selectedVehicle.km_price);
