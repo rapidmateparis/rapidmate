@@ -169,8 +169,12 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     );
   }, []);
 
+  // const disableVehicleType = () => {
+  //   return serviceTypeId !== 1 && serviceTypeId !== 2 ? true : false;
+  // };
+
   const disableVehicleType = () => {
-    return serviceTypeId !== 1 && serviceTypeId !== 2 ? true : false;
+    return serviceTypeId !== 1  ? true : false;
   };
 
   const disableServiceType = () => {
