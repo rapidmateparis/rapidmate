@@ -30,6 +30,7 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
   const [days, setDays] = useState([]);
   const [timeSlotIndex, setTimeSlotIndex] = useState(null);
   const [copiedValue, setCopiedValue] = useState([]);
+  const [time, setTime] = useState(new Date());
 
   const params = route.params;
 
@@ -126,7 +127,9 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
         <View style={styles.startDateCard}>
           <View style={{width: '48%'}}>
             <Text style={styles.pickupDates}>Start Date</Text>
-            <TouchableOpacity onPress={() => setStartDateOpen(true)} style={styles.startScheduleDate}>
+            <TouchableOpacity
+              onPress={() => setStartDateOpen(true)}
+              style={styles.startScheduleDate}>
               <DatePicker
                 modal
                 open={startDateOpen}
@@ -164,7 +167,9 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
 
           <View style={{width: '48%'}}>
             <Text style={styles.pickupDates}>End Date</Text>
-            <TouchableOpacity onPress={() => setEndDateOpen(true)} style={styles.startScheduleDate}>
+            <TouchableOpacity
+              onPress={() => setEndDateOpen(true)}
+              style={styles.startScheduleDate}>
               <DatePicker
                 modal
                 open={endDateOpen}
@@ -278,54 +283,51 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
                   <DatePicker
                     modal
                     open={item.fromTimeOpen}
-                    date={
-                      item.toTimeText
-                        ? moment(item.toTimeText, 'hh:mm A').toDate()
-                        : new Date()
-                    }
+                    date={time}
                     mode="time"
+                    is24hourSource="locale"
+                    locale="en-GB"
                     onConfirm={date => {
-                      var curentInstance = [...days];
-                      curentInstance[index].fromTimeOpen = false;
-
-                      curentInstance[index].timeslots[timeSlotIndex].from_time =
-                        moment(date).format('hh:mm A');
-                      setDays(curentInstance);
+                      var currentInstance = [...days];
+                      currentInstance[index].fromTimeOpen = false;
+                      currentInstance[index].timeslots[
+                        timeSlotIndex
+                      ].from_time = moment(date).format('HH:mm');
+                      setDays(currentInstance);
                       setTimeSlotIndex(() => {
-                        setDays(curentInstance);
+                        setDays(currentInstance);
                         return null;
                       });
                     }}
                     onCancel={() => {
                       setTimeSlotIndex(null);
-                      var curentInstance = [...days];
-                      curentInstance[index].fromTimeOpen = false;
-                      setDays(curentInstance);
+                      var currentInstance = [...days];
+                      currentInstance[index].fromTimeOpen = false;
+                      setDays(currentInstance);
                     }}
                   />
 
                   <DatePicker
                     modal
                     open={item.toTimeOpen}
-                    date={
-                      item.toTimeText
-                        ? moment(item.toTimeText, 'hh:mm A').toDate()
-                        : new Date()
-                    }
+                    date={time}
                     mode="time"
+                    is24hourSource="locale"
+                    locale="en-GB"
                     onConfirm={date => {
-                      var curentInstance = [...days];
-                      curentInstance[index].toTimeOpen = false;
-                      curentInstance[index].timeslots[timeSlotIndex].to_time =
-                        moment(date).format('hh:mm A');
-                      setDays(curentInstance);
+                      var currentInstance = [...days];
+                      currentInstance[index].toTimeOpen = false;
+                      currentInstance[index].timeslots[timeSlotIndex].to_time =
+                        moment(date).format('HH:mm');
+                      setDays(currentInstance);
                     }}
                     onCancel={() => {
-                      var curentInstance = [...days];
-                      curentInstance[index].toTimeOpen = false;
-                      setDays(curentInstance);
+                      var currentInstance = [...days];
+                      currentInstance[index].toTimeOpen = false;
+                      setDays(currentInstance);
                     }}
                   />
+
                   {item.timeslots.map((slot, timeSlotIndex) => {
                     return (
                       <View key={timeSlotIndex} style={styles.selectTimeCard}>
