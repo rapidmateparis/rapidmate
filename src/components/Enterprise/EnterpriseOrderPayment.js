@@ -88,7 +88,6 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
     if (orderNumber) {
       // setLoading(true)
       if (selectedOptionIndex != 99) {
-        createPaymentIntent();
         // setLoading(false)
       } else {
         if (isScheduledOrder && isScheduledOrder === 1) {
@@ -122,7 +121,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   }, []);
 
   useEffect(() => {
-    console.log(userDetails.userDetails[0]);
+   // console.log(userDetails.userDetails[0]);
     //getPaymentMethod();
   }, []);
 
@@ -316,37 +315,41 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         requestParams.promo_value = promoCodeResponse.discount;
         requestParams.order_amount = parseFloat(totalAmount);
       }
-
-      // if (params.branches) {
-      //   requestParams.branches = params.branches;
-      // }
-      console.log('requestParams from props ******', params);
-      console.log('requestParams ******', requestParams);
-      setLoading(true);
-      createEnterpriseOrder(
-        requestParams,
-        successResponse => {
-          if (successResponse[0]._success) {
-            console.log('createEnterpriseOrder', successResponse[0]._response);
-            savePlacedOrderDetails(successResponse[0]._response);
-            setOrderResponse(successResponse[0]._response[0]);
+      console.log();
+      console.log(orderNumber);
+      if(orderNumber){
+        console.log("---------------Payment retry---------------------------------");
+        createPaymentIntent();
+      }else{
+        setLoading(true);
+        createEnterpriseOrder(
+          requestParams,
+          successResponse => {
             setLoading(false);
-            setOrderNumber(successResponse[0]._response[0].order_number);
-            setIsScheduledOrder(params.is_scheduled_order);
-            setScheduledDateTime(params.schedule_date_time);
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          console.log(
-            'createEnterpriseOrder==>errorResponse',
-            errorResponse[0],
-          );
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
+            if (successResponse[0]._success) {
+              console.log('createEnterpriseOrder', successResponse[0]._response);
+              savePlacedOrderDetails(successResponse[0]._response);
+              setOrderResponse(successResponse[0]._response[0]);
+              setOrderNumber(successResponse[0]._response[0].order_number);
+              setIsScheduledOrder(params.is_scheduled_order);
+              setScheduledDateTime(params.schedule_date_time);
+              createPaymentIntent();
+            }
+          },
+          errorResponse => {
+            setLoading(false);
+            console.log(
+              'createEnterpriseOrder==>errorResponse',
+              errorResponse[0],
+            );
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          },
+        );
+       
+      }
+ 
     } catch (error) {
       console.log('error==>errorResponse', error);
     }
