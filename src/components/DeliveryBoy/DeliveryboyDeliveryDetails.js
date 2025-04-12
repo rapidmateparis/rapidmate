@@ -111,7 +111,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
         params,
         successResponse => {
           const data = successResponse[0]._response.next_action_status;
-          Alert.alert('Success', 'Delivered OPT verified successfully', [
+          Alert.alert('Success', 'Delivered OTP verified successfully', [
             {
               text: 'OK',
               onPress: () => {

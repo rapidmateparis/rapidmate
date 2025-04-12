@@ -33,6 +33,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const [currentMonthWords, setCurrentMonthWords] = useState(0);
   const [currentYear, setCurrentYear] = useState(0);
   const [allWeeksSlots, setAllWeeksSlots] = useState([]);
+  const [time, setTime] = useState(new Date());
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
   const paste = localizationText('Common', 'paste') || 'Paste';
@@ -495,12 +496,10 @@ const DeliveryboySetAvailability = ({navigation}) => {
                           <DatePicker
                             modal
                             open={!!slot.showFromTimePicker}
-                            date={
-                              slot?.from_time
-                                ? moment(slot?.from_time, 'hh:mm A').toDate()
-                                : new Date()
-                            }
+                            date={time}
                             mode="time"
+                            is24hourSource="locale"
+                            locale="en-GB"
                             onConfirm={date => {
                               setTimeSlots({
                                 ...timeSlots,
@@ -508,8 +507,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                                   idx === slotIndex
                                     ? {
                                         ...s,
-                                        from_time:
-                                          moment(date).format('hh:mm A'),
+                                        from_time: moment(date).format('HH:mm'), // 24-hour format
                                         showFromTimePicker: false,
                                       }
                                     : s,
@@ -569,12 +567,10 @@ const DeliveryboySetAvailability = ({navigation}) => {
                             <DatePicker
                               modal
                               open={!!slot.showToTimePicker}
-                              date={
-                                slot?.to_time
-                                  ? moment(slot?.to_time, 'hh:mm A').toDate()
-                                  : new Date()
-                              }
+                              date={time}
                               mode="time"
+                              is24hourSource="locale"
+                              locale="en-GB"
                               onConfirm={date => {
                                 setTimeSlots({
                                   ...timeSlots,
