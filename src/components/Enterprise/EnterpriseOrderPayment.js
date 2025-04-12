@@ -315,10 +315,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         requestParams.promo_value = promoCodeResponse.discount;
         requestParams.order_amount = parseFloat(totalAmount);
       }
-      console.log();
-      console.log(orderNumber);
       if(orderNumber){
-        console.log("---------------Payment retry---------------------------------");
         createPaymentIntent();
       }else{
         setLoading(true);
