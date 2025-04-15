@@ -108,6 +108,13 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   }, [orderNumber, scheduledDateTime, isScheduledOrder]);
 
   useEffect(() => {
+    if (orderNumber) {
+      createPaymentIntent();
+    }
+  }, [orderNumber]);
+  
+
+  useEffect(() => {
     getTaxDetails(
       success => {
         if (success[0]._response[0].tax_value) {
@@ -192,6 +199,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   };
 
   const checkout = async () => {
+    console.log("orderNumber=========================>", orderNumber)
     const {error} = await presentPaymentSheet();
     if (!error) {
       createPayment();
@@ -325,12 +333,13 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             setLoading(false);
             if (successResponse[0]._success) {
               console.log('createEnterpriseOrder', successResponse[0]._response);
+              const orderNumberFromAPI = successResponse[0]._response[0].order_number;
               savePlacedOrderDetails(successResponse[0]._response);
               setOrderResponse(successResponse[0]._response[0]);
-              setOrderNumber(successResponse[0]._response[0].order_number);
+              setOrderNumber(orderNumberFromAPI);
               setIsScheduledOrder(params.is_scheduled_order);
               setScheduledDateTime(params.schedule_date_time);
-              createPaymentIntent();
+              // createPaymentIntent();
             }
           },
           errorResponse => {
