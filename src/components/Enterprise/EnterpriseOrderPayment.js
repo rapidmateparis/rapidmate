@@ -90,7 +90,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       if (selectedOptionIndex != 99) {
         // setLoading(false)
       } else {
-        if (isScheduledOrder && isScheduledOrder === 1) {
+        if (params.is_scheduled_order === 1) {
           navigation.navigate('ScheduleOrderSuccess', {
             schedule_date_time: scheduledDateTime,
             serviceTypeId: 1,
@@ -219,7 +219,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          if (params.is_scheduled_order === 1 && params.schedule_date_time) {
+          if (params.is_scheduled_order === 1) {
             navigation.navigate('ScheduleOrderSuccess', {
               schedule_date_time: params.schedule_date_time,
               serviceTypeId: params.delivery_type_id,
