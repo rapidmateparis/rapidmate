@@ -134,9 +134,7 @@ const DeliveryboyTakeSelfie = ({ route, navigation }) => {
           [
             {
               text: 'OK',
-              onPress: () => {
-                navigation.goBack();
-              },
+              onPress: () => {},
             },
           ],
         );
