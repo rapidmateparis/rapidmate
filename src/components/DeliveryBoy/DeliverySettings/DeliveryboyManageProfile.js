@@ -299,6 +299,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
               style={styles.inputTextStyle}
               placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor={'#999'}
+              maxLength={10}
               value={vehicleNo}
               onChangeText={text => setVehicleNo(text)}
             />
@@ -311,6 +312,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
               style={styles.inputTextStyle}
               placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleModel}
               onChangeText={text => setVehicleModel(text)}
             />
@@ -325,6 +327,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
               style={styles.inputTextStyle}
               placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleMake}
               onChangeText={text => setVehicleMake(text)}
             />
@@ -337,6 +340,7 @@ const DeliveryboyManageProfile = ({navigation}) => {
               style={styles.inputTextStyle}
               placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleVariant}
               onChangeText={text => setVehicleVariant(text)}
             />

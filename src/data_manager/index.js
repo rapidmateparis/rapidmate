@@ -1547,3 +1547,18 @@ export const updateBillingAddressDetails = (
   );
 };
 
+export const getAppVersion = (successCallback, errorCallback) => {
+  axiosCall(
+    API.appVersion,
+    HTTPMethod.GET,
+    null, 
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    }
+  );
+};
+
+

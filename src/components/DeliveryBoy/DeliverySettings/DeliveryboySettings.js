@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -17,11 +17,32 @@ import RNRestart from 'react-native-restart';
 import {API} from '../../../utils/constant';
 import {localizationText} from '../../../utils/common';
 import i18n from '../../../localization/localizationUtils';
+import {getAppVersion} from '../../../data_manager';
 
 const DeliveryboySettings = ({navigation}) => {
   const {userDetails} = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [version, setVersion] = useState('');
+
+  useEffect(() => {
+    getAppVersion(
+      response => {
+        console.log('Full version response:', response);
+        const version = response[0]?._response?.version;
+        console.log('version', version);
+        if (version) {
+          setVersion(version);
+        } else {
+          setVersion('Version not available');
+        }
+      },
+      errorResponse => {
+        console.error('Error fetching version', errorResponse);
+        setVersion('Failed to load version');
+      },
+    );
+  }, []);
 
   const languages = [
     {label: 'English', key: 'en'},
@@ -191,9 +212,7 @@ const DeliveryboySettings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity
-            onPress={handlePress}
-            style={styles.bookAddress}>
+          <TouchableOpacity onPress={handlePress} style={styles.bookAddress}>
             <Text style={styles.cardTitle}>
               {localizationText('Common', 'help')}
             </Text>
@@ -234,6 +253,11 @@ const DeliveryboySettings = ({navigation}) => {
             </Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.versionCard}>
+          <Text style={styles.versionText}>Version</Text>
+          <Text style={styles.currentVersion}>{version || 'Loading...'}</Text>
         </View>
       </View>
     </ScrollView>
@@ -295,6 +319,22 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Bold',
     color: colors.primary,
     paddingHorizontal: 10,
+  },
+  versionText: {
+    color: colors.primary,
+    fontSize: 15,
+    fontFamily: 'Montserrat-Bold',
+    textAlign: 'center',
+  },
+  currentVersion: {
+    color: colors.text,
+    fontSize: 13,
+    fontFamily: 'Montserrat-Bold',
+    textAlign: 'center',
+  },
+  versionCard: {
+    paddingTop: 5,
+    marginBottom: 20,
   },
 });
 

@@ -55,7 +55,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
-  const [promoCode, setPromoCode] = useState('')
+  const [promoCode, setPromoCode] = useState('');
   const toText = localizationText('Common', 'to') || 'To';
   const discountText = localizationText('Common', 'discount') || 'Discount';
   const payLaterText = localizationText('Common', 'payLater') || 'Pay Later';
@@ -112,7 +112,6 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       createPaymentIntent();
     }
   }, [orderNumber]);
-  
 
   useEffect(() => {
     getTaxDetails(
@@ -128,7 +127,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   }, []);
 
   useEffect(() => {
-   // console.log(userDetails.userDetails[0]);
+    // console.log(userDetails.userDetails[0]);
     //getPaymentMethod();
   }, []);
 
@@ -152,7 +151,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   };
 
   const createPaymentIntent = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await fetch(
         'https://api.stripe.com/v1/payment_intents',
@@ -179,8 +178,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       setup(data.client_secret);
     } catch (error) {
       // Alert.alert('Error', error.message);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -199,7 +198,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   };
 
   const checkout = async () => {
-    console.log("orderNumber=========================>", orderNumber)
+    console.log('orderNumber=========================>', orderNumber);
     const {error} = await presentPaymentSheet();
     if (!error) {
       createPayment();
@@ -323,17 +322,21 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         requestParams.promo_value = promoCodeResponse.discount;
         requestParams.order_amount = parseFloat(totalAmount);
       }
-      if(orderNumber){
+      if (orderNumber) {
         createPaymentIntent();
-      }else{
+      } else {
         setLoading(true);
         createEnterpriseOrder(
           requestParams,
           successResponse => {
             setLoading(false);
             if (successResponse[0]._success) {
-              console.log('createEnterpriseOrder', successResponse[0]._response);
-              const orderNumberFromAPI = successResponse[0]._response[0].order_number;
+              console.log(
+                'createEnterpriseOrder',
+                successResponse[0]._response,
+              );
+              const orderNumberFromAPI =
+                successResponse[0]._response[0].order_number;
               savePlacedOrderDetails(successResponse[0]._response);
               setOrderResponse(successResponse[0]._response[0]);
               setOrderNumber(orderNumberFromAPI);
@@ -353,9 +356,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
             ]);
           },
         );
-       
       }
- 
     } catch (error) {
       console.log('error==>errorResponse', error);
     }
@@ -411,6 +412,12 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
     );
   };
 
+  const formatAmount = amount => {
+    const [intPart, decimalPart = '00'] = Number(amount).toFixed(2).split('.');
+    const paddedInt = intPart.length === 1 ? `0${intPart}` : intPart;
+    return `${paddedInt}.${decimalPart}`;
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -429,7 +436,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
               <Text style={styles.vehicleCapacity}>
                 {params.vehicle_type.vehicle_type}
               </Text>
-              <View style={styles.distanceTime}>
+              <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.vehicleCapacity, {marginRight: 10}]}>
                   {params.distance} Km
                 </Text>
@@ -437,53 +444,59 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          <View style={styles.distanceTime}>
-            <EvilIcons name="location" size={18} color="#606060" />
-            <Text style={styles.vehicleCapacity}>
-              {localizationText('Common', 'from')} -{' '}
-              {params.pickup_location?.sourceDescription}
-            </Text>
-          </View>
-
-          {params?.dropDetails?.length > 0 ? (
-            params?.dropDetails.map(dropLocation => {
-              return (
-                <View style={styles.distanceTime}>
-                  <EvilIcons name="location" size={18} color="#606060" />
-                  <Text style={styles.vehicleCapacity}>
-                    {toText} - {dropLocation.destinationDescription}
-                  </Text>
-                </View>
-              );
-            })
-          ) : (
+          <View style={{marginBottom: 10}}>
             <View style={styles.distanceTime}>
               <EvilIcons name="location" size={18} color="#606060" />
               <Text style={styles.vehicleCapacity}>
-                {toText} - {params.dropoff_location.destinationDescription}
+                {localizationText('Common', 'from')} -{' '}
+                {params.pickup_location?.sourceDescription}
               </Text>
             </View>
-          )}
 
-          <View style={{flexDirection: 'row'}}>
+            {params?.dropDetails?.length > 0 ? (
+              params?.dropDetails.map(dropLocation => {
+                return (
+                  <View style={styles.distanceTime}>
+                    <EvilIcons name="location" size={18} color="#606060" />
+                    <Text style={styles.vehicleCapacity}>
+                      {toText} - {dropLocation.destinationDescription}
+                    </Text>
+                  </View>
+                );
+              })
+            ) : (
+              <View style={styles.distanceTime}>
+                <EvilIcons name="location" size={18} color="#606060" />
+                <Text style={styles.vehicleCapacity}>
+                  {toText} - {params.dropoff_location.destinationDescription}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <View style={{flexDirection: 'row', marginVertical: 3}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
               {localizationText('Common', 'orderFare')}
             </Text>
             <Text style={styles.totalAmount}>
-              <Text>€</Text> {params.amount}
+              € {formatAmount(params.amount)}
             </Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row', marginVertical: 3}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
               {localizationText('Common', 'tax')}
             </Text>
-            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
+            <Text style={styles.totalAmount}>
+              € {formatAmount(getTaxAmount())}
+            </Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row', marginVertical: 3}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
               {localizationText('Common', 'totalAmount')}
             </Text>
-            <Text style={styles.totalAmount}>€ {totalAmount}</Text>
+            <Text style={styles.totalAmount}>
+              € {formatAmount(totalAmount)}
+            </Text>
           </View>
         </View>
 
@@ -540,9 +553,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         {paymentMethod.length > 0 && (
           <>
             <View>
-              <Text style={styles.selectPaymentMethod}>
-                {creditDebitCards}
-              </Text>
+              <Text style={styles.selectPaymentMethod}>{creditDebitCards}</Text>
             </View>
 
             <View style={[styles.inputContainer, {flexDirection: 'column'}]}>
@@ -625,7 +636,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           </>
         )}
 
-        <View style={styles.discountCard}>
+        {/* <View style={styles.discountCard}>
           <Image
             style={{marginRight: 20}}
             source={require('../../image/Group.png')}
@@ -633,7 +644,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           <Text style={styles.discountInfo}>
             20% {localizationText('Common', 'creditCardsOff')}
           </Text>
-        </View>
+        </View> */}
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>
             <Text>€</Text>
@@ -752,6 +763,7 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
+    marginVertical: 3,
   },
   totalAmount: {
     fontSize: 12,
