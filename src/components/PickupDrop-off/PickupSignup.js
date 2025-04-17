@@ -63,7 +63,11 @@ const PickupSignup = ({navigation}) => {
       errors.name = 'Name is required';
     } else if (name.length < 3) {
       errors.name = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z]+$/.test(name)) {
+      errors.name = 'Name should only contain letters';
     }
+
+
     if (!email.trim()) {
       errors.email = 'Email is required';
     } else if (!emailPattern.test(email)) {
@@ -80,13 +84,23 @@ const PickupSignup = ({navigation}) => {
     /* if (!selectedAccountType) {
       errors.selectedAccountType = 'Please select an account type';
     } */
+    // if (!number.trim()) {
+    //   errors.number = 'Number is required';
+    // } else if (isNaN(number)) {
+    //   errors.number = 'Number should be numeric';
+    // } else if (number.trim().length < 9) {
+    //   errors.number = 'Invalid number';
+    // }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    } else if (!/^\d+$/.test(number.trim())) {
       errors.number = 'Number should be numeric';
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';
     }
+
+    
     if (!dropdownCountryValue) {
       errors.dropdownCountryValue = 'Please select a country';
     }
