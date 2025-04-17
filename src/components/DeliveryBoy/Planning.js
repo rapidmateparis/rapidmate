@@ -22,7 +22,7 @@ import {
 } from '../../data_manager';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
-import { localizationText, titleFormat, utcLocal } from '../../utils/common';
+import {localizationText, titleFormat, utcLocal} from '../../utils/common';
 
 const Planning = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -31,7 +31,8 @@ const Planning = ({navigation}) => {
   const [orderList, setOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [calendarData, setCalendarData] = useState();
-  const noRecordFound = localizationText('Common', 'noRecordFound') || 'No record Found';
+  const noRecordFound =
+    localizationText('Common', 'noRecordFound') || 'No record Found';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -158,125 +159,144 @@ const Planning = ({navigation}) => {
     );
   };
 
-  const navigateToDeliveryBoyDeliveryDetails=(details)=>{
+  const navigateToDeliveryBoyDeliveryDetails = details => {
     navigation.navigate('DeliveryboyDeliveryDetails', {
       order_number: details.order_number,
       package_photo: details.package_photo,
       orderItem: details,
     });
-  }
+  };
 
-  const renderPlanningList = planningItem =>{
-    return(
-    <TouchableOpacity style={styles.packageDetailCard} onPress={()=>navigateToDeliveryBoyDeliveryDetails(planningItem.item)}>
-      <View style={styles.packageHeader}>
-        <Image source={require('../../image/package-medium-icon.png')} />
-        <Text style={styles.deliveryTime}>
-          {planningItem.item.consumer_order_title}{' '}
-          {
-          planningItem.item.is_show_datetime_in_title==1? (planningItem.item.order_status === 'ORDER_PLACED' ?
-          titleFormat(planningItem.item.schedule_date_time || planningItem.item.order_date)
-          :titleFormat(planningItem.item.updated_on)):""}
-        </Text>
-      </View>
-
-      <View style={styles.packageMiddle}>
-        <Ionicons name="location-outline" size={15} color="#717172" />
-        <Text style={styles.fromLocation}>
-          From{' '}
-          <Text style={styles.Location}>
-            {getLocationAddress(planningItem.item.pickup_location_id)}
+  const renderPlanningList = planningItem => {
+    return (
+      <TouchableOpacity
+        style={styles.packageDetailCard}
+        onPress={() => navigateToDeliveryBoyDeliveryDetails(planningItem.item)}>
+        <View style={styles.packageHeader}>
+          <Image source={require('../../image/package-medium-icon.png')} />
+          <Text style={styles.deliveryTime}>
+            {planningItem.item.consumer_order_title}{' '}
+            {planningItem.item.is_show_datetime_in_title == 1
+              ? planningItem.item.order_status === 'ORDER_PLACED'
+                ? titleFormat(
+                    planningItem.item.schedule_date_time ||
+                      planningItem.item.order_date,
+                  )
+                : titleFormat(planningItem.item.updated_on)
+              : ''}
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      <View style={styles.packageMiddle}>
-        <MaterialIcons name="my-location" size={15} color="#717172" />
-        <Text style={styles.fromLocation}>
-          To{' '}
-          <Text style={styles.Location}>
-            {getLocationAddress(planningItem.item.dropoff_location_id)}
+        <View style={styles.packageMiddle}>
+          <Ionicons name="location-outline" size={15} color="#717172" />
+          <Text style={styles.fromLocation}>
+            From{' '}
+            <Text style={styles.Location}>
+              {getLocationAddress(planningItem.item.pickup_location_id)}
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      <View style={styles.footerCard}>
-        <Text style={styles.orderId}>
-          Order ID: {planningItem.item.order_number}
-        </Text>
-        <Text style={styles.valueMoney}>
-          For {planningItem.item.company_name}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  )};
+        <View style={styles.packageMiddle}>
+          <MaterialIcons name="my-location" size={15} color="#717172" />
+          <Text style={styles.fromLocation}>
+            To{' '}
+            <Text style={styles.Location}>
+              {getLocationAddress(planningItem.item.dropoff_location_id)}
+            </Text>
+          </Text>
+        </View>
+
+        <View style={styles.footerCard}>
+          <Text style={styles.orderId}>
+            Order ID: {planningItem.item.order_number}
+          </Text>
+          <Text style={styles.valueMoney}>
+            For {planningItem.item.company_name}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{backgroundColor: '#fff'}}>
-        <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>{localizationText('Common', 'planning')}</Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <TouchableOpacity onPress={() => toggleModal()}>
-                <AntDesign name="filter" size={25} color={colors.secondary} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('DeliveryboySetAvailability')
-                }
-                style={styles.availbilityBt}>
-                <Text style={styles.availabilityText}>{localizationText('Common', 'setAvailability')}</Text>
-              </TouchableOpacity>
+    <ScrollView>
+      <View style={{flex: 1, width: '100%', backgroundColor: '#FBFAF5'}}>
+        <View>
+          <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
+            <View style={styles.header}>
+              <Text style={styles.headerText}>
+                {localizationText('Common', 'planning')}
+              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <TouchableOpacity onPress={() => toggleModal()}>
+                  <AntDesign name="filter" size={25} color={colors.secondary} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('DeliveryboySetAvailability')
+                  }
+                  style={styles.availbilityBt}>
+                  <Text style={styles.availabilityText}>
+                    {localizationText('Common', 'setAvailability')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
-      </View>
-      <View style={styles.calenderCard}>
-        <Calendar
-          onDayPress={day => {
-            setSelected(day.dateString);
-            getDeliveryBoyPlannningList(day.dateString);
-          }}
-          markedDates={calendarData}
-          theme={{
-            backgroundColor: '#ffffff',
-            calendarBackground: '#ffffff',
-            textSectionTitleColor: '#b6c1cd',
-            selectedDayBackgroundColor: colors.primary,
-            selectedDayTextColor: '#ffffff',
-            todayTextColor: '#00adf5',
-            dayTextColor: '#2d4150',
-            textDisabledColor: '#ccc',
-          }}
-        />
-      </View>
-      <View style={styles.mainColorCard}>
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.primary} />
-          <Text style={styles.colorWiseText}>{localizationText('Common', 'restaurant')}</Text>
+        <View style={styles.calenderCard}>
+          <Calendar
+            onDayPress={day => {
+              setSelected(day.dateString);
+              getDeliveryBoyPlannningList(day.dateString);
+            }}
+            markedDates={calendarData}
+            theme={{
+              backgroundColor: '#ffffff',
+              calendarBackground: '#ffffff',
+              textSectionTitleColor: '#b6c1cd',
+              selectedDayBackgroundColor: colors.primary,
+              selectedDayTextColor: '#ffffff',
+              todayTextColor: '#00adf5',
+              dayTextColor: '#2d4150',
+              textDisabledColor: '#ccc',
+            }}
+          />
+        </View>
+        <View style={styles.mainColorCard}>
+          <View style={styles.colorCardWise}>
+            <Octicons name="dot-fill" size={20} color={colors.primary} />
+            <Text style={styles.colorWiseText}>
+              {localizationText('Common', 'restaurant')}
+            </Text>
+          </View>
+
+          <View style={styles.colorCardWise}>
+            <Octicons name="dot-fill" size={20} color={colors.MountainMeadow} />
+            <Text style={styles.colorWiseText}>
+              {localizationText('Common', 'supermarkets')}
+            </Text>
+          </View>
+
+          <View style={styles.colorCardWise}>
+            <Octicons name="dot-fill" size={20} color={colors.CuriousBlue} />
+            <Text style={styles.colorWiseText}>
+              {localizationText('Common', 'eCommerce')}
+            </Text>
+          </View>
         </View>
 
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.MountainMeadow} />
-          <Text style={styles.colorWiseText}>{localizationText('Common', 'supermarkets')}</Text>
+        <View style={styles.mainColorCard}>
+          <View style={styles.colorCardWise}>
+            <Octicons name="dot-fill" size={20} color={colors.Wisteria} />
+            <Text style={styles.colorWiseText}>
+              {localizationText('Common', 'packersAndMovers')}
+            </Text>
+          </View>
         </View>
 
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.CuriousBlue} />
-          <Text style={styles.colorWiseText}>{localizationText('Common', 'eCommerce')}</Text>
-        </View>
-      </View>
-
-      <View style={styles.mainColorCard}>
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.Wisteria} />
-          <Text style={styles.colorWiseText}>{localizationText('Common', 'packersAndMovers')}</Text>
-        </View>
-      </View>
-
-      <View style={{flex: 1}}>
-        <View style={{paddingHorizontal: 15, paddingTop: 5}}>
+        <View style={{paddingHorizontal: 15}}>
           <View style={styles.packageDetailCard}>
             {orderList.length == 0 ? (
               <Text style={styles.listText}>{noRecordFound}</Text>
@@ -285,14 +305,14 @@ const Planning = ({navigation}) => {
             )}
           </View>
         </View>
+        {/* Modal start here  */}
+        <PlaningFilterModal
+          isModalVisible={isModalVisible}
+          setModalVisible={setModalVisible}
+          onPressPlanningFilter={onPressPlanningFilter}
+        />
       </View>
-      {/* Modal start here  */}
-      <PlaningFilterModal
-        isModalVisible={isModalVisible}
-        setModalVisible={setModalVisible}
-        onPressPlanningFilter={onPressPlanningFilter}
-      />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -337,8 +357,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5, // for Android
-    marginBottom: 7,
-    marginTop: 7,
+    marginBottom: 15,
+    marginTop: 15,
   },
   packageHeader: {
     flexDirection: 'row',

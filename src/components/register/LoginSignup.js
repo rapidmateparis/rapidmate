@@ -1,30 +1,51 @@
-import React, {useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
   StyleSheet,
   Image,
+  Platform,
 } from 'react-native';
 import ExStyles from '../../style';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LanguageSwitcher from '../../common/LanguageSwitcher';
-import {localizationText} from '../../utils/common';
+import { localizationText } from '../../utils/common';
+import { getAppVersion } from '../../data_manager';
 
-const LoginSignup = ({navigation}) => {
+const LoginSignup = ({ navigation }) => {
+  const [version, setVersion] = useState('');
+
+  useEffect(() => {
+    getAppVersion(
+      (response) => {
+        console.log('Full version response:', response);
+        const version = response[0]?._response?.version;
+        console.log("version", version);
+        if (version) {
+          setVersion(version);
+        } else {
+          setVersion('Version not available');
+        }
+      },
+      (errorResponse) => {
+        console.error('Error fetching version', errorResponse);
+        setVersion('Failed to load version');
+      }
+    );
+  }, []);
+    
+
   return (
-    <View style={{width: '100%', backgroundColor: colors.primary}}>
+    <View style={{ width: '100%', backgroundColor: colors.primary }}>
       <View>
         <View style={styles.deliveryIconMain}>
           <Image
             source={require('../../image/Logo.png')}
             style={styles.deliveryScootericon}
           />
-          <Text style={[styles.companyName, {color: colors.text}]}>
+          <Text style={[styles.companyName, { color: colors.text }]}>
             Rapidmate
           </Text>
         </View>
@@ -32,48 +53,55 @@ const LoginSignup = ({navigation}) => {
           style={[
             styles.loginSignupCard,
             styles.rotatedCard,
-            {width: '100%', height: '100%'},
-          ]}>
+            { width: '100%', height: '100%' },
+          ]}
+        >
           <View style={[styles.rotatedView, styles.shadowStyle]} />
           <LanguageSwitcher />
           <TouchableOpacity
             onPress={() => navigation.navigate('ProfileChoose')}
-            style={[styles.createAcBtn, {backgroundColor: colors.white}]}>
-            <Text style={[styles.pageDirections, {color: colors.text}]}>
+            style={[styles.createAcBtn, { backgroundColor: colors.white }]}
+          >
+            <Text style={[styles.pageDirections, { color: colors.text }]}>
               {localizationText('Main', 'createAccount')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('LogInScreen')}
-            style={styles.loginAcBtn}>
-            <Text style={[styles.pageDirections, {color: colors.white}]}>
+            style={styles.loginAcBtn}
+          >
+            <Text style={[styles.pageDirections, { color: colors.white }]}>
               {localizationText('Main', 'loginWithEmail')}
             </Text>
           </TouchableOpacity>
-          <View style={{marginTop: 10}}>
-            <Text style={[styles.loginDisclemar, {color: colors.white}]}>
+          <View style={{ marginTop: 10 }}>
+            <Text style={[styles.loginDisclemar, { color: colors.white }]}>
               {localizationText('Main', 'loggingRegisteringText')}
             </Text>
-            <Text style={[styles.loginDisclemar, {color: colors.white}]}>
+            <Text style={[styles.loginDisclemar, { color: colors.white }]}>
               <TouchableOpacity
-                style={{paddingTop: 10}}
-                onPress={() => navigation.navigate('TermsAndConditions')}>
+                style={{ paddingTop: 10 }}
+                onPress={() => navigation.navigate('TermsAndConditions')}
+              >
                 <Text style={styles.termServicesText}>
                   {localizationText('Common', 'termsAndConditions')}
                 </Text>
               </TouchableOpacity>{' '}
               <TouchableOpacity>
-                <Text style={{color: colors.white, fontSize: 11,}}>
+                <Text style={{ color: colors.white, fontSize: 11 }}>
                   {localizationText('Common', 'and')}{' '}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('PrivacyPolicy')}>
+              <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
                 <Text style={styles.termServicesText}>
                   {localizationText('Common', 'privacyPolicy')}
                 </Text>
               </TouchableOpacity>
             </Text>
+            <View style={styles.versionCard}>
+              <Text style={styles.versionText}>Version</Text>
+              <Text style={styles.currentVersion}>{version || 'Loading...'}</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -83,13 +111,13 @@ const LoginSignup = ({navigation}) => {
 
 const styles = StyleSheet.create({
   deliveryIconMain: {
-    marginVertical: 70,
+    marginVertical: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
   deliveryScootericon: {
-    height: 88,
-    width: 82,
+    height: 80,
+    width: 72,
   },
   loginSignupCard: {
     paddingHorizontal: 20,
@@ -158,6 +186,22 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     color: colors.white,
     fontSize: 11,
+  },
+  versionText: {
+    color: colors.text,
+    fontSize: 14,
+    fontFamily: 'Montserrat-Bold',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  currentVersion: {
+    color: colors.white,
+    fontSize: 13,
+    fontFamily: 'Montserrat-Medium',
+    textAlign: 'center',
+  },
+  versionCard: {
+    paddingTop: 35,
   },
 });
 
