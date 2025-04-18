@@ -88,15 +88,18 @@ const DateAndTimePickerModal = ({
                   open={timeOpen}
                   date={time}
                   mode="time"
+                  is24hourSource="locale" // or "device", depending on your needs
+                  locale="en-GB" // This typically uses 24-hour format
                   onConfirm={date => {
                     setTimeOpen(false);
                     setTime(date);
-                    setPickupTime(moment(date).format('hh:mm A'));
+                    setPickupTime(moment(date).format('HH:mm'));
                   }}
                   onCancel={() => {
                     setTimeOpen(false);
                   }}
                 />
+
                 <TextInput
                   style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                   placeholder="Time"

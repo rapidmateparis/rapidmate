@@ -176,7 +176,7 @@ const AddPickupdetails = ({route, navigation}) => {
 
     let errors = {};
     if (!name.trim()) {
-      errors.name = 'Name is required';
+      errors.name = 'First name is required';
     } else if (name.length < 3) {
       errors.name = 'Name must be at least 3 characters long';
     }else if (!/^[A-Za-z\s]+$/.test(name)) {

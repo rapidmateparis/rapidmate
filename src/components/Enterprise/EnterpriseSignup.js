@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,11 +11,11 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import CheckBox from '@react-native-community/checkbox';
 import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
 import {
@@ -29,11 +29,11 @@ import {
   getStateList,
   signUpUser,
 } from '../../data_manager';
-import {useLoader} from '../../utils/loaderContext';
-import {useSignUpDetails} from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
+import { useSignUpDetails } from '../commonComponent/StoreContext';
 // import DropDownDropdown from '../common component/dropdown';
 
-const EnterpriseSignup = ({navigation}) => {
+const EnterpriseSignup = ({ navigation }) => {
   const [toggleCheckBoxFirst, setToggleCheckBoxFirst] = useState(false);
   const [toggleCheckBoxSecond, setToggleCheckBoxSecond] = useState(false);
   const [name, setName] = useState('');
@@ -56,7 +56,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [dropdownIndustryValue, setDropdownIndustryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
-  const {setLoading} = useLoader();
+  const { setLoading } = useLoader();
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
   const [masterStateList, setMasterStateList] = useState(null);
@@ -64,7 +64,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
-  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
+  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
   const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
@@ -89,14 +89,14 @@ const EnterpriseSignup = ({navigation}) => {
   // ];
 
   const industryList = [
-    {label: 'Restaurant and takeaway', value: 1},
-    {label: 'Grocery and speciality', value: 2},
-    {label: 'Gift delivery', value: 3},
-    {label: 'Health and beauty', value: 4},
-    {label: 'Tech and electronics', value: 5},
-    {label: 'Retail and shopping', value: 6},
-    {label: 'Professional services', value: 7},
-    {label: 'Other', value: 8},
+    { label: 'Restaurant and takeaway', value: 1 },
+    { label: 'Grocery and speciality', value: 2 },
+    { label: 'Gift delivery', value: 3 },
+    { label: 'Health and beauty', value: 4 },
+    { label: 'Tech and electronics', value: 5 },
+    { label: 'Retail and shopping', value: 6 },
+    { label: 'Professional services', value: 7 },
+    { label: 'Other', value: 8 },
   ];
 
   useEffect(() => {
@@ -108,7 +108,7 @@ const EnterpriseSignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterCountryList(successResponse[0]._response);
@@ -136,7 +136,7 @@ const EnterpriseSignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -148,7 +148,7 @@ const EnterpriseSignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterStateList(successResponse[0]._response);
@@ -160,7 +160,7 @@ const EnterpriseSignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -173,7 +173,7 @@ const EnterpriseSignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterCityList(successResponse[0]._response);
@@ -185,7 +185,7 @@ const EnterpriseSignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -194,6 +194,9 @@ const EnterpriseSignup = ({navigation}) => {
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phonePattern = /^\+?\d{10,15}$/;
+    const regexName = new RegExp(`^[A-Za-z]+$`);
+
+
     let errors = {};
     if (!name.trim()) {
       errors.name = 'First name is required';
@@ -207,7 +210,6 @@ const EnterpriseSignup = ({navigation}) => {
     if (lastname && !/^[A-Za-z\s]+$/.test(lastname)) {
       errors.name = 'Last name should contain letters only';
     }
-
     if (!email.trim()) {
       errors.email = 'Email is required';
     } else if (!emailPattern.test(email)) {
@@ -227,6 +229,7 @@ const EnterpriseSignup = ({navigation}) => {
     if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords does not match';
     }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
     }else if (!/^\d+$/.test(number)){
@@ -234,6 +237,17 @@ const EnterpriseSignup = ({navigation}) => {
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';
     }
+
+
+    // if (!number.trim()) {
+    //   errors.number = 'Number is required';
+    // } else if (isNaN(number)) {
+    //   errors.number = 'Number should be numeric';
+    // } else if (number.trim().length < 9) {
+    //   errors.number = 'Invalid number';
+    // }
+
+
     if (!companyName.trim()) {
       errors.companyName = 'Company name is required';
     }
@@ -270,7 +284,7 @@ const EnterpriseSignup = ({navigation}) => {
 
     if (!toggleCheckBoxFirst || !toggleCheckBoxSecond) {
       Alert.alert('Error', 'You must agree to both conditions to proceed.', [
-        { text: 'OK', onPress: () => {} },
+        { text: 'OK', onPress: () => { } },
       ]);
       return;
     }
@@ -317,7 +331,7 @@ const EnterpriseSignup = ({navigation}) => {
           console.log('errorResponse', errorResponse[0]._errors.message[0]);
           setLoading(false);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
+            { text: 'OK', onPress: () => { } },
           ]);
         },
       );
@@ -325,13 +339,13 @@ const EnterpriseSignup = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
-      <View style={{paddingHorizontal: 15, marginTop: 10}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{width: '85%'}}>
-            <Text style={[styles.logInText, {color: colors.text}]}>
+    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
+      <View style={{ paddingHorizontal: 15, marginTop: 10 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ width: '85%' }}>
+            <Text style={[styles.logInText, { color: colors.text }]}>
               {localizationText('Common', 'enterprise')}{' '}
-              <Text style={{fontFamily: 'Montserrat-Medium'}}>
+              <Text style={{ fontFamily: 'Montserrat-Medium' }}>
                 {localizationText('Common', 'signup')}
               </Text>
             </Text>
@@ -340,13 +354,13 @@ const EnterpriseSignup = ({navigation}) => {
             </Text>
           </View>
           <Image
-            style={{width: 45, height: 45}}
+            style={{ width: 45, height: 45 }}
             source={require('../../image/Enterprise-Bulding.png')}
           />
         </View>
         <View style={styles.logFormView}>
           {errors.name ? (
-            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.name}</Text>
           ) : null}
           <View
             style={{
@@ -369,7 +383,7 @@ const EnterpriseSignup = ({navigation}) => {
             <View style={styles.nameInputDiv}>
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
-                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
+                style={[styles.loginput, { fontFamily: 'Montserrat-Regular' }]}
                 placeholder={localizationText('Common', 'lastName')}
                 placeholderTextColor="#999"
                 maxLength={15}
@@ -379,7 +393,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
           </View>
           {errors.email ? (
-            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.email}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign name="mail" size={18} color="#131314" />
@@ -392,7 +406,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           {errors.password ? (
-            <Text style={[{color: 'red'}]}>{errors.password}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.password}</Text>
           ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
@@ -415,7 +429,7 @@ const EnterpriseSignup = ({navigation}) => {
             </TouchableOpacity>
           </View>
           {errors.confirmPassword ? (
-            <Text style={[{color: 'red'}]}>{errors.confirmPassword}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.confirmPassword}</Text>
           ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
@@ -438,10 +452,10 @@ const EnterpriseSignup = ({navigation}) => {
             </TouchableOpacity>
           </View>
           {errors.number ? (
-            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.number}</Text>
           ) : null}
           <View style={styles.mobileNumberInput}>
-            <View style={{width: 95}}>
+            <View style={{ width: 95 }}>
               <View style={styles.containerDropdown}>
                 <Dropdown
                   data={countryCodeList}
@@ -464,7 +478,7 @@ const EnterpriseSignup = ({navigation}) => {
                   }}
                   renderLeftIcon={() => (
                     <Image
-                      style={{marginRight: 10}}
+                      style={{ marginRight: 10 }}
                       source={require('../../image/flagIcon.png')}
                     />
                   )}
@@ -482,7 +496,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           {errors.companyName ? (
-            <Text style={[{color: 'red'}]}>{errors.companyName}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.companyName}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <FontAwesome6 name="warehouse" size={15} color="#131314" />
@@ -516,7 +530,7 @@ const EnterpriseSignup = ({navigation}) => {
               }}
               renderLeftIcon={() => (
                 <AntDesign
-                  style={{marginRight: 10}}
+                  style={{ marginRight: 10 }}
                   name="API"
                   size={18}
                   color={colors.text}
@@ -525,7 +539,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           {errors.deliveries ? (
-            <Text style={[{color: 'red'}]}>{errors.deliveries}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.deliveries}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <MaterialCommunityIcons name="package" size={18} color="#131314" />
@@ -539,7 +553,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           {errors.dropdownCountryValue ? (
-            <Text style={[{color: 'red'}]}>{errors.dropdownCountryValue}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.dropdownCountryValue}</Text>
           ) : null}
           <View style={styles.containerCountry}>
             <Dropdown
@@ -573,7 +587,7 @@ const EnterpriseSignup = ({navigation}) => {
               }}
               renderLeftIcon={() => (
                 <FontAwesome6
-                  style={{marginRight: 10}}
+                  style={{ marginRight: 10 }}
                   name="globe"
                   size={18}
                   color={colors.text}
@@ -588,12 +602,12 @@ const EnterpriseSignup = ({navigation}) => {
               justifyContent: 'space-between',
             }}>
             {errors.dropdownStateValue ? (
-              <Text style={[{color: 'red'}]}>{errors.dropdownStateValue}</Text>
+              <Text style={[{ color: 'red' }]}>{errors.dropdownStateValue}</Text>
             ) : (
               <Text />
             )}
             {errors.dropdownCityValue ? (
-              <Text style={[{color: 'red'}]}>{errors.dropdownCityValue}</Text>
+              <Text style={[{ color: 'red' }]}>{errors.dropdownCityValue}</Text>
             ) : null}
           </View>
           <View
@@ -634,7 +648,7 @@ const EnterpriseSignup = ({navigation}) => {
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
-                    style={{marginRight: 10}}
+                    style={{ marginRight: 10 }}
                     name="globe"
                     size={18}
                     color={colors.text}
@@ -664,7 +678,7 @@ const EnterpriseSignup = ({navigation}) => {
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
-                    style={{marginRight: 10}}
+                    style={{ marginRight: 10 }}
                     name="globe"
                     size={18}
                     color={colors.text}
@@ -674,7 +688,7 @@ const EnterpriseSignup = ({navigation}) => {
             </View>
           </View>
           {errors.siret ? (
-            <Text style={[{color: 'red'}]}>{errors.siret}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.siret}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <MaterialIcons name="villa" size={18} color="#131314" />
@@ -689,7 +703,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           {errors.comments ? (
-            <Text style={[{color: 'red'}]}>{errors.comments}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.comments}</Text>
           ) : null}
           <View>
             <TextInput
@@ -708,8 +722,8 @@ const EnterpriseSignup = ({navigation}) => {
               disabled={false}
               value={toggleCheckBoxFirst}
               onValueChange={newValue => setToggleCheckBoxFirst(newValue)}
-              style={{alignSelf: 'flex-start'}}
-              tintColors={{true: '#FFC72B', false: '#999'}}
+              style={{ alignSelf: 'flex-start' }}
+              tintColors={{ true: '#FFC72B', false: '#999' }}
             />
             <Text style={styles.checkboxText}>
               {localizationText('Main', 'enterpriseAuthoriseCheckboxText')}
@@ -720,8 +734,8 @@ const EnterpriseSignup = ({navigation}) => {
               disabled={false}
               value={toggleCheckBoxSecond}
               onValueChange={newValue => setToggleCheckBoxSecond(newValue)}
-              style={{alignSelf: 'flex-start'}}
-              tintColors={{true: '#FFC72B', false: '#999'}}
+              style={{ alignSelf: 'flex-start' }}
+              tintColors={{ true: '#FFC72B', false: '#999' }}
             />
             <View>
               <TouchableOpacity>
@@ -739,7 +753,7 @@ const EnterpriseSignup = ({navigation}) => {
           </View>
           <TouchableOpacity
             onPress={handleSignUp}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+            style={[styles.logbutton, { backgroundColor: colors.primary }]}>
             <Text style={styles.buttonText}>
               {localizationText('Common', 'continue')}
             </Text>
@@ -749,7 +763,7 @@ const EnterpriseSignup = ({navigation}) => {
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
               {localizationText('Common', 'alreadyHaveAccount')}{' '}
-              <Text style={{color: colors.primary}}>
+              <Text style={{ color: colors.primary }}>
                 {localizationText('Common', 'login')}
               </Text>
             </Text>

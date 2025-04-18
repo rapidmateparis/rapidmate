@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -16,8 +16,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {Dropdown} from 'react-native-element-dropdown';
-import {colors} from '../../colors';
+import { Dropdown } from 'react-native-element-dropdown';
+import { colors } from '../../colors';
 import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
 import {
   handleCameraLaunchFunction,
@@ -26,14 +26,14 @@ import {
   localToUTC,
 } from '../../utils/common';
 import MapAddress from '../commonComponent/MapAddress';
-import {useLoader} from '../../utils/loaderContext';
-import {getLocationId, uploadDocumentsApi} from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
+import { getLocationId, uploadDocumentsApi } from '../../data_manager';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import MultpleMapAddress from '../commonComponent/MultipleMapAddress';
-import {useUserDetails} from '../commonComponent/StoreContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
-const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
+const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
   const [pickupAddress, setPickupAddress] = useState('');
   const [dropAddress, setDropAddress] = useState('');
   const [company, setCompany] = useState('');
@@ -56,7 +56,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const [distanceTime, setDistanceTime] = useState();
   const [sourceLocation, setSourceLocation] = useState();
   const [destinationLocation, setDestinationLocation] = useState();
-  const {setLoading} = useLoader();
+  const { setLoading } = useLoader();
   const [sourceLocationId, setSourceLocationId] = useState();
   const [destinationLocationId, setDestinationLocationId] = useState();
   const [date, setDate] = useState(new Date());
@@ -85,7 +85,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const routeParams = route.params;
   const deliveryType = route.params.delivery_type_id;
 
-  const {userDetails} = useUserDetails();
+  const { userDetails } = useUserDetails();
 
   const [imageViewId, setImageViewId] = useState(null);
 
@@ -139,68 +139,68 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   const pickupTimeText =
     localizationText('Common', 'pickupTime') || 'Pickup Date';
 
-  const repeatType = [{label: week, value: week}];
+  const repeatType = [{ label: week, value: week }];
 
-  const weeklyDay = [{label: day, value: day}];
+  const weeklyDay = [{ label: day, value: day }];
 
   const monthValue1 = [
-    {label: first, value: first},
-    {label: second, value: second},
-    {label: third, value: third},
-    {label: fourth, value: fourth},
-    {label: fifth, value: fifth},
+    { label: first, value: first },
+    { label: second, value: second },
+    { label: third, value: third },
+    { label: fourth, value: fourth },
+    { label: fifth, value: fifth },
   ];
 
   const monthDays = [
-    {label: '1', value: '1'},
-    {label: '2', value: '2'},
-    {label: '3', value: '3'},
-    {label: '4', value: '4'},
-    {label: '5', value: '5'},
-    {label: '6', value: '6'},
-    {label: '7', value: '7'},
-    {label: '8', value: '8'},
-    {label: '9', value: '9'},
-    {label: '10', value: '10'},
-    {label: '11', value: '11'},
-    {label: '12', value: '12'},
-    {label: '13', value: '13'},
-    {label: '14', value: '14'},
-    {label: '15', value: '15'},
-    {label: '16', value: '16'},
-    {label: '17', value: '17'},
-    {label: '18', value: '18'},
-    {label: '19', value: '19'},
-    {label: '20', value: '20'},
-    {label: '21', value: '21'},
-    {label: '22', value: '22'},
-    {label: '23', value: '23'},
-    {label: '24', value: '24'},
-    {label: '25', value: '25'},
-    {label: '26', value: '26'},
-    {label: '27', value: '27'},
-    {label: '28', value: '28'},
-    {label: '29', value: '29'},
-    {label: '30', value: '30'},
-    {label: '31', value: '31'},
+    { label: '1', value: '1' },
+    { label: '2', value: '2' },
+    { label: '3', value: '3' },
+    { label: '4', value: '4' },
+    { label: '5', value: '5' },
+    { label: '6', value: '6' },
+    { label: '7', value: '7' },
+    { label: '8', value: '8' },
+    { label: '9', value: '9' },
+    { label: '10', value: '10' },
+    { label: '11', value: '11' },
+    { label: '12', value: '12' },
+    { label: '13', value: '13' },
+    { label: '14', value: '14' },
+    { label: '15', value: '15' },
+    { label: '16', value: '16' },
+    { label: '17', value: '17' },
+    { label: '18', value: '18' },
+    { label: '19', value: '19' },
+    { label: '20', value: '20' },
+    { label: '21', value: '21' },
+    { label: '22', value: '22' },
+    { label: '23', value: '23' },
+    { label: '24', value: '24' },
+    { label: '25', value: '25' },
+    { label: '26', value: '26' },
+    { label: '27', value: '27' },
+    { label: '28', value: '28' },
+    { label: '29', value: '29' },
+    { label: '30', value: '30' },
+    { label: '31', value: '31' },
   ];
 
   const days = [
-    {label: '1', value: '1'},
-    {label: '2', value: '2'},
-    {label: '3', value: '3'},
-    {label: '4', value: '4'},
-    {label: '5', value: '5'},
+    { label: '1', value: '1' },
+    { label: '2', value: '2' },
+    { label: '3', value: '3' },
+    { label: '4', value: '4' },
+    { label: '5', value: '5' },
   ];
 
   const weekList = [
-    {label: sunday, value: sunday},
-    {label: monday, value: monday},
-    {label: tuesday, value: tuesday},
-    {label: wednesday, value: wednesday},
-    {label: thursday, value: thursday},
-    {label: friday, value: friday},
-    {label: saturday, value: saturday},
+    { label: sunday, value: sunday },
+    { label: monday, value: monday },
+    { label: tuesday, value: tuesday },
+    { label: wednesday, value: wednesday },
+    { label: thursday, value: thursday },
+    { label: friday, value: friday },
+    { label: saturday, value: saturday },
   ];
 
   const toggleModal = () => {
@@ -211,8 +211,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
   };
 
   const numberData = [
-    {label: '+91', value: '+91'},
-    {label: '+33', value: '+33'},
+    { label: '+91', value: '+91' },
+    { label: '+33', value: '+33' },
   ];
 
   const handleCameraLaunch = async () => {
@@ -299,7 +299,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           console.error('Upload Error:', 'Server busy. Please try again!!!');
           setLoading(false);
           Alert.alert('Error Alert', 'Server busy. Please try again!!!', [
-            {text: 'OK'},
+            { text: 'OK' },
           ]);
         },
       );
@@ -392,7 +392,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
   useEffect(() => {
     // setNumber(userDetails.userDetails[0].phone.substring(3));
-     setNumber(userDetails.userDetails[0].phone);
+    setNumber(userDetails.userDetails[0].phone);
     //  console.log("Phone number",userDetails.userDetails[0].phone)
     // console.log(userDetails.userDetails[0].phone.substring(3))
     setCompany(userDetails.userDetails[0].company_name);
@@ -401,7 +401,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     }
   }, []);
 
- 
+
 
   const onBranchSourceLocation = location => {
     let locationParams = {
@@ -458,13 +458,13 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
         currentElement.to_longitude = element.destinationCoordinates.longitude;
         currentElement.amount = Math.round(
           route.params.vehicle_type.base_price +
-            route.params.vehicle_type.km_price * element.distance,
+          route.params.vehicle_type.km_price * element.distance,
         ).toFixed(2);
         totalAmount =
           totalAmount +
           Math.round(
             route.params.vehicle_type.base_price +
-              route.params.vehicle_type.km_price * element.distance,
+            route.params.vehicle_type.km_price * element.distance,
           );
         currentElement.delivery_date = moment(localToUTC(new Date())).format(
           'YYYY-MM-DD',
@@ -549,7 +549,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
       errorResponse => {
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -586,9 +586,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
     <ScrollView
       keyboardShouldPersistTaps="handled"
       nestedScrollEnabled={true}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       {deliveryType == 2 ? (
-        <View style={{height: 400, position: 'relative'}}>
+        <View style={{ height: 400, position: 'relative' }}>
           <MultpleMapAddress
             sourceLocation={routeParams.sourceBranch}
             sourceDisabled={'none'}
@@ -599,7 +599,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
           />
         </View>
       ) : (
-        <View style={{height: 200, position: 'relative'}}>
+        <View style={{ height: 200, position: 'relative' }}>
           <MapAddress
             sourceLocation={routeParams.sourceBranch}
             sourceDisabled={'none'}
@@ -610,10 +610,10 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
         </View>
       )}
 
-      <View style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-        <View style={{paddingHorizontal: 15, paddingTop: 8}}>
+      <View style={{ width: '100%', backgroundColor: '#FBFAF5' }}>
+        <View style={{ paddingHorizontal: 15, paddingTop: 8 }}>
           <View>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <Text style={styles.textlable}>
                 {localizationText('Common', 'companyName')}
               </Text>
@@ -631,7 +631,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 {localizationText('Common', 'phoneNumber')}
               </Text>
               <View style={styles.mobileNumberInput}>
-                <View style={{width: 95}}>
+                <View style={{ width: 95 }}>
                   <View style={styles.containerDropdown}>
                     <Dropdown
                       data={numberData}
@@ -654,7 +654,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       }}
                       renderLeftIcon={() => (
                         <Image
-                          style={{marginRight: 10}}
+                          style={{ marginRight: 10 }}
                           source={require('../../image/flagIcon.png')}
                         />
                       )}
@@ -664,7 +664,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 <TextInput
                   style={[
                     styles.input,
-                    {fontFamily: 'Montserrat-Regular', fontSize: 16},
+                    { fontFamily: 'Montserrat-Regular', fontSize: 16 },
                   ]}
                   placeholder="00 00 00 00 00"
                   placeholderTextColor="#999"
@@ -676,11 +676,11 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               </View>
             </View>
             {errors.number ? (
-              <Text style={[{color: 'red'}]}>{errors.number}</Text>
+              <Text style={[{ color: 'red' }]}>{errors.number}</Text>
             ) : null}
             <TouchableOpacity
               onPress={toggleModal}
-              style={{flex: 1, backgroundColor: '#fff'}}>
+              style={{ flex: 1, backgroundColor: '#fff' }}>
               <Text style={styles.textlable}>
                 {localizationText('Common', 'packagePhoto')}
               </Text>
@@ -689,7 +689,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   name="attachment"
                   size={13}
                   color="#131314"
-                  style={{marginTop: 13}}
+                  style={{ marginTop: 13 }}
                 />
                 <Text style={styles.packagePhoto}>
                   {localizationText('Common', 'packagePhoto')}
@@ -700,7 +700,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               </View>
             </TouchableOpacity>
 
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <Text style={styles.textlable}>
                 {localizationText('Common', 'packageId')}
               </Text>
@@ -714,9 +714,9 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               />
             </View>
             {errors.orderid ? (
-              <Text style={[{color: 'red'}]}>{errors.orderid}</Text>
+              <Text style={[{ color: 'red' }]}>{errors.orderid}</Text>
             ) : null}
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <Text style={styles.textlable}>
                 {localizationText('Common', 'pickupNotes')}
               </Text>
@@ -732,7 +732,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
               />
             </View>
             {errors.pickupNotes ? (
-              <Text style={[{color: 'red'}]}>{errors.pickupNotes}</Text>
+              <Text style={[{ color: 'red' }]}>{errors.pickupNotes}</Text>
             ) : null}
             <View>
               <View style={styles.bookAddress}>
@@ -760,7 +760,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                 </Text>
               ) : (
                 <View style={styles.datetimeCard}>
-                  <View style={{width: '50%', marginRight: 8}}>
+                  <View style={{ width: '50%', marginRight: 8 }}>
                     <Text style={styles.pickupDates}>{pickupDateText}</Text>
                     <View style={styles.nameInputDiv}>
                       <DatePicker
@@ -782,7 +782,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       <TextInput
                         style={[
                           styles.loginput,
-                          {fontFamily: 'Montserrat-Regular'},
+                          { fontFamily: 'Montserrat-Regular' },
                         ]}
                         placeholder="12/06/2024"
                         placeholderTextColor="#999"
@@ -794,12 +794,12 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                         size={20}
                         onPress={() => setDateOpen(true)}
                         color={colors.secondary}
-                        style={{marginTop: 13}}
+                        style={{ marginTop: 13 }}
                       />
                     </View>
                   </View>
 
-                  <View style={{width: '50%'}}>
+                  <View style={{ width: '50%' }}>
                     <Text style={styles.pickupDates}>{pickupTimeText}</Text>
                     <View style={styles.nameInputDiv}>
                       <DatePicker
@@ -820,7 +820,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       <TextInput
                         style={[
                           styles.loginput,
-                          {fontFamily: 'Montserrat-Regular'},
+                          { fontFamily: 'Montserrat-Regular' },
                         ]}
                         placeholder="10:30 AM"
                         placeholderTextColor="#999"
@@ -834,7 +834,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                           setTimeOpen(true);
                         }}
                         color={colors.secondary}
-                        style={{marginTop: 13}}
+                        style={{ marginTop: 13 }}
                       />
                     </View>
                   </View>
@@ -920,8 +920,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
-                      itemTextStyle={{color: colors.text}}
-                      selectedTextStyle={{color: colors.text}}
+                      itemTextStyle={{ color: colors.text }}
+                      selectedTextStyle={{ color: colors.text }}
                       placeholder={!isFocusRepeatEvery ? '1' : '1'}
                       searchPlaceholder="Search.."
                       value={selectedRepeatEvery}
@@ -956,7 +956,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     <TextInput
                       style={[
                         styles.loginput,
-                        {fontFamily: 'Montserrat-Regular'},
+                        { fontFamily: 'Montserrat-Regular' },
                       ]}
                       placeholder="12/06/2024"
                       placeholderTextColor="#999"
@@ -968,7 +968,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       size={20}
                       onPress={() => setDateUntilOpen(true)}
                       color={colors.secondary}
-                      style={{marginTop: 13}}
+                      style={{ marginTop: 13 }}
                     />
                   </View>
                 </View>
@@ -998,8 +998,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
-                    itemTextStyle={{color: colors.text}}
-                    selectedTextStyle={{color: colors.text}}
+                    itemTextStyle={{ color: colors.text }}
+                    selectedTextStyle={{ color: colors.text }}
                     placeholder={!isFocus ? '1' : '1'}
                     searchPlaceholder="Search.."
                     value={selectedRepeatEvery}
@@ -1017,8 +1017,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     style={styles.dateDropdown}
                     data={weeklyDay}
                     disable
-                    itemTextStyle={{color: colors.text}}
-                    selectedTextStyle={{color: colors.text}}
+                    itemTextStyle={{ color: colors.text }}
+                    selectedTextStyle={{ color: colors.text }}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
@@ -1056,7 +1056,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <TextInput
                     style={[
                       styles.loginput,
-                      {fontFamily: 'Montserrat-Regular'},
+                      { fontFamily: 'Montserrat-Regular' },
                     ]}
                     placeholder="12/06/2024"
                     placeholderTextColor="#999"
@@ -1068,7 +1068,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     size={20}
                     onPress={() => setDateUntilOpen(true)}
                     color={colors.secondary}
-                    style={{marginTop: 13}}
+                    style={{ marginTop: 13 }}
                   />
                 </View>
               </View>
@@ -1120,8 +1120,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
-                    itemTextStyle={{color: colors.text}}
-                    selectedTextStyle={{color: colors.text}}
+                    itemTextStyle={{ color: colors.text }}
+                    selectedTextStyle={{ color: colors.text }}
                     placeholder={!isFocus ? '1' : '1'}
                     searchPlaceholder="Search.."
                     value={selectedRepeatEvery}
@@ -1138,8 +1138,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <Dropdown
                     style={styles.dateDropdown}
                     data={repeatType}
-                    itemTextStyle={{color: colors.text}}
-                    selectedTextStyle={{color: colors.text}}
+                    itemTextStyle={{ color: colors.text }}
+                    selectedTextStyle={{ color: colors.text }}
                     maxHeight={300}
                     labelField="label"
                     valueField="value"
@@ -1176,7 +1176,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   <TextInput
                     style={[
                       styles.loginput,
-                      {fontFamily: 'Montserrat-Regular'},
+                      { fontFamily: 'Montserrat-Regular' },
                     ]}
                     placeholder="12/06/2024"
                     placeholderTextColor="#999"
@@ -1188,7 +1188,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     size={20}
                     onPress={() => setDateUntilOpen(true)}
                     color={colors.secondary}
-                    style={{marginTop: 13}}
+                    style={{ marginTop: 13 }}
                   />
                 </View>
               </View>
@@ -1214,8 +1214,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
-                      itemTextStyle={{color: colors.text}}
-                      selectedTextStyle={{color: colors.text}}
+                      itemTextStyle={{ color: colors.text }}
+                      selectedTextStyle={{ color: colors.text }}
                       placeholder={!isFocus ? '1' : '1'}
                       searchPlaceholder="Search.."
                       value={selectedRepeatEvery}
@@ -1251,8 +1251,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
-                      itemTextStyle={{color: colors.text}}
-                      selectedTextStyle={{color: colors.text}}
+                      itemTextStyle={{ color: colors.text }}
+                      selectedTextStyle={{ color: colors.text }}
                       placeholder={!isFocus ? '1' : '1'}
                       searchPlaceholder="Search.."
                       value={selectedRepeatMonth1}
@@ -1268,8 +1268,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     <Dropdown
                       style={styles.dateDropdown}
                       data={weekList}
-                      itemTextStyle={{color: colors.text}}
-                      selectedTextStyle={{color: colors.text}}
+                      itemTextStyle={{ color: colors.text }}
+                      selectedTextStyle={{ color: colors.text }}
                       maxHeight={300}
                       labelField="label"
                       valueField="value"
@@ -1302,7 +1302,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   Alert.alert(
                     'Error Alert',
                     'Please fill the required fields.',
-                    [{text: 'OK', onPress: () => {}}],
+                    [{ text: 'OK', onPress: () => { } }],
                   );
                   return;
                 }
@@ -1315,7 +1315,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                   Alert.alert(
                     'Error Alert',
                     'Please fill the required fields.',
-                    [{text: 'OK', onPress: () => {}}],
+                    [{ text: 'OK', onPress: () => { } }],
                   );
                   return;
                 }
@@ -1362,7 +1362,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     Alert.alert(
                       'Error Alert',
                       'Please choose pickup and drop location',
-                      [{text: 'OK', onPress: () => {}}],
+                      [{ text: 'OK', onPress: () => { } }],
                     );
                   }
                 } else {
@@ -1384,8 +1384,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       package_id: orderid,
                       amount: Math.round(
                         route.params.vehicle_type.base_price +
-                          route.params.vehicle_type.km_price *
-                            distanceTime.distance,
+                        route.params.vehicle_type.km_price *
+                        distanceTime.distance,
                       ).toFixed(2),
                       distance: distanceTime.distance.toFixed(2),
                       time: distanceTime.time.toFixed(0),
@@ -1411,12 +1411,12 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                     Alert.alert(
                       'Error Alert',
                       'Please choose pickup and drop location',
-                      [{text: 'OK', onPress: () => {}}],
+                      [{ text: 'OK', onPress: () => { } }],
                     );
                   }
                 }
               }}
-              style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+              style={[styles.logbutton, { backgroundColor: colors.primary }]}>
               <Text style={styles.buttonText}>
                 {localizationText('Common', 'next')}
               </Text>

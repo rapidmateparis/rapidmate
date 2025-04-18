@@ -240,7 +240,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
                 {localizationText('Common', 'orderFare')}
               </Text>
               <Text style={styles.totalmoney}>
-                € {orderDetails.amount.toFixed(2)}
+                € {orderDetails.delivery_boy_amount.toFixed(2)}
               </Text>
             </View>
 
@@ -291,7 +291,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
               </Text>
               <Text style={styles.value}>
                 €{' '}
-                {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
+                {orderDetails.delivery_boy_amount ? orderDetails.delivery_boy_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 

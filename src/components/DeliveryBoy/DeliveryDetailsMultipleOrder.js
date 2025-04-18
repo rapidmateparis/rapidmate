@@ -24,6 +24,7 @@ import {
   orderStatusUpdate,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 
 const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
   const [delivered, setDelivered] = useState(false);
@@ -35,6 +36,15 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
   const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [isOTPModalVisible, setOTPModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const vehicleText = localizationText('Common', 'vehicle') || 'Vehicle';
+  const packagePhoto = localizationText('Common', 'packagePhoto') || 'Package Photo';
+  const goingToPickup = localizationText('Common', 'goingToPickup') || 'Going to Pickup';
+  const reached = localizationText('Common', 'reached') || 'Reached';
+  const deliveredText = localizationText('Common', 'delivered') || 'Delivered';
+  const orderClosedEarned =
+      localizationText('Common', 'orderClosedEarned') ||
+      'This order is closed, you earned';
 
   const [isOTP, setIsOTP] = useState();
   const [lineId, setLineId] = useState(null);
@@ -96,7 +106,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
         successResponse => {
           setLineId(null);
           const data = successResponse[0]._response.next_action_status;
-          Alert.alert('Success', 'Delivered OPT verified successfully', [
+          Alert.alert('Success', 'Delivered OTP verified successfully', [
             {
               text: 'OK',
               onPress: () => {
@@ -185,11 +195,17 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
-              <Text style={styles.dropInfo}>Pickup information</Text>
+              <Text style={styles.dropInfo}>
+                {localizationText('Main', 'pickupInformation')}
+              </Text>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('DeliveryDetailsMultipleInvoice')
-                }>
+                onPress={() => {
+                  const address = orderDetails.address;
+                  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                    address,
+                  )}`;
+                  Linking.openURL(url);
+                }}>
                 <Image
                   style={styles.startIcon}
                   source={require('../../image/Start-Icon.png')}
@@ -305,7 +321,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                     <View style={styles.borderShowOff} />
 
                     <View style={styles.packageBasicInfo}>
-                      <Text style={styles.headingOTP}>Vehicle:</Text>
+                      <Text style={styles.headingOTP}>{vehicleText}:</Text>
                       <Text style={styles.subheadingOTP}>
                         {orderDetails.vehicle_type}
                       </Text>
@@ -314,7 +330,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                     <View style={styles.borderShowOff} />
 
                     <View style={styles.packageBasicInfo}>
-                      <Text style={styles.headingOTP}>Order ID:</Text>
+                      <Text style={styles.headingOTP}>{orderID}:</Text>
                       <Text style={styles.subheadingOTP}>
                         {location.order_number}
                       </Text>
@@ -323,7 +339,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                     <View style={styles.borderShowOff} />
 
                     <View style={styles.packageBasicInfo}>
-                      <Text style={styles.headingOTP}>Package photo</Text>
+                      <Text style={styles.headingOTP}>{packagePhoto}</Text>
                       <TouchableOpacity onPress={() => toggleModal()}>
                         {orderDetails?.package_photo ? (
                           <Image
@@ -396,7 +412,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                               : '#FF0058'
                           }
                         />
-                        <Text style={styles.statusInfo}>Going to Pickup</Text>
+                        <Text style={styles.statusInfo}>{goingToPickup}</Text>
                       </View>
                       <View style={styles.borderStyle} />
 
@@ -419,7 +435,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                               : '#FF0058'
                           }
                         />
-                        <Text style={styles.statusInfo}>Reached</Text>
+                        <Text style={styles.statusInfo}>{reached}</Text>
                       </View>
                       <View style={styles.borderStyle} />
 
@@ -433,17 +449,17 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                             updateStatus == 'Completed' ? '#FF0058' : '#D9D9D9'
                           }
                         />
-                        <Text style={styles.statusInfo}>Delivered</Text>
+                        <Text style={styles.statusInfo}>{deliveredText}</Text>
                       </View>
                     </View>
-                    <View style={styles.earningCard}>
+                    {/* <View style={styles.earningCard}>
                       {delivered && (
                         <Text style={styles.boyEarning}>
                           This order is closed, you earned{' '}
                           <Text style={styles.earnedMoney}>€34</Text>
                         </Text>
                       )}
-                    </View>
+                    </View> */}
                     {updateStatus !== 'Completed' && (
                       <TouchableOpacity
                         onPress={() =>
@@ -479,7 +495,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                 styles.acceptOrReject,
                 {backgroundColor: colors.primary},
               ]}>
-              <Text style={styles.buttonText}>Accept</Text>
+              <Text style={styles.buttonText}>{localizationText('Common', 'accept')}</Text>
             </TouchableOpacity>
             <View style={{width: '1%'}} />
             <TouchableOpacity
@@ -490,7 +506,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                 styles.acceptOrReject,
                 {backgroundColor: colors.primary},
               ]}>
-              <Text style={styles.buttonText}>Reject</Text>
+              <Text style={styles.buttonText}>{localizationText('Common', 'reject')}</Text>
             </TouchableOpacity>
           </View>
         ) : null}

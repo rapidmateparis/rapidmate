@@ -53,15 +53,14 @@ const AddDropDetails = ({route, navigation}) => {
 
     let errors = {};
     if (!name.trim()) {
-      errors.name = 'Name is required';
+      errors.name = 'First name is required';
     } else if (name.length < 3) {
       errors.name = 'Name must be at least 3 characters long';
     } else if (!/^[A-Za-z\s]+$/.test(name)) {
       console.log("name ======>", name);
       errors.name = 'Names should only contain letters';
     }
-
-    
+   
   if (lastname && !/^[A-Za-z\s]+$/.test(lastname)) {
     errors.name = 'Last name should contain letters only';
   }
@@ -78,6 +77,7 @@ const AddDropDetails = ({route, navigation}) => {
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';
     }
+
     if (!dropdownValue) {
       errors.dropdownValue = 'Please select country';
     }

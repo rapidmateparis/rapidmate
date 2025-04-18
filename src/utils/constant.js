@@ -119,7 +119,8 @@ export const API = {
   changeCreateShiftStatus:BASE_URL + 'order/update/shift/status',
   deliveryBoyOrderSlots:BASE_URL + 'order/deliveryboy/myslots/',
   billingAddressDetails: BASE_URL+'enterprise/billing/address/',
-  billingAddressDetailsUpdate: BASE_URL+'enterprise/billing/address/create'
+  billingAddressDetailsUpdate: BASE_URL+'enterprise/billing/address/create',
+  appVersion: BASE_URL+'version'
 };
 
 export const DATE_FORMAT ={

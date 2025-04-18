@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,22 +11,22 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import CheckBox from '@react-native-community/checkbox';
-import {useLoader} from '../../utils/loaderContext';
+import { useLoader } from '../../utils/loaderContext';
 import {
   getCityList,
   getCountryList,
   getStateList,
   signUpUser,
 } from '../../data_manager';
-import {useSignUpDetails} from '../commonComponent/StoreContext';
-import {localizationText} from '../../utils/common';
+import { useSignUpDetails } from '../commonComponent/StoreContext';
+import { localizationText } from '../../utils/common';
 
-const DeliveryBoySignup = ({navigation}) => {
+const DeliveryBoySignup = ({ navigation }) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
@@ -46,7 +46,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const {setLoading} = useLoader();
+  const { setLoading } = useLoader();
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
   const [masterStateList, setMasterStateList] = useState(null);
@@ -54,7 +54,7 @@ const DeliveryBoySignup = ({navigation}) => {
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
-  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
+  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
   const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
@@ -78,7 +78,7 @@ const DeliveryBoySignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterCountryList(successResponse[0]._response);
@@ -106,7 +106,7 @@ const DeliveryBoySignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -119,7 +119,7 @@ const DeliveryBoySignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterStateList(successResponse[0]._response);
@@ -131,7 +131,7 @@ const DeliveryBoySignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -144,7 +144,7 @@ const DeliveryBoySignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterCityList(successResponse[0]._response);
@@ -156,15 +156,15 @@ const DeliveryBoySignup = ({navigation}) => {
         setLoading(false);
         console.log('errorResponse', errorResponse[0]._errors.message);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
   }, []);
 
   const data = [
-    {label: '+91', value: '+91'},
-    {label: '+33', value: '+33'},
+    { label: '+91', value: '+91' },
+    { label: '+33', value: '+33' },
   ];
 
   const validateForm = () => {
@@ -176,6 +176,7 @@ const DeliveryBoySignup = ({navigation}) => {
       errors.name = 'First name is required';
     } else if (name.length < 3) {
       errors.name = 'Name must be at least 3 characters long';
+
     }else if (!/^[A-Za-z\s]+$/.test(name)) {
       console.log("name ======>", name);
       errors.name = 'Names should only contain letters';
@@ -184,6 +185,7 @@ const DeliveryBoySignup = ({navigation}) => {
     if (lastname && !/^[A-Za-z\s]+$/.test(lastname)) {
       errors.name = 'Last name should contain letters only';
     }
+
 
     if (!email.trim()) {
       errors.email = 'Email is required';
@@ -198,6 +200,7 @@ const DeliveryBoySignup = ({navigation}) => {
     if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords does not match';
     }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
     } else if (!/^\d+$/.test(number))  {
@@ -205,6 +208,7 @@ const DeliveryBoySignup = ({navigation}) => {
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';
     }
+
     if (!dropdownCountryValue) {
       errors.dropdownCountryValue = 'Please select a country';
     }
@@ -260,7 +264,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 successResponse[0]._response.name == 'NotAuthorizedException'
               ) {
                 Alert.alert('Error Alert', successResponse[0]._response.name, [
-                  {text: 'OK', onPress: () => {}},
+                  { text: 'OK', onPress: () => { } },
                 ]);
               } else if (successResponse[0]._httpsStatusCode == 200) {
                 saveSignUpDetails({
@@ -279,7 +283,7 @@ const DeliveryBoySignup = ({navigation}) => {
           console.log('errorResponse', errorResponse[0]._errors.message[0]);
           setLoading(false);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
+            { text: 'OK', onPress: () => { } },
           ]);
         },
       );
@@ -287,13 +291,13 @@ const DeliveryBoySignup = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
-      <View style={{paddingHorizontal: 15, marginTop: 10}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{width: '85%'}}>
-            <Text style={[styles.logInText, {color: colors.text}]}>
+    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
+      <View style={{ paddingHorizontal: 15, marginTop: 10 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ width: '85%' }}>
+            <Text style={[styles.logInText, { color: colors.text }]}>
               {localizationText('Common', 'deliveryBoy')}{' '}
-              <Text style={{fontFamily: 'Montserrat-Medium'}}>
+              <Text style={{ fontFamily: 'Montserrat-Medium' }}>
                 {localizationText('Common', 'signup')}
               </Text>
             </Text>
@@ -303,14 +307,14 @@ const DeliveryBoySignup = ({navigation}) => {
           </View>
           <View style={styles.profilePhotoCard}>
             <Image
-              style={{width: 40, height: 60}}
+              style={{ width: 40, height: 60 }}
               source={require('../../image/DeliveryBoy-Icon.png')}
             />
           </View>
         </View>
         <View style={styles.logFormView}>
           {errors.name ? (
-            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.name}</Text>
           ) : null}
           <View
             style={{
@@ -323,7 +327,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 name="user"
                 size={18}
                 color="#131314"
-                style={{marginTop: 13}}
+                style={{ marginTop: 13 }}
               />
               <TextInput
                 style={styles.loginput}
@@ -340,7 +344,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 name="user"
                 size={18}
                 color="#131314"
-                style={{marginTop: 13}}
+                style={{ marginTop: 13 }}
               />
               <TextInput
                 style={styles.loginput}
@@ -353,14 +357,14 @@ const DeliveryBoySignup = ({navigation}) => {
             </View>
           </View>
           {errors.email ? (
-            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.email}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign
               name="mail"
               size={18}
               color="#131314"
-              style={{marginTop: 13}}
+              style={{ marginTop: 13 }}
             />
             <TextInput
               style={styles.loginput}
@@ -371,7 +375,7 @@ const DeliveryBoySignup = ({navigation}) => {
             />
           </View>
           {errors.password ? (
-            <Text style={[{color: 'red'}]}>{errors.password}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.password}</Text>
           ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
@@ -394,7 +398,7 @@ const DeliveryBoySignup = ({navigation}) => {
             </TouchableOpacity>
           </View>
           {errors.confirmPassword ? (
-            <Text style={[{color: 'red'}]}>{errors.confirmPassword}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.confirmPassword}</Text>
           ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
@@ -417,10 +421,10 @@ const DeliveryBoySignup = ({navigation}) => {
             </TouchableOpacity>
           </View>
           {errors.number ? (
-            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.number}</Text>
           ) : null}
           <View style={styles.mobileNumberInput}>
-            <View style={{width: 95}}>
+            <View style={{ width: 95 }}>
               <View style={styles.containerDropdown}>
                 <Dropdown
                   data={countryCodeList}
@@ -443,7 +447,7 @@ const DeliveryBoySignup = ({navigation}) => {
                   }}
                   renderLeftIcon={() => (
                     <Image
-                      style={{marginRight: 10}}
+                      style={{ marginRight: 10 }}
                       source={require('../../image/flagIcon.png')}
                     />
                   )}
@@ -461,7 +465,7 @@ const DeliveryBoySignup = ({navigation}) => {
             />
           </View>
           {errors.dropdownCountryValue ? (
-            <Text style={[{color: 'red', marginTop: 20, marginBottom: -20}]}>
+            <Text style={[{ color: 'red', marginTop: 20, marginBottom: -20 }]}>
               {errors.dropdownCountryValue}
             </Text>
           ) : null}
@@ -497,7 +501,7 @@ const DeliveryBoySignup = ({navigation}) => {
               }}
               renderLeftIcon={() => (
                 <FontAwesome6
-                  style={{marginRight: 10}}
+                  style={{ marginRight: 10 }}
                   name="globe"
                   size={18}
                   color={colors.text}
@@ -506,7 +510,7 @@ const DeliveryBoySignup = ({navigation}) => {
             />
           </View>
           {errors.dropdownStateValue ? (
-            <Text style={[{color: 'red'}]}>{errors.dropdownStateValue}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.dropdownStateValue}</Text>
           ) : null}
           <View
             style={{
@@ -546,7 +550,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
-                    style={{marginRight: 10}}
+                    style={{ marginRight: 10 }}
                     name="globe"
                     size={18}
                     color={colors.text}
@@ -577,7 +581,7 @@ const DeliveryBoySignup = ({navigation}) => {
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
-                    style={{marginRight: 10}}
+                    style={{ marginRight: 10 }}
                     name="globe"
                     size={18}
                     color={colors.text}
@@ -587,14 +591,14 @@ const DeliveryBoySignup = ({navigation}) => {
             </View>
           </View>
           {errors.siret ? (
-            <Text style={[{color: 'red'}]}>{errors.siret}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.siret}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <Ionicons
               name="location-outline"
               size={18}
               color="#131314"
-              style={{marginTop: 13}}
+              style={{ marginTop: 13 }}
             />
             <TextInput
               style={styles.loginput}
@@ -612,8 +616,8 @@ const DeliveryBoySignup = ({navigation}) => {
               disabled={false}
               value={toggleCheckBox}
               onValueChange={newValue => setToggleCheckBox(newValue)}
-              style={{alignSelf: 'flex-start'}}
-              tintColors={{true: '#FFC72B', false: '#999'}}
+              style={{ alignSelf: 'flex-start' }}
+              tintColors={{ true: '#FFC72B', false: '#999' }}
             />
             <Text style={styles.checkboxText}>
               {localizationText('Main', 'deliveryBoyAuthoriseCheckbox')}{' '}
@@ -625,7 +629,7 @@ const DeliveryBoySignup = ({navigation}) => {
             </Text>
           </View>
           {errors.toggleCheckBox ? (
-            <Text style={[{color: 'red', marginTop: 20, marginBottom: -20}]}>
+            <Text style={[{ color: 'red', marginTop: 20, marginBottom: -20 }]}>
               {errors.toggleCheckBox}
             </Text>
           ) : null}
@@ -633,7 +637,7 @@ const DeliveryBoySignup = ({navigation}) => {
             onPress={() => {
               handleSignUp();
             }}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
+            style={[styles.logbutton, { backgroundColor: colors.primary }]}>
             <Text style={styles.buttonText}>
               {localizationText('Common', 'continue')}
             </Text>
@@ -643,7 +647,7 @@ const DeliveryBoySignup = ({navigation}) => {
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
               {localizationText('Common', 'alreadyHaveAccount')}{' '}
-              <Text style={{color: colors.primary}}>
+              <Text style={{ color: colors.primary }}>
                 {localizationText('Common', 'login')}
               </Text>
             </Text>
