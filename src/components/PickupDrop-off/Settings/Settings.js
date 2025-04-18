@@ -17,32 +17,23 @@ import RNRestart from 'react-native-restart';
 import {API} from '../../../utils/constant';
 import i18n from '../../../localization/localizationUtils';
 import {localizationText} from '../../../utils/common';
-import { getAppVersion } from '../../../data_manager';
+import {getAppVersion} from '../../../data_manager';
+import { getCachedAppVersion } from '../../../utils/asyncStorage';
 
 const Settings = ({navigation}) => {
   const {userDetails} = useUserDetails();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [version, setVersion] = useState('');
-  
+
   useEffect(() => {
-      getAppVersion(
-        (response) => {
-          console.log('Full version response:', response);
-          const version = response[0]?._response?.version;
-          console.log("version", version);
-          if (version) {
-            setVersion(version);
-          } else {
-            setVersion('Version not available');
-          }
-        },
-        (errorResponse) => {
-          console.error('Error fetching version', errorResponse);
-          setVersion('Failed to load version');
-        }
-      );
-    }, []);
+    const loadVersion = async () => {
+      const version = await getCachedAppVersion();
+      setVersion(version);
+    };
+
+    loadVersion();
+  }, []);
 
   const languages = [
     {label: 'English', key: 'en'},
