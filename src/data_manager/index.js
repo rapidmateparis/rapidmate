@@ -1551,11 +1551,12 @@ export const getAppVersion = (successCallback, errorCallback) => {
   axiosCall(
     API.appVersion,
     HTTPMethod.GET,
-    null, 
-    response => {
+    null,
+    (response) => {
+      console.log('App version response:', response);
       successCallback(response);
     },
-    errorResponse => {
+    (errorResponse) => {
       errorCallback(errorResponse);
     }
   );

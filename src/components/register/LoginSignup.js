@@ -12,28 +12,18 @@ import { colors } from '../../colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LanguageSwitcher from '../../common/LanguageSwitcher';
 import { localizationText } from '../../utils/common';
-import { getAppVersion } from '../../data_manager';
+import { getCachedAppVersion } from '../../utils/asyncStorage';
 
 const LoginSignup = ({ navigation }) => {
   const [version, setVersion] = useState('');
 
   useEffect(() => {
-    getAppVersion(
-      (response) => {
-        console.log('Full version response:', response);
-        const version = response[0]?._response?.version;
-        console.log("version", version);
-        if (version) {
-          setVersion(version);
-        } else {
-          setVersion('Version not available');
-        }
-      },
-      (errorResponse) => {
-        console.error('Error fetching version', errorResponse);
-        setVersion('Failed to load version');
-      }
-    );
+    const loadVersion = async () => {
+      const version = await getCachedAppVersion();
+      setVersion(version);
+    };
+  
+    loadVersion();
   }, []);
     
 
