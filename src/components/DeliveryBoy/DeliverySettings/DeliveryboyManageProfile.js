@@ -97,10 +97,18 @@ const DeliveryboyManageProfile = ({navigation}) => {
       errors.firstName = 'Name is required';
     } else if (firstName.length < 3) {
       errors.firstName = 'Name must be at least 3 characters long';
+    }else if (!/^[A-Za-z\s]+$/.test(firstName)) {
+      // console.log("name ======>", name);
+      errors.firstName = 'Names should only contain letters';
     }
+
+    if (lastName && !/^[A-Za-z\s]+$/.test(lastName)) {
+      errors.lastname = 'Last name should contain letters only';
+    }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    } else if (!/^\d+$/.test(number)) {
       errors.number = 'Number should be numeric';
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';
@@ -213,6 +221,9 @@ const DeliveryboyManageProfile = ({navigation}) => {
             onChangeText={text => setFirstName(text)}
           />
         </View>
+        {errors.lastname ? (
+          <Text style={[{color: 'red'}]}>{errors.lastname}</Text>
+        ) : null}
         <View style={{flex: 1}}>
           <Text style={styles.textlable}>
             {localizationText('Common', 'lastName')}

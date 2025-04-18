@@ -33,6 +33,8 @@ const ConsumerManageProfile = ({navigation}) => {
 
   const [vehicleModel, setVehicleModel] = useState(fullName);
 
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     setVehicleModel(fullName);
   }, [userDetails]);
@@ -47,10 +49,33 @@ const ConsumerManageProfile = ({navigation}) => {
   };
 
   const saveProfileDetails = () => {
-    if (number.length < 9) {
-      Alert.alert('Invalid Number', 'Phone number must be at least 9 digits.');
-      return;
+    // if (number.length < 9) {
+    //   Alert.alert('Invalid Number', 'Phone number must be at least 9 digits.');
+    //   return;
+    // }
+
+    let errors = {};
+
+    if (!vehicleModel) {
+      errors.name = 'First name is required';
+    } else if (vehicleModel.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(vehicleModel)) {
+      // console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
     }
+
+    if (!number) {
+      errors.number = 'Number is required';
+    } else if (!/^\d+$/.test(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.length < 9) {
+      errors.number = 'Invalid number';
+    }
+
+    setErrors(errors)
+
+    return Object.keys(errors).length === 0;
 
     setLoading(true);
     let profileParams = {
@@ -108,7 +133,7 @@ const ConsumerManageProfile = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={{flex: 1}}>
+        <View style={{flex: 1,marginBottom:15}}>
           <Text style={styles.textlable}>
             {localizationText('Common', 'name')}
           </Text>
@@ -119,6 +144,7 @@ const ConsumerManageProfile = ({navigation}) => {
             value={vehicleModel}
             onChangeText={text => setVehicleModel(text)}
           />
+          {errors.name ? (<Text style={{color : 'red'}} >{errors.name}</Text>) : (null)}
         </View>
         <View>
           <Text style={styles.textlable}>
@@ -170,6 +196,7 @@ const ConsumerManageProfile = ({navigation}) => {
               onChangeText={text => setNumber(text)}
             />
           </View>
+          {errors.number ? (<Text style={{color:'red'}}>{errors.number}</Text>) : (null)}
         </View>
         {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
@@ -231,7 +258,7 @@ const styles = StyleSheet.create({
     padding: 10,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
-    marginBottom: 15,
+    marginBottom: 5,
   },
   mobileNumberInput: {
     flexDirection: 'row',
@@ -240,7 +267,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     paddingHorizontal: 8,
-    marginBottom: 15,
+    marginBottom: 5,
   },
   containerDropdown: {
     borderRightWidth: 1,

@@ -56,7 +56,16 @@ const AddDropDetails = ({route, navigation}) => {
       errors.name = 'Name is required';
     } else if (name.length < 3) {
       errors.name = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
     }
+
+    
+  if (lastname && !/^[A-Za-z\s]+$/.test(lastname)) {
+    errors.name = 'Last name should contain letters only';
+  }
+
     if (!email.trim()) {
       errors.email = 'Email is required';
     } else if (!emailPattern.test(email)) {
@@ -64,7 +73,7 @@ const AddDropDetails = ({route, navigation}) => {
     }
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    }else if (!/^\d+$/.test(number)) {
       errors.number = 'Number should be numeric';
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';

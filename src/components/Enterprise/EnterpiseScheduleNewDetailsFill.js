@@ -560,7 +560,7 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
 
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    }  else if (!/^\d+$/.test(number)) {
       errors.number = 'Number should be numeric';
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';
@@ -805,7 +805,8 @@ const EnterpiseScheduleNewDetailsFill = ({route, navigation}) => {
                       <DatePicker
                         modal
                         open={timeOpen}
-                        date={time}
+                        date={moment().add(10, 'minutes').toDate()}
+                        minimumDate={moment().add(10, 'minutes').toDate()}
                         mode="time"
                         onConfirm={date => {
                           setTimeOpen(false);

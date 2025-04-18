@@ -68,9 +68,19 @@ const EnterpriseManageProfile = ({navigation}) => {
     let errors = {};
 
     // Validation
+
+    if (!userName) {
+      errors.userName = 'First name is required';
+    } else if (userName.length < 3) {
+      errors.userName = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(userName)) {
+      console.log("name ======>", userName);
+      errors.userName = 'Names should only contain letters';
+    }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    } else if (!/^\d+$/.test(number)) {
       errors.number = 'Number should be numeric';
     } else if (number.trim().length < 9) {
       errors.number = 'Invalid number';
@@ -185,6 +195,7 @@ const EnterpriseManageProfile = ({navigation}) => {
             onChangeText={text => setUserName(text)}
           />
         </View>
+        {errors.userName ? ( <Text style={[{color: 'red'}]}>{errors.userName}</Text>) : (null)}
         <View>
           <Text style={styles.textlable}>
             {localizationText('Common', 'phoneNumber')}
