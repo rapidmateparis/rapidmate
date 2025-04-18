@@ -71,8 +71,16 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   }, [vehicleTypeList]);
 
   useEffect(() => {
-    if (selectedOption !== 1) {
-      setSelectedVehiclePrice(0);
+    if (selectedOption !== 1 && selectedOption !== 2) {
+      let amount  = 0;
+      if(lookupData){
+        const eServiceType = lookupData.enterpriseServiceType.filter(
+          val => val.id === selectedOption,
+        )[0];
+        amount = eServiceType.hour_amount;
+      }
+      setSelectedVehiclePrice(amount);
+      
     } else {
       route.params.delivery_type_id == 3
         ? serviceTypeId === 1
@@ -174,7 +182,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   // };
 
   const disableVehicleType = () => {
-    return serviceTypeId !== 1 ? true : false;
+    return serviceTypeId !== 1 && serviceTypeId !== 2 ? true : false;
   };
 
   const disableServiceType = () => {
@@ -192,7 +200,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           {lookupData?.enterpriseServiceType?.length > 0
             ? lookupData?.enterpriseServiceType.map(serviceType => {
                 if (disableServiceType()) {
-                  if (serviceType.id === 1) {
+                  if (serviceType.id === 1  || serviceType.id === 2) {
                     return (
                       <TouchableOpacity
                         disabled={disableServiceType()}
@@ -202,9 +210,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                         ]}
                         onPress={() =>
                           handleOptionSelect(
-                            serviceType.id === 1
+                            serviceType.id === 1 || serviceType.id === 2
                               ? vehicleTypeList.filter(
-                                  val => val.vehicle_type == 'Scooter',
+                                  val => val.vehicle_type == 'Cycle',
                                 )[0]
                               : '',
                             serviceType,
@@ -245,9 +253,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                       ]}
                       onPress={() =>
                         handleOptionSelect(
-                          serviceType.id === 1
+                          serviceType.id === 1  || serviceType.id === 2
                             ? vehicleTypeList.filter(
-                                val => val.vehicle_type == 'Scooter',
+                                val => val.vehicle_type == 'Cycle',
                               )[0]
                             : '',
                           serviceType,
