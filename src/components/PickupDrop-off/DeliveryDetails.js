@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {
   cancelOrderConsumer,
@@ -28,17 +28,17 @@ import {
   getViewEnterpriseOrderDetail,
   getViewOrderDetail,
 } from '../../data_manager';
-import {useLoader} from '../../utils/loaderContext';
+import { useLoader } from '../../utils/loaderContext';
 import CancellationModal from '../commonComponent/CancellationModal';
 import RNFS from 'react-native-fs';
-import {Buffer} from 'buffer';
-import {API} from '../../utils/constant';
+import { Buffer } from 'buffer';
+import { API } from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
-import {useUserDetails} from '../commonComponent/StoreContext';
-import {localizationText, utcLocal} from '../../utils/common';
+import { useUserDetails } from '../commonComponent/StoreContext';
+import { localizationText, utcLocal } from '../../utils/common';
 
-const DeliveryDetails = ({navigation, route}) => {
-  const {setLoading} = useLoader();
+const DeliveryDetails = ({ navigation, route }) => {
+  const { setLoading } = useLoader();
   const orderNumber = route.params?.orderItem?.order_number;
   const componentType = route.params?.componentType;
   const [order, setOrder] = useState({});
@@ -48,7 +48,7 @@ const DeliveryDetails = ({navigation, route}) => {
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
-  const {userDetails} = useUserDetails();
+  const { userDetails } = useUserDetails();
   const [locations, setLocations] = useState([]);
   const [multipleOrderLocation, setMultipleOrderLocation] = useState([]);
   const pickupInformation =
@@ -132,7 +132,7 @@ const DeliveryDetails = ({navigation, route}) => {
     }
   }, []);
 
-  useEffect(() => {}, [locations]);
+  useEffect(() => { }, [locations]);
 
   const enterpriseOrderDetail = () => {
     setLoading(true);
@@ -167,7 +167,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('orderDetail==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -199,7 +199,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('orderDetail==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -219,7 +219,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('locations==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -245,7 +245,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('destination==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -265,7 +265,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('destination==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -285,7 +285,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('vehicleDetail==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -347,7 +347,7 @@ const DeliveryDetails = ({navigation, route}) => {
 
     if (fileExists) {
       FileViewer.open(filePath)
-        .then(() => {})
+        .then(() => { })
         .catch(error => {
           Alert.alert('Error', 'Unable to open file: ' + error);
         });
@@ -402,8 +402,8 @@ const DeliveryDetails = ({navigation, route}) => {
         componentType == 'ENTERPRISE'
           ? 'enterprise'
           : componentType == 'DELIVERBOY'
-          ? 'deliveryboy'
-          : 'consumer';
+            ? 'deliveryboy'
+            : 'consumer';
 
       const successResponse = await new Promise((resolve, reject) => {
         downloadInvoiceOrder(orderNumber, type, resolve, reject);
@@ -486,8 +486,8 @@ const DeliveryDetails = ({navigation, route}) => {
         backgroundColor: '#FBFAF5',
         marginBottom: 20,
       }}>
-      <View style={{paddingHorizontal: 15}}>
-        <View style={{width: '100%', height: 250}}>
+      <View style={{ paddingHorizontal: 15 }}>
+        <View style={{ width: '100%', height: 250 }}>
           <MapDeliveryDetails
             addressData={{
               sourceAddress: sourceAddress,
@@ -508,7 +508,7 @@ const DeliveryDetails = ({navigation, route}) => {
                   uri: API.viewImageUrl + deliveryboy?.profile_pic,
                 }}
               />
-              <View style={{marginLeft: 10}}>
+              <View style={{ marginLeft: 10 }}>
                 <Text style={styles.driverName}>
                   {deliveryboy?.first_name} {''}
                   {deliveryboy?.last_name}
@@ -518,14 +518,14 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
           ) : order?.service_type_id ===
             1 ? null : order?.is_delivery_boy_allocated === 0 ? (
-            <View style={{alignContent: 'flex-end'}}>
-              <Button
-                title="Allocate Driver"
-                color={colors.primary}
-                onPress={getDeliveryBoyAllocation}
-              />
-            </View>
-          ) : null}
+              <View style={{ alignContent: 'flex-end' }}>
+                <Button
+                  title="Allocate Driver"
+                  color={colors.primary}
+                  onPress={getDeliveryBoyAllocation}
+                />
+              </View>
+            ) : null}
         </View>
         <View style={styles.packageCard}>
           <View style={styles.packageLeftsideCard}>
@@ -533,7 +533,7 @@ const DeliveryDetails = ({navigation, route}) => {
               style={styles.packageManager}
               source={require('../../image/Pickup-Package-Icon.png')}
             />
-            <View style={{marginLeft: 10}}>
+            <View style={{ marginLeft: 10 }}>
               <Text style={styles.dropInfo}>{pickupInformation}</Text>
               {order.company_name && (
                 <Text style={styles.companyInfo}>
@@ -566,7 +566,7 @@ const DeliveryDetails = ({navigation, route}) => {
               style={styles.packageManager}
               source={require('../../image/package-img.png')}
             />
-            <View style={{marginLeft: 10}}>
+            <View style={{ marginLeft: 10 }}>
               <Text style={styles.dropInfo}>{dropOffInformation}</Text>
               {order.drop_company_name && (
                 <Text style={styles.companyInfo}>
@@ -576,7 +576,7 @@ const DeliveryDetails = ({navigation, route}) => {
               {componentType == 'ENTERPRISE' ? (
                 <View>
                   {enterpriseDestinationList &&
-                  enterpriseDestinationList.length > 0 ? (
+                    enterpriseDestinationList.length > 0 ? (
                     enterpriseDestinationList.map(location => {
                       return (
                         <Text style={styles.dropInfo}>
@@ -622,11 +622,11 @@ const DeliveryDetails = ({navigation, route}) => {
         <View style={styles.invoiceMainCard}>
           <View>
             <Image
-              style={{height: 26, width: 26}}
+              style={{ height: 26, width: 26 }}
               source={require('../../image/Big-Package.png')}
             />
           </View>
-          <View style={{marginLeft: 10}}>
+          <View style={{ marginLeft: 10 }}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>{packageInformation}</Text>
             </View>
@@ -665,7 +665,7 @@ const DeliveryDetails = ({navigation, route}) => {
           <View>
             <Image source={require('../../image/order-fare.png')} />
           </View>
-          <View style={{marginLeft: 10}}>
+          <View style={{ marginLeft: 10 }}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>{totalOrderFare}</Text>
               <Text style={styles.totalmoney}>
@@ -686,10 +686,12 @@ const DeliveryDetails = ({navigation, route}) => {
               </Text>
             </View>
 
+            {console.log("Oder ================>", order)}
+
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>{tax}</Text>
+              <Text style={styles.orderFareValue}>{`${tax} @20%`}</Text>
               <Text style={styles.value}>
-                {order.tax ? order.tax : '0.00'} %
+                € {order.order_amount ? (order.order_amount * 0.2).toFixed(2) : '0.00'}
               </Text>
             </View>
 
@@ -701,10 +703,8 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Discount</Text>
-              <Text style={styles.value}>
-                {order.discount ? order.discount : '0'} %
-              </Text>
+              <Text style={styles.orderFareValue}>{`Discount @${order.discount}%`}</Text>
+              <Text style={styles.value}>€ {(order.order_amount * (order.discount / 100)).toFixed(2)}</Text>
             </View>
 
             <View style={styles.cardHeader}>
@@ -733,7 +733,7 @@ const DeliveryDetails = ({navigation, route}) => {
             </View>
             <View>
               <Feather
-                style={{marginTop: 5}}
+                style={{ marginTop: 5 }}
                 name="download"
                 size={20}
                 color="#FF0058"
