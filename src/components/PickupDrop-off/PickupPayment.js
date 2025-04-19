@@ -478,6 +478,8 @@ const PickupPayment = ({route, navigation}) => {
     );
   };
 
+  console.log("first", params)
+
   const formatAmount = amount => {
     const [intPart, decimalPart = '00'] = Number(amount).toFixed(2).split('.');
     const paddedInt = intPart.length === 1 ? `0${intPart}` : intPart;
@@ -569,7 +571,7 @@ const PickupPayment = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row', marginVertical: 3}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
-              {localizationText('Common', 'tax')}
+              {localizationText('Common', 'tax')} {''}(20%)
             </Text>
             <Text style={styles.totalAmount}>
               € {formatAmount(getTaxAmount(params.selectedVehiclePrice))}

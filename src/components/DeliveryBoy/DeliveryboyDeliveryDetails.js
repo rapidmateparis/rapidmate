@@ -331,7 +331,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   {order.order
                     ? order.order.company_name
                       ? order.order.company_name
-                      : 'Company Name'
+                      : ''
                     : ''}
                 </Text>
                 {pickUpLocation ? (
@@ -463,7 +463,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   {order.order
                     ? order.order.drop_company_name
                       ? order.order.drop_company_name
-                      : 'Company Name'
+                      : ''
                     : ''}
                 </Text>
                 {dropOffLocation && (

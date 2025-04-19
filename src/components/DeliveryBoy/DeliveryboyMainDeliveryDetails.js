@@ -183,7 +183,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             <Text style={styles.companyInfo}>
               {orderDetails.company_name
                 ? orderDetails.company_name
-                : 'Company Name'}
+                : ''}
             </Text>
             <Text style={styles.dropInfo}>
               {pickUpLocation?.address || ''}
@@ -210,7 +210,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             <Text style={styles.companyInfo}>
               {orderDetails.drop_company_name
                 ? orderDetails.drop_company_name
-                : 'Company Name'}
+                : ''}
             </Text>
             {dropOffLocation &&
               dropOffLocation?.address &&
