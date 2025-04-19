@@ -151,7 +151,7 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
               </View>
 
               <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Tax</Text>
+                <Text style={styles.orderFareValue}>Tax {''}(20%)</Text>
                 <Text style={styles.value}>€00.00</Text>
               </View>
 

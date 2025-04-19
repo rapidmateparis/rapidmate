@@ -478,11 +478,6 @@ const PickupPayment = ({route, navigation}) => {
     );
   };
 
-  // const formatAmount = amount => {
-  //   const [intPart, decimalPart = '00'] = Number(amount).toFixed(2).split('.');
-  //   const paddedInt = intPart.length === 1 ? `0${intPart}` : intPart;
-  //   return `${paddedInt}.${decimalPart}`;
-  // };
   const formatAmount = amount => {
     const num = isNaN(Number(amount)) ? 0 : Number(amount);
     const [intPart, decimalPart = '00'] = num.toFixed(2).split('.');
@@ -576,7 +571,7 @@ const PickupPayment = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row', marginVertical: 3}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
-              {localizationText('Common', 'tax')}
+              {localizationText('Common', 'tax')} {''}(20%)
             </Text>
             <Text style={styles.totalAmount}>
               € {formatAmount(getTaxAmount(params.selectedVehiclePrice))}
