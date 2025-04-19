@@ -478,11 +478,18 @@ const PickupPayment = ({route, navigation}) => {
     );
   };
 
+  // const formatAmount = amount => {
+  //   const [intPart, decimalPart = '00'] = Number(amount).toFixed(2).split('.');
+  //   const paddedInt = intPart.length === 1 ? `0${intPart}` : intPart;
+  //   return `${paddedInt}.${decimalPart}`;
+  // };
   const formatAmount = amount => {
-    const [intPart, decimalPart = '00'] = Number(amount).toFixed(2).split('.');
+    const num = isNaN(Number(amount)) ? 0 : Number(amount);
+    const [intPart, decimalPart = '00'] = num.toFixed(2).split('.');
     const paddedInt = intPart.length === 1 ? `0${intPart}` : intPart;
     return `${paddedInt}.${decimalPart}`;
   };
+  
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>

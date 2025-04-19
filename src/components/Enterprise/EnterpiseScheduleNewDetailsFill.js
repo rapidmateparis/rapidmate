@@ -805,8 +805,8 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                       <DatePicker
                         modal
                         open={timeOpen}
-                        date={moment().add(10, 'minutes').toDate()}
-                        minimumDate={moment().add(10, 'minutes').toDate()}
+                        date={moment().add(15, 'minutes').toDate()}
+                        minimumDate={moment().add(15, 'minutes').toDate()}
                         mode="time"
                         onConfirm={date => {
                           setTimeOpen(false);
