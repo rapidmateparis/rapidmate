@@ -484,7 +484,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row', marginVertical: 3}}>
             <Text style={[styles.totalAmount, {flex: 1}]}>
-              {localizationText('Common', 'tax')}
+              {localizationText('Common', 'tax')} {''}(20%)
             </Text>
             <Text style={styles.totalAmount}>
               € {formatAmount(getTaxAmount())}
