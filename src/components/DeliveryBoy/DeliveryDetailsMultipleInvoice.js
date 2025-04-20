@@ -14,29 +14,44 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
-import { useLoader } from '../../utils/loaderContext';
-import { downloadInvoiceOrder, getLocationById } from '../../data_manager';
-import { API } from '../../utils/constant';
+import {useLoader} from '../../utils/loaderContext';
+import {downloadInvoiceOrder, getLocationById} from '../../data_manager';
+import {API} from '../../utils/constant';
 import RNFS from 'react-native-fs';
 import FileViewer from 'react-native-file-viewer';
+import {localizationText} from '../../utils/common';
 
-const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
+const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
   const [showDetails, setShowDetails] = useState(false);
-  const [orderDetails,setOrderDetails]=useState({})
-
+  const [orderDetails, setOrderDetails] = useState({});
   const {setLoading} = useLoader();
   const [pickUpLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
+  const pickupOTP = localizationText('Common', 'pickupOTP') || 'Pickup OTP';
+  const deliveredOTP =
+    localizationText('Common', 'deliveredOTP') || 'Delivered OTP';
+  const totalOrderFare =
+    localizationText('Common', 'totalOrderFare') || 'Total Order fare';
+  const orderFare = localizationText('Common', 'orderFare') || 'Order fare';
+  const travelled = localizationText('Common', 'travelled') || 'Travelled';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const orderDate = localizationText('Common', 'orderDate') || 'Order Date';
+  const vehicleText = localizationText('Common', 'vehicle') || 'Vehicle';
+  const packageInformation =
+    localizationText('Main', 'packageInformation') || 'Package information';
+  const amountCharged =
+    localizationText('Common', 'amountCharged') || 'Amount charged';
+  const paidWith = localizationText('Common', 'paidWith') || 'Paid with';
+  const downloadInvoice =
+    localizationText('Common', 'downloadInvoice') || 'Download invoice';
 
-
-  useEffect(()=>{
-   if(route?.params?.orderItem){
-    setOrderDetails(route?.params?.orderItem)
-   }else{
-    setOrderDetails({})
-   }
-
-  },[])
+  useEffect(() => {
+    if (route?.params?.orderItem) {
+      setOrderDetails(route?.params?.orderItem);
+    } else {
+      setOrderDetails({});
+    }
+  }, []);
 
   useEffect(() => {
     getLocationInfoById(orderDetails.pickup_location_id, 0);
@@ -72,11 +87,21 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
     setLoading(true);
     try {
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderDetails.order_number,'deliveryboy', resolve, reject);
+        downloadInvoiceOrder(
+          orderDetails.order_number,
+          'deliveryboy',
+          resolve,
+          reject,
+        );
       });
 
-      const pdf = API.downloadInvoice + orderDetails.order_number+'/'+'deliveryboy'+'?show=true'
-      downloadFile(pdf)
+      const pdf =
+        API.downloadInvoice +
+        orderDetails.order_number +
+        '/' +
+        'deliveryboy' +
+        '?show=true';
+      downloadFile(pdf);
       // const invoiceData = successResponse;
       // const filePath =
       //   Platform.OS === 'android'
@@ -112,12 +137,14 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
     }
   };
 
-  const downloadFile = (pdf) => {
+  const downloadFile = pdf => {
     setLoading(true);
     let date = new Date();
     let exe = '.pdf';
     let filename =
-    `invoice_${orderDetails.order_number}` + Math.floor(date.getTime() + date.getSeconds() / 2) + exe;
+      `invoice_${orderDetails.order_number}` +
+      Math.floor(date.getTime() + date.getSeconds() / 2) +
+      exe;
     const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
 
     const options = {
@@ -127,29 +154,28 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
 
     RNFS.downloadFile(options)
       .promise.then(() => {
-          setTimeout(() => {
-            FileViewer.open(localFile);
-          }, 300);
+        setTimeout(() => {
+          FileViewer.open(localFile);
+        }, 300);
       })
       .then(() => {
         setLoading(false);
-          Linking.openURL(pdf)
+        Linking.openURL(pdf);
       })
       .catch(error => {
         setLoading(false);
       });
   };
 
-
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails 
-          addressData={{
-            sourceAddress: pickUpLocation,
-            destinationAddress: dropOffLocation,
-          }}
+          <MapDeliveryDetails
+            addressData={{
+              sourceAddress: pickUpLocation,
+              destinationAddress: dropOffLocation,
+            }}
           />
         </View>
 
@@ -159,40 +185,48 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
             source={require('../../image/Pickup-Package-Icon.png')}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup information</Text>
+            <Text style={styles.dropInfo}>
+              {localizationText('Main', 'pickupInformation')}
+            </Text>
             <Text style={styles.companyInfo}>{orderDetails.company_name}</Text>
             <Text style={styles.dropInfo}>{orderDetails.address}</Text>
             <Text style={styles.pickupNotes}>{orderDetails.pickup_notes}</Text>
           </View>
         </View>
 
-        {
-          orderDetails?.locations && orderDetails?.locations.map((location,index)=>{
-            return(
+        {orderDetails?.locations &&
+          orderDetails?.locations.map((location, index) => {
+            return (
               <View style={styles.packageCard} key={index}>
                 <Image
                   style={styles.packageManager}
                   source={require('../../image/package-img.png')}
                 />
                 <View style={{marginLeft: 10}}>
-                  <Text style={styles.dropInfo}>{`Drop off ${index+1} information`}</Text>
-                  <Text style={styles.companyInfo}>{location.drop_company_name}</Text>
-                  <Text style={styles.dropInfo}>{location.destination_description}</Text>
+                  <Text style={styles.dropInfo}>{`Drop off ${
+                    index + 1
+                  } information`}</Text>
+                  <Text style={styles.companyInfo}>
+                    {location.drop_company_name}
+                  </Text>
+                  <Text style={styles.dropInfo}>
+                    {location.destination_description}
+                  </Text>
                   <Text style={styles.pickupNotes}>{location.drop_notes}</Text>
                   <View style={styles.otpHeadCard}>
-                    <Text style={styles.otpTitleText}>Pickup OTP:</Text>
+                    <Text style={styles.otpTitleText}>{pickupOTP}:</Text>
                     <Text style={styles.otpText}>{location.otp}</Text>
                   </View>
                   <View style={styles.otpHeadCard}>
-                    <Text style={styles.otpTitleText}>Deliverd OTP:</Text>
-                    <Text style={styles.otpText}>{location.delivered_otp || "Gendrate if completed pickup" }</Text>
+                    <Text style={styles.otpTitleText}>{deliveredOTP}:</Text>
+                    <Text style={styles.otpText}>
+                      {location.delivered_otp || 'Gendrate if completed pickup'}
+                    </Text>
                   </View>
                 </View>
               </View>
-            )
-          })
-          
-          }
+            );
+          })}
 
         {/* <View style={styles.packageCard}>
           <Image
@@ -226,16 +260,16 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Package information</Text>
+              <Text style={styles.orderFare}>{packageInformation}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Order ID:</Text>
+              <Text style={styles.orderFareValue}>{orderID}:</Text>
               <Text style={styles.value}>{orderDetails.order_number}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Vehicle:</Text>
+              <Text style={styles.orderFareValue}>{vehicleText}:</Text>
               <Text style={styles.value}>{orderDetails.vehicle_type}</Text>
             </View>
           </View>
@@ -247,23 +281,24 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare</Text>
-              <Text style={styles.totalmoney}>€{orderDetails.amount}</Text>
+              <Text style={styles.orderFare}>{totalOrderFare}</Text>
+              <Text style={styles.totalmoney}>
+              €{Number(orderDetails.amount || 0).toFixed(2)}
+              </Text>
             </View>
 
             <Text style={styles.travel}>
-            Travelled{' '}
+              {travelled}{' '}
               {orderDetails.distance
                 ? orderDetails.distance.toFixed(2)
                 : '0.00'}{' '}
-              km in{' '}
-              {orderDetails.total_duration ? orderDetails.total_duration : '00'}
+              km
             </Text>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Order fare</Text>
+              <Text style={styles.orderFareValue}>{orderFare}</Text>
               <Text style={styles.value}>
-              €{' '}
+                €{' '}
                 {orderDetails.order_amount
                   ? orderDetails.order_amount.toFixed(2)
                   : '0.00'}
@@ -273,7 +308,7 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Waiting</Text>
               <Text style={styles.value}>
-              €{' '}
+                €{' '}
                 {orderDetails.waiting_fare
                   ? orderDetails.waiting_fare.toFixed(2)
                   : '0.00'}
@@ -286,27 +321,30 @@ const DeliveryDetailsMultipleInvoice = ({route,navigation}) => {
             </View> */}
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Amount charged</Text>
+              <Text style={styles.orderFareValue}>{amountCharged}</Text>
               <Text style={styles.value}>
-              €{' '}
+                €{' '}
                 {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
-              <Text style={styles.paidWith}>Paid with {orderDetails.paid_with ? orderDetails.paid_with : ''}</Text>
+              <Text style={styles.paidWith}>
+                {paidWith}{' '}
+                {orderDetails.paid_with ? orderDetails.paid_with : ''}
+              </Text>
             </View>
           </View>
         </View>
 
-        <TouchableOpacity style={styles.packageInvoiceCard}
-        onPress={downloadInvoiceFile}
-        >
+        <TouchableOpacity
+          style={styles.packageInvoiceCard}
+          onPress={downloadInvoiceFile}>
           <View style={styles.invoiceCard}>
             <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
 
-            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+            <Text style={styles.downloadInvoiceText}>{downloadInvoice}</Text>
           </View>
           <View>
             <Feather
@@ -362,7 +400,7 @@ const styles = StyleSheet.create({
   cardHeaderValues: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '74%', 
+    width: '74%',
   },
   orderFare: {
     width: '75%',
@@ -490,7 +528,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 5,
-    width: '76%',
+    width: '75%',
   },
   otpTitleText: {
     fontSize: 12,

@@ -100,10 +100,10 @@ function DeliveryboyTransactions() {
               {transactionItem.item.order_number}
             </Text>
           </Text>
-          <Text style={styles.transactioneFrom}>
+          {/* <Text style={styles.transactioneFrom}>
             {from}{' '}
             <Text style={styles.transactioneAddress}>North Street, ABC</Text>
-          </Text>
+          </Text> */}
         </View>
         <View>
           <Text style={styles.moneyEarn}>€{transactionItem.item.amount}</Text>

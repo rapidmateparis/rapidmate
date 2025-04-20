@@ -29,6 +29,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {color} from 'react-native-reanimated';
 import {localizationText, titleFormat, utcLocal} from '../../utils/common';
+import ConsumerOrderFilter from './ConsumerOrderFilter';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -105,13 +106,14 @@ const TodayList = ({navigation, searchText}) => {
     getConsumerViewOrdersListBySearch(
       postParams,
       successResponse => {
+        setLoading(false);
         console.log('successResponse ===> f ', JSON.stringify(successResponse));
 
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setOrderList(tempOrderList);
         }
-        setLoading(false);
+       
       },
       errorResponse => {
         setLoading(false);
@@ -128,11 +130,12 @@ const TodayList = ({navigation, searchText}) => {
     getLocations(
       null,
       successResponse => {
+        setLoading(false);
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setLocationList(tempOrderList);
         }
-        setLoading(false);
+        
       },
       errorResponse => {
         setLoading(false);
@@ -145,7 +148,11 @@ const TodayList = ({navigation, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const getOrderList = () => {
@@ -161,7 +168,7 @@ const TodayList = ({navigation, searchText}) => {
       null,
       successResponse => {
         console.log('successResponse ===> f ', JSON.stringify(successResponse));
-
+        setLoading(false);
         if (successResponse[0]._success) {
           if (size === successResponse[0]._response.length) {
             setPage(page + 1);
@@ -172,7 +179,7 @@ const TodayList = ({navigation, searchText}) => {
           let tempOrderList = successResponse[0]._response;
           setOrderList([...orderList, ...tempOrderList]);
         }
-        setLoading(false);
+      
       },
       errorResponse => {
         setLoading(false);
@@ -399,7 +406,11 @@ const PastList = ({navigation, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const getOrderList = () => {
@@ -541,6 +552,11 @@ const PastList = ({navigation, searchText}) => {
 function History({navigation}) {
   const [searchText, setSearchText] = useState('');
   const [index, setIndex] = useState(0);
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+
+  const toggleFilterModal = () => {
+    setFilterModalVisible(!isFilterModalVisible);
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -555,9 +571,9 @@ function History({navigation}) {
           <Text style={styles.headerText}>
             {localizationText('Common', 'history')}
           </Text>
-          <TouchableOpacity>
+          {/* <TouchableOpacity onPress={toggleFilterModal}>
             <AntDesign name="filter" size={25} color={colors.secondary} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={styles.searchContainer}>
           <AntDesign
@@ -604,6 +620,12 @@ function History({navigation}) {
         </Tab.Screen>
       </Tab.Navigator>
       {/* End of Tab Navigator */}
+
+       {/* Modal Start Here  */}
+      <ConsumerOrderFilter
+        isFilterModalVisible={isFilterModalVisible}
+        setFilterModalVisible={setFilterModalVisible}
+      />
     </View>
   );
 }
@@ -684,7 +706,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ccc',
     width: '100%',
-    marginVertical: 15,
+    marginVertical: 8,
   },
   footerCard: {
     flexDirection: 'row',

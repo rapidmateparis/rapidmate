@@ -174,11 +174,15 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const createShiftOrder = item => {
-    console.log('item ====>', item);
+    console.log('createShiftOrder ====>', item);
 
     return (
       <TouchableOpacity
@@ -205,24 +209,30 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
         }}
         style={styles.packageDetailCard}>
         <View style={styles.packageHeader}>
-          <Image
-            style={{width: 25, height: 25}}
-            source={require('../../image/Big-Calender.png')}
-          />
-          <Text style={styles.deliveryTime}>{shift}</Text>
+          <View style={styles.packageHeader}>
+            <Image
+              style={{width: 25, height: 25}}
+              source={require('../../image/Big-Calender.png')}
+            />
+            <Text style={styles.deliveryTime}>{shift}</Text>
+          </View>
+
+          <View style={styles.packageShiftOrderIdCard}>
+            <Text style={styles.esordernumber}>{item?.order_number}</Text>
+          </View>
         </View>
 
         <View style={styles.overViewCard}>
           <View>
             <Text style={styles.requestOverview}>
-              {item.total_days ? item.total_days : 0}
+              {/* {item.total_days ? item.total_days : 0} */}1
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
           </View>
 
           <View>
             <Text style={styles.requestOverview}>
-              {item.total_hours ? item.total_hours.toFixed(2) : 0}
+              {item?.slots ? Number(item.slots[0]?.total_hours).toFixed(2) : 0}
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
           </View>
@@ -231,7 +241,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.requestOverview}>
               €
               <Text>
-                {item.total_amount ? item.total_amount.toFixed(2) : 0}
+                {item?.slots ? Number(item.slots[0]?.delivery_boy_amount).toFixed(2) : 0}
               </Text>
             </Text>
             <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
@@ -242,25 +252,29 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
           <Text style={styles.schaduleInfo}>
             {fromText}{' '}
             <Text style={styles.schaduleDateTime}>
-              {moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}
+              {moment(
+                utcLocal(item?.slots ? item.slots[0]?.slot_date : new Date()),
+              ).format('DD-MM-YYYY')}
             </Text>
           </Text>
           <View style={styles.borderShowoff} />
           <Text style={styles.schaduleInfo}>
             {toText}{' '}
             <Text style={styles.schaduleDateTime}>
-              {moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}
+              {moment(
+                utcLocal(item?.slots ? item.slots[0]?.slot_date : new Date()),
+              ).format('DD-MM-YYYY')}
             </Text>
           </Text>
         </View>
 
-        {/* <View style={styles.borderShow}></View> */}
+        <View style={styles.borderShow}></View>
 
         <View style={styles.footerCard}>
           <Text style={styles.orderId}>
             {forText}: {item?.company_name ? item?.company_name : '-'}
           </Text>
-          {/* <Text style={styles.valueMoney}>€34.00</Text> */}
+          <Text style={styles.valueMoney}>€{Number(item?.slots[0]?.delivery_boy_amount).toFixed(2)}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -351,11 +365,12 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             <View style={styles.borderShow}></View>
 
             <View style={styles.footerCard}>
+            {console.log('ITEM DATA:', item)}
               <Text style={styles.orderId}>{item.item.company_name}</Text>
               <Text style={styles.valueMoney}>
                 €
-                {item.item.amount
-                  ? Number(item.item.amount).toFixed(2)
+                {item.item.delivery_boy_amount
+                  ? Number(item.item.delivery_boy_amount).toFixed(2)
                   : '34.00'}
               </Text>
             </View>
@@ -527,16 +542,19 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
   };
 
   const getLocationsData = () => {
+    setLoading(true)
     setLocationList([]);
     getLocations(
       null,
       successResponse => {
+        setLoading(false)
         if (successResponse[0]._success) {
           let tempOrderList = successResponse[0]._response;
           setLocationList(tempOrderList);
         }
       },
       errorResponse => {
+        setLoading(false)
         if (errorResponse[0]._errors.message) {
           setLocationList([]);
         }
@@ -546,7 +564,11 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const createShiftOrder = item => {
@@ -557,7 +579,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         onPress={() => {
           console.log('delivery_type_id ====>', item);
           if (item?.delivery_type_id === 3) {
-            navigation.navigate('DeliveryboyShiftDetails', {
+            navigation.navigate('DeliveryboyMainShiftDetails', {
               orderItem: item,
             });
           } else if (
@@ -577,24 +599,29 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
         }}
         style={styles.packageDetailCard}>
         <View style={styles.packageHeader}>
-          <Image
-            style={{width: 25, height: 25}}
-            source={require('../../image/Big-Calender.png')}
-          />
-          <Text style={styles.deliveryTime}>{shift}</Text>
+          <View style={styles.packageHeader}>
+            <Image
+              style={{width: 25, height: 25}}
+              source={require('../../image/Big-Calender.png')}
+            />
+            <Text style={styles.deliveryTime}>{shift}</Text>
+          </View>
+          <View style={styles.packageShiftOrderIdCard}>
+            <Text style={styles.esordernumber}>{item?.order_number}</Text>
+          </View>
         </View>
 
         <View style={styles.overViewCard}>
           <View>
             <Text style={styles.requestOverview}>
-              {item.total_days ? item.total_days : 0}
+              {/* {item.total_days ? item.total_days : 0} */}1
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
           </View>
 
           <View>
             <Text style={styles.requestOverview}>
-              {item.total_hours ? item.total_hours.toFixed(2) : 0}
+              {item?.slots ? Number(item.slots[0]?.total_hours).toFixed(2) : 0}
             </Text>
             <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
           </View>
@@ -603,7 +630,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
             <Text style={styles.requestOverview}>
               €
               <Text>
-                {item.total_amount ? item.total_amount.toFixed(2) : 0}
+                {item?.slots ? Number(item.slots[0]?.delivery_boy_amount).toFixed(2) : 0}
               </Text>
             </Text>
             <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
@@ -614,14 +641,18 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           <Text style={styles.schaduleInfo}>
             {fromText}{' '}
             <Text style={styles.schaduleDateTime}>
-              {moment(utcLocal(item.shift_from_date)).format('DD-MM-YYYY')}
+              {moment(
+                utcLocal(item?.slots ? item.slots[0].slot_date : new Date()),
+              ).format('DD-MM-YYYY')}
             </Text>
           </Text>
           <View style={styles.borderShowoff} />
           <Text style={styles.schaduleInfo}>
             {toText}{' '}
             <Text style={styles.schaduleDateTime}>
-              {moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}
+              {moment(
+                utcLocal(item?.slots ? item.slots[0].slot_date : new Date()),
+              ).format('DD-MM-YYYY')}
             </Text>
           </Text>
         </View>
@@ -632,13 +663,14 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
           <Text style={styles.orderId}>
             {forText} {item?.company_name ? item?.company_name : '-'}
           </Text>
-          <Text style={styles.valueMoney}>€34.00</Text>
+          <Text style={styles.valueMoney}>€{Number(item?.slots[0]?.delivery_boy_amount).toFixed(2)}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   const renderItem = item => {
+    console.log("Item====================>render",item)
     console.log(
       'item?.item?.delivery_type_id === 3 ====',
       item?.item?.delivery_type_id,
@@ -728,7 +760,7 @@ const PastList = ({navigation, filterCriteria, searchText}) => {
 
               <View style={styles.footerCard}>
                 <Text style={styles.orderId}>{item.item.company_name}</Text>
-                <Text style={styles.valueMoney}>€ {item.item.amount}</Text>
+                <Text style={styles.valueMoney}>€ {Number(item.item.delivery_boy_amount).toFixed(2)}</Text>
               </View>
             </TouchableOpacity>
           )}
@@ -1002,6 +1034,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     marginLeft: 10,
   },
+  esordernumber: {
+    fontSize: 13,
+    color: colors.secondary,
+    fontFamily: 'Montserrat-SemiBold',
+  },
   fromLocation: {
     color: colors.subText,
     fontSize: 12,
@@ -1135,6 +1172,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-SemiBold',
+  },
+  packageShiftOrderIdCard: {
+    marginLeft: 'auto',
   },
 });
 

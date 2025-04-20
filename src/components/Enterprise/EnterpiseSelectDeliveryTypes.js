@@ -49,12 +49,12 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const {saveLookupData, lookupData} = useLookupData();
 
-  console.log('lookupData ====>', lookupData);
-
   const toggleModal = vehicleDetails => {
     setVehicleDetails(vehicleDetails);
     setModalVisible(!isModalVisible);
   };
+
+  console.log('vechel type ', vehicleTypeList);
 
   useEffect(() => {
     if (vehicleTypeList?.length > 0) {
@@ -71,12 +71,20 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
   }, [vehicleTypeList]);
 
   useEffect(() => {
-    if (selectedOption !== 'Delivery boy with scooter') {
-      setSelectedVehiclePrice(0);
+    if (selectedOption !== 1 && selectedOption !== 2) {
+      let amount  = 0;
+      if(lookupData){
+        const eServiceType = lookupData.enterpriseServiceType.filter(
+          val => val.id === selectedOption,
+        )[0];
+        amount = eServiceType.hour_amount;
+      }
+      setSelectedVehiclePrice(amount);
+      
     } else {
       route.params.delivery_type_id == 3
         ? serviceTypeId === 1
-          ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount)
+          ? setSelectedVehiclePrice(selectedVehicle.enterprise_wv_amount)
           : setSelectedVehiclePrice(selectedVehicle.enterprise_wov_amount)
         : setSelectedVehiclePrice(selectedVehicle.km_price);
       // selectedVehicle?.km_price && setSelectedVehiclePrice(selectedVehicle.km_price);
@@ -169,6 +177,10 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
     );
   }, []);
 
+  // const disableVehicleType = () => {
+  //   return serviceTypeId !== 1 && serviceTypeId !== 2 ? true : false;
+  // };
+
   const disableVehicleType = () => {
     return serviceTypeId !== 1 && serviceTypeId !== 2 ? true : false;
   };
@@ -187,46 +199,135 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
 
           {lookupData?.enterpriseServiceType?.length > 0
             ? lookupData?.enterpriseServiceType.map(serviceType => {
-                return (
-                  <TouchableOpacity
-                    style={[
-                      styles.selectDeliveryboyTypeCard,
-                      selectedOption === serviceType.id && {},
-                    ]}
-                    onPress={() =>
-                      handleOptionSelect(
-                        serviceType.id === 1
-                          ? vehicleTypeList.filter(
-                              val => val.vehicle_type == 'Scooter',
-                            )[0]
-                          : '',
-                        serviceType,
-                      )
-                    }>
-                    {selectedOption === serviceType.id ? (
-                      <FontAwesome
-                        name="dot-circle-o"
-                        size={25}
-                        color={colors.secondary}
-                      />
-                    ) : (
-                      <FontAwesome
-                        name="circle-thin"
-                        size={25}
-                        color={colors.text}
-                      />
-                    )}
-                    <Text
+                if (disableServiceType()) {
+                  if (serviceType.id === 1  || serviceType.id === 2) {
+                    return (
+                      <TouchableOpacity
+                        disabled={disableServiceType()}
+                        style={[
+                          styles.selectDeliveryboyTypeCard,
+                          selectedOption === serviceType.id && {},
+                        ]}
+                        onPress={() =>
+                          handleOptionSelect(
+                            serviceType.id === 1 || serviceType.id === 2
+                              ? vehicleTypeList.filter(
+                                  val => val.vehicle_type == 'Cycle',
+                                )[0]
+                              : '',
+                            serviceType,
+                          )
+                        }>
+                        {selectedOption === serviceType.id ? (
+                          <FontAwesome
+                            name="dot-circle-o"
+                            size={25}
+                            color={colors.secondary}
+                          />
+                        ) : (
+                          <FontAwesome
+                            name="circle-thin"
+                            size={25}
+                            color={colors.text}
+                          />
+                        )}
+                        <Text
+                          style={[
+                            styles.deliveryboyType,
+                            selectedOption === serviceType.id && {
+                              fontFamily: 'Montserrat-Bold',
+                            },
+                          ]}>
+                          {serviceType.service_type}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  }
+                } else {
+                  return (
+                    <TouchableOpacity
+                      disabled={disableServiceType()}
                       style={[
-                        styles.deliveryboyType,
-                        selectedOption === serviceType.id && {
-                          fontFamily: 'Montserrat-Bold',
-                        },
-                      ]}>
-                      {serviceType.service_type}
-                    </Text>
-                  </TouchableOpacity>
-                );
+                        styles.selectDeliveryboyTypeCard,
+                        selectedOption === serviceType.id && {},
+                      ]}
+                      onPress={() =>
+                        handleOptionSelect(
+                          serviceType.id === 1  || serviceType.id === 2
+                            ? vehicleTypeList.filter(
+                                val => val.vehicle_type == 'Cycle',
+                              )[0]
+                            : '',
+                          serviceType,
+                        )
+                      }>
+                      {selectedOption === serviceType.id ? (
+                        <FontAwesome
+                          name="dot-circle-o"
+                          size={25}
+                          color={colors.secondary}
+                        />
+                      ) : (
+                        <FontAwesome
+                          name="circle-thin"
+                          size={25}
+                          color={colors.text}
+                        />
+                      )}
+                      <Text
+                        style={[
+                          styles.deliveryboyType,
+                          selectedOption === serviceType.id && {
+                            fontFamily: 'Montserrat-Bold',
+                          },
+                        ]}>
+                        {serviceType.service_type}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }
+
+                // return (
+                //   <TouchableOpacity
+                //    disabled={disableServiceType()}
+                //     style={[
+                //       styles.selectDeliveryboyTypeCard,
+                //       selectedOption === serviceType.id && {},
+                //     ]}
+                //     onPress={() =>
+                //       handleOptionSelect(
+                //         serviceType.id === 1
+                //           ? vehicleTypeList.filter(
+                //               val => val.vehicle_type == 'Scooter',
+                //             )[0]
+                //           : '',
+                //         serviceType,
+                //       )
+                //     }>
+                //     {selectedOption === serviceType.id ? (
+                //       <FontAwesome
+                //         name="dot-circle-o"
+                //         size={25}
+                //         color={colors.secondary}
+                //       />
+                //     ) : (
+                //       <FontAwesome
+                //         name="circle-thin"
+                //         size={25}
+                //         color={colors.text}
+                //       />
+                //     )}
+                //     <Text
+                //       style={[
+                //         styles.deliveryboyType,
+                //         selectedOption === serviceType.id && {
+                //           fontFamily: 'Montserrat-Bold',
+                //         },
+                //       ]}>
+                //       {serviceType.service_type}
+                //     </Text>
+                //   </TouchableOpacity>
+                // );
               })
             : null}
 
@@ -352,88 +453,97 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
             <Text style={styles.selectServiceTitle}>
               {localizationText('Main', 'selectVehicleType')}
             </Text>
-            {/* <Text style={styles.selectedVehiclePrice}>
-              {selectedVehiclePrice && selectedVehiclePrice.toFixed(2)}
-            </Text> */}
+            {disableVehicleType() && (
+              <Text style={styles.selectedVehiclePrice}>
+                €{selectedVehiclePrice && selectedVehiclePrice.toFixed(2)} /hrs
+                Excl. VAT
+              </Text>
+            )}
           </View>
         </View>
 
-        {vehicleTypeList.map((vehicle, index) => (
-          <TouchableOpacity
-            disabled={disableVehicleType()}
-            key={index}
-            onPress={() => {
-              setTimeout(() => {
-                setSelectedVehicle(vehicle);
-                route.params.delivery_type_id == 3
-                  ? serviceTypeId === 1
-                    ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount)
-                    : setSelectedVehiclePrice(vehicle.enterprise_wov_amount)
-                  : setSelectedVehiclePrice(vehicle.km_price);
-              }, 500);
-            }}
-            style={[
-              styles.addressCard,
-              vehicle.vehicle_type === selectedVehicle.vehicle_type
-                ? styles.selectedCard
-                : null,
-
-              vehicle.vehicle_type === selectedVehicle.vehicle_type
-                ? {borderColor: colors.secondary}
-                : null,
-            ]}>
-            <TouchableOpacity
-              disabled={disableVehicleType()}
-              onPress={() => toggleModal(vehicle)}
-              style={styles.infoIcons}>
-              <Image source={require('../../image/info.png')} />
-            </TouchableOpacity>
-            <View style={styles.vihicleCards}>
-              <FontAwesome
-                name={
+        {vehicleTypeList.map(
+          (vehicle, index) =>
+            vehicle.id != 8 && (
+              <TouchableOpacity
+                disabled={disableVehicleType()}
+                key={vehicle.id}
+                onPress={() => {
+                  setTimeout(() => {
+                    setSelectedVehicle(vehicle);
+                    route.params.delivery_type_id == 3
+                      ? serviceTypeId === 1
+                        ? setSelectedVehiclePrice(vehicle.enterprise_wv_amount)
+                        : setSelectedVehiclePrice(vehicle.enterprise_wov_amount)
+                      : setSelectedVehiclePrice(
+                          (vehicle.km_price * vehicle.percent) / 100 +
+                            vehicle.km_price,
+                        );
+                  }, 500);
+                }}
+                style={[
+                  styles.addressCard,
                   vehicle.vehicle_type === selectedVehicle.vehicle_type
-                    ? 'dot-circle-o'
-                    : 'circle-thin'
-                }
-                size={25}
-                color={
-                  disableVehicleType()
-                    ? colors.lightGrey
-                    : vehicle.vehicle_type === selectedVehicle.vehicle_type
-                    ? colors.secondary
-                    : colors.text
-                }
-              />
-              <View style={{flexDirection: 'row'}}>
-                <Text
-                  style={[
-                    styles.paymentPlateform,
-                    disableVehicleType() ? {color: colors.lightGrey} : '',
-                  ]}>
-                  {vehicle.vehicle_type}
-                </Text>
+                    ? styles.selectedCard
+                    : null,
 
-                {vehicle.vehicle_type === selectedVehicle.vehicle_type && (
-                  <View style={styles.chargeBatch}>
+                  vehicle.vehicle_type === selectedVehicle.vehicle_type
+                    ? {borderColor: colors.secondary}
+                    : null,
+                ]}>
+                <TouchableOpacity
+                  disabled={disableVehicleType()}
+                  onPress={() => toggleModal(vehicle)}
+                  style={styles.infoIcons}>
+                  <Image source={require('../../image/info.png')} />
+                </TouchableOpacity>
+                <View style={styles.vihicleCards}>
+                  <FontAwesome
+                    name={
+                      vehicle.vehicle_type === selectedVehicle.vehicle_type
+                        ? 'dot-circle-o'
+                        : 'circle-thin'
+                    }
+                    size={25}
+                    color={
+                      disableVehicleType()
+                        ? colors.lightGrey
+                        : vehicle.vehicle_type === selectedVehicle.vehicle_type
+                        ? colors.secondary
+                        : colors.text
+                    }
+                  />
+                  <View style={{flexDirection: 'row'}}>
                     <Text
-                      style={
-                        styles.chargeBatchTextStyle
-                      }>{`€ ${selectedVehiclePrice.toFixed(2)}/${
-                      route.params.delivery_type_id == 3 ? 'hrs' : 'km'
-                    }`}{' '}Excl. VAT</Text>
+                      style={[
+                        styles.paymentPlateform,
+                        disableVehicleType() ? {color: colors.lightGrey} : '',
+                      ]}>
+                      {vehicle.vehicle_type}
+                    </Text>
+
+                    {vehicle.vehicle_type === selectedVehicle.vehicle_type && (
+                      <View style={styles.chargeBatch}>
+                        <Text style={styles.chargeBatchTextStyle}>
+                          {`€ ${selectedVehiclePrice.toFixed(2)}/${
+                            route.params.delivery_type_id == 3 ? 'hrs' : 'km'
+                          }`}{' '}
+                          Excl. VAT
+                        </Text>
+                      </View>
+                    )}
                   </View>
-                )}
-              </View>
-            </View>
-            <Image
-              style={[
-                vehicle.vehicleStyle,
-                disableVehicleType() ? {tintColor: colors.lightGrey} : [],
-              ]}
-              source={vehicle.image}
-            />
-          </TouchableOpacity>
-        ))}
+                </View>
+                <Image
+                  style={[
+                    vehicle.vehicleStyle,
+                    disableVehicleType() ? {tintColor: colors.lightGrey} : [],
+                  ]}
+                  source={vehicle.image}
+                />
+              </TouchableOpacity>
+            ),
+        )}
         <TouchableOpacity
           onPress={() => {
             if (route.params.delivery_type_id == 3) {
@@ -452,7 +562,9 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
             }
           }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>{localizationText('Common', 'next')}</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'next')}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -577,9 +689,10 @@ const styles = StyleSheet.create({
   vehicleTypePrice: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   selectedVehiclePrice: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-Medium',
     color: colors.secondary,
   },

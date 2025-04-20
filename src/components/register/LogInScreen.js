@@ -212,6 +212,7 @@ const LogInScreen = ({navigation}) => {
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                 placeholder={localizationText('Common', 'password')}
                 placeholderTextColor="#999"
+                maxLength={10}
                 secureTextEntry={!passwordVisible} // Use the secureTextEntry prop based on passwordVisible state
                 value={password}
                 onChangeText={text => setPassword(text)}

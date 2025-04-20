@@ -111,7 +111,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
         params,
         successResponse => {
           const data = successResponse[0]._response.next_action_status;
-          Alert.alert('Success', 'Delivered OPT verified successfully', [
+          Alert.alert('Success', 'Delivered OTP verified successfully', [
             {
               text: 'OK',
               onPress: () => {
@@ -331,7 +331,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   {order.order
                     ? order.order.company_name
                       ? order.order.company_name
-                      : 'Company Name'
+                      : ''
                     : ''}
                 </Text>
                 {pickUpLocation ? (
@@ -343,6 +343,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                     {pickUpLocation?.state || ''}
                   </Text>
                 ) : order?.pickup_location_id ? null : null}
+                <Text style={styles.dropInfo}>
+                  {order.order ? order.order.pickup_notes : ''}
+                </Text>
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity
@@ -431,17 +434,6 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 )}
               </TouchableOpacity>
             </View>
-
-            <View style={styles.borderShowOff} />
-
-            <View>
-              <Text style={styles.headingOTP}>
-                {localizationText('Common', 'pickupNotes')}
-              </Text>
-              <Text style={styles.dropInfo}>
-                {order.order ? order.order.pickup_notes : ''}
-              </Text>
-            </View>
           </View>
         </View>
 
@@ -471,7 +463,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   {order.order
                     ? order.order.drop_company_name
                       ? order.order.drop_company_name
-                      : 'Company Name'
+                      : ''
                     : ''}
                 </Text>
                 {dropOffLocation && (
@@ -480,6 +472,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                     {dropOffLocation?.city || ''} {dropOffLocation?.state || ''}
                   </Text>
                 )}
+                <Text style={styles.dropInfo}>
+                  {order.order ? order.order.drop_notes : ''}
+                </Text>
               </View>
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity
@@ -613,7 +608,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 <Text style={styles.earnedMoney}>
                   €{' '}
                   {parseFloat(
-                    route.params.orderItem.delivery_boy_amount,
+                    route.params.orderItem?.delivery_boy_amount || 0,
                   ).toFixed(2)}
                 </Text>
               </Text>
@@ -671,8 +666,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: 3,
+    marginTop: 3,
   },
   companyInfo: {
     fontSize: 14,

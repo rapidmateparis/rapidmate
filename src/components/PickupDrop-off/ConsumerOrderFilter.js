@@ -8,7 +8,7 @@ import {TextInput} from 'react-native-gesture-handler';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
-const EnterpriseShiftFillter = props => {
+const ConsumerOrderFilter = props => {
   const [selectedType, setSelectedType] = useState(null);
   const [fromDate, setFromDate] = useState(new Date());
   const [fromDateOpen, setFromDateOpen] = useState(false);
@@ -26,28 +26,23 @@ const EnterpriseShiftFillter = props => {
     setToDate(new Date());
   }, []);
 
-  const toggleShiftModal = () => {
-    props.setShiftModalVisible(!props.isShiftModalVisible);
-  };
-  const applyModal = () => {
-    props.onFilterSelected({fromDate: fromDate, toDate: toDate});
+  const toggleFilterModal = () => {
+    props.setFilterModalVisible(!props.isFilterModalVisible);
   };
 
   return (
     <View>
-      <Modal isVisible={props.isShiftModalVisible}>
+      <Modal isVisible={props.isFilterModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.headerTitle}>Apply filters</Text>
-            <TouchableOpacity onPress={toggleShiftModal}>
+            <TouchableOpacity onPress={toggleFilterModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
           </View>
           <View style={styles.modalCard}>
             <Text style={styles.textlable}>From date</Text>
-            <TouchableOpacity
-              style={styles.textInputDiv}
-              onPress={() => setFromDateOpen(true)}>
+            <TouchableOpacity style={styles.textInputDiv} onPress={() => setFromDateOpen(true)}>
               <DatePicker
                 modal
                 open={fromDateOpen}
@@ -78,7 +73,9 @@ const EnterpriseShiftFillter = props => {
             </TouchableOpacity>
 
             <Text style={styles.textlable}>To date</Text>
-            <TouchableOpacity style={styles.textInputDiv} onPress={() => setToDateOpen(true)}>
+            <TouchableOpacity
+              style={styles.textInputDiv}
+              onPress={() => setToDateOpen(true)}>
               <DatePicker
                 modal
                 open={toDateOpen}
@@ -145,7 +142,9 @@ const EnterpriseShiftFillter = props => {
 
             <View style={styles.borderShowOff}></View>
           </View>
-          <TouchableOpacity onPress={applyModal} style={styles.buttonCard}>
+          <TouchableOpacity
+            onPress={toggleFilterModal}
+            style={styles.buttonCard}>
             <Text style={styles.okButton}>Apply</Text>
           </TouchableOpacity>
         </View>
@@ -328,4 +327,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EnterpriseShiftFillter;
+export default ConsumerOrderFilter;

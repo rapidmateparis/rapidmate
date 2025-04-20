@@ -19,7 +19,7 @@ import {
 import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRejectModal';
 import {useLoader} from '../../utils/loaderContext';
 import {useLocationData, useUserDetails} from '../commonComponent/StoreContext';
-import {localizationText, playNotificationSound, stopNotificationSound} from '../../utils/common';
+import {localizationText, playNotificationSound, stopNotificationSound, saveCurrentUserDetailsInStore} from '../../utils/common';
 
 const Bottom = createBottomTabNavigator();
 
@@ -79,6 +79,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
           newUserDetails['notificationCount'] = 0;
         }
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+         saveCurrentUserDetailsInStore(userDetails);
         setLoading(false);
       },
       errorResponse => {
@@ -134,7 +135,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               setTimeout(() => {
                 stopNotificationSound();
                 setDeliveryBoyAcceptRejectModalModalVisible(false);
-              }, 30000);
+              }, 80000);
             }
           },
           errorResponse => {
@@ -216,7 +217,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
             ),
           }}
         />
-        <Bottom.Screen
+        {/* <Bottom.Screen
           key="Notifications"
           name={chatText}
           component={Notifications}
@@ -230,7 +231,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               />
             ),
           }}
-        />
+        /> */}
         <Bottom.Screen
           key="Planning"
           name={planningText}

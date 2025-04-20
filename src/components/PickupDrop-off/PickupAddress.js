@@ -30,7 +30,7 @@ import {
   getDistancePriceList,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {localizationText} from '../../utils/common';
 
 const {width} = Dimensions.get('window');
@@ -85,11 +85,12 @@ const PickupAddress = ({route, navigation}) => {
   }
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     getAllVehiclesType();
   }, []);
 
   const getAllVehiclesType = () => {
+    setLoading(true);
     getAllVehicleTypes(
       null,
       successResponse => {
@@ -226,9 +227,7 @@ const PickupAddress = ({route, navigation}) => {
 
       if (route?.params?.pickupService?.id == 1) {
         var scheduleParam = {
-          schedule_date_time: `${pickupDateTime.pickupDate} ${moment(
-            pickupDateTime.time,
-          ).format('hh:mm')}`,
+          schedule_date_time: `${pickupDateTime.pickupDate} ${pickupDateTime.pickupTime}`,
         };
       }
       navigation.push('AddPickupdetails', {
@@ -241,6 +240,7 @@ const PickupAddress = ({route, navigation}) => {
         sourceLocationId: sourceLocationId,
         destinationLocationId: destinationLocationId,
         serviceTypeId: route?.params?.pickupService?.id || 2,
+        timezone : moment.tz.guess(),
         paymentDiscount: route?.params?.pickupService?.discount,
         ...scheduleParam,
       });

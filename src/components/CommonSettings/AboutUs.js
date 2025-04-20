@@ -23,7 +23,7 @@ const AboutUs = ({navigation}) => {
           style={styles.walletBgImage}
           source={require('../../image/AboutUs-Bg.png')}>
           <View
-            style={{paddingTop: '8%', paddingRight: '45%', paddingLeft: 15}}>
+            style={{paddingTop: 10, paddingRight: '45%', paddingLeft: 15}}>
             <Text style={styles.aboutCompany}>
               {localizationText('Common', 'whoWeAre')}
             </Text>

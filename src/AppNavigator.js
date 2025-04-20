@@ -129,11 +129,12 @@ import EnterpriseAddMultpleDropDetails from './components/Enterprise/EnterpriseA
 import PrivacyPolicy from './common/PrivacyPolicy';
 import TermsAndConditions from './common/TermsOfService';
 import EnterpriseBillingDetail from './components/Enterprise/EnterpriseSettings/EnterpriseBillingDetail';
-import {localizationText} from './utils/common';
+import {localizationText, saveCurrentUserDetailsInStore} from './utils/common';
 import EnterpriseShiftRequestNewDelivery from './components/Enterprise/EnterpriseShiftRequestNewDelivery';
 import EnterpriseShiftAddDetsils from './components/Enterprise/EnterpriseShiftAddDetsils';
 import EnterpriseShiftOrderPreview from './components/Enterprise/EnterpriseShiftOrderPreview';
 import EnterpriseShiftDeliveryboyAssigned from './components/Enterprise/EnterpriseShiftDeliveryboyAssigned';
+import DeliveryboyMainShiftDetails from './components/DeliveryBoy/DeliveryboyMainShiftDetails';
 
 const Stack = createStackNavigator();
 
@@ -142,44 +143,89 @@ const AppNavigator = () => {
   const [userDetails, setUserDetail] = useState(null);
   const {saveUserDetails} = useUserDetails();
   const [isLoading, setIsLoading] = useState(true);
-  const takeSelfie = localizationText('NavHeaderTitles', 'takeSelfie') || 'Take a selfie';
-  const privacyPolicy = localizationText('Common', 'privacyPolicy') || 'Privacy Policy';
-  const termsAndConditions = localizationText('Common', 'privacyPolicy') || 'Terms And Conditions';
-  const addPaymentMethod = localizationText('NavHeaderTitles', 'addPaymentMethod') || 'Add Payment Method';
-  const withdraw = localizationText('NavHeaderTitles', 'withdraw') || 'Withdraw';
-  const addPickupDetails = localizationText('NavHeaderTitles', 'addPickupDetails') || 'Add Pickup Details';
-  const addDropDetails = localizationText('NavHeaderTitles', 'addDropDetails') || 'Add Drop Details';
-  const orderPreview = localizationText('NavHeaderTitles', 'orderPreview') || 'Order Preview';
-  const orderConfirmed = localizationText('NavHeaderTitles', 'orderConfirmed') || 'Order Confirmed';
+  const takeSelfie =
+    localizationText('NavHeaderTitles', 'takeSelfie') || 'Take a selfie';
+  const privacyPolicy =
+    localizationText('Common', 'privacyPolicy') || 'Privacy Policy';
+  const termsAndConditions =
+    localizationText('Common', 'privacyPolicy') || 'Terms And Conditions';
+  const addPaymentMethod =
+    localizationText('NavHeaderTitles', 'addPaymentMethod') ||
+    'Add Payment Method';
+  const withdraw =
+    localizationText('NavHeaderTitles', 'withdraw') || 'Withdraw';
+  const addPickupDetails =
+    localizationText('NavHeaderTitles', 'addPickupDetails') ||
+    'Add Pickup Details';
+  const addDropDetails =
+    localizationText('NavHeaderTitles', 'addDropDetails') || 'Add Drop Details';
+  const orderPreview =
+    localizationText('NavHeaderTitles', 'orderPreview') || 'Order Preview';
+  const orderConfirmed =
+    localizationText('NavHeaderTitles', 'orderConfirmed') || 'Order Confirmed';
   const payment = localizationText('NavHeaderTitles', 'payment') || 'Payment';
-  const paymentSuccess = localizationText('NavHeaderTitles', 'paymentSuccess') || 'Payment Success';
-  const scheduleOrderSuccess = localizationText('NavHeaderTitles', 'scheduleOrderSuccess') || 'Schedule Order Success';
-  const notificationSettings = localizationText('NavHeaderTitles', 'notificationSettings') || 'Notification Settings';
-  const notifications = localizationText('Common', 'notifications') || 'Notifications';
+  const paymentSuccess =
+    localizationText('NavHeaderTitles', 'paymentSuccess') || 'Payment Success';
+  const scheduleOrderSuccess =
+    localizationText('NavHeaderTitles', 'scheduleOrderSuccess') ||
+    'Schedule Order Success';
+  const notificationSettings =
+    localizationText('NavHeaderTitles', 'notificationSettings') ||
+    'Notification Settings';
+  const notifications =
+    localizationText('Common', 'notifications') || 'Notifications';
   const wallet = localizationText('Common', 'wallet') || 'Wallet';
-  const deliveryDetails = localizationText('NavHeaderTitles', 'deliveryDetails') || 'Delivery Details';
-  const changePassword = localizationText('Common', 'changePassword') || 'Change Password';
-  const manageProfile = localizationText('NavHeaderTitles', 'manageProfile') || 'Manage Profile';
-  const billingDetails = localizationText('Common', 'billingDetails') || 'Billing Details';
-  const addVehicle = localizationText('NavHeaderTitles', 'addVehicle') || 'Add Vehicle';
-  const addPickup = localizationText('NavHeaderTitles', 'addPickup') || 'Add Pickup';
-  const setAvailability = localizationText('Common', 'setAvailability') || 'Set Availability';
+  const deliveryDetails =
+    localizationText('NavHeaderTitles', 'deliveryDetails') ||
+    'Delivery Details';
+  const changePassword =
+    localizationText('Common', 'changePassword') || 'Change Password';
+  const manageProfile =
+    localizationText('NavHeaderTitles', 'manageProfile') || 'Manage Profile';
+  const billingDetails =
+    localizationText('Common', 'billingDetails') || 'Billing Details';
+  const addVehicle =
+    localizationText('NavHeaderTitles', 'addVehicle') || 'Add Vehicle';
+  const addPickup =
+    localizationText('NavHeaderTitles', 'addPickup') || 'Add Pickup';
+  const setAvailability =
+    localizationText('Common', 'setAvailability') || 'Set Availability';
   const support = localizationText('NavHeaderTitles', 'support') || 'Support';
-  const scheduleDetails = localizationText('NavHeaderTitles', 'scheduleDetails') || 'Schedule Details';
-  const transactions = localizationText('Common', 'transactions') || 'Transactions';
-  const deliveryPreferance = localizationText('NavHeaderTitles', 'deliveryPreferance') || 'Delivery Preferance';
-  const companyLocations = localizationText('Common', 'companyLocations') || 'Company Locations';
-  const selectCompanyLocation = localizationText('NavHeaderTitles', 'selectCompanyLocation') || 'Select Company Location';
-  const createNewDelivery = localizationText('NavHeaderTitles', 'createNewDelivery') || 'Create New Delivery';
-  const createNewSchedule = localizationText('NavHeaderTitles', 'createNewSchedule') || 'Create New Schedule';
+  const scheduleDetails =
+    localizationText('NavHeaderTitles', 'scheduleDetails') ||
+    'Schedule Details';
+  const transactions =
+    localizationText('Common', 'transactions') || 'Transactions';
+  const deliveryPreferance =
+    localizationText('NavHeaderTitles', 'deliveryPreferance') ||
+    'Delivery Preferance';
+  const companyLocations =
+    localizationText('Common', 'companyLocations') || 'Company Locations';
+  const selectCompanyLocation =
+    localizationText('NavHeaderTitles', 'selectCompanyLocation') ||
+    'Select Company Location';
+  const createNewDelivery =
+    localizationText('NavHeaderTitles', 'createNewDelivery') ||
+    'Create New Delivery';
+  const createNewSchedule =
+    localizationText('NavHeaderTitles', 'createNewSchedule') ||
+    'Create New Schedule';
   const preview = localizationText('NavHeaderTitles', 'preview') || 'Preview';
-  const shiftDetails = localizationText('NavHeaderTitles', 'shiftDetails') || 'Shift Details';
-  const activeDeliveries = localizationText('NavHeaderTitles', 'activeDeliveries') || 'Active Deliveries';
-  const locations = localizationText('NavHeaderTitles', 'locations') || 'Locations';
+  const shiftDetails =
+    localizationText('NavHeaderTitles', 'shiftDetails') || 'Shift Details';
+  const activeDeliveries =
+    localizationText('NavHeaderTitles', 'activeDeliveries') ||
+    'Active Deliveries';
+  const locations =
+    localizationText('NavHeaderTitles', 'locations') || 'Locations';
   const add = localizationText('NavHeaderTitles', 'add') || 'Add';
-  const addNewLocations = localizationText('NavHeaderTitles', 'addNewLocations') || 'Add New Locations';
-  const manageAds = localizationText('NavHeaderTitles', 'manageAds') || 'Manage Ads';
-  const listNewAd = localizationText('NavHeaderTitles', 'listNewAd') || 'List New Ad';
+  const addNewLocations =
+    localizationText('NavHeaderTitles', 'addNewLocations') ||
+    'Add New Locations';
+  const manageAds =
+    localizationText('NavHeaderTitles', 'manageAds') || 'Manage Ads';
+  const listNewAd =
+    localizationText('NavHeaderTitles', 'listNewAd') || 'List New Ad';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -194,6 +240,7 @@ const AppNavigator = () => {
           saveUserDetails(JSON.parse(getUserDetails));
           let userDetails = JSON.parse(getUserDetails);
           setUserDetail(userDetails);
+          saveCurrentUserDetailsInStore(userDetails);
         }
         setIsLoading(false);
       } catch (error) {}
@@ -1348,18 +1395,8 @@ const AppNavigator = () => {
               <Stack.Screen
                 name="DeliveryboyShiftStarted"
                 component={DeliveryboyShiftStarted}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
+                options={{
+                  headerLeft: () => null,
                   headerTitle: 'Shift started',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
@@ -1371,17 +1408,10 @@ const AppNavigator = () => {
                     borderBottomWidth: 0,
                     elevation: 0,
                   },
-                  headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}}>
-                      <Ionicons
-                        name="settings-outline"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
-                })}
+                  headerRight: () => null,
+                }}
               />
+
               <Stack.Screen
                 name="DeliveryboyShiftStaredRequest"
                 component={DeliveryboyShiftStaredRequest}
@@ -1712,6 +1742,24 @@ const AppNavigator = () => {
                     </TouchableOpacity>
                   ),
                   headerTitle: billingDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="DeliveryboyMainShiftDetails"
+                component={DeliveryboyMainShiftDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => null,
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2623,7 +2671,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Pickup Details',
+                  headerTitle: addDropDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Linking,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -15,11 +16,17 @@ import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 import DeliveryboySubmitOTPModal from '../commonComponent/DeliveryboySubmitOTPModal';
-import { useUserDetails } from '../commonComponent/StoreContext';
-import { orderOPTVerify, orderOPTVerifyForDelivery, orderRequestAction, orderStatusUpdate } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
+import {useUserDetails} from '../commonComponent/StoreContext';
+import {
+  orderOPTVerify,
+  orderOPTVerifyForDelivery,
+  orderRequestAction,
+  orderStatusUpdate,
+} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 
-const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
+const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
   const [delivered, setDelivered] = useState(false);
   const handleMarkAsDelivered = () => {
     setDelivered(true);
@@ -29,11 +36,19 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
   const [isImageModalVisible, setImageModalVisible] = useState(false);
   const [isOTPModalVisible, setOTPModalVisible] = useState(false);
   const {userDetails} = useUserDetails();
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const vehicleText = localizationText('Common', 'vehicle') || 'Vehicle';
+  const packagePhoto = localizationText('Common', 'packagePhoto') || 'Package Photo';
+  const goingToPickup = localizationText('Common', 'goingToPickup') || 'Going to Pickup';
+  const reached = localizationText('Common', 'reached') || 'Reached';
+  const deliveredText = localizationText('Common', 'delivered') || 'Delivered';
+  const orderClosedEarned =
+      localizationText('Common', 'orderClosedEarned') ||
+      'This order is closed, you earned';
 
   const [isOTP, setIsOTP] = useState();
   const [lineId, setLineId] = useState(null);
 
-  
   const toggleModal = () => {
     setImageModalVisible(!isImageModalVisible);
   };
@@ -41,34 +56,33 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
     setOTPModalVisible(!isOTPModalVisible);
   };
 
-  const [orderDetails,setOrderDetails]=useState({})
-  
-  useEffect(()=>{
+  const [orderDetails, setOrderDetails] = useState({});
 
+  useEffect(() => {
     // route.params.orderItem.next_action_status,
-   if(route?.params?.orderItem){
-    setOrderDetails(route?.params?.orderItem)
-   }else{
-    setOrderDetails({})
-   }
-
-  },[])
+    if (route?.params?.orderItem) {
+      setOrderDetails(route?.params?.orderItem);
+    } else {
+      setOrderDetails({});
+    }
+  }, []);
+  console.log('orderDetails===>', orderDetails);
 
   const validateOtp = otpValue => {
     let params = {
       delivery_boy_ext_id: userDetails.userDetails[0].ext_id,
       order_number: orderDetails.order_number,
       otp: otpValue,
-      line_id:lineId
+      line_id: lineId,
     };
-    console.log('print_data==<<<<', isOTP, otpValue,params);
+    console.log('print_data==<<<<', isOTP, otpValue, params);
     if (isOTP) {
       orderOPTVerify(
         params,
         successResponse => {
           console.log('successResponse==<<<<', successResponse);
 
-          setLineId(null)
+          setLineId(null);
           Alert.alert('Success', 'Status updated successfully', [
             {
               text: 'OK',
@@ -80,7 +94,7 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
           ]);
         },
         errorResponse => {
-          setLineId(null)
+          setLineId(null);
           Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
           ]);
@@ -90,9 +104,9 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
       orderOPTVerifyForDelivery(
         params,
         successResponse => {
-          setLineId(null)
+          setLineId(null);
           const data = successResponse[0]._response.next_action_status;
-          Alert.alert('Success', 'Delivered OPT verified successfully', [
+          Alert.alert('Success', 'Delivered OTP verified successfully', [
             {
               text: 'OK',
               onPress: () => {
@@ -104,7 +118,7 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
           ]);
         },
         errorResponse => {
-          setLineId(null)
+          setLineId(null);
           Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
           ]);
@@ -113,17 +127,16 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
     }
   };
 
-  
-  const handleStatusUpdated = (updateStatus,location) => {
-    console.log('location.id ----<>',updateStatus,location.id)
+  const handleStatusUpdated = (updateStatus, location) => {
+    console.log('location.id ----<>', updateStatus, location.id);
 
     if (updateStatus == 'Enter OTP') {
-      setLineId(location.id)
+      setLineId(location.id);
       toggleModalOTP();
       setIsOTP(true);
     } else if (updateStatus == 'Enter Delivered OTP') {
-      console.log('location.id ---->',location.id)
-      setLineId(location.id)
+      console.log('location.id ---->', location.id);
+      setLineId(location.id);
       toggleModalOTP();
       setIsOTP(false);
     } else {
@@ -131,7 +144,7 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
       let params = {
         order_number: location.order_number,
         status: updateStatus,
-        line_id:location.id
+        line_id: location.id,
       };
       orderStatusUpdate(
         params,
@@ -182,45 +195,63 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
-              <Text style={styles.dropInfo}>Pickup information</Text>
+              <Text style={styles.dropInfo}>
+                {localizationText('Main', 'pickupInformation')}
+              </Text>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('DeliveryDetailsMultipleInvoice')
-                }>
-                <Image source={require('../../image/Track-Icon.png')} />
+                onPress={() => {
+                  const address = orderDetails.address;
+                  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                    address,
+                  )}`;
+                  Linking.openURL(url);
+                }}>
+                <Image
+                  style={styles.startIcon}
+                  source={require('../../image/Start-Icon.png')}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
-                <Text style={styles.companyInfo}>{orderDetails.company_name}</Text>
-                <Text style={styles.dropInfo}>{orderDetails.address}
-                  {/* 22 Rue de la Liberté, Paris, Île-de-France. */}
+                <Text style={styles.companyInfo}>
+                  {orderDetails.company_name}
                 </Text>
+                <Text style={styles.dropInfo}>{orderDetails.address}</Text>
+                <Text style={styles.dropInfo}>{orderDetails.pickup_notes}</Text>
               </View>
               <View style={styles.contactInfoIcons}>
-                <TouchableOpacity style={{marginRight: 10}}>
-                  <Image style={{width: 32, height: 32,}} source={require('../../image/chat-icon.png')} />
+                <TouchableOpacity
+                  style={{marginRight: 10}}
+                  onPress={() => {
+                    const smsNumber = `sms:${orderDetails.enterpirse_mobile}`;
+                    Linking.openURL(smsNumber);
+                  }}>
+                  <Image
+                    style={{width: 32, height: 32}}
+                    source={require('../../image/chat-icon.png')}
+                  />
                 </TouchableOpacity>
-                <TouchableOpacity>
-                  <Image style={{width: 32, height: 32,}} source={require('../../image/call-icon.png')} />
+                <TouchableOpacity
+                  onPress={() => {
+                    const phoneNumber = `tel:${orderDetails.enterpirse_mobile}`;
+                    Linking.openURL(phoneNumber);
+                  }}>
+                  <Image
+                    style={{width: 32, height: 32}}
+                    source={require('../../image/call-icon.png')}
+                  />
                 </TouchableOpacity>
               </View>
-            </View>
-
-            <View style={styles.borderShowOff} />
-
-            <View>
-              <Text style={styles.headingOTP}>Pickup notes</Text>
-              <Text style={styles.dropInfo}>{orderDetails.pickup_notes}</Text>
             </View>
           </View>
         </View>
-        
-        {
-          orderDetails?.locations && orderDetails?.locations.map((location,index)=>{
-            const updateStatus = location.next_action_status
-            console.log('updateStatus ====>',updateStatus)
-            return(
+
+        {orderDetails?.locations &&
+          orderDetails?.locations.map((location, index) => {
+            const updateStatus = location.next_action_status;
+            console.log('updateStatus ====>', updateStatus);
+            return (
               <View key={index}>
                 <View style={styles.packageCard}>
                   <View style={{width: '10%'}}>
@@ -231,25 +262,58 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                   </View>
                   <View style={{marginLeft: 5, width: '89%'}}>
                     <View style={styles.pickupCardHeader}>
-                      <Text style={styles.dropInfo}>{`Drop off ${index+1} information`}</Text>
+                      <Text style={styles.dropInfo}>{`Drop off ${
+                        index + 1
+                      } information`}</Text>
                       <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate('DeliveryDetailsMultipleInvoice')
-                        }>
-                        <Image source={require('../../image/Track-Icon.png')} />
+                        onPress={() => {
+                          const address = encodeURIComponent(
+                            location.destination_description,
+                          );
+                          const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
+                          Linking.openURL(url).catch(err =>
+                            console.error('Failed to open Google Maps', err),
+                          );
+                        }}>
+                        <Image
+                          style={styles.startIcon}
+                          source={require('../../image/Start-Icon.png')}
+                        />
                       </TouchableOpacity>
                     </View>
                     <View style={styles.companyInfosmain}>
                       <View style={{width: '65%'}}>
-                        <Text style={styles.companyInfo}>{location.drop_company_name}</Text>
-                        <Text style={styles.dropInfo}>{location.destination_description}</Text>
+                        <Text style={styles.companyInfo}>
+                          {location.drop_company_name}
+                        </Text>
+                        <Text style={styles.dropInfo}>
+                          {location.destination_description}
+                        </Text>
+                        <Text style={styles.dropInfo}>
+                          {location?.drop_notes}
+                        </Text>
                       </View>
                       <View style={styles.contactInfoIcons}>
-                        <TouchableOpacity style={{marginRight: 10}}>
-                          <Image style={{width: 32, height: 32,}} source={require('../../image/chat-icon.png')} />
+                        <TouchableOpacity
+                          style={{marginRight: 10}}
+                          onPress={() => {
+                            const smsNumber = `sms:${location.drop_mobile}`;
+                            Linking.openURL(smsNumber);
+                          }}>
+                          <Image
+                            style={{width: 32, height: 32}}
+                            source={require('../../image/chat-icon.png')}
+                          />
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                          <Image style={{width: 32, height: 32,}} source={require('../../image/call-icon.png')} />
+                        <TouchableOpacity
+                          onPress={() => {
+                            const phoneNumber = `tel:${location.drop_mobile}`;
+                            Linking.openURL(phoneNumber);
+                          }}>
+                          <Image
+                            style={{width: 32, height: 32}}
+                            source={require('../../image/call-icon.png')}
+                          />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -257,166 +321,195 @@ const DeliveryDetailsMultipleOrder = ({route,navigation}) => {
                     <View style={styles.borderShowOff} />
 
                     <View style={styles.packageBasicInfo}>
-                      <Text style={styles.headingOTP}>Vehicle:</Text>
-                      <Text style={styles.subheadingOTP}>{orderDetails.vehicle_type}</Text>
+                      <Text style={styles.headingOTP}>{vehicleText}:</Text>
+                      <Text style={styles.subheadingOTP}>
+                        {orderDetails.vehicle_type}
+                      </Text>
                     </View>
 
                     <View style={styles.borderShowOff} />
 
                     <View style={styles.packageBasicInfo}>
-                      <Text style={styles.headingOTP}>Package photo</Text>
+                      <Text style={styles.headingOTP}>{orderID}:</Text>
+                      <Text style={styles.subheadingOTP}>
+                        {location.order_number}
+                      </Text>
+                    </View>
+
+                    <View style={styles.borderShowOff} />
+
+                    <View style={styles.packageBasicInfo}>
+                      <Text style={styles.headingOTP}>{packagePhoto}</Text>
                       <TouchableOpacity onPress={() => toggleModal()}>
-                        {
-                         orderDetails?.package_photo ?
+                        {orderDetails?.package_photo ? (
                           <Image
                             style={styles.packagePhoto}
                             source={{
                               uri: orderDetails?.package_photo,
                             }}
                           />
-                          :
+                        ) : (
                           <Image
-                          style={styles.packagePhoto}
-                          source={require('../../image/PackagePhoto.png')}
-                        />}
+                            style={styles.packagePhoto}
+                            source={require('../../image/PackagePhoto.png')}
+                          />
+                        )}
                       </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.borderShowOff} />
-
-                    <View>
-                      <Text style={styles.headingOTP}>Drop notes</Text>
-                      <Text style={styles.dropInfo}>{location?.drop_notes}</Text>
                     </View>
                   </View>
                 </View>
 
-              {
-                route.params.orderItem.order_status == 'ORDER_ALLOCATED' ?
-                null
-              //   <View
-              //   style={{
-              //     flexDirection: 'row',
-              //     justifyContent: 'space-evenly',
-              //     marginTop: 7,
-              //     marginBottom: 10,
-              //   }}>
-              //   <TouchableOpacity
-              //     onPress={() => {
-              //       handleOrderRequest(true);
-              //     }}
-              //     style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
-              //     <Text style={styles.buttonText}>Accept</Text>
-              //   </TouchableOpacity>
-              //   <View style={{width: '1%'}} />
-              //   <TouchableOpacity
-              //     onPress={() => {
-              //       handleOrderRequest(false);
-              //     }}
-              //     style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
-              //     <Text style={styles.buttonText}>Reject</Text>
-              //   </TouchableOpacity>
-              // </View>
-              
-              :
-              
-                <View style={styles.deliveryStatusCard}>
-                  <View style={styles.deliveryinfo}>
-                    <View style={styles.statusAboutDelivery}>
-                      {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
-                      {/* <Octicons
+                {route.params.orderItem.order_status ==
+                'ORDER_ALLOCATED' ? null : (
+                  //   <View
+                  //   style={{
+                  //     flexDirection: 'row',
+                  //     justifyContent: 'space-evenly',
+                  //     marginTop: 7,
+                  //     marginBottom: 10,
+                  //   }}>
+                  //   <TouchableOpacity
+                  //     onPress={() => {
+                  //       handleOrderRequest(true);
+                  //     }}
+                  //     style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
+                  //     <Text style={styles.buttonText}>Accept</Text>
+                  //   </TouchableOpacity>
+                  //   <View style={{width: '1%'}} />
+                  //   <TouchableOpacity
+                  //     onPress={() => {
+                  //       handleOrderRequest(false);
+                  //     }}
+                  //     style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
+                  //     <Text style={styles.buttonText}>Reject</Text>
+                  //   </TouchableOpacity>
+                  // </View>
+
+                  <View style={styles.deliveryStatusCard}>
+                    <View style={styles.deliveryinfo}>
+                      <View style={styles.statusAboutDelivery}>
+                        {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
+                        {/* <Octicons
                         name={ 'dot-fill'}
                         size={15}
                         color={
                           '#D9D9D9'
                         }
                       /> */}
-                      
-                      <Octicons
-                        name={updateStatus == 'Ready to pickup' || updateStatus === null ? 'dot-fill' : 'check'}
-                        size={15}
-                        color={
-                          updateStatus == 'Ready to pickup' || updateStatus === null ? '#D9D9D9' : '#FF0058'
-                        }
-                      />
-                      <Text style={styles.statusInfo}>Going to Pickup</Text>
-                    </View>
-                    <View style={styles.borderStyle} />
 
-                    <View style={styles.statusAboutDelivery}>
-                      {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
-                      <Octicons
-                        name={updateStatus == 'Reached'|| updateStatus == 'Ready to pickup'|| updateStatus === null ? 'dot-fill' : 'check'}
-                        size={15}
-                        color={
-                          updateStatus == 'Reached' || updateStatus == 'Ready to pickup'|| updateStatus === null? '#D9D9D9' : '#FF0058'
-                        }
-                      />
-                      <Text style={styles.statusInfo}>Reached</Text>
-                    </View>
-                    <View style={styles.borderStyle} />
-
-                    <View style={styles.statusAboutDelivery}>
                         <Octicons
-                          name={updateStatus == 'Completed' ? 'check' : 'dot-fill'}
+                          name={
+                            updateStatus == 'Ready to pickup' ||
+                            updateStatus === null
+                              ? 'dot-fill'
+                              : 'check'
+                          }
                           size={15}
-                          color={updateStatus == 'Completed' ? '#FF0058' : '#D9D9D9'}
+                          color={
+                            updateStatus == 'Ready to pickup' ||
+                            updateStatus === null
+                              ? '#D9D9D9'
+                              : '#FF0058'
+                          }
                         />
-                      <Text style={styles.statusInfo}>Delivered</Text>
+                        <Text style={styles.statusInfo}>{goingToPickup}</Text>
+                      </View>
+                      <View style={styles.borderStyle} />
+
+                      <View style={styles.statusAboutDelivery}>
+                        {/* <AntDesign name="check" size={15} color={'#FF0058'} /> */}
+                        <Octicons
+                          name={
+                            updateStatus == 'Reached' ||
+                            updateStatus == 'Ready to pickup' ||
+                            updateStatus === null
+                              ? 'dot-fill'
+                              : 'check'
+                          }
+                          size={15}
+                          color={
+                            updateStatus == 'Reached' ||
+                            updateStatus == 'Ready to pickup' ||
+                            updateStatus === null
+                              ? '#D9D9D9'
+                              : '#FF0058'
+                          }
+                        />
+                        <Text style={styles.statusInfo}>{reached}</Text>
+                      </View>
+                      <View style={styles.borderStyle} />
+
+                      <View style={styles.statusAboutDelivery}>
+                        <Octicons
+                          name={
+                            updateStatus == 'Completed' ? 'check' : 'dot-fill'
+                          }
+                          size={15}
+                          color={
+                            updateStatus == 'Completed' ? '#FF0058' : '#D9D9D9'
+                          }
+                        />
+                        <Text style={styles.statusInfo}>{deliveredText}</Text>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.earningCard}>
-                    {delivered && (
-                      <Text style={styles.boyEarning}>
-                        This order is closed, you earned{' '}
-                        <Text style={styles.earnedMoney}>€34</Text>
-                      </Text>
+                    {/* <View style={styles.earningCard}>
+                      {delivered && (
+                        <Text style={styles.boyEarning}>
+                          This order is closed, you earned{' '}
+                          <Text style={styles.earnedMoney}>€34</Text>
+                        </Text>
+                      )}
+                    </View> */}
+                    {updateStatus !== 'Completed' && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleStatusUpdated(updateStatus, location)
+                        }
+                        style={[
+                          styles.logbutton,
+                          {backgroundColor: colors.primary},
+                        ]}
+                        disabled={updateStatus == 'Completed' ? true : false}>
+                        <Text style={styles.buttonText}>{updateStatus}</Text>
+                      </TouchableOpacity>
                     )}
                   </View>
-                  {updateStatus !== 'Completed' && (
-                    <TouchableOpacity
-                      onPress={()=>handleStatusUpdated(updateStatus,location)}
-                      style={[styles.logbutton, {backgroundColor: colors.primary}]}
-                      disabled={updateStatus == 'Completed' ? true : false}>
-                      <Text style={styles.buttonText}>{updateStatus}</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-          }
+                )}
               </View>
-            )
-          })
-        }
+            );
+          })}
 
-{
-                route.params.orderItem.order_status == 'ORDER_ALLOCATED' ?
-                <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-evenly',
-                  marginTop: 7,
-                  marginBottom: 10,
-                }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleOrderRequest(true);
-                  }}
-                  style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
-                  <Text style={styles.buttonText}>Accept</Text>
-                </TouchableOpacity>
-                <View style={{width: '1%'}} />
-                <TouchableOpacity
-                  onPress={() => {
-                    handleOrderRequest(false);
-                  }}
-                  style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
-                  <Text style={styles.buttonText}>Reject</Text>
-                </TouchableOpacity>
-              </View>
-              
-              :
-              null
-          }
+        {route.params.orderItem.order_status == 'ORDER_ALLOCATED' ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              marginTop: 7,
+              marginBottom: 10,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                handleOrderRequest(true);
+              }}
+              style={[
+                styles.acceptOrReject,
+                {backgroundColor: colors.primary},
+              ]}>
+              <Text style={styles.buttonText}>{localizationText('Common', 'accept')}</Text>
+            </TouchableOpacity>
+            <View style={{width: '1%'}} />
+            <TouchableOpacity
+              onPress={() => {
+                handleOrderRequest(false);
+              }}
+              style={[
+                styles.acceptOrReject,
+                {backgroundColor: colors.primary},
+              ]}>
+              <Text style={styles.buttonText}>{localizationText('Common', 'reject')}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
 
         {/* <View>
           <View style={styles.packageCard}>
@@ -672,8 +765,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: 3,
+    marginTop: 3,
   },
   companyInfo: {
     fontSize: 14,
@@ -869,6 +962,10 @@ const styles = StyleSheet.create({
     padding: 13,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  startIcon: {
+    height: 23,
+    width: 60,
   },
 });
 

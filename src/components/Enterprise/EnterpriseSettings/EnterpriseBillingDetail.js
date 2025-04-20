@@ -40,6 +40,7 @@ const EnterpriseBillingDetail = () => {
   const [cityList, setCityList] = useState([]);
   const [billingDetails] = useState({});
   useEffect(() => {
+    setLoading(true)
     getCountryList(
       {},
       successResponse => {

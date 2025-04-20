@@ -28,6 +28,10 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
   const isVisible = useIsFocused();
   const cancelRequestText = localizationText('Common', 'cancelRequest') || 'Cancel Request';
 
+  const [reTryCount, updateReTryCount] = useState(0);
+
+  const timeout = React.useRef(null);
+
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
   };
@@ -45,25 +49,20 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
           getAllocatedEnterprise(
             params,
             successResponse => {
+              updateReTryCount(null);
+              clearTimeout(timeout.current);
               navigation.navigate('EnterpriseOrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
-              console.log(
-                'successResponseerrorReq <========>',
-                JSON.stringify(params),
-              );
-              console.log(
-                'successResponseerrorResponse <========>',
-                JSON.stringify(errorResponse),
-              );
-
-              navigation.navigate(
-                'EnterpriseDriverNotAvailable',
-                errorResponse,
-              );
+              timeout.current = setTimeout(() => {
+                updateReTryCount(reTryCount + 1);
+                if (reTryCount === 5) {
+                  navigation.navigate('EnterpriseDriverNotAvailable', errorResponse);
+                }
+              }, 10000);
             },
           );
         }
@@ -79,10 +78,10 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    if (isVisible) {
+    if (isVisible && reTryCount !== null && reTryCount <= 5) {
       getLocationsData();
     }
-  }, [isVisible]);
+  }, [reTryCount, isVisible]);
 
   return (
     <ScrollView

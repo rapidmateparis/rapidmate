@@ -25,7 +25,7 @@ import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import {useFocusEffect} from '@react-navigation/native';
-import {localizationText} from '../../utils/common';
+import {localizationText, saveCurrentUserDetailsInStore} from '../../utils/common';
 
 const DeliveryboyHome = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -55,6 +55,7 @@ const DeliveryboyHome = ({navigation}) => {
   );
 
   const fetchData = async () => {
+    setLoading(true)
     try {
       await Promise.all([
         getLocationsData(),
@@ -66,6 +67,8 @@ const DeliveryboyHome = ({navigation}) => {
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -99,7 +102,7 @@ const DeliveryboyHome = ({navigation}) => {
   };
 
   const getLocationsData = () => {
-    setLoading(true);
+    // setLoading(true);
     getLocations(
       null,
       successResponse => {
@@ -109,18 +112,18 @@ const DeliveryboyHome = ({navigation}) => {
         }
       },
       errorResponse => {
-        setLoading(false);
+        // setLoading(false);
         console.log('getLocationsData==>errorResponse', '' + errorResponse[0]);
       },
     );
   };
 
   const getNotificationAllCount = () => {
-    setLoading(true);
+    // setLoading(true);
     getNotificationCount(
       userDetails.userDetails[0].ext_id,
       successResponse => {
-        setLoading(false);
+        // setLoading(false);
         console.log(
           'getNotificationAllCount==>successResponse',
           '' + JSON.stringify(successResponse[0]._response.notificationCount),
@@ -133,9 +136,10 @@ const DeliveryboyHome = ({navigation}) => {
           newUserDetails['notificationCount'] = 0;
         }
         saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        saveCurrentUserDetailsInStore(userDetails);
       },
       errorResponse => {
-        setLoading(false);
+        // setLoading(false);
         console.log(
           'getNotificationAllCount==>errorResponse',
           '' + errorResponse[0],

@@ -10,6 +10,7 @@ import {
   StatusBar,
   SafeAreaView,
   Alert,
+  Linking,
 } from 'react-native';
 import {colors} from '../../colors';
 import SwipeButton from 'rn-swipe-button';
@@ -18,10 +19,18 @@ import StartShift from '../../image/play-32.png';
 import {useNavigation} from '@react-navigation/native';
 import {API} from '../../utils/constant';
 import {updateShiftOrderStatus} from '../../data_manager';
-import {localizationText, utcLocal} from '../../utils/common';
+import {localizationText, utcLocal, saveCurrentUserDetailsInStore} from '../../utils/common';
 import moment from 'moment';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import BicycleImage from '../../image/Cycle-Icon.png';
+import MotorbikeImage from '../../image/Motorbike.png';
+import CarImage from '../../image/Car-Icon.png';
+import PartnerImage from '../../image/Partner-icon.png';
+import VanImage from '../../image/Van-Icon.png';
+import PickupImage from '../../image/Pickup-Icon.png';
+import TruckImage from '../../image/Truck-Icon.png';
+import BigTruckImage from '../../image/Big-Package.png';
 
 const DeliveryboyShiftDetails = ({navigation, route}) => {
   const defaultStatusMessage = 'Swipe to accept the request';
@@ -38,13 +47,6 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
 
   console.log('orderDetails ====>>', orderDetails);
   console.log('route?.params ====>>', route?.params);
-  // useEffect(() => {
-  //   const interval = setInterval(
-  //     () => setSwipeStatusMessage(defaultStatusMessage),
-  //     5000,
-  //   );
-  //   return () => clearInterval(interval);
-  // }, [defaultStatusMessage]);
 
   const startCreateShiftOrder = () => {
     if (checkStartAction()) {
@@ -95,17 +97,62 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
     const getSlot = todayList.length > 0 ? todayList[0] : [];
     return getSlot;
   };
+
   useEffect(() => {
     if (
       checkStartAction() &&
       checkStartAction()?.id &&
       checkStartAction()?.order_status == 'WORKING_INPROGRESS'
     ) {
-      navigation.navigate('DeliveryboyShiftStarted', {orderItem: orderDetails});
     }
   }, []);
 
-  console.log('checkStartAction  =====>', checkStartAction());
+  const openGoogleMaps = address => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      address,
+    )}`;
+    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  };
+
+  const getVechicleImage = vehicleTypeId => {
+    switch (vehicleTypeId) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return VanImage;
+      case 6:
+        return PickupImage;
+      case 7:
+        return TruckImage;
+      default:
+        return BigTruckImage;
+    }
+  };
+
+  const handleCallPress = () => {
+    const phoneNumber = orderDetails?.enterpirse_mobile;
+    if (phoneNumber) {
+      Linking.openURL(`tel:${phoneNumber}`);
+    } else {
+      Alert.alert('Error', 'Phone number not available');
+    }
+  };
+
+  const handleChatPress = () => {
+    const phoneNumber = orderDetails?.enterpirse_mobile;
+    if (phoneNumber) {
+      Linking.openURL(`sms:${phoneNumber}`);
+    } else {
+      Alert.alert('Error', 'Phone number not available');
+    }
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -120,29 +167,30 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('DeliveryboyMainDeliveryDetails')
+                  openGoogleMaps(
+                    orderDetails?.address ? orderDetails.address : '-',
+                  )
                 }>
-                <Image source={require('../../image/Track-Icon.png')} />
+                <Image
+                  style={styles.startIcon}
+                  source={require('../../image/Start-Icon.png')}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
               <View style={{width: '65%'}}>
                 <Text style={styles.companyInfo}>
-                  {orderDetails?.company_name
-                    ? orderDetails?.company_name
-                    : '-'}
+                  {orderDetails?.branch_name ? orderDetails?.branch_name : '-'}
                 </Text>
                 <Text style={styles.dropInfo}>
-                  {orderDetails?.company_address
-                    ? orderDetails.company_address
-                    : '22 Rue de la Liberté, Paris, Île-de-France.'}
+                  {orderDetails?.address ? orderDetails.address : '-'}
                 </Text>
               </View>
               <View style={styles.contactInfoIcons}>
-                <TouchableOpacity style={{marginRight: 10}}>
+                <TouchableOpacity style={{marginRight: 10}} onPress={handleChatPress}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleCallPress}>
                   <Image source={require('../../image/call-icon.png')} />
                 </TouchableOpacity>
               </View>
@@ -166,7 +214,8 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
               <View style={styles.overViewCard}>
                 <View>
                   <Text style={styles.requestOverview}>
-                    {orderDetails?.total_days ? orderDetails.total_days : 0}
+                    {/* {orderDetails?.total_days ? orderDetails.total_days : 0} */}
+                    1
                   </Text>
                   <Text style={styles.requestOverviewInfo}>
                     {localizationText('Common', 'totalDays')}
@@ -175,9 +224,8 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
 
                 <View>
                   <Text style={styles.requestOverview}>
-                    {orderDetails?.total_hours
-                      ? orderDetails.total_hours.toFixed(2)
-                      : 0}
+                  {orderDetails?.slots ? orderDetails.slots[0]?.total_hours.toFixed(2) : 0}
+
                   </Text>
                   <Text style={styles.requestOverviewInfo}>
                     {localizationText('Common', 'totalHours')}
@@ -188,9 +236,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.requestOverview}>
                     €
                     <Text>
-                      {orderDetails?.total_amount
-                        ? orderDetails.total_amount.toFixed(2)
-                        : 0}
+                    {orderDetails?.slots ? orderDetails.slots[0]?.delivery_boy_amount.toFixed(2) : 0}
                     </Text>
                   </Text>
                   <Text style={styles.requestOverviewInfo}>
@@ -204,18 +250,45 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'from')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails?.shift_from_date)).format(
-                        'DD-MM-YYYY',
-                      )}
+                      {moment(
+                        utcLocal(
+                          orderDetails?.slots
+                            ? orderDetails.slots[0].slot_date
+                            : new Date(),
+                        ),
+                      ).format('DD-MM-YYYY')}
                     </Text>
                   </Text>
                   <View style={styles.borderShowoff} />
                   <Text style={styles.schaduleInfo}>
                     {localizationText('Common', 'to')}{' '}
                     <Text style={styles.schaduleDateTime}>
-                      {moment(utcLocal(orderDetails?.shift_tp_date)).format(
-                        'DD-MM-YYYY',
-                      )}
+                      {moment(
+                        utcLocal(
+                          orderDetails?.slots
+                            ? orderDetails.slots[0].slot_date
+                            : new Date(),
+                        ),
+                      ).format('DD-MM-YYYY')}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+              <View>
+                <View style={styles.scheduleDateTimeCard}>
+                  <Text style={styles.schaduleInfo}>
+                    {localizationText('Common', 'fromTime')}{' '}
+                    <Text style={styles.schaduleDateTime}>
+                      {orderDetails?.slots
+                        ? orderDetails.slots[0].from_time
+                        : ''}
+                    </Text>
+                  </Text>
+                  <View style={styles.borderShowoff} />
+                  <Text style={styles.schaduleInfo}>
+                    {localizationText('Common', 'toTime')}{' '}
+                    <Text style={styles.schaduleDateTime}>
+                      {orderDetails?.slots ? orderDetails.slots[0].to_time : ''}
                     </Text>
                   </Text>
                 </View>
@@ -250,8 +323,8 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
             </View>
             <View>
               <Image
-                style={{width: 45, height: 30}}
-                source={require('../../image/Delivery-PickupTruck-Icon.png')}
+                style={{width: 55, height: 45, resizeMode: 'contain'}}
+                source={getVechicleImage(route.params.orderItem.vehicle_type_id)}
               />
             </View>
           </View>
@@ -275,10 +348,9 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                     updateSwipeStatusMessage('Swipe started!')
                   }
                   onSwipeSuccess={() => {
-                    // Alert.alert('swipe success---')
                     updateSwipeStatusMessage('Shift accepted');
                     startCreateShiftOrder();
-                    // navigation.navigate('DeliveryboyShiftStarted');
+                    navigation.navigate('DeliveryboyShiftStarted', {orderItem: orderDetails});
                   }}
                   thumbIconImageSource={StartShift}
                   railBackgroundColor="#27AE601F"
@@ -596,6 +668,10 @@ const styles = StyleSheet.create({
   },
   swipeBt: {
     marginTop: '30%',
+  },
+  startIcon: {
+    height: 23,
+    width: 60,
   },
 });
 

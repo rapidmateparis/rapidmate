@@ -80,7 +80,7 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       branch_id: params.branch_id,
       delivery_type_id: params.delivery_type_id,
       service_type_id: params.service_type_id,
-      vehicle_type_id: params.vehicle_type.vehicle_type_id,
+      vehicle_type_id: params.vehicle_type?.vehicle_type_id || 8,
       shift_from_date: localToUTC(moment(params.schedule.startDate,'DD/MM/YYYY').toDate()),
       shift_tp_date: localToUTC(moment(params.schedule.endDate,'DD/MM/YYYY').toDate()),
       is_same_slot_all_days: 0,

@@ -30,9 +30,9 @@ const PickupSignup = ({navigation}) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
-  const [dropdownValue, setDropdownValue] = useState('75');
+  const [dropdownValue, setDropdownValue] = useState('33');
   const [dropdownCountryCodeValue, setDropdownCountryCodeValue] =
-    useState('75');
+    useState('33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
@@ -61,6 +61,11 @@ const PickupSignup = ({navigation}) => {
     let errors = {};
     if (!name.trim()) {
       errors.name = 'Name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
     }
     if (!email.trim()) {
       errors.email = 'Email is required';
@@ -78,11 +83,23 @@ const PickupSignup = ({navigation}) => {
     /* if (!selectedAccountType) {
       errors.selectedAccountType = 'Please select an account type';
     } */
+    // if (!number.trim()) {
+    //   errors.number = 'Number is required';
+    // } else if (isNaN(number)) {
+    //   errors.number = 'Number should be numeric';
+    // } else if (number.trim().length < 9) {
+    //   errors.number = 'Invalid number';
+    // }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    }else if (!/^\d+$/.test(number)) {
       errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
     }
+
+    
     if (!dropdownCountryValue) {
       errors.dropdownCountryValue = 'Please select a country';
     }
@@ -97,6 +114,7 @@ const PickupSignup = ({navigation}) => {
   ];
 
   useEffect(() => {
+    setLoading(true);
     getCountryList(
       (param = {}),
       successResponse => {
@@ -229,6 +247,7 @@ const PickupSignup = ({navigation}) => {
               style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
               placeholder={localizationText('Common', 'fullName')}
               placeholderTextColor="#999"
+              maxLength={15}
               value={name}
               onChangeText={text => setName(text)}
             />
@@ -255,6 +274,7 @@ const PickupSignup = ({navigation}) => {
               style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
               placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={text => setPassword(text)}
@@ -277,6 +297,7 @@ const PickupSignup = ({navigation}) => {
               style={styles.input}
               placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}

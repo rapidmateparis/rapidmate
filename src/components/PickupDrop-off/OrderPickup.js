@@ -36,6 +36,7 @@ const OrderPickup = ({route, navigation}) => {
   const [driverDetails, setDriverDetails] = useState(
     route.params.driverDetails,
   );
+  console.log("OrderPickupRoutesData------", route.params.driverDetails)
   const [locationList, setLocationList] = useState(route.params.locationList);
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
@@ -44,9 +45,6 @@ const OrderPickup = ({route, navigation}) => {
   );
 
   useEffect(() => {
-    console.log('progressTypeId ====>', userDetails.progressTypeId);
-    console.log('delivered_otp ====>', userDetails.delivered_otp);
-
     userDetails.progressTypeId &&
       setCurrentPosition(userDetails.progressTypeId);
     userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);

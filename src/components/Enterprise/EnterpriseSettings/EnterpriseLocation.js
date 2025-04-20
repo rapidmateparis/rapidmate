@@ -28,6 +28,7 @@ const EnterpriseLocation = ({navigation}) => {
   const isVisible = useIsFocused();
 
   useEffect(() => {
+    setLoading(true)
     getEnterpriseBranch(
       userDetails.userDetails[0].ext_id,
       successResponse => {

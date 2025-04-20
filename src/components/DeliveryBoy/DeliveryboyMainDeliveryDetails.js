@@ -161,12 +161,14 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          {pickUpLocation && dropOffLocation && <MapDeliveryDetails
-            addressData={{
-              sourceAddress: pickUpLocation,
-              destinationAddress: dropOffLocation,
-            }}
-          />}
+          {pickUpLocation && dropOffLocation && (
+            <MapDeliveryDetails
+              addressData={{
+                sourceAddress: pickUpLocation,
+                destinationAddress: dropOffLocation,
+              }}
+            />
+          )}
         </View>
 
         <View style={styles.packageCard}>
@@ -181,7 +183,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             <Text style={styles.companyInfo}>
               {orderDetails.company_name
                 ? orderDetails.company_name
-                : 'Company Name'}
+                : ''}
             </Text>
             <Text style={styles.dropInfo}>
               {pickUpLocation?.address || ''}
@@ -189,6 +191,9 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
               {pickUpLocation?.city}
               {', '}
               {pickUpLocation?.state}
+            </Text>
+            <Text style={styles.dropInfo}>
+              {orderDetails.pickup_notes ? orderDetails.pickup_notes : ''}
             </Text>
           </View>
         </View>
@@ -205,7 +210,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             <Text style={styles.companyInfo}>
               {orderDetails.drop_company_name
                 ? orderDetails.drop_company_name
-                : 'Company Name'}
+                : ''}
             </Text>
             {dropOffLocation &&
               dropOffLocation?.address &&
@@ -219,6 +224,9 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
                   {dropOffLocation.state}
                 </Text>
               )}
+            <Text style={styles.dropInfo}>
+              {orderDetails.pickup_notes ? orderDetails.drop_notes : ''}
+            </Text>
           </View>
         </View>
 
@@ -231,7 +239,9 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
               <Text style={styles.orderFare}>
                 {localizationText('Common', 'orderFare')}
               </Text>
-              <Text style={styles.totalmoney}>€ {orderDetails.amount}</Text>
+              <Text style={styles.totalmoney}>
+                € {orderDetails.delivery_boy_amount.toFixed(2)}
+              </Text>
             </View>
 
             <Text style={styles.travel}>
@@ -239,8 +249,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
               {orderDetails.distance
                 ? orderDetails.distance.toFixed(2)
                 : '0.00'}{' '}
-              km {localizationText('Common', 'inText')}{' '}
-              {orderDetails.total_duration ? orderDetails.total_duration : '00'}
+              km
             </Text>
 
             <View style={styles.cardHeader}>
@@ -282,7 +291,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
               </Text>
               <Text style={styles.value}>
                 €{' '}
-                {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
+                {orderDetails.delivery_boy_amount ? orderDetails.delivery_boy_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
@@ -304,12 +313,6 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             {localizationText('Common', 'orderID')}:{' '}
             <Text style={styles.detailsId}>
               {orderDetails.order_number ? orderDetails.order_number : ''}
-            </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            {localizationText('Common', 'comments')}:{' '}
-            <Text style={styles.detailsId}>
-              {orderDetails.pickup_notes ? orderDetails.pickup_notes : ''}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
@@ -365,7 +368,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
+    marginBottom: 3,
+    marginTop: 3,
   },
   companyInfo: {
     fontSize: 14,

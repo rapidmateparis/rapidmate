@@ -193,7 +193,7 @@ const PickupBottomNav = ({navigation}) => {
             ),
           }}
         />
-        <Bottom.Screen
+        {/* <Bottom.Screen
           key="Notifications"
           name={chatText}
           component={Notifications}
@@ -218,7 +218,7 @@ const PickupBottomNav = ({navigation}) => {
               />
             ),
           }}
-        />
+        /> */}
         <Bottom.Screen
           key="PickupAddress"
           name={requestsText}

@@ -82,47 +82,96 @@ const AddPickupVehicle = ({route, navigation}) => {
     }
   };
 
+  // const uploadImage = async image => {
+  //   setLoading(true);
+  //   if (image != null) {
+  //     var photo = {
+  //       uri: image.data.uri,
+  //       type: image.data.type,
+  //       name: image.data.fileName,
+  //     };
+  //     const formdata = new FormData();
+  //     formdata.append('file', photo);
+  //     uploadDocumentsApi(
+  //       formdata,
+  //       successResponse => {
+  //         console.log(successResponse, 'UpoladDocumentApi')
+  //         setLoading(false);
+  //         if (imageFileUrl === 'VehicleRegistration') {
+  //           setRegDocId(JSON.parse(successResponse).id);
+  //         } else if (imageFileUrl === 'DrivingLicense') {
+  //           setDrivingLicenseDocId(JSON.parse(successResponse).id);
+  //         } else if (imageFileUrl === 'VehicleInsurance') {
+  //           setInsuranceDocId(JSON.parse(successResponse).id);
+  //         } else if (imageFileUrl === 'Passport') {
+  //           setPassportDocId(JSON.parse(successResponse).id);
+  //         }
+  //       },
+  //       errorResponse => {
+  //         console.log(
+  //           'print_data==>errorResponseuploadDocumentsApi',
+  //           '' + errorResponse,
+  //         );
+  //         setLoading(false);
+  //         Alert.alert('Error Alert', '' + errorResponse, [
+  //           {text: 'OK', onPress: () => {}},
+  //         ]);
+  //       },
+  //     );
+  //   } else {
+  //     Alert.alert('Error Alert', 'Please choose a picture', [
+  //       {text: 'OK', onPress: () => {}},
+  //     ]);
+  //   }
+  // };
+
   const uploadImage = async image => {
+    if (!image) {
+      Alert.alert('Error Alert', 'Please choose a picture', [{ text: 'OK', onPress: () => {} }]);
+      return; 
+    }
+
     setLoading(true);
-    if (image != null) {
-      var photo = {
+    try {
+      const photo = {
         uri: image.data.uri,
         type: image.data.type,
         name: image.data.fileName,
       };
+
       const formdata = new FormData();
       formdata.append('file', photo);
+
       uploadDocumentsApi(
         formdata,
         successResponse => {
+          console.log(successResponse, 'UploadDocumentApi');
           setLoading(false);
+          
+          const responseData = JSON.parse(successResponse);
           if (imageFileUrl === 'VehicleRegistration') {
-            setRegDocId(JSON.parse(successResponse).id);
+            setRegDocId(responseData.id);
           } else if (imageFileUrl === 'DrivingLicense') {
-            setDrivingLicenseDocId(JSON.parse(successResponse).id);
+            setDrivingLicenseDocId(responseData.id);
           } else if (imageFileUrl === 'VehicleInsurance') {
-            setInsuranceDocId(JSON.parse(successResponse).id);
+            setInsuranceDocId(responseData.id);
           } else if (imageFileUrl === 'Passport') {
-            setPassportDocId(JSON.parse(successResponse).id);
+            setPassportDocId(responseData.id);
           }
         },
         errorResponse => {
-          console.log(
-            'print_data==>errorResponseuploadDocumentsApi',
-            '' + errorResponse,
-          );
+          console.log('print_data==>errorResponseuploadDocumentsApi', errorResponse);
           setLoading(false);
-          Alert.alert('Error Alert', '' + errorResponse, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
+          Alert.alert('Error Alert', "Server busy. Please try again!!!", [{ text: 'OK', onPress: () => {} }]);
+        }
       );
-    } else {
-      Alert.alert('Error Alert', 'Please choose a picture', [
-        {text: 'OK', onPress: () => {}},
-      ]);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      Alert.alert('Error Alert', 'Server busy. Please try again!!!', [{ text: 'OK', onPress: () => {} }]);
+      setLoading(false);
     }
-  };
+};
+
 
   const handleCameraLaunch = async item => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -270,6 +319,7 @@ const AddPickupVehicle = ({route, navigation}) => {
               style={styles.inputTextStyle}
               placeholder="Type here"
               placeholderTextColor={'#999'}
+              maxLength={10}
               value={vehicleNo}
               onChangeText={text => setVehicleNo(text)}
             />
@@ -285,6 +335,7 @@ const AddPickupVehicle = ({route, navigation}) => {
               style={styles.inputTextStyle}
               placeholder="Type here"
               placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleModel}
               onChangeText={text => setVehicleModel(text)}
             />
@@ -301,6 +352,7 @@ const AddPickupVehicle = ({route, navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
+                maxLength={18}
                 value={vehicleMake}
                 onChangeText={text => setVehicleMake(text)}
               />
@@ -316,6 +368,7 @@ const AddPickupVehicle = ({route, navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
+                maxLength={18}
                 value={vehicleVariant}
                 onChangeText={text => setVehicleVariant(text)}
               />

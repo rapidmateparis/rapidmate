@@ -16,7 +16,8 @@ import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
 import {updateUserProfile} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
-import { localizationText } from '../../../utils/common';
+import {localizationText} from '../../../utils/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EnterpriseManageProfile = ({navigation}) => {
   const {userDetails, saveUserDetails} = useUserDetails();
@@ -27,6 +28,7 @@ const EnterpriseManageProfile = ({navigation}) => {
   const [company, setCompany] = useState('');
   const [industry, setIndustry] = useState('');
   const [deliveryCount, setDeliveryCount] = useState('');
+  const [errors, setErrors] = useState({});
 
   const [userName, setUserName] = useState('');
   const [dropdownIndustryValue, setDropdownIndustryValue] = useState(null);
@@ -47,7 +49,7 @@ const EnterpriseManageProfile = ({navigation}) => {
   useEffect(() => {
     console.log('userDetails.userDetails[0]', userDetails.userDetails[0]);
     setCompany(userDetails.userDetails[0].company_name);
-    setNumber(userDetails.userDetails[0].phone.substring(3));
+    setNumber(userDetails.userDetails[0].phone);
     setEmail(userDetails.userDetails[0].email);
     setUserName(
       userDetails.userDetails[0].first_name +
@@ -59,65 +61,97 @@ const EnterpriseManageProfile = ({navigation}) => {
       setDeliveryCount(userDetails.userDetails[0].deliveryMonthHours);
     }
   }, [userDetails]);
-
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
   const updateProfile = () => {
-    if (number.length < 9) {
-      Alert.alert('Invalid Number', 'Phone number must be at least 9 digits long.');
-      return;
+    let errors = {};
+
+    // Validation
+
+    if (!userName) {
+      errors.userName = 'First name is required';
+    } else if (userName.length < 3) {
+      errors.userName = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(userName)) {
+      console.log("name ======>", userName);
+      errors.userName = 'Names should only contain letters';
     }
-  
-    let usernamelist = userName.split(' ');
+
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    } else if (!/^\d+$/.test(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
+    }
+    if (!company) {
+      errors.company = 'Company Name is required';
+    }
+    if (!dropdownIndustryValue) {
+      errors.dropdownIndustryValue = 'Please select industry';
+    }
+
+    setErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return; // Stop if there are validation errors
+    }
+
+    let usernamelist = userName.trim().split(' ');
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       company_name: company,
-      first_name: userName.split(' ')[0],
-      phone: '+33' + number,
+      first_name: usernamelist[0],
+      phone: number.trim(),
+      phoneCode: dropdownValue,
       industry_type_id: dropdownIndustryValue,
     };
-  
-    if (userName.split.length > 1) {
-      profileParams.last_name = usernamelist[1];
+
+    if (usernamelist.length > 1) {
+      profileParams.last_name = usernamelist.slice(1).join(' ');
     }
+
     if (deliveryCount) {
       profileParams.deliveryMonthHours = deliveryCount;
     }
-  
+
     setLoading(true);
+
     updateUserProfile(
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
         setLoading(false);
-        console.log('updateUserProfile success', '' + successResponse);
-        saveUserDetails({
-          userInfo: userDetails.userInfo,
-          userDetails: [
-            {
-              ...userDetails.userDetails[0],
-              company_name: profileParams.company_name,
-              first_name: profileParams.first_name,
-              phone: profileParams.phone,
-              industry_type_id: profileParams.industry_type_id,
-              last_name: profileParams.last_name ? profileParams.last_name : '',
-              deliveryMonthHours: profileParams.deliveryMonthHours
-                ? profileParams.deliveryMonthHours
-                : '',
-            },
-          ],
-        });
+        const newUserDetails = {...userDetails.userDetails[0]};
+        newUserDetails['company_name'] = profileParams.company_name;
+        newUserDetails['first_name'] = profileParams.first_name;
+        newUserDetails['last_name'] = profileParams.last_name || '';
+        newUserDetails['phone'] = profileParams.phone;
+        newUserDetails['industry_type_id'] = profileParams.industry_type_id;
+        newUserDetails['deliveryMonthHours'] =
+          profileParams.deliveryMonthHours || 0;
+
+        const updatedUser = {...userDetails, userDetails: [newUserDetails]};
+        saveUserDetails(updatedUser);
+        saveUserDetailsInAsync(updatedUser);
+        console.log(updatedUser);
+
         Alert.alert('Success', 'Profile updated successfully', [
           {text: 'Ok', onPress: () => navigation.goBack()},
-        ])
+        ]);
       },
       errorResponse => {
         setLoading(false);
         console.log('updateUserProfile error', '' + errorResponse);
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
+        Alert.alert(
+          'Error Alert',
+          errorResponse[0]?._errors?.message || 'Something went wrong',
+          [{text: 'OK', onPress: () => {}}],
+        );
       },
     );
-  };  
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -150,7 +184,9 @@ const EnterpriseManageProfile = ({navigation}) => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>{localizationText('Common', 'name')}</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'name')}
+          </Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -159,8 +195,11 @@ const EnterpriseManageProfile = ({navigation}) => {
             onChangeText={text => setUserName(text)}
           />
         </View>
+        {errors.userName ? ( <Text style={[{color: 'red'}]}>{errors.userName}</Text>) : (null)}
         <View>
-          <Text style={styles.textlable}>{localizationText('Common', 'phoneNumber')}</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'phoneNumber')}
+          </Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -206,6 +245,9 @@ const EnterpriseManageProfile = ({navigation}) => {
             />
           </View>
         </View>
+        {errors.number ? (
+          <Text style={[{color: 'red'}]}>{errors.number}</Text>
+        ) : null}
         {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
           <TextInput
@@ -217,7 +259,9 @@ const EnterpriseManageProfile = ({navigation}) => {
           />
         </View> */}
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>{localizationText('Common', 'companyName')}</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'companyName')}
+          </Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -226,8 +270,13 @@ const EnterpriseManageProfile = ({navigation}) => {
             onChangeText={text => setCompany(text)}
           />
         </View>
+        {errors.company ? (
+          <Text style={[{color: 'red'}]}>{errors.company}</Text>
+        ) : null}
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>{localizationText('Common', 'industry')}</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'industry')}
+          </Text>
           <View style={styles.containerCountry}>
             <Dropdown
               data={industryList}
@@ -257,7 +306,10 @@ const EnterpriseManageProfile = ({navigation}) => {
             />
           </View>
         </View>
-        <View style={{flex: 1}}>
+        {errors.dropdownIndustryValue ? (
+          <Text style={[{color: 'red'}]}>{errors.dropdownIndustryValue}</Text>
+        ) : null}
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>
           {localizationText('Common', 'deliveriesPerMonth')}
           </Text>
@@ -266,15 +318,18 @@ const EnterpriseManageProfile = ({navigation}) => {
             placeholder="Type here"
             placeholderTextColor={'#999'}
             value={deliveryCount}
+            maxLength={3}
             onChangeText={text => setDeliveryCount(text)}
           />
-        </View>
+        </View> */}
         <TouchableOpacity
           onPress={() => {
             updateProfile();
           }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>{localizationText('Common', 'save')}</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

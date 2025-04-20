@@ -44,6 +44,9 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
     : route.params?.props
     ? route.params?.props
     : route.params;
+    console.log("**********************************");
+    console.log(params);
+
   const dropDetails = route.params?.props?.branches
     ? route.params?.props?.branches
     : [];
@@ -78,7 +81,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.pickup_location.sourceDescription}
+              {params.pickup_location?.sourceDescription}
             </Text>
           </View>
           <View style={styles.borderDummy}></View>

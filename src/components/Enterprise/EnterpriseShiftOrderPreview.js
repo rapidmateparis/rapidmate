@@ -135,7 +135,7 @@ const EnterpriseShiftOrderPreview = ({route, navigation}) => {
 
         <TouchableOpacity
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Proceed to payment</Text>
+          <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
