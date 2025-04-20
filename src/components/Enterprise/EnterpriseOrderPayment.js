@@ -500,7 +500,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
           </View>
         </View>
 
-        <View style={styles.inputContainer}>
+        {/*<View style={styles.inputContainer}>
           <Image source={require('../../image/ticket-discount.png')} />
           <TextInput
             style={styles.input}
@@ -538,7 +538,8 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
               <AntDesign name="check" size={20} color="#fff" />
             </TouchableOpacity>
           )}
-        </View>
+        </View>*/
+        }
 
         {promoCodeResponse && (
           <Text

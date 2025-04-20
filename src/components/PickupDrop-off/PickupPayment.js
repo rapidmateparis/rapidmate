@@ -587,7 +587,7 @@ const PickupPayment = ({route, navigation}) => {
           </View>
         </View>
 
-        <View
+        {/*<View
           style={[
             styles.inputContainer,
             {
@@ -632,7 +632,7 @@ const PickupPayment = ({route, navigation}) => {
               <AntDesign name="check" size={20} color="#fff" />
             </TouchableOpacity>
           )}
-        </View>
+        </View> */}
         {promoCodeResponse && (
           <Text
             style={[

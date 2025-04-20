@@ -98,10 +98,7 @@ function DeliveryBoyAcceptRejectModal({
 };
 
 const getLocationAddressByOrder = (address, city, state, country) => {
-  console.log("-----------------")
-  // console.log(orderLocation.address)
   return `${address}, ${city}, ${state}, ${country}`;
-
 };
 
 
@@ -208,6 +205,22 @@ const getLocationAddressByOrder = (address, city, state, country) => {
           toggleModal()
         }
       )
+    }
+
+    const getOrderType = (orderNumber)=>{
+      let orderTypeMessage = "Rapidmate Order";
+      if(String(orderNumber).includes("ES")){
+        orderTypeMessage = "Enterprise Shift Order : Shift Base";
+      }else if(String(orderNumber).includes("EM")){
+        orderTypeMessage = "Enterprise Multiple Order : One or More drop locations";
+      }else if(String(orderNumber).includes("EO")){
+        orderTypeMessage = "Enterprise Onetime Order : One Drop location";
+      }else if(String(orderNumber).includes("NS")){
+        orderTypeMessage = "Customer Scheduled Order : One Drop location";
+      }else if(String(orderNumber).includes("N")){
+        orderTypeMessage = "Customer Order : One Drop Location";
+      }  
+      return orderTypeMessage;
     }
   
 
@@ -380,6 +393,13 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                   />
                 </View>
               </View>
+            </View>
+            <View style={styles.container}>
+                <Text style={styles.subText}>
+                  <Text style={styles.orderTypeHighlight}>
+                    {getOrderType(deliveryBoyAcceptRejectMessage?.order?.order_number)}
+                  </Text>
+                </Text>
             </View>
           </View>
       }
@@ -590,6 +610,13 @@ const styles = StyleSheet.create({
   boldSubText: {
     color: colors.secondary,
     fontSize: 14,
+    fontFamily: 'Montserrat-Bold',
+  },
+
+  orderTypeHighlight: {
+    marginTop: 10,
+    color: 'rgba(7, 59, 23, 0.86)',
+    fontSize: 15,
     fontFamily: 'Montserrat-Bold',
   },
 
