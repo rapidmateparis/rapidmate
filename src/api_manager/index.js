@@ -24,7 +24,8 @@ export async function axiosCall(
   axiosInstance.interceptors.request.use(
     function (config) {
       if (token) {
-        config.headers.rapid_token = token;
+        config.headers.authorization = token;
+        config.headers.Authorization = token;
       }
       return config;
     },

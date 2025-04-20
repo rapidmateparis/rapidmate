@@ -9,8 +9,9 @@ import {
   ImageBackground,
 } from 'react-native';
 import {colors} from '../../../colors';
+import { localizationText } from '../../../utils/common';
 
-const EnterpriseDriverNotAvailable = ({route,navigation}) => {
+const EnterpriseDriverNotAvailable = ({route, navigation}) => {
   const params = route.params;
 
   return (
@@ -25,9 +26,11 @@ const EnterpriseDriverNotAvailable = ({route,navigation}) => {
             style={styles.loaderMap}
             source={require('../../../image/Driver-Not-Found.png')}
           />
-          <Text style={styles.text}>Couldn’t find driver</Text>
+          <Text style={styles.text}>
+            {localizationText('Main', 'couldntFindDriver')}
+          </Text>
           <Text style={styles.subText}>
-            No drivers available in your area for now, please try again later
+            {localizationText('Main', 'couldntFindDriverDescription')}
           </Text>
         </View>
         <View style={{flexDirection: 'row', paddingVertical: 10}}>
@@ -36,16 +39,16 @@ const EnterpriseDriverNotAvailable = ({route,navigation}) => {
             onPress={() => {
               navigation.navigate('EnterpriseBottomNav');
             }}>
-            <Text style={styles.cancelRequest}>Go Home</Text>
+            <Text style={styles.cancelRequest}>{localizationText('Common', 'goHome')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.requestTouch}
             onPress={() => {
-              navigation.navigate('EnterpriseLookingForDriver',{
-                cancellable:params?.cancellable
+              navigation.navigate('EnterpriseLookingForDriver', {
+                cancellable: params?.cancellable,
               });
             }}>
-            <Text style={styles.cancelRequest}>Try Again</Text>
+            <Text style={styles.cancelRequest}>{localizationText('Common', 'tryAgain')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -14,21 +14,29 @@ import {colors} from '../../colors';
 import SwipeButton from 'rn-swipe-button';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import StopShift from '../../image/stop-25.png';
+import { localizationText, utcLocal } from '../../utils/common';
+import { useLoader } from '../../utils/loaderContext';
+import moment from 'moment';
+import { updateShiftOrderStatus } from '../../data_manager';
+import { useUserDetails } from '../commonComponent/StoreContext';
 
-const DeliveryboyShiftStarted = ({navigation}) => {
+const DeliveryboyShiftStarted = ({navigation,route}) => {
   const [disableCBButton, setDisableCBButton] = useState(false);
   const defaultStatusMessage = 'Swipe to accept the request';
   const [swipeStatusMessage, setSwipeStatusMessage] =
     useState(defaultStatusMessage);
   const [forceResetLastButton, setForceResetLastButton] = useState(null);
+  const orderDetails =  route?.params?.orderItem
+  const {setLoading} = useLoader();
+  const {saveUserDetails,userDetails} = useUserDetails();
 
-  useEffect(() => {
+ /* useEffect(() => {
     const interval = setInterval(
       () => setSwipeStatusMessage(defaultStatusMessage),
       5000,
     );
     return () => clearInterval(interval);
-  }, [defaultStatusMessage]);
+  }, [defaultStatusMessage]);*/
 
   const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
   const [startTimerChange, setStartTimerChange] = useState(true);
@@ -36,11 +44,39 @@ const DeliveryboyShiftStarted = ({navigation}) => {
     hours: 0,
     minutes: 0,
     seconds: 0,
-    centiseconds: 0,
   });
 
+  const [time, setTime] = useState(0);
+  const companyDeliveryRequests = localizationText('Common', 'companyDeliveryRequests') || 'Company Delivery Requests';
+  const noPendingDelivery = localizationText('Common', 'noPendingDelivery') || 'No Pending Delivery';
+  const noOrdersDescription = localizationText('Common', 'noOrdersDescription') || 'No Orders Description';
+  const swipeToEndShift = localizationText('Common', 'swipeToEndShift') || 'Swipe to end shift';
+  const shiftElapsedTime = localizationText('Common', 'shiftElapsedTime') || 'Shift elapsed time';
+
+  useEffect(() => {
+   /*  const intervalId = setInterval(() => {
+       setTime(time+1);
+       console.log('prevTime ===',time)
+     }
+  , 1000)*/
+  });
+
+  //   return () => clearInterval(intervalId); // Cleanup interval on component unmount
+   
+
+  const formatTime = (timer) => {
+    // const hours = Math.floor(timer / 3600);
+    // const minutes = Math.floor((timer % 3600) / 60);
+    // const seconds = timer % 60;
+    console.log("timer----------------------------", timer);
+    // return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    console.log("orderDetails.slots[0]----------------------------", orderDetails.slots[0]);
+    return getTotalHoursForOneSlot(orderDetails.slots[0].shift_started_on,new Date())
+  };
+
+
   const runTimer = useCallback(() => {
-    const interval = setInterval(() => {
+    /*const interval = setInterval(() => {
       setTimer(prevTimer => {
         const newCentiseconds = prevTimer.centiseconds + 1;
         if (newCentiseconds === 100) {
@@ -79,8 +115,16 @@ const DeliveryboyShiftStarted = ({navigation}) => {
         }
       });
     }, 10);
+  */
+    const intervalId = setInterval(() => {
+      //setTime(time+1);
+      //console.log('prevTime ===',time)
+    }, 1000);
 
-    return () => clearInterval(interval);
+   return () => {
+      clearInterval(intervalId)
+      //clearInterval(interval)
+    };
   }, []);
 
   useEffect(() => {
@@ -89,6 +133,64 @@ const DeliveryboyShiftStarted = ({navigation}) => {
       return cleanup;
     }
   }, [startTimerChange]);
+  const checkStartAction=()=>{
+    const slots = orderDetails.slots
+    const todayDate = moment(new Date()).format('DD/MM/YYYY')
+    console.log('todayDate  =====>',todayDate)
+
+    const todayList = slots.filter(slot=>moment(utcLocal(slot.slot_date)).format('DD/MM/YYYY') === todayDate)
+
+    const getSlot = todayList.length > 0 ? todayList[0] : null
+    return getSlot
+  }
+
+  const getTotalHoursForOneSlot=(from_time,current_time)=>{
+    if(!from_time){
+      from_time = new Date()
+    }
+    const start = moment(from_time);
+    const end = moment(current_time);
+    const diffMinutes = end.diff(start, 'minutes');
+    const diffSeconds = end.diff(start, 'seconds');
+    const totalHours = Math.floor(diffMinutes / 60).toString().padStart(2, '0');
+    const remainingMinutes = (diffMinutes % 60).toString().padStart(2, '0');
+    const remainingSeconds = (diffSeconds % 60).toString().padStart(2, '0');
+    return isNanCheck(totalHours) + ':' + isNanCheck(remainingMinutes) + ':' + isNanCheck(remainingSeconds);
+}
+const isNanCheck = (content) => {
+  return isNaN(content)? "00" : content;
+}
+
+const createShiftOrder = userDetails.createShiftOrder
+const startTime = createShiftOrder?.start_time ? new Date(createShiftOrder?.start_time):null
+  const endCreateShiftOrder=()=>{
+   // if(checkStartAction() && startTime){
+      setLoading(true);
+      updateShiftOrderStatus(
+        {
+          "order_number" : orderDetails.order_number,
+          "status" : "End",
+          "slot_id" : checkStartAction().id,
+          "total_duration_text" : getTotalHoursForOneSlot(startTime,new Date())
+        },
+        successRes=>{
+          saveUserDetails({...userDetails,createShiftOrder:null});
+
+          setLoading(false);
+          navigation.navigate('DeliveryboyMainShiftDetails',{orderItem:orderDetails});
+          console.log('successRes  =====>',successRes)
+        },
+        errorRes=>{
+          setLoading(false);
+          console.log('errorRes  =====>',errorRes)
+        }
+      )
+   // }
+
+  }
+  const swipeStatus=(content)=>{
+    console.log("Swipe End block----------------------->", content);
+  }
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -99,19 +201,20 @@ const DeliveryboyShiftStarted = ({navigation}) => {
               styles.timerText,
               {fontFamily: 'monospace', width: '100%'},
             ]}>
-            {`${timer.hours.toString().padStart(2, '0')}:${timer.minutes
+            {/* {`${timer.hours.toString().padStart(2, '0')}:${timer.minutes
               .toString()
               .padStart(2, '0')}:${timer.seconds
               .toString()
               .padStart(2, '0')}:${timer.centiseconds
               .toString()
-              .padStart(2, '0')}`}
+              .padStart(2, '0')}`} */}
+              {formatTime(orderDetails.slots[0].shift_started_on)}
           </Text>
-          <Text style={styles.elapsedTime}>Shift elapsed time</Text>
+          <Text style={styles.elapsedTime}>{shiftElapsedTime}</Text>
         </View>
 
         <Text style={styles.deliveryRequestStatus}>
-          Company delivery requests (0)
+          {companyDeliveryRequests} (0)
         </Text>
       </View>
       <View style={styles.scrollViewContainer}>
@@ -121,9 +224,9 @@ const DeliveryboyShiftStarted = ({navigation}) => {
               style={styles.loaderMap}
               source={require('../../image/undraw_no_data.png')}
             />
-            <Text style={styles.text}>No pending delivery</Text>
+            <Text style={styles.text}>{noPendingDelivery}</Text>
             <Text style={styles.subText}>
-              If there is any active order, it will be shown here..
+              {noOrdersDescription}
             </Text>
           </View>
         </View>
@@ -134,22 +237,22 @@ const DeliveryboyShiftStarted = ({navigation}) => {
         <SafeAreaView>
           <View style={styles.container}>
             <Text style={styles.swipeInfo}>
-              If you are at company’s location and ready to start the shift,
-              please swipe below!
+              {localizationText('Main', 'shiftSwipeEndDescription')}
             </Text>
-            <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
             <SwipeButton
               onSwipeFail={() => {
                 updateSwipeStatusMessage('Incomplete swipe!');
-                setStartTimerChange(true);
+                //setStartTimerChange(true);
               }}
               onSwipeStart={() => {
-                updateSwipeStatusMessage('Swipe started!');
-                setStartTimerChange(false);
+                //updateSwipeStatusMessage('Swipe started!');
+                //setStartTimerChange(false);
+                swipeStatus("Start");
               }}
               onSwipeSuccess={() => {
-                updateSwipeStatusMessage('Request rejected');
-                navigation.navigate('DeliveryboyShiftStaredRequest');
+                //updateSwipeStatusMessage('Request rejected');
+                swipeStatus("End");
+                endCreateShiftOrder();
               }}
               thumbIconImageSource={StopShift}
               railBackgroundColor="#BA1A1A0A"
@@ -162,7 +265,7 @@ const DeliveryboyShiftStarted = ({navigation}) => {
               thumbIconWidth={50}
               title={
                 <View style={styles.swipeTitleComp}>
-                  <Text>Swipe to end shift</Text>
+                  <Text style={{color: colors.text}}>{swipeToEndShift}</Text>
                   <AntDesign
                     name="doubleright"
                     size={18}

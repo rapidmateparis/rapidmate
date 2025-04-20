@@ -25,6 +25,7 @@ const EnterpriesSelectCompanyLocation = ({route, navigation}) => {
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
 
   useEffect(() => {
+    setLoading(true)
     getEnterpriseBranch(
       userDetails.userDetails[0].ext_id,
       successResponse => {

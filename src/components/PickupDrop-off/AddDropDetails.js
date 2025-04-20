@@ -14,6 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {uploadDocumentsApi} from '../../data_manager';
@@ -36,48 +37,79 @@ const AddDropDetails = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
+  const [errors, setErrors] = useState({});
   const {setLoading} = useLoader();
   const params = route.params.props;
-  const  component = route?.params?.component ? route?.params?.component : '';
+  const component = route?.params?.component ? route?.params?.component : '';
 
   const data = [
     {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 
-
   const validateForm = () => {
-    if (
-      !name ||
-      !lastname ||
-      !email ||
-      !number ||
-      !dropdownValue ||
-      !dropNotes
-    ) {
-      Alert.alert('Validation Error', 'Please fill all the required fields.');
-      return false;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\+?\d{10,15}$/;
+
+    let errors = {};
+    if (!name.trim()) {
+      errors.name = 'First name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
     }
-    return true;
+   
+  if (lastname && !/^[A-Za-z\s]+$/.test(lastname)) {
+    errors.name = 'Last name should contain letters only';
+  }
+
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    }else if (!/^\d+$/.test(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
+    }
+
+    if (!dropdownValue) {
+      errors.dropdownValue = 'Please select country';
+    }
+    if (!dropNotes.trim()) {
+      errors.dropNotes = 'Drop note is required';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
   };
 
-  const handleNextPress =()=>{
-    if(!validateForm()) return 
-    const includeDropDetails = {...params,
-      drop_details:{
+  const handleNextPress = () => {
+    if (!validateForm()) return;
+    const includeDropDetails = {
+      ...params,
+      drop_details: {
         drop_first_name: name,
         drop_last_name: lastname,
         drop_mobile: number,
         drop_notes: dropNotes,
         drop_email: email,
         drop_company_name: company,
-      }
+      },
+    };
+    if (component === 'ENTERPRISE') {
+      navigation.navigate('EnterprisePickupOrderPriview', {
+        props: includeDropDetails,
+      });
+    } else {
+      navigation.navigate('PickupOrderPreview', {props: includeDropDetails});
     }
-    if(component === 'ENTERPRISE'){
-      navigation.navigate('EnterprisePickupOrderPriview',  {props: includeDropDetails});
-      }else{
-        navigation.navigate('PickupOrderPreview', {props: includeDropDetails});
-      }  }
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
@@ -85,49 +117,67 @@ const AddDropDetails = ({route, navigation}) => {
         <View style={styles.logFormView}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
-              <Text style={styles.textlable}>First name*</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'firstName')}*
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                maxLength={15}
+                placeholder={localizationText('Common', 'typeHere')}
                 value={name}
                 onChangeText={text => setName(text)}
               />
             </View>
 
             <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>Last name*</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'lastName')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                maxLength={15}
+                placeholder={localizationText('Common', 'typeHere')}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
             </View>
           </View>
+          {errors.name ? (
+            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+          ) : null}
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Company</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'companyName')}
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={company}
               onChangeText={text => setCompany(text)}
             />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Email*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'email')}*
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={email}
               onChangeText={text => setEmail(text)}
             />
           </View>
+          {errors.email ? (
+            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+          ) : null}
           <View>
-            <Text style={styles.textlable}>Phone number*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'phoneNumber')}*
+            </Text>
             <View style={styles.mobileNumberInput}>
               <View style={{width: 95}}>
                 <View style={styles.containerDropdown}>
@@ -173,23 +223,33 @@ const AddDropDetails = ({route, navigation}) => {
               />
             </View>
           </View>
+          {errors.number ? (
+            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+          ) : null}
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Drop notes*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'dropNotes')}*
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
-              numberOfLines={4} 
+              numberOfLines={4}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               textAlignVertical="top"
               value={dropNotes}
               onChangeText={text => setDropNotes(text)}
             />
           </View>
+          {errors.dropNotes ? (
+            <Text style={[{color: 'red'}]}>{errors.dropNotes}</Text>
+          ) : null}
           <TouchableOpacity
             onPress={() => handleNextPress()}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'next')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

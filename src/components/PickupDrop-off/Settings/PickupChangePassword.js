@@ -13,7 +13,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {changeUserPassword} from '../../../data_manager';
-import { useLoader } from '../../../utils/loaderContext';
+import {useLoader} from '../../../utils/loaderContext';
+import {localizationText} from '../../../utils/common';
 
 const PickupChangePassword = ({navigation}) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -40,16 +41,14 @@ const PickupChangePassword = ({navigation}) => {
       Alert.alert('Error', 'Password fill the required password fields.', [
         {
           text: 'OK',
-          onPress: () => {
-          },
+          onPress: () => {},
         },
       ]);
-    } else if (newPassword != confirmNewPassword){
+    } else if (newPassword != confirmNewPassword) {
       Alert.alert('Error', 'Passwords do not match.', [
         {
           text: 'OK',
-          onPress: () => {
-          },
+          onPress: () => {},
         },
       ]);
     } else {
@@ -90,7 +89,7 @@ const PickupChangePassword = ({navigation}) => {
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
         <Text style={styles.subtitle}>
-          Before setting up a new password, please confirm your current password
+          {localizationText('Main', 'changePasswordDescription')}
         </Text>
         <View>
           <View style={styles.inputContainer}>
@@ -99,6 +98,7 @@ const PickupChangePassword = ({navigation}) => {
               style={styles.input}
               placeholder="Current Password"
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!currentPasswordVisible}
               value={currentPassword}
               onChangeText={text => setCurrentPassword(text)}
@@ -116,13 +116,14 @@ const PickupChangePassword = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('PasswordRecovery')}
             style={styles.forgotPasswordLink}>
-            <Text style={styles.forgotText}>Forgot your password?</Text>
+            <Text style={styles.forgotText}>
+              {localizationText('Common', 'passwordForgot')}
+            </Text>
           </TouchableOpacity>
 
           <View>
             <Text style={styles.subtitle}>
-              Use at least 12 characters, mixing uppercase, lowercase, numbers,
-              and symbols.
+              {localizationText('Main', 'newPasswordSetupDescription')}
             </Text>
           </View>
 
@@ -130,8 +131,9 @@ const PickupChangePassword = ({navigation}) => {
             <AntDesign name="lock" size={20} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="New Password"
+              placeholder={localizationText('Common', 'newPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!newPasswordVisible}
               value={newPassword}
               onChangeText={text => setNewPassword(text)}
@@ -149,8 +151,9 @@ const PickupChangePassword = ({navigation}) => {
             <AntDesign name="lock" size={20} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Confirm New Password"
+              placeholder={localizationText('Common', 'confirmNewPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmNewPassword}
               onChangeText={text => setConfirmNewPassword(text)}
@@ -167,7 +170,7 @@ const PickupChangePassword = ({navigation}) => {
           <TouchableOpacity
             style={[styles.button, {backgroundColor: colors.primary}]}
             onPress={handleResetPassword}>
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.buttonText}>{localizationText('Common', 'submit')}</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -28,6 +28,7 @@ import {
   deleteAddressBookforEnterprise,
 } from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
+import { localizationText } from '../../../utils/common';
 
 const AddressBook = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -109,6 +110,7 @@ const AddressBook = ({route, navigation}) => {
         createConsumerAddressBook(
           consumerParams,
           successResponse => {
+            setLoading(false);
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
                 {
@@ -120,7 +122,7 @@ const AddressBook = ({route, navigation}) => {
                 },
               ]);
               toggleModal(0);
-              setLoading(false);
+             
             }
           },
           errorResponse => {
@@ -140,6 +142,7 @@ const AddressBook = ({route, navigation}) => {
         createDeliveryBoyAddressBook(
           deliveryBoyParams,
           successResponse => {
+            setLoading(false);
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
                 {
@@ -151,7 +154,7 @@ const AddressBook = ({route, navigation}) => {
                 },
               ]);
               toggleModal(0);
-              setLoading(false);
+             
             }
           },
           errorResponse => {
@@ -170,6 +173,7 @@ const AddressBook = ({route, navigation}) => {
         createEnterpriseAddressBook(
           enterpriseParams,
           successResponse => {
+            setLoading(false);
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
                 {
@@ -181,7 +185,7 @@ const AddressBook = ({route, navigation}) => {
                 },
               ]);
               toggleModal(0);
-              setLoading(false);
+              
             }
           },
           errorResponse => {
@@ -203,6 +207,7 @@ const AddressBook = ({route, navigation}) => {
         updateAddressBookforConsumer(
           consumerParams,
           successResponse => {
+            setLoading(false);
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
                 {
@@ -214,7 +219,7 @@ const AddressBook = ({route, navigation}) => {
                 },
               ]);
               toggleModal(0);
-              setLoading(false);
+             
             }
           },
           errorResponse => {
@@ -233,6 +238,7 @@ const AddressBook = ({route, navigation}) => {
         updateAddressBookforDeliveryBoy(
           deliveryBoyParams,
           successResponse => {
+            setLoading(false);
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address added successfully', [
                 {
@@ -244,7 +250,7 @@ const AddressBook = ({route, navigation}) => {
                 },
               ]);
               toggleModal(0);
-              setLoading(false);
+             
             }
           },
           errorResponse => {
@@ -264,6 +270,7 @@ const AddressBook = ({route, navigation}) => {
         updateAddressBookforEnterprise(
           enterpriseParams,
           successResponse => {
+            setLoading(false);
             if (successResponse[0]._success) {
               Alert.alert('Success', 'Address updated successfully', [
                 {
@@ -275,7 +282,7 @@ const AddressBook = ({route, navigation}) => {
                 },
               ]);
               toggleModal(0);
-              setLoading(false);
+              
             }
           },
           errorResponse => {
@@ -300,6 +307,7 @@ const AddressBook = ({route, navigation}) => {
       deleteAddressBookforConsumer(
         consumerParams,
         successResponse => {
+          setLoading(false);
           if (successResponse[0]._success) {
             Alert.alert('Success', successResponse[0]._response, [
               {
@@ -311,7 +319,7 @@ const AddressBook = ({route, navigation}) => {
               },
             ]);
             toggleModal(0);
-            setLoading(false);
+           
           }
         },
         errorResponse => {
@@ -330,6 +338,7 @@ const AddressBook = ({route, navigation}) => {
       deleteAddressBookforDeliveryBoy(
         deliveryBoyParams,
         successResponse => {
+          setLoading(false);
           if (successResponse[0]._success) {
             Alert.alert('Success', successResponse[0]._response, [
               {
@@ -341,7 +350,7 @@ const AddressBook = ({route, navigation}) => {
               },
             ]);
             toggleModal(0);
-            setLoading(false);
+           
           }
         },
         errorResponse => {
@@ -359,6 +368,7 @@ const AddressBook = ({route, navigation}) => {
       deleteAddressBookforEnterprise(
         enterpriseParams,
         successResponse => {
+          setLoading(false);
           if (successResponse[0]._success) {
             Alert.alert('Success', successResponse[0]._response, [
               {
@@ -370,7 +380,7 @@ const AddressBook = ({route, navigation}) => {
               },
             ]);
             toggleModal(0);
-            setLoading(false);
+           
           }
         },
         errorResponse => {
@@ -424,7 +434,7 @@ const AddressBook = ({route, navigation}) => {
             fontSize: 16,
             color: colors.black,
           }}>
-          Address book
+         {localizationText('Common', 'addressBook')}
         </Text>
         <TouchableOpacity
           onPress={() => toggleModal(0)}

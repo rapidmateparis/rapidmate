@@ -4,6 +4,7 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {API} from '../../utils/constant';
+import { localizationText } from '../../utils/common';
 
 function DeliveryboyPackagePreviewModal({
   setImageModalVisible,
@@ -19,7 +20,7 @@ function DeliveryboyPackagePreviewModal({
       <Modal isVisible={isImageModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>View photo</Text>
+            <Text style={styles.headerTitle}>{localizationText('Common', 'viewPhoto')}</Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#fff" />
             </TouchableOpacity>

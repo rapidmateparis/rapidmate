@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const ChoosePhotoByCameraGallaryModal = ({
   visible,
@@ -35,21 +36,23 @@ const ChoosePhotoByCameraGallaryModal = ({
         onRequestClose={toggleModal}>
         <View
           style={{
-              height: '30%',
-              marginTop: 'auto',
-              backgroundColor: '#ffff',
-              borderWidth: 1,
-              borderTopRightRadius: 15,
-              borderTopLeftRadius: 15,
-              borderColor: '#ccc',
-            }}>
+            height: '30%',
+            marginTop: 'auto',
+            backgroundColor: '#ffff',
+            borderWidth: 1,
+            borderTopRightRadius: 15,
+            borderTopLeftRadius: 15,
+            borderColor: '#ccc',
+          }}>
           <View style={styles.headerView}>
             <View>
-              <Text style={styles.headerText}>Choose photo source</Text>
+              <Text style={styles.headerText}>
+                {localizationText('Common', 'choosePhotoSource')}
+              </Text>
             </View>
             <TouchableOpacity activeOpacity={0.5} onPress={toggleModal}>
               <View style={styles.closeIcon}>
-                <MaterialCommunityIcons name="close" color="#000" size={24} />
+                <MaterialCommunityIcons name="close" color="#000" size={22} />
               </View>
             </TouchableOpacity>
           </View>
@@ -60,9 +63,14 @@ const ChoosePhotoByCameraGallaryModal = ({
                 activeOpacity={0.5}
                 onPress={handleImageLibraryLaunch}>
                 <View style={styles.bodyIcon}>
-                  <Image style={styles.bodyIconCss} source={require('../../image/gallery.png')}/>
+                  <Image
+                    style={styles.bodyIconCss}
+                    source={require('../../image/gallery.png')}
+                  />
                 </View>
-                <Text style={[styles.iconText, {paddingLeft: 10,}]}>Photo gallery</Text>
+                <Text style={[styles.iconText, {paddingLeft: 10}]}>
+                  {localizationText('Common', 'photoGallery')}
+                </Text>
               </TouchableOpacity>
             </View>
             <View>
@@ -71,9 +79,14 @@ const ChoosePhotoByCameraGallaryModal = ({
                 onPress={handleCameraLaunch}>
                 <View style={styles.aligntexticonher}>
                   <View style={styles.bodyIcon}>
-                  <Image style={styles.bodyIconCss} source={require('../../image/camera.png')}/>
+                    <Image
+                      style={styles.bodyIconCss}
+                      source={require('../../image/camera.png')}
+                    />
                   </View>
-                  <Text style={styles.iconText}>Phone camera</Text>
+                  <Text style={styles.iconText}>
+                    {localizationText('Common', 'phoneCamera')}
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -88,7 +101,7 @@ const styles = StyleSheet.create({
   // ------------ camera modal css ----------------
   headerText: {
     color: colors.text,
-    fontSize: 17,
+    fontSize: 15,
     padding: 15,
     fontFamily: 'Montserrat-SemiBold',
     marginRight: 50,
@@ -121,9 +134,9 @@ const styles = StyleSheet.create({
   },
   iconText: {
     padding: 3,
-    fontSize: 14,
+    fontSize: 12,
     color: colors.text,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
   },
   aligntexticonher: {
     textAlign: 'center',

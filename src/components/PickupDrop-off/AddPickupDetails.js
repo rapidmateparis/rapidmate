@@ -17,6 +17,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {RadioButton, RadioGroup} from 'react-native-radio-buttons-group';
 import {useUserDetails} from '../commonComponent/StoreContext';
@@ -40,18 +41,21 @@ const AddPickupdetails = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
+  const [errors, setErrors] = useState({});
   const {setLoading} = useLoader();
+  const mySelfText = localizationText('Common', 'mySelf') || 'My Self';
+  const othersText = localizationText('Common', 'others') || 'Others';
 
   const radioButtons = useMemo(
     () => [
       {
         id: '1',
-        label: 'My Self',
+        label: mySelfText,
         value: 'self',
       },
       {
         id: '2',
-        label: 'Others',
+        label: othersText,
         value: 'others',
       },
     ],
@@ -95,7 +99,7 @@ const AddPickupdetails = ({route, navigation}) => {
           '' + errorResponse,
         );
         setLoading(false);
-        Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
+        Alert.alert('Error Alert', 'Server busy. Please try again!!!', [
           {text: 'OK', onPress: () => {}},
         ]);
       },
@@ -141,12 +145,11 @@ const AddPickupdetails = ({route, navigation}) => {
   };
 
   useEffect(() => {
+    console.log(userDetails);
+    let userDBData = userDetails?.userDetails[0];
+    console.log(userDBData);
     if (selectedId === '1') {
-      const updatedNumber = userDetails.userInfo.phone_number
-        ? userDetails.userInfo.phone_number.startsWith('+91')
-          ? userDetails.userInfo.phone_number.slice(3)
-          : userDetails.userInfo.phone_number
-        : null;
+      const updatedNumber = userDBData.phone ? userDBData.phone : null;
       setName(
         userDetails.userDetails[0].first_name
           ? userDetails.userDetails[0].first_name
@@ -168,19 +171,49 @@ const AddPickupdetails = ({route, navigation}) => {
   }, [selectedId]);
 
   const validateForm = () => {
-    if (
-      !name ||
-      !lastname ||
-      !email ||
-      !number ||
-      !dropdownValue ||
-      !orderid ||
-      !pickupNotes
-    ) {
-      Alert.alert('Validation Error', 'Please fill all the required fields.');
-      return false;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\+?\d{10,15}$/;
+
+    let errors = {};
+    if (!name.trim()) {
+      errors.name = 'First name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
+    }else if (!/^[A-Za-z\s]+$/.test(name)) {
+      console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
     }
-    return true;
+
+    if (lastname && !/^[A-Za-z\s]+$/.test(lastname)) {
+      errors.name = 'Last name should contain letters only';
+    }
+
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailPattern.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    }else if (!/^\d+$/.test(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
+    }
+    if (!dropdownValue) {
+      errors.dropdownValue = 'Please select country';
+    }
+    if (!orderid.trim()) {
+      errors.orderid = 'Package Id is required';
+    } else if (orderid.length < 8) {
+      errors.orderid = 'package Id must be at least 8 characters long';
+    }
+    if (!pickupNotes.trim()) {
+      errors.pickupNotes = 'Pickup note is required';
+    }
+    console.log(errors);
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
   };
 
   const handleNextPress = () => {
@@ -229,49 +262,70 @@ const AddPickupdetails = ({route, navigation}) => {
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
-              <Text style={styles.textlable}>First name*</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'firstName')}*
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                maxLength={15}
+                placeholder={localizationText('Common', 'typeHere')}
                 value={name}
                 onChangeText={text => setName(text)}
               />
             </View>
 
             <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>Last name*</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'lastName')}
+              </Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                maxLength={15}
+                placeholder={localizationText('Common', 'typeHere')}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
             </View>
           </View>
+          {errors.name ? (
+            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+          ) : null}
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Company</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'companyName')}
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={company}
               onChangeText={text => setCompany(text)}
             />
           </View>
+          {errors.company ? (
+            <Text style={[{color: 'red'}]}>{errors.company}</Text>
+          ) : null}
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Email*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'email')}*
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               value={email}
               onChangeText={text => setEmail(text)}
             />
           </View>
+          {errors.email ? (
+            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+          ) : null}
           <View>
-            <Text style={styles.textlable}>Phone number*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'phoneNumber')}*
+            </Text>
             <View style={styles.mobileNumberInput}>
               <View style={{width: 95}}>
                 <View style={styles.containerDropdown}>
@@ -311,14 +365,19 @@ const AddPickupdetails = ({route, navigation}) => {
                 placeholder="00 00 00 00 00)"
                 placeholderTextColor="#999"
                 keyboardType="numeric"
-                maxLength={11}
+                maxLength={10}
                 value={number}
                 onChangeText={text => setNumber(text)}
               />
             </View>
           </View>
+          {errors.number ? (
+            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+          ) : null}
           <TouchableOpacity onPress={toggleModal} style={{flex: 1}}>
-            <Text style={styles.textlable}>Package photo</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'packagePhoto')}
+            </Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
@@ -326,7 +385,9 @@ const AddPickupdetails = ({route, navigation}) => {
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text style={styles.packagePhoto}>Package photo</Text>
+              <Text style={styles.packagePhoto}>
+                {localizationText('Common', 'packagePhoto')}
+              </Text>
               <View style={styles.packagePhotoPath}>
                 <Text style={styles.packagePhotoText}>{photoFileName}</Text>
                 <MaterialCommunityIcons
@@ -341,34 +402,47 @@ const AddPickupdetails = ({route, navigation}) => {
             </View>
           </TouchableOpacity>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Package ID*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'packageId')}
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              maxLength={8}
+              placeholder={localizationText('Common', 'typeHere')}
               value={orderid}
               onChangeText={text => setOrderid(text)}
             />
           </View>
+          {errors.orderid ? (
+            <Text style={[{color: 'red'}]}>{errors.orderid}</Text>
+          ) : null}
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Pickup notes*</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'pickupNotes')}*
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
               numberOfLines={4}
               placeholderTextColor="#999"
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               textAlignVertical="top"
               value={pickupNotes}
               onChangeText={text => setPickupNotes(text)}
             />
           </View>
+          {errors.pickupNotes ? (
+            <Text style={[{color: 'red'}]}>{errors.pickupNotes}</Text>
+          ) : null}
           <TouchableOpacity
             onPress={() => {
               handleNextPress();
             }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'next')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

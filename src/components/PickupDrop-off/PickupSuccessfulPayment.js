@@ -10,6 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const PickupSuccessfulPayment = ({navigation}) => {
   return (
@@ -28,9 +29,11 @@ const PickupSuccessfulPayment = ({navigation}) => {
             style={styles.paymentSuccuss}
             source={require('../../image/Payment-Sucuss.png')}
           />
-          <Text style={styles.text}>Payment Successful!</Text>
+          <Text style={styles.text}>
+            {localizationText('Common', 'paymentSuccessful')}
+          </Text>
           <Text style={styles.subText}>
-          Your payment was successful, let’s look for a delivery boy now...
+            {localizationText('Common', 'paymentSuccessfulDescription')}
           </Text>
         </View>
       </View>
@@ -38,7 +41,9 @@ const PickupSuccessfulPayment = ({navigation}) => {
         <TouchableOpacity
           onPress={() => navigation.navigate('PickupUnsuccessfulPayment')}
           style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'continue')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

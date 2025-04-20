@@ -29,6 +29,12 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
+  const homeText = localizationText('BottomTabNav', 'home');
+  const chatText = localizationText('BottomTabNav', 'chat');
+  const requestsText = localizationText('BottomTabNav', 'requests');
+  const ordersText = localizationText('BottomTabNav', 'orders');
+  const accountText = localizationText('BottomTabNav', 'account');
+  const notifications = localizationText('Common', 'notifications');
 
   useEffect(() => {
     const onBackPress = () => {
@@ -174,7 +180,7 @@ const PickupBottomNav = ({navigation}) => {
         }}>
         <Bottom.Screen
           key="PickupHome"
-          name="Home"
+          name={homeText}
           component={PickupHome}
           options={{
             headerShown: false,
@@ -187,12 +193,12 @@ const PickupBottomNav = ({navigation}) => {
             ),
           }}
         />
-        <Bottom.Screen
+        {/* <Bottom.Screen
           key="Notifications"
-          name="Chat"
+          name={chatText}
           component={Notifications}
           options={{
-            headerTitle: 'Notifications',
+            headerTitle: notifications,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,
@@ -212,10 +218,10 @@ const PickupBottomNav = ({navigation}) => {
               />
             ),
           }}
-        />
+        /> */}
         <Bottom.Screen
           key="PickupAddress"
-          name="Requsts"
+          name={requestsText}
           component={PickupAddress}
           options={{
             headerShown: false,
@@ -230,7 +236,7 @@ const PickupBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="History"
-          name="Orders"
+          name={ordersText}
           component={History}
           options={{
             headerShown: false,
@@ -245,7 +251,7 @@ const PickupBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="Settings"
-          name="Account"
+          name={accountText}
           component={Settings}
           options={{
             headerTitle: `${localizationText('Common','settings')}`,

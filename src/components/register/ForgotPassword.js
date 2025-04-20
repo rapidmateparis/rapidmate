@@ -18,9 +18,10 @@ import {Dimensions} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import { useForgotPasswordDetails } from '../commonComponent/StoreContext';
-import { resetPasswordApi } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
+import {useForgotPasswordDetails} from '../commonComponent/StoreContext';
+import {resetPasswordApi} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const ForgotPassword = ({navigation}) => {
@@ -34,24 +35,30 @@ const ForgotPassword = ({navigation}) => {
     value,
     setValue,
   });
-  const { forgotPasswordDetails, saveForgotPasswordDetails } = useForgotPasswordDetails();
-  const { setLoading } = useLoader();
+  const {forgotPasswordDetails, saveForgotPasswordDetails} =
+    useForgotPasswordDetails();
+  const {setLoading} = useLoader();
 
-  const handleVerifyCode = async() => {
-    saveForgotPasswordDetails({...forgotPasswordDetails, code:value})
-    navigation.navigate('ResetPassword')
-  }
-  
+  const handleVerifyCode = async () => {
+    saveForgotPasswordDetails({...forgotPasswordDetails, code: value});
+    navigation.navigate('ResetPassword');
+  };
+
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
         <Text style={[styles.title, {color: colors.text}]}>
-          Forgot password
+          {localizationText('Common', 'forgotPassword')}
         </Text>
         <Text style={styles.subtitle}>
-          We have sent a 6 digit code to your email address{' '}
-          <Text style={{fontWeight: 'bold'}}>{forgotPasswordDetails.userName.replace(/(\w{3})[\w.-]+@([\w.]+\w)/, "$1***@$2")}</Text>,
-          please confirm the code below
+          {localizationText('Common', 'forgotPasswordTopDes')}{' '}
+          <Text style={{fontWeight: 'bold'}}>
+            {forgotPasswordDetails.userName.replace(
+              /(\w{3})[\w.-]+@([\w.]+\w)/,
+              '$1***@$2',
+            )}
+          </Text>
+          ,{localizationText('Common', 'forgotPasswordBottomDes')}
         </Text>
 
         <View style={styles.viewOtpEnter}>
@@ -114,11 +121,11 @@ const ForgotPassword = ({navigation}) => {
           <TouchableOpacity
             onPress={handleVerifyCode}
             style={[styles.button, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>{localizationText('Common', 'login')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.resendCodeText}>
-            <Text style={styles.codeSet}>Resend code</Text>
+            <Text style={styles.codeSet}>{localizationText('Common', 'resendCode')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -134,7 +141,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular', 
+    fontFamily: 'Montserrat-Regular',
     color: colors.text,
     width: '80%',
     marginBottom: 20,
@@ -149,7 +156,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Medium', 
+    fontFamily: 'Montserrat-Medium',
     color: colors.text,
   },
   inputCardContainer: {
