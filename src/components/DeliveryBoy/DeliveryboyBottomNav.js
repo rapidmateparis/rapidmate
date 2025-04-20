@@ -135,7 +135,7 @@ const DeliveryboyBottomNav = ({navigation}) => {
               setTimeout(() => {
                 stopNotificationSound();
                 setDeliveryBoyAcceptRejectModalModalVisible(false);
-              }, 30000);
+              }, 80000);
             }
           },
           errorResponse => {
