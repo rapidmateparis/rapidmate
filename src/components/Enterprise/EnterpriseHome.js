@@ -26,6 +26,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import {getEnterpriseDashboardInfo, getNotificationCount} from '../../data_manager';
 import {useFocusEffect} from '@react-navigation/native';
+import { localizationText, saveCurrentUserDetailsInStore } from '../../utils/common';
 const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
@@ -49,6 +50,9 @@ const EnterpriseHome = ({navigation}) => {
   const {setLoading} = useLoader();
   const [dashboardData, setDashboardData] = useState(null);
   const [bookingHour, setBookingHour] = useState(0);
+  const activeBookings = localizationText('Common', 'activeBookings') || 'Active Bookings';
+  const scheduledBookings = localizationText('Common', 'scheduledBookings') || 'Scheduled Bookings';
+  const allBookings = localizationText('Common', 'allBookings') || 'All Bookings';
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -181,6 +185,7 @@ const EnterpriseHome = ({navigation}) => {
           newUserDetails['notificationCount']=0
         }
         saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+        saveCurrentUserDetailsInStore(userDetails);
       },
       errorResponse => {
         setLoading(false);
@@ -196,7 +201,7 @@ const EnterpriseHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome{' '}
+              {localizationText('Common', 'welcome')}{' '}
               <Text style={styles.userName}>
                 {userDetails.userDetails[0].first_name +
                   ' ' +
@@ -204,7 +209,7 @@ const EnterpriseHome = ({navigation}) => {
               </Text>
             </Text>
             <Text style={styles.aboutPage}>
-              This is your Rapidmate enterprise dashboard!
+            {localizationText('Main', 'consumerWelcomeDescription')}
             </Text>
           </View>
           <TouchableOpacity
@@ -224,7 +229,7 @@ const EnterpriseHome = ({navigation}) => {
         <View style={styles.allInformatinCard}>
           <View style={styles.informatinMainCard}>
             <View style={styles.informatinCard}>
-              <Text style={styles.informationText}>Active bookings</Text>
+              <Text style={styles.informationText}>{localizationText('Common', 'activeBookings')}</Text>
               <TouchableOpacity>
                 <Image source={require('../../image/Info-Cricle.png')} />
               </TouchableOpacity>
@@ -240,7 +245,7 @@ const EnterpriseHome = ({navigation}) => {
 
           <View style={styles.informatinMainCard}>
             <View style={styles.informatinCard}>
-              <Text style={styles.informationText}>Scheduled bookings</Text>
+              <Text style={styles.informationText}>{localizationText('Common', 'scheduledBookings')}</Text>
               <TouchableOpacity>
                 <Image source={require('../../image/Info-Cricle.png')} />
               </TouchableOpacity>
@@ -257,7 +262,7 @@ const EnterpriseHome = ({navigation}) => {
           <View style={styles.informatinMainCard}>
             <View style={styles.informatinCard}>
               <Text style={[styles.informationText, {paddingRight: 22}]}>
-                All bookings
+              {localizationText('Common', 'allBookings')}
               </Text>
               <TouchableOpacity>
                 <Image source={require('../../image/Info-Cricle.png')} />
@@ -276,7 +281,7 @@ const EnterpriseHome = ({navigation}) => {
       </View>
       <View style={styles.barChartCard}>
         <View style={styles.hoursInfoCard}>
-          <Text style={styles.hoursBooked}>Booking Overview</Text>
+          <Text style={styles.hoursBooked}>{localizationText('Common', 'bookingOverview')}</Text>
           <Text style={styles.hoursNumberCount}>{bookingHour}</Text>
         </View>
         <View style={styles.dropdownCard}>
@@ -347,10 +352,10 @@ const EnterpriseHome = ({navigation}) => {
       </View>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         <View style={styles.recentlyInfo}>
-          <Text style={styles.deliveryRecently}>Company locations</Text>
+          <Text style={styles.deliveryRecently}>{localizationText('Common', 'companyLocations')}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('EnterpriseCompanyLocations',{branches:dashboardData?.branchOverviewData?.length > 0 ? dashboardData?.branchOverviewData : []})}>
-            <Text style={styles.seAllText}>See All</Text>
+            <Text style={styles.seAllText}>{localizationText('Common', 'seeAll')}</Text>
           </TouchableOpacity>
         </View>
         {dashboardData?.branchOverviewData?.length > 0 && dashboardData?.branchOverviewData.map((item, index) => {

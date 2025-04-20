@@ -39,6 +39,7 @@ import SemiTruckImage from '../../image/Semi-Truck.png';
 import BigTruckImage from '../../image/Big-Package.png';
 import {API} from '../../utils/constant';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import {localizationText} from '../../utils/common';
 
 const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   const [delivered, setDelivered] = useState(false);
@@ -53,6 +54,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
   );
   const {userDetails} = useUserDetails();
   const [isOTP, setIsOTP] = useState();
+  const orderClosedEarned =
+    localizationText('Common', 'orderClosedEarned') ||
+    'This order is closed, you earned';
 
   console.log('order', order);
 
@@ -107,7 +111,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
         params,
         successResponse => {
           const data = successResponse[0]._response.next_action_status;
-          Alert.alert('Success', 'Delivered OPT verified successfully', [
+          Alert.alert('Success', 'Delivered OTP verified successfully', [
             {
               text: 'OK',
               onPress: () => {
@@ -287,6 +291,17 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     });
   };
 
+  const openInGoogleMaps = location => {
+    if (location) {
+      const {address, city, state} = location;
+      const formattedAddress = encodeURIComponent(
+        `${address}, ${city}, ${state}`,
+      );
+      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${formattedAddress}`;
+      Linking.openURL(googleMapsUrl);
+    }
+  };
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -299,10 +314,15 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
-              <Text style={styles.dropInfo}>Pickup information</Text>
+              <Text style={styles.dropInfo}>
+                {localizationText('Main', 'pickupInformation')}
+              </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('TrackDelivery')}>
-                <Image source={require('../../image/Track-Icon.png')} />
+                onPress={() => openInGoogleMaps(pickUpLocation)}>
+                <Image
+                  style={styles.startIcon}
+                  source={require('../../image/Start-Icon.png')}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
@@ -311,20 +331,33 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   {order.order
                     ? order.order.company_name
                       ? order.order.company_name
-                      : 'Company Name'
+                      : ''
                     : ''}
                 </Text>
-                { pickUpLocation ? <Text style={styles.dropInfo}>
-                  {pickUpLocation?.address || ''}{', '}{pickUpLocation?.city || ''}{', '}{pickUpLocation?.state || ''}
-                 
+                {pickUpLocation ? (
+                  <Text style={styles.dropInfo}>
+                    {pickUpLocation?.address || ''}
+                    {', '}
+                    {pickUpLocation?.city || ''}
+                    {', '}
+                    {pickUpLocation?.state || ''}
+                  </Text>
+                ) : order?.pickup_location_id ? null : null}
+                <Text style={styles.dropInfo}>
+                  {order.order ? order.order.pickup_notes : ''}
                 </Text>
-               : order?.pickup_location_id ?
-                    null
-               :null
-              }
               </View>
               <View style={styles.contactInfoIcons}>
-                <TouchableOpacity style={{marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 10}}
+                  onPress={() => {
+                    const phoneNumber =
+                      order?.order?.is_my_self === 1
+                        ? order?.order?.consumer_mobile
+                        : order?.order?.mobile;
+
+                    Linking.openURL(`sms:${phoneNumber}`);
+                  }}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -352,12 +385,17 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.borderShowOff} /> */}
 
             <View style={styles.packageBasicInfo}>
-              <Text style={styles.headingOTP}>When?</Text>
+              <Text style={styles.headingOTP}>
+                {localizationText('Common', 'when')}
+              </Text>
               <Text style={styles.subheadingOTP}>
                 {order.order
-                  ? moment(order.order.order_date).format(
-                      'MMM DD, YYYY hh:mm A',
-                    )
+                  ? moment().diff(moment(order.order.order_date), 'minutes') <=
+                    30
+                    ? 'Now'
+                    : moment(order.order.order_date).format(
+                        'MMM DD, YYYY hh:mm A',
+                      )
                   : ''}
               </Text>
             </View>
@@ -365,43 +403,36 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             <View style={styles.borderShowOff} />
 
             <View style={styles.packageBasicInfo}>
-              <Text style={styles.headingOTP}>Package photo</Text>
+              <Text style={styles.headingOTP}>
+                {localizationText('Common', 'packagePhoto')}
+              </Text>
               <TouchableOpacity onPress={() => toggleModal()}>
-                {
-                order?.order?.package_photo ? 
+                {order?.order?.package_photo ? (
                   <View>
                     <TouchableOpacity onPress={() => toggleModal()}>
                       <Image
                         style={styles.packagePhoto}
                         source={{
-                          uri: order.order.package_photo,
+                          uri: API.viewImageUrl + order.order.package_photo,
                         }}
                       />
                     </TouchableOpacity>
                   </View>
-
-                :route.params.package_photo && (
-                  <View>
-                    <TouchableOpacity onPress={() => toggleModal()}>
-                      <Image
-                        style={styles.packagePhoto}
-                        source={{
-                          uri: API.viewImageUrl + route.params.package_photo,
-                        }}
-                      />
-                    </TouchableOpacity>
-                  </View>
+                ) : (
+                  route.params.package_photo && (
+                    <View>
+                      <TouchableOpacity onPress={() => toggleModal()}>
+                        <Image
+                          style={styles.packagePhoto}
+                          source={{
+                            uri: API.viewImageUrl + route.params.package_photo,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )
                 )}
               </TouchableOpacity>
-            </View>
-
-            <View style={styles.borderShowOff} />
-
-            <View>
-              <Text style={styles.headingOTP}>Pickup notes</Text>
-              <Text style={styles.dropInfo}>
-                {order.order ? order.order.pickup_notes : ''}
-              </Text>
             </View>
           </View>
         </View>
@@ -415,10 +446,15 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
           </View>
           <View style={{marginLeft: 5, width: '89%'}}>
             <View style={styles.pickupCardHeader}>
-              <Text style={styles.dropInfo}>Drop off information</Text>
+              <Text style={styles.dropInfo}>
+                {localizationText('Main', 'dropOffInformation')}
+              </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('TrackDelivery')}>
-                <Image source={require('../../image/Track-Icon.png')} />
+                onPress={() => openInGoogleMaps(dropOffLocation)}>
+                <Image
+                  style={styles.startIcon}
+                  source={require('../../image/Start-Icon.png')}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.companyInfosmain}>
@@ -427,15 +463,25 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   {order.order
                     ? order.order.drop_company_name
                       ? order.order.drop_company_name
-                      : 'Company Name'
+                      : ''
                     : ''}
                 </Text>
-                {dropOffLocation &&<Text style={styles.dropInfo}>
-                  {dropOffLocation?.address || ''}{dropOffLocation?.city || ''}{' '}{dropOffLocation?.state || ''}
-                </Text>}
+                {dropOffLocation && (
+                  <Text style={styles.dropInfo}>
+                    {dropOffLocation?.address || ''}
+                    {dropOffLocation?.city || ''} {dropOffLocation?.state || ''}
+                  </Text>
+                )}
+                <Text style={styles.dropInfo}>
+                  {order.order ? order.order.drop_notes : ''}
+                </Text>
               </View>
               <View style={styles.contactInfoIcons}>
-                <TouchableOpacity style={{marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 10}}
+                  onPress={() =>
+                    Linking.openURL(`sms:${order.order.drop_mobile}`)
+                  }>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -448,23 +494,27 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
         </View>
 
         <View style={styles.packageInformationCard}>
-          <Text style={styles.packageTitle}>Package information</Text>
+          <Text style={styles.packageTitle}>
+            {localizationText('Main', 'packageInformation')}
+          </Text>
           <Text style={styles.orderdetails}>
-            Order ID:
+            {localizationText('Common', 'orderID')}:
             <Text style={styles.detailsId}>
               {' '}
               {order.order ? order.order.order_number : '123456'}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
-            Vehicle:
+            {localizationText('Common', 'vehicle')}:
             <Text style={styles.detailsId}> {vehicleType.vehicle_type}</Text>
           </Text>
         </View>
 
         <View style={styles.vehicleCardInfo}>
           <View>
-            <Text style={styles.packageTitle}>Vehicle requested</Text>
+            <Text style={styles.packageTitle}>
+              {localizationText('Common', 'vehicleRequested')}
+            </Text>
             <Text style={styles.orderdetails}>{vehicleType.vehicle_type}</Text>
           </View>
           <View>
@@ -488,7 +538,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
               handleOrderRequest(true);
             }}
             style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Accept</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'accept')}
+            </Text>
           </TouchableOpacity>
           <View style={{width: '1%'}} />
           <TouchableOpacity
@@ -496,7 +548,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
               handleOrderRequest(false);
             }}
             style={[styles.acceptOrReject, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Reject</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'reject')}
+            </Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -510,7 +564,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                   updateStatus == 'Ready to pickup' ? '#D9D9D9' : '#FF0058'
                 }
               />
-              <Text style={styles.statusInfo}>Going to pickup</Text>
+              <Text style={styles.statusInfo}>
+                {localizationText('Common', 'goingToPickup')}
+              </Text>
             </View>
             <View style={styles.borderStyle} />
 
@@ -528,7 +584,9 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                     : '#FF0058'
                 }
               />
-              <Text style={styles.statusInfo}>Reached</Text>
+              <Text style={styles.statusInfo}>
+                {localizationText('Common', 'reached')}
+              </Text>
             </View>
             <View style={styles.borderStyle} />
 
@@ -538,17 +596,19 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                 size={15}
                 color={updateStatus == 'Completed' ? '#FF0058' : '#D9D9D9'}
               />
-              <Text style={styles.statusInfo}>Delivered</Text>
+              <Text style={styles.statusInfo}>
+                {localizationText('Common', 'delivered')}
+              </Text>
             </View>
           </View>
           <View style={styles.earningCard}>
             {updateStatus === 'Completed' && (
               <Text style={styles.boyEarning}>
-                This order is closed, you earned{' '}
+                {orderClosedEarned}{' '}
                 <Text style={styles.earnedMoney}>
                   €{' '}
                   {parseFloat(
-                    route.params.orderItem.delivery_boy_amount,
+                    route.params.orderItem?.delivery_boy_amount || 0,
                   ).toFixed(2)}
                 </Text>
               </Text>
@@ -606,8 +666,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: 3,
+    marginTop: 3,
   },
   companyInfo: {
     fontSize: 14,
@@ -805,6 +865,10 @@ const styles = StyleSheet.create({
   packageManager: {
     width: 30,
     height: 30,
+  },
+  startIcon: {
+    height: 23,
+    width: 60,
   },
 });
 

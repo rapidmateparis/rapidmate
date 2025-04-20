@@ -11,6 +11,7 @@ import {
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const EnterpriseScheduleNewDelivery = ({navigation}) => {
   return (
@@ -18,22 +19,40 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         <View>
           <View style={styles.scheduleboard}>
-            <Image style={{width: 212, height: 140,}} source={require('../../image/ScheduleNewDelivery.png')} />
+            <Image
+              style={{width: 212, height: 140}}
+              source={require('../../image/ScheduleNewDelivery.png')}
+            />
           </View>
           <View style={styles.schedulecard}>
-            <Text style={styles.scheduleTitle}>Create New Delivery</Text>
+            <Text style={styles.scheduleTitle}>
+              {localizationText('Main', 'createNewDelivery')}
+            </Text>
             <Text style={styles.scheduleSubTitle}>
-              Schedule for one time or for multiple hours
+              {localizationText('Main', 'createNewDeliveryDescription')}
             </Text>
           </View>
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation',{delivery_type_id:1})} style={styles.franchiseCard}>
-            <Image style={{width: 50, height: 30,}} source={require('../../image/ExpressPackage.png')} />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('EnterpriesSelectCompanyLocation', {
+                delivery_type_id: 1,
+              })
+            }
+            style={styles.franchiseCard}>
+            <Image
+              style={{width: 50, height: 30}}
+              source={require('../../image/ExpressPackage.png')}
+            />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>One time delivery</Text>
-              <Text style={styles.franchiseSubTitle}>Avail any service for fixed time and location</Text>
+              <Text style={styles.franchiseStreet}>
+                {localizationText('Main', 'oneTimeDelivery')}
+              </Text>
+              <Text style={styles.franchiseSubTitle}>
+                {localizationText('Main', 'oneTimeDeliveryDescription')}
+              </Text>
             </View>
             <View>
               <AntDesign name="arrowright" size={22} color="#000" />
@@ -42,11 +61,24 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation',{delivery_type_id:2})} style={styles.franchiseCard}>
-            <Image style={{width: 30, height: 30, marginLeft: 20,}} source={require('../../image/Big-Calender.png')} />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('EnterpriesSelectCompanyLocation', {
+                delivery_type_id: 2,
+              })
+            }
+            style={styles.franchiseCard}>
+            <Image
+              style={{width: 30, height: 30, marginLeft: 20}}
+              source={require('../../image/Big-Calender.png')}
+            />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>Multiple deliveries</Text>
-              <Text style={styles.franchiseSubTitle}>Repeat single delivery for multiple days</Text>
+              <Text style={styles.franchiseStreet}>
+                {localizationText('Main', 'multipleDeliveries')}
+              </Text>
+              <Text style={styles.franchiseSubTitle}>
+                {localizationText('Main', 'multipleDeliveriesDescription')}
+              </Text>
             </View>
             <View>
               <AntDesign name="arrowright" size={22} color="#000" />
@@ -55,18 +87,30 @@ const EnterpriseScheduleNewDelivery = ({navigation}) => {
         </View>
 
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('EnterpriesSelectCompanyLocation',{delivery_type_id:3})} style={styles.franchiseCard}>
-            <Image style={{width: 30, height: 30,marginLeft: 20,}} source={require('../../image/clanderSchdule.png')} />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('EnterpriesSelectCompanyLocation', {
+                delivery_type_id: 3,
+              })
+            }
+            style={styles.franchiseCard}>
+            <Image
+              style={{width: 30, height: 30, marginLeft: 20}}
+              source={require('../../image/clanderSchdule.png')}
+            />
             <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>Create shift</Text>
-              <Text style={styles.franchiseSubTitle}>Avail any service for a time slot with multiple hours</Text>
+              <Text style={styles.franchiseStreet}>
+                {localizationText('Main', 'createShift')}
+              </Text>
+              <Text style={styles.franchiseSubTitle}>
+                {localizationText('Main', 'createShiftDescription')}
+              </Text>
             </View>
             <View>
               <AntDesign name="arrowright" size={22} color="#000" />
             </View>
           </TouchableOpacity>
         </View>
-
       </View>
     </ScrollView>
   );

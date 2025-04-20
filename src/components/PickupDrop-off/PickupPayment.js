@@ -32,7 +32,8 @@ import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
 import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
 import {debounce} from 'lodash';
-import { localToUTC } from '../../utils/common';
+import {localizationText, localToUTC} from '../../utils/common';
+import moment from 'moment';
 
 const PickupPayment = ({route, navigation}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
@@ -44,7 +45,7 @@ const PickupPayment = ({route, navigation}) => {
   const [promoCode, setPromoCode] = useState('');
   const params = route.params.props;
   const [totalAmount, setTotalAmount] = useState(0);
-  console.log("dsgdhsgadghsagh", params.userDetails.number)
+  console.log('dsgdhsgadghsagh', params.userDetails.number);
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
   const [orderNumber, setOrderNumber] = useState(0);
@@ -55,42 +56,54 @@ const PickupPayment = ({route, navigation}) => {
     placePickUpOrder();
   };
 
-  const getTaxAmount = ()=>{
-    const amount =   typeof params.selectedVehiclePrice === 'number'
-      ? params.selectedVehiclePrice.toFixed(2)
-      : parseFloat(params.selectedVehiclePrice)
-    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
-     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
-     return taxAmount? taxAmount.toFixed(2): 0
-  }
+  const getTaxAmount = amount => {
+    const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
+    const totalDiscountAmount = amount - discount;
+    const taxAmount =
+      (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    return taxAmount ? taxAmount.toFixed(2) : 0.0;
+  };
 
+  const getDiscountAmount = amount => {
+    console.log('offerDiscount ------------', offerDiscount);
+    if (offerDiscount && parseFloat(offerDiscount) > 0) {
+      const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
+      const totalDiscountAmount = amount - discount;
+      return totalDiscountAmount ? '- ' + totalDiscountAmount.toFixed(2) : 0.0;
+    }
+    return 0.0;
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
+    const amount =
+      typeof params.selectedVehiclePrice === 'number'
+        ? params.selectedVehiclePrice.toFixed(2)
+        : parseFloat(params.selectedVehiclePrice);
+    const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
+    const totalDiscountAmount = amount - discount;
+    const taxAmount =
+      (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount;
+    console.log('totalAmount is ', totalAmount);
+    if (totalAmount) {
+      setTotalAmount(totalAmount.toFixed(2));
+      setPaymentAmount(totalAmount.toFixed(2));
+    }
+  }, [vechicleTax]);
 
-   const amount =   typeof params.selectedVehiclePrice === 'number'
-      ? params.selectedVehiclePrice.toFixed(2)
-      : parseFloat(params.selectedVehiclePrice)
-    console.log('amount is ',amount,'and vechile tax is ',vechicleTax)
-     const taxAmount =  (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
-     const total_Amount = parseFloat(amount)+taxAmount
-     if(total_Amount){
-      setTotalAmount(total_Amount.toFixed(2))
-      setPaymentAmount(total_Amount.toFixed(2))
-     }
-  },[vechicleTax])
-
-  function calculateFinalPrice(originalPrice, discountPercentage) {
-    console.log(originalPrice, discountPercentage);
-    const discount = (originalPrice * discountPercentage) / 100;
-    const finalPrice = originalPrice - discount;
-    console.log(finalPrice);
-    return finalPrice.toFixed(2);
+  function calculateFinalPrice(amount) {
+    const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
+    const totalDiscountAmount = amount - discount;
+    const taxAmount =
+      (parseFloat(totalDiscountAmount) * parseFloat(vechicleTax)) / 100;
+    const totalAmount = parseFloat(totalDiscountAmount) + taxAmount;
+    return totalAmount.toFixed(2);
   }
 
   useEffect(() => {
     {
       offerDiscount > 0 &&
-        setPaymentAmount(calculateFinalPrice(paymentAmount, offerDiscount));
+        setPaymentAmount(calculateFinalPrice(params.selectedVehiclePrice));
     }
   }, []);
 
@@ -102,17 +115,23 @@ const PickupPayment = ({route, navigation}) => {
 
   useEffect(() => {}, [orderResponse]);
   useEffect(() => {
-    getTaxDetails((success)=>{
-      if(success[0]._response[0].tax_value){
-        setVechicleTax(parseFloat(success[0]._response[0].tax_value))
-      }
-    },
-    (error)=>{
-      console.log('error ====== ===== ',error)
-    })
+    setLoading(true);
+    getTaxDetails(
+      success => {
+        setLoading(false);
+        if (success[0]._response[0].tax_value) {
+          setVechicleTax(parseFloat(success[0]._response[0].tax_value));
+        }
+      },
+      error => {
+        setLoading(false);
+        console.log('error ====== ===== ', error);
+      },
+    );
   }, []);
 
   const createPaymentIntent = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         'https://api.stripe.com/v1/payment_intents',
@@ -137,7 +156,10 @@ const PickupPayment = ({route, navigation}) => {
       setClientSecret(data.client_secret);
       setup(data.client_secret);
     } catch (error) {
+      setLoading(false);
       Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,10 +178,13 @@ const PickupPayment = ({route, navigation}) => {
 
   const checkout = async () => {
     const {error} = await presentPaymentSheet();
-    console.log('érror', error);
+    console.log('Error:', error);
+
     if (!error) {
       createPayment();
     } else {
+      setLoading(false);
+
       Alert.alert('Error Alert', error.message, [
         {
           text: 'Cancel',
@@ -170,18 +195,23 @@ const PickupPayment = ({route, navigation}) => {
           text: 'Go Home',
           onPress: () => {
             setLoading(true);
+
             let params = {
               order_number: orderNumber,
               status: 'Payment Failed',
             };
+
             console.log('params ===>', JSON.stringify(params));
 
             orderStatusUpdate(
               params,
               successResponse => {
-                setLoading(false);
                 console.log('message===>', JSON.stringify(successResponse));
-                navigation.navigate('PickupBottomNav')
+
+                setTimeout(() => {
+                  setLoading(false);
+                  navigation.navigate('PickupBottomNav');
+                }, 200);
               },
               errorResponse => {
                 setLoading(false);
@@ -194,93 +224,187 @@ const PickupPayment = ({route, navigation}) => {
     }
   };
 
+  const getCurrentDateAndTime = () => {
+    // return format like YYYY-MM-DD HH:mm:ss
+    const currentDate = new Date();
+    const date =
+      currentDate.getDate() > 9
+        ? currentDate.getDate()
+        : '0' + currentDate.getDate();
+    const month =
+      currentDate.getMonth() + 1 > 9
+        ? currentDate.getMonth() + 1
+        : '0' + currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
 
-  const getCurrentDateAndTime =()=>{ // return format like YYYY-MM-DD HH:mm:ss
-    const currentDate = new Date()
-    const date = currentDate.getDate() > 9 ? currentDate.getDate() :'0'+currentDate.getDate()
-    const month = currentDate.getMonth()+1  > 9 ? currentDate.getMonth()+1 :'0'+currentDate.getMonth()+1
-    const year = currentDate.getFullYear()
+    const hour =
+      currentDate.getHours() > 9
+        ? currentDate.getHours()
+        : '0' + currentDate.getHours();
+    const min =
+      currentDate.getMinutes() > 9
+        ? currentDate.getMinutes()
+        : '0' + currentDate.getMinutes();
+    const sec =
+      currentDate.getSeconds() > 9
+        ? currentDate.getSeconds()
+        : '0' + currentDate.getSeconds();
 
-    const hour = currentDate.getHours() > 9 ? currentDate.getHours() :'0'+currentDate.getHours()
-    const min = currentDate.getMinutes() > 9 ? currentDate.getMinutes() :'0'+currentDate.getMinutes()
-    const sec = currentDate.getSeconds() > 9 ? currentDate.getSeconds() :'0'+currentDate.getSeconds()
-
-    return `${year}-${month}-${date} ${hour}:${min}:${sec}`
-
-  }
+    return `${year}-${month}-${date} ${hour}:${min}:${sec}`;
+  };
 
   const placePickUpOrder = async () => {
-    if (userDetails.userDetails[0]) {
-      console.log('params.schedule_date_time', params.schedule_date_time);
-      if (params.serviceTypeId == 1) {
-        var scheduleParam = {schedule_date_time: localToUTC(params.schedule_date_time)};
-      }
-      let requestParams = {
-        consumer_ext_id: userDetails.userDetails[0].ext_id,
-        service_type_id: params.serviceTypeId,
-        vehicle_type_id: params.selectedVehicleDetails.id,
-        pickup_location_id: params.sourceLocationId
-          ? params.sourceLocationId
-          : 1,
-        dropoff_location_id: params.destinationLocationId
-          ? params.destinationLocationId
-          : 2,
-        distance: parseFloat(params.distanceTime.distance.toFixed(1)),
-        total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
-        total_amount: parseFloat(paymentAmount),
-        discount: offerDiscount,
-        pickup_notes: params.userDetails.pickupNotes,
-        mobile: params.userDetails.number,
-        company_name: params.userDetails.company,
-        ...scheduleParam,
-
-        drop_first_name: params.drop_details.drop_first_name,
-        drop_last_name: params.drop_details.drop_last_name,
-        drop_mobile: params.drop_details.drop_mobile,
-        drop_notes: params.drop_details.drop_notes,
-        drop_email: params.drop_details.drop_email,
-        drop_company_name: params.drop_details.drop_company_name,
-        // order_date: getCurrentDateAndTime()
-        order_date: localToUTC(),
-        package_photo: params.userDetails.package_photo,
-        tax_value:vechicleTax
-      };
-      
-
-      console.log('LOCAL to UTC ==:', localToUTC())      
-      if (promoCodeResponse) {
-        requestParams.promo_code = promoCodeResponse.promoCode;
-        requestParams.promo_value = promoCodeResponse.discount;
-        requestParams.order_amount = parseFloat(totalAmount);
-      }
-
-      setLoading(true);
-      createPickupOrder(
-        requestParams,
-        successResponse => {
-          if (successResponse[0]._success) {
-            console.log('placePickUpOrder', successResponse[0]._response);
-            savePlacedOrderDetails(successResponse[0]._response);
-            setOrderResponse(successResponse[0]._response);
-            setLoading(false);
-            setOrderNumber(successResponse[0]._response[0].order_number);
-          }
-          console.log("requestParams===",requestParams)
-        },
-        errorResponse => {
-          setLoading(false);
-          console.log('createPickupOrder==>errorResponse', errorResponse[0]);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
-    } else {
+    if (!userDetails?.userDetails?.[0]) {
       Alert.alert('Error Alert', 'Consumer extended ID missing', [
-        {text: 'OK', onPress: () => {}},
+        {text: 'OK'},
       ]);
+      return;
     }
+
+    console.log('params.schedule_date_time', params.schedule_date_time);
+
+    let scheduleParam = {};
+    if (params.serviceTypeId == 1) {
+      scheduleParam = {
+        schedule_date_time: localToUTC(
+          moment(params.schedule_date_time, 'YYYY-MM-DD hh:mm A').toDate(),
+        ),
+      };
+    }
+
+    let requestParams = {
+      consumer_ext_id: userDetails.userDetails[0].ext_id,
+      service_type_id: params.serviceTypeId,
+      vehicle_type_id: params.selectedVehicleDetails.id,
+      pickup_location_id: params.sourceLocationId || 1,
+      dropoff_location_id: params.destinationLocationId || 2,
+      distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+      total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
+      total_amount: parseFloat(paymentAmount),
+      order_amount: params.selectedVehiclePrice,
+      discount: offerDiscount,
+      pickup_notes: params.userDetails.pickupNotes,
+      mobile: params.userDetails.number,
+      company_name: params.userDetails.company,
+      ...scheduleParam,
+
+      drop_first_name: params.drop_details.drop_first_name,
+      drop_last_name: params.drop_details.drop_last_name,
+      drop_mobile: params.drop_details.drop_mobile,
+      drop_notes: params.drop_details.drop_notes,
+      drop_email: params.drop_details.drop_email,
+      drop_company_name: params.drop_details.drop_company_name,
+      order_date: localToUTC(),
+      package_photo: params.userDetails.package_photo,
+      tax_value: vechicleTax,
+    };
+
+    console.log('LOCAL to UTC ==:', localToUTC());
+
+    if (promoCodeResponse) {
+      requestParams.promo_code = promoCodeResponse.promoCode;
+      requestParams.promo_value = promoCodeResponse.discount;
+      requestParams.order_amount = parseFloat(totalAmount);
+    }
+
+    setLoading(true);
+
+    createPickupOrder(
+      requestParams,
+      successResponse => {
+        setLoading(false);
+        if (successResponse[0]._success) {
+          console.log('placePickUpOrder', successResponse[0]._response);
+          savePlacedOrderDetails(successResponse[0]._response);
+          setOrderResponse(successResponse[0]._response);
+          setOrderNumber(successResponse[0]._response[0].order_number);
+        }
+        console.log('requestParams===', requestParams);
+      },
+      errorResponse => {
+        console.log('createPickupOrder==>errorResponse', errorResponse[0]);
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK'},
+        ]);
+      },
+    );
   };
+
+  // const placePickUpOrder = async () => {
+  //   if (userDetails.userDetails[0]) {
+  //     console.log('params.schedule_date_time', params.schedule_date_time);
+  //     if (params.serviceTypeId == 1) {
+  //       var scheduleParam = {
+  //         schedule_date_time: localToUTC(moment(params.schedule_date_time, 'YYYY-MM-DD hh:mm A').toDate()),
+  //       };
+  //     }
+  //     let requestParams = {
+  //       consumer_ext_id: userDetails.userDetails[0].ext_id,
+  //       service_type_id: params.serviceTypeId,
+  //       vehicle_type_id: params.selectedVehicleDetails.id,
+  //       pickup_location_id: params.sourceLocationId
+  //         ? params.sourceLocationId
+  //         : 1,
+  //       dropoff_location_id: params.destinationLocationId
+  //         ? params.destinationLocationId
+  //         : 2,
+  //       distance: parseFloat(params.distanceTime.distance.toFixed(1)),
+  //       total_duration: parseFloat(params.distanceTime.time.toFixed(2)),
+  //       total_amount: parseFloat(paymentAmount),
+  //       order_amount : params.selectedVehiclePrice,
+  //       discount: offerDiscount,
+  //       pickup_notes: params.userDetails.pickupNotes,
+  //       mobile: params.userDetails.number,
+  //       company_name: params.userDetails.company,
+  //       ...scheduleParam,
+
+  //       drop_first_name: params.drop_details.drop_first_name,
+  //       drop_last_name: params.drop_details.drop_last_name,
+  //       drop_mobile: params.drop_details.drop_mobile,
+  //       drop_notes: params.drop_details.drop_notes,
+  //       drop_email: params.drop_details.drop_email,
+  //       drop_company_name: params.drop_details.drop_company_name,
+  //       // order_date: getCurrentDateAndTime()
+  //       order_date: localToUTC(),
+  //       package_photo: params.userDetails.package_photo,
+  //       tax_value: vechicleTax,
+  //     };
+
+  //     console.log('LOCAL to UTC ==:', localToUTC());
+  //     if (promoCodeResponse) {
+  //       requestParams.promo_code = promoCodeResponse.promoCode;
+  //       requestParams.promo_value = promoCodeResponse.discount;
+  //       requestParams.order_amount = parseFloat(totalAmount);
+  //     }
+
+  //     setLoading(true);
+  //     createPickupOrder(
+  //       requestParams,
+  //       successResponse => {
+  //         if (successResponse[0]._success) {
+  //           console.log('placePickUpOrder', successResponse[0]._response);
+  //           savePlacedOrderDetails(successResponse[0]._response);
+  //           setOrderResponse(successResponse[0]._response);
+  //           setLoading(false);
+  //           setOrderNumber(successResponse[0]._response[0].order_number);
+  //         }
+  //         console.log('requestParams===', requestParams);
+  //       },
+  //       errorResponse => {
+  //         setLoading(false);
+  //         console.log('createPickupOrder==>errorResponse', errorResponse[0]);
+  //         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+  //           {text: 'OK', onPress: () => {}},
+  //         ]);
+  //       },
+  //     );
+  //   } else {
+  //     Alert.alert('Error Alert', 'Consumer extended ID missing', [
+  //       {text: 'OK', onPress: () => {}},
+  //     ]);
+  //   }
+  // };
 
   const createPayment = async () => {
     let requestParams = {
@@ -293,13 +417,14 @@ const PickupPayment = ({route, navigation}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
-          navigation.navigate('PaymentSuccess',{
+          navigation.navigate('PaymentSuccess', {
             schedule_date_time: params.schedule_date_time,
-            serviceTypeId:params.serviceTypeId
+            serviceTypeId: params.serviceTypeId,
           });
         }
       },
       errorResponse => {
+        setLoading(false);
         Alert.alert('Error Alert', '' + errorResponse[0]._errors.message, [
           {
             text: 'OK',
@@ -311,6 +436,7 @@ const PickupPayment = ({route, navigation}) => {
               orderStatusUpdate(
                 params,
                 successResponse => {
+                  setLoading(false);
                   console.log('message===>', JSON.stringify(successResponse));
                 },
                 errorResponse => {
@@ -352,6 +478,14 @@ const PickupPayment = ({route, navigation}) => {
     );
   };
 
+  const formatAmount = amount => {
+    const num = isNaN(Number(amount)) ? 0 : Number(amount);
+    const [intPart, decimalPart = '00'] = num.toFixed(2).split('.');
+    const paddedInt = intPart.length === 1 ? `0${intPart}` : intPart;
+    return `${paddedInt}.${decimalPart}`;
+  };
+  
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -380,12 +514,14 @@ const PickupPayment = ({route, navigation}) => {
               />
             </View>
             <View>
-              <Text style={styles.vehicleName}>Order Summary</Text>
+              <Text style={styles.vehicleName}>
+                {localizationText('Common', 'orderSummary')}
+              </Text>
               <Text style={styles.vehicleCapacity}>
                 {params.selectedVehicle}{' '}
                 {params.selectedVehicleDetails.capacity}
               </Text>
-              <View style={styles.distanceTime}>
+              <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.vehicleCapacity, {marginRight: 10}]}>
                   {params.distanceTime.distance.toFixed(1)} Km
                 </Text>
@@ -395,41 +531,63 @@ const PickupPayment = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          <View style={[styles.distanceTime, {marginVertical: 3}]}>
-            <EvilIcons name="location" size={18} color="#606060" />
-            <Text style={styles.vehicleCapacity}>
-              From:{' '}
-              {params.sourceLocation.sourceDescription
-                ? params.sourceLocation.sourceDescription
-                : ''}{' '}
-            </Text>
+          <View style={{marginBottom: 10}}>
+            <View style={[styles.distanceTime, {marginVertical: 3}]}>
+              <EvilIcons name="location" size={18} color="#606060" />
+              <Text style={styles.vehicleCapacity}>
+                {localizationText('Common', 'from')}{' '}
+                {params.sourceLocation?.sourceDescription
+                  ? params.sourceLocation.sourceDescription
+                  : ''}{' '}
+              </Text>
+            </View>
+
+            <View style={styles.distanceTime}>
+              <EvilIcons name="location" size={18} color="#606060" />
+              <Text style={styles.vehicleCapacity}>
+                {localizationText('Common', 'to')}{' '}
+                {params.destinationLocation.destinationDescription
+                  ? params.destinationLocation.destinationDescription
+                  : ''}
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.distanceTime}>
-            <EvilIcons name="location" size={18} color="#606060" />
-            <Text style={styles.vehicleCapacity}>
-              To:{' '}
-              {params.destinationLocation.destinationDescription
-                ? params.destinationLocation.destinationDescription
-                : ''}
+          <View style={{flexDirection: 'row', marginVertical: 3}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'amount')}
+            </Text>
+            <Text style={styles.totalAmount}>
+              € {formatAmount(params.selectedVehiclePrice)}
             </Text>
           </View>
-
-          <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Amount</Text>
-            <Text style={styles.totalAmount}>€ {params.selectedVehiclePrice}</Text>
+          <View style={{flexDirection: 'row', marginVertical: 3}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'discount')}
+            </Text>
+            <Text style={styles.totalAmount}>
+              € {formatAmount(getDiscountAmount(params.selectedVehiclePrice))}
+            </Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Tax {vechicleTax}%</Text>
-            <Text style={styles.totalAmount}>€ {getTaxAmount()}</Text>
+          <View style={{flexDirection: 'row', marginVertical: 3}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'tax')} {''}(20%)
+            </Text>
+            <Text style={styles.totalAmount}>
+              € {formatAmount(getTaxAmount(params.selectedVehiclePrice))}
+            </Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.totalAmount, {flex: 1}]}>Total Amount</Text>
-            <Text style={styles.totalAmount}>€ {totalAmount}</Text>
+          <View style={{flexDirection: 'row', marginVertical: 3}}>
+            <Text style={[styles.totalAmount, {flex: 1}]}>
+              {localizationText('Common', 'totalAmount')}
+            </Text>
+            <Text style={styles.totalAmount}>
+              € {formatAmount(totalAmount)}
+            </Text>
           </View>
         </View>
 
-        <View
+        {/*<View
           style={[
             styles.inputContainer,
             {
@@ -474,32 +632,35 @@ const PickupPayment = ({route, navigation}) => {
               <AntDesign name="check" size={20} color="#fff" />
             </TouchableOpacity>
           )}
-        </View>
+        </View> */}
         {promoCodeResponse && (
           <Text
             style={[
               styles.discountInfo,
               {fontSize: 16, alignSelf: 'flex-end'},
             ]}>
-            Discount: € {promoCodeResponse.discount}
+            {localizationText('Common', 'discount')}: €{' '}
+            {promoCodeResponse.discount}
           </Text>
         )}
 
-        <View>
-          <Text style={styles.selectPaymentMethod}>Credit & Debit Cards</Text>
-        </View>
+        {/* <View>
+          <Text style={styles.selectPaymentMethod}>
+            {localizationText('Common', 'creditDebitCards')}
+          </Text>
+        </View> */}
 
-        <View style={styles.discountCard}>
+        {/* <View style={styles.discountCard}>
           <Image
             style={{marginRight: 20}}
             source={require('../../image/Group.png')}
           />
           <Text style={styles.discountInfo}>
-            20% off on city bank credit card!
+            20% {localizationText('Common', 'creditCardsOff')}
           </Text>
-        </View>
+        </View> */}
 
-        {offerDiscount > 0 && (
+        {/* {offerDiscount > 0 && (
           <View style={styles.discountCard}>
             <Image
               style={{marginRight: 20}}
@@ -512,12 +673,14 @@ const PickupPayment = ({route, navigation}) => {
                 : 'Pickup&Drop Order'}
             </Text>
           </View>
-        )}
+        )} */}
 
         <View style={styles.ProceedCard}>
           <Text style={styles.proceedPayment}>€ {paymentAmount}</Text>
           <TouchableOpacity onPress={debounce(onPayment, 500)}>
-            <Text style={styles.PayText}>Proceed to pay</Text>
+            <Text style={styles.PayText}>
+              {localizationText('Common', 'proceedToPay')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -627,7 +790,7 @@ const styles = StyleSheet.create({
   },
   distanceTime: {
     flexDirection: 'row',
-    // alignItems: 'center',
+    marginVertical: 3,
   },
   totalAmount: {
     fontSize: 12,
@@ -688,7 +851,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 100,
+    marginTop: 60,
     marginBottom: 20,
   },
   PayText: {

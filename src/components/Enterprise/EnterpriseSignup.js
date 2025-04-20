@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,16 +11,17 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import CheckBox from '@react-native-community/checkbox';
 import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCameraGallaryModal';
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {
   getCityList,
@@ -28,11 +29,11 @@ import {
   getStateList,
   signUpUser,
 } from '../../data_manager';
-import {useLoader} from '../../utils/loaderContext';
-import {useSignUpDetails} from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
+import { useSignUpDetails } from '../commonComponent/StoreContext';
 // import DropDownDropdown from '../common component/dropdown';
 
-const EnterpriseSignup = ({navigation}) => {
+const EnterpriseSignup = ({ navigation }) => {
   const [toggleCheckBoxFirst, setToggleCheckBoxFirst] = useState(false);
   const [toggleCheckBoxSecond, setToggleCheckBoxSecond] = useState(false);
   const [name, setName] = useState('');
@@ -55,7 +56,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [dropdownIndustryValue, setDropdownIndustryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
-  const {setLoading} = useLoader();
+  const { setLoading } = useLoader();
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
   const [masterStateList, setMasterStateList] = useState(null);
@@ -63,7 +64,7 @@ const EnterpriseSignup = ({navigation}) => {
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
   const [errors, setErrors] = useState({});
-  const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
+  const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
   const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
@@ -88,14 +89,14 @@ const EnterpriseSignup = ({navigation}) => {
   // ];
 
   const industryList = [
-    {label: 'Restaurant and takeaway', value: 1},
-    {label: 'Grocery and speciality', value: 2},
-    {label: 'Gift delivery', value: 3},
-    {label: 'Health and beauty', value: 4},
-    {label: 'Tech and electronics', value: 5},
-    {label: 'Retail and shopping', value: 6},
-    {label: 'Professional services', value: 7},
-    {label: 'Other', value: 8},
+    { label: 'Restaurant and takeaway', value: 1 },
+    { label: 'Grocery and speciality', value: 2 },
+    { label: 'Gift delivery', value: 3 },
+    { label: 'Health and beauty', value: 4 },
+    { label: 'Tech and electronics', value: 5 },
+    { label: 'Retail and shopping', value: 6 },
+    { label: 'Professional services', value: 7 },
+    { label: 'Other', value: 8 },
   ];
 
   useEffect(() => {
@@ -107,7 +108,7 @@ const EnterpriseSignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterCountryList(successResponse[0]._response);
@@ -119,16 +120,14 @@ const EnterpriseSignup = ({navigation}) => {
                   value: element.id,
                 });
                 formattedCountryCodeList.push({
-                  label: "+" + element.phone_code,
+                  label: '+' + element.phone_code,
                   value: element.id,
                 });
               });
 
               setCountryList(formattedCountryList);
               setCountryCodeList(formattedCountryCodeList);
-              setDropdownValue(formattedCountryCodeList[0].value)
-
-
+              setDropdownValue(formattedCountryCodeList[0].value);
             }
           }
         }
@@ -137,7 +136,7 @@ const EnterpriseSignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -149,7 +148,7 @@ const EnterpriseSignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterStateList(successResponse[0]._response);
@@ -161,7 +160,7 @@ const EnterpriseSignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -174,7 +173,7 @@ const EnterpriseSignup = ({navigation}) => {
           if (successResponse[0]._response) {
             if (successResponse[0]._response.name == 'NotAuthorizedException') {
               Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
+                { text: 'OK', onPress: () => { } },
               ]);
             } else {
               setMasterCityList(successResponse[0]._response);
@@ -186,7 +185,7 @@ const EnterpriseSignup = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -195,9 +194,21 @@ const EnterpriseSignup = ({navigation}) => {
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phonePattern = /^\+?\d{10,15}$/;
+    const regexName = new RegExp(`^[A-Za-z]+$`);
+
+
     let errors = {};
     if (!name.trim()) {
       errors.name = 'First name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
+    }else if (!/^[A-Za-z\s]+$/.test(name)) {
+      console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
+    }
+
+    if (lastname && !/^[A-Za-z\s]+$/.test(lastname)) {
+      errors.name = 'Last name should contain letters only';
     }
     if (!email.trim()) {
       errors.email = 'Email is required';
@@ -218,11 +229,25 @@ const EnterpriseSignup = ({navigation}) => {
     if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords does not match';
     }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    }else if (!/^\d+$/.test(number)){
       errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
     }
+
+
+    // if (!number.trim()) {
+    //   errors.number = 'Number is required';
+    // } else if (isNaN(number)) {
+    //   errors.number = 'Number should be numeric';
+    // } else if (number.trim().length < 9) {
+    //   errors.number = 'Invalid number';
+    // }
+
+
     if (!companyName.trim()) {
       errors.companyName = 'Company name is required';
     }
@@ -238,6 +263,12 @@ const EnterpriseSignup = ({navigation}) => {
     if (!dropdownCityValue) {
       errors.dropdownCityValue = 'Please select a city';
     }
+    if (!siret) {
+      errors.siret = 'Please enter siret number';
+    }
+    else if (siret.trim().length < 14) {
+      errors.siret = 'Invalid siret number';
+    }
     if (!comments) {
       errors.comments = 'Please describe your projects';
     }
@@ -248,6 +279,15 @@ const EnterpriseSignup = ({navigation}) => {
 
   const handleSignUp = async () => {
     const isValid = validateForm();
+
+
+
+    if (!toggleCheckBoxFirst || !toggleCheckBoxSecond) {
+      Alert.alert('Error', 'You must agree to both conditions to proceed.', [
+        { text: 'OK', onPress: () => { } },
+      ]);
+      return;
+    }
 
     if (isValid) {
       let params = {
@@ -266,7 +306,7 @@ const EnterpriseSignup = ({navigation}) => {
           city: dropdownCityValue.toString(),
           state: dropdownStateValue.toString(),
           country: dropdownCountryValue.toString(),
-          siretNo: '4352354',
+          siretNo: siret,
           termone: 1,
         },
       };
@@ -291,7 +331,7 @@ const EnterpriseSignup = ({navigation}) => {
           console.log('errorResponse', errorResponse[0]._errors.message[0]);
           setLoading(false);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
+            { text: 'OK', onPress: () => { } },
           ]);
         },
       );
@@ -299,27 +339,28 @@ const EnterpriseSignup = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
-      <View style={{paddingHorizontal: 15, marginTop: 10}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{width: '85%'}}>
-            <Text style={[styles.logInText, {color: colors.text}]}>
-              Enterprise{' '}
-              <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
+    <ScrollView style={{ width: '100%', backgroundColor: '#fff' }}>
+      <View style={{ paddingHorizontal: 15, marginTop: 10 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ width: '85%' }}>
+            <Text style={[styles.logInText, { color: colors.text }]}>
+              {localizationText('Common', 'enterprise')}{' '}
+              <Text style={{ fontFamily: 'Montserrat-Medium' }}>
+                {localizationText('Common', 'signup')}
+              </Text>
             </Text>
             <Text style={styles.loginAccessText}>
-              Let’s create your profile so you can request continuous scheduled
-              deliveries
+              {localizationText('Main', 'enterpriseSignupDescription')}
             </Text>
           </View>
           <Image
-            style={{width: 45, height: 45}}
-            source={require('../../image/home.png')}
+            style={{ width: 45, height: 45 }}
+            source={require('../../image/Enterprise-Bulding.png')}
           />
         </View>
         <View style={styles.logFormView}>
           {errors.name ? (
-            <Text style={[{color: 'red'}]}>{errors.name}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.name}</Text>
           ) : null}
           <View
             style={{
@@ -331,8 +372,9 @@ const EnterpriseSignup = ({navigation}) => {
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
                 style={styles.loginput}
-                placeholder="First Name"
+                placeholder={localizationText('Common', 'firstName')}
                 placeholderTextColor="#999"
+                maxLength={15}
                 value={name}
                 onChangeText={text => setName(text)}
               />
@@ -341,36 +383,38 @@ const EnterpriseSignup = ({navigation}) => {
             <View style={styles.nameInputDiv}>
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
-                style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Last Name"
+                style={[styles.loginput, { fontFamily: 'Montserrat-Regular' }]}
+                placeholder={localizationText('Common', 'lastName')}
                 placeholderTextColor="#999"
+                maxLength={15}
                 value={lastname}
                 onChangeText={text => setLastname(text)}
               />
             </View>
           </View>
           {errors.email ? (
-            <Text style={[{color: 'red'}]}>{errors.email}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.email}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Email"
+              placeholder={localizationText('Common', 'email')}
               placeholderTextColor="#999"
               value={email}
               onChangeText={text => setEmail(text)}
             />
           </View>
           {errors.password ? (
-            <Text style={[{color: 'red'}]}>{errors.password}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.password}</Text>
           ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={text => setPassword(text)}
@@ -385,14 +429,15 @@ const EnterpriseSignup = ({navigation}) => {
             </TouchableOpacity>
           </View>
           {errors.confirmPassword ? (
-            <Text style={[{color: 'red'}]}>{errors.confirmPassword}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.confirmPassword}</Text>
           ) : null}
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Confirm Password"
+              placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}
@@ -407,10 +452,10 @@ const EnterpriseSignup = ({navigation}) => {
             </TouchableOpacity>
           </View>
           {errors.number ? (
-            <Text style={[{color: 'red'}]}>{errors.number}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.number}</Text>
           ) : null}
           <View style={styles.mobileNumberInput}>
-            <View style={{width: 95}}>
+            <View style={{ width: 95 }}>
               <View style={styles.containerDropdown}>
                 <Dropdown
                   data={countryCodeList}
@@ -433,7 +478,7 @@ const EnterpriseSignup = ({navigation}) => {
                   }}
                   renderLeftIcon={() => (
                     <Image
-                      style={{marginRight: 10}}
+                      style={{ marginRight: 10 }}
                       source={require('../../image/flagIcon.png')}
                     />
                   )}
@@ -445,19 +490,19 @@ const EnterpriseSignup = ({navigation}) => {
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={11}
+              maxLength={9}
               value={number}
               onChangeText={text => setNumber(text)}
             />
           </View>
           {errors.companyName ? (
-            <Text style={[{color: 'red'}]}>{errors.companyName}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.companyName}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <FontAwesome6 name="warehouse" size={15} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Company name"
+              placeholder={localizationText('Common', 'companyName')}
               placeholderTextColor="#999"
               value={companyName}
               onChangeText={text => setCompanyName(text)}
@@ -485,7 +530,7 @@ const EnterpriseSignup = ({navigation}) => {
               }}
               renderLeftIcon={() => (
                 <AntDesign
-                  style={{marginRight: 10}}
+                  style={{ marginRight: 10 }}
                   name="API"
                   size={18}
                   color={colors.text}
@@ -494,13 +539,13 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           {errors.deliveries ? (
-            <Text style={[{color: 'red'}]}>{errors.deliveries}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.deliveries}</Text>
           ) : null}
           <View style={styles.textInputDiv}>
             <MaterialCommunityIcons name="package" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Deliveries per month / Hours per month"
+              placeholder={localizationText('Common', 'deliveriesPerMonth')}
               placeholderTextColor="#999"
               keyboardType="numeric"
               value={deliveries}
@@ -508,7 +553,7 @@ const EnterpriseSignup = ({navigation}) => {
             />
           </View>
           {errors.dropdownCountryValue ? (
-            <Text style={[{color: 'red'}]}>{errors.dropdownCountryValue}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.dropdownCountryValue}</Text>
           ) : null}
           <View style={styles.containerCountry}>
             <Dropdown
@@ -542,7 +587,7 @@ const EnterpriseSignup = ({navigation}) => {
               }}
               renderLeftIcon={() => (
                 <FontAwesome6
-                  style={{marginRight: 10}}
+                  style={{ marginRight: 10 }}
                   name="globe"
                   size={18}
                   color={colors.text}
@@ -557,12 +602,12 @@ const EnterpriseSignup = ({navigation}) => {
               justifyContent: 'space-between',
             }}>
             {errors.dropdownStateValue ? (
-              <Text style={[{color: 'red'}]}>{errors.dropdownStateValue}</Text>
+              <Text style={[{ color: 'red' }]}>{errors.dropdownStateValue}</Text>
             ) : (
               <Text />
             )}
             {errors.dropdownCityValue ? (
-              <Text style={[{color: 'red'}]}>{errors.dropdownCityValue}</Text>
+              <Text style={[{ color: 'red' }]}>{errors.dropdownCityValue}</Text>
             ) : null}
           </View>
           <View
@@ -603,7 +648,7 @@ const EnterpriseSignup = ({navigation}) => {
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
-                    style={{marginRight: 10}}
+                    style={{ marginRight: 10 }}
                     name="globe"
                     size={18}
                     color={colors.text}
@@ -633,7 +678,7 @@ const EnterpriseSignup = ({navigation}) => {
                 }}
                 renderLeftIcon={() => (
                   <FontAwesome6
-                    style={{marginRight: 10}}
+                    style={{ marginRight: 10 }}
                     name="globe"
                     size={18}
                     color={colors.text}
@@ -642,25 +687,30 @@ const EnterpriseSignup = ({navigation}) => {
               />
             </View>
           </View>
+          {errors.siret ? (
+            <Text style={[{ color: 'red' }]}>{errors.siret}</Text>
+          ) : null}
           <View style={styles.textInputDiv}>
             <MaterialIcons name="villa" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
               placeholder="Siret"
               placeholderTextColor="#999"
+              keyboardType="numeric"
+              maxLength={14}
               value={siret}
               onChangeText={text => setSiret(text)}
             />
           </View>
           {errors.comments ? (
-            <Text style={[{color: 'red'}]}>{errors.comments}</Text>
+            <Text style={[{ color: 'red' }]}>{errors.comments}</Text>
           ) : null}
           <View>
             <TextInput
               style={styles.inputTextStyle}
               multiline={true}
-              numberOfLines={4} // Set the number of lines you want to display initially
-              placeholder="Describe your projects here"
+              numberOfLines={4}
+              placeholder={localizationText('Common', 'describeYourProjects')}
               placeholderTextColor="#999"
               textAlignVertical="top"
               value={comments}
@@ -672,14 +722,11 @@ const EnterpriseSignup = ({navigation}) => {
               disabled={false}
               value={toggleCheckBoxFirst}
               onValueChange={newValue => setToggleCheckBoxFirst(newValue)}
-              style={{alignSelf: 'flex-start'}}
-              tintColors={{true: '#FFC72B', false: '#999'}}
+              style={{ alignSelf: 'flex-start' }}
+              tintColors={{ true: '#FFC72B', false: '#999' }}
             />
             <Text style={styles.checkboxText}>
-              By checking this box, I authorise Rapidmate to use my information
-              to send me communications regarding Rapidmate products and events.
-              You can opt out of any marketing communications or customise your
-              preferences at any time.
+              {localizationText('Main', 'enterpriseAuthoriseCheckboxText')}
             </Text>
           </View>
           <View style={styles.checkboxContainer}>
@@ -687,30 +734,38 @@ const EnterpriseSignup = ({navigation}) => {
               disabled={false}
               value={toggleCheckBoxSecond}
               onValueChange={newValue => setToggleCheckBoxSecond(newValue)}
-              style={{alignSelf: 'flex-start'}}
-              tintColors={{true: '#FFC72B', false: '#999'}}
+              style={{ alignSelf: 'flex-start' }}
+              tintColors={{ true: '#FFC72B', false: '#999' }}
             />
             <View>
               <TouchableOpacity>
                 <Text style={styles.checkboxText}>
-                  By clicking on this box, you acknowledge that you have read
-                  and understood the
-                  <Text style={styles.pirvacyTextBold}> Privacy Policy</Text>
+                  {localizationText('Main', 'enterprisePrivacyCheckboxText')}
+                  <Text
+                    onPress={() => navigation.navigate('PrivacyPolicy')}
+                    style={styles.pirvacyTextBold}>
+                    {' '}
+                    {localizationText('Common', 'privacyPolicy')}
+                  </Text>
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
           <TouchableOpacity
             onPress={handleSignUp}
-            style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Continue</Text>
+            style={[styles.logbutton, { backgroundColor: colors.primary }]}>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'continue')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('LogInScreen')}
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
-              Already have an account?{' '}
-              <Text style={{color: colors.primary}}>Login</Text>
+              {localizationText('Common', 'alreadyHaveAccount')}{' '}
+              <Text style={{ color: colors.primary }}>
+                {localizationText('Common', 'login')}
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>

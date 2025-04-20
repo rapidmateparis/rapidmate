@@ -6,18 +6,32 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Linking,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../../../colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {localizationText} from '../../../utils/common';
 
 const Supports = () => {
   const navigation = useNavigation();
+  const reportSafetyIssue =
+    localizationText('Common', 'reportSafetyIssue') || 'Report safety issue';
+  const reportSafetyIssueDescription =
+    localizationText('Common', 'reportSafetyIssueDescription') || '';
+  const driverFeedback =
+    localizationText('Common', 'driverFeedback') || 'Driver feedback';
+  const driverFeedbackDescription =
+    localizationText('Common', 'driverFeedbackDescription') || '';
+  const lostSomething =
+    localizationText('Common', 'lostSomething') || 'Lost Something';
+  const lostSomethingDescription =
+    localizationText('Common', 'lostSomethingDescription') || '';
 
-  const handleContinue = () => {
-    navigation.navigate('ChooseDeliveryType');
-  };
+    const handlePress = () => {
+      Linking.openURL('https://rapidmate.fr/support-page');
+    };
 
   const renderCard = (option, iconSource, title, subtitle, imageStyle) => {
     return (
@@ -27,7 +41,7 @@ const Supports = () => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}>
         <TouchableOpacity
-         onPress={() => navigation.goBack()}
+          onPress={handlePress}
           style={styles.addressCard}>
           <Image source={iconSource} style={styles.cardImage} />
           <View style={{flex: 1}}>
@@ -46,20 +60,20 @@ const Supports = () => {
         {renderCard(
           'ReportSafety',
           require('../../../image/ReportSaftyIcon.png'),
-          'Report safety issue',
-          'Tell us here if you have any safety issue',
+          reportSafetyIssue,
+          reportSafetyIssueDescription,
         )}
         {renderCard(
           'DriverFeedback',
           require('../../../image/DriverFeedbackIcon.png'),
-          'Driver feedback',
-          'Tell us know your concern about the driver',
+          driverFeedback,
+          driverFeedbackDescription,
         )}
         {renderCard(
           'LostSomething',
           require('../../../image/LoastSomthingIcon.png'),
-          'Lost something?',
-          'Tell us if you have lost or some missing item',
+          lostSomething,
+          lostSomethingDescription,
         )}
       </View>
     </ScrollView>
@@ -76,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
     paddingHorizontal: 15,
-    height: 100,
+    height: 115,
     borderWidth: 1,
     borderColor: '#35353533',
     borderRadius: 10,

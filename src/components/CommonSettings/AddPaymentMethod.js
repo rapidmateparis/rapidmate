@@ -17,7 +17,7 @@ import {
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import moment from 'moment';
-import { localToUTC } from '../../utils/common';
+import { localizationText, localToUTC } from '../../utils/common';
 
 const AddPaymentMethod = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -32,6 +32,13 @@ const AddPaymentMethod = ({navigation}) => {
     setToggleCheckBox(!toggleCheckBox);
   };
 
+  const nameOnCardText = localizationText('Common', 'nameOnCard');
+  const cardNumberText = localizationText('Common', 'cardNumber');
+  const expiryText = localizationText('Common', 'expiry');
+  const cvvText = localizationText('Common', 'cvv');
+  const submitText = localizationText('Common', 'submit');
+  const typeHereText = localizationText('Common', 'typeHere');
+
   const consumerPaymentMethod = () => {
     setLoading(true);
     let params = {
@@ -40,7 +47,7 @@ const AddPaymentMethod = ({navigation}) => {
       cvv: cvvNumber,
       payment_method_type_id: 1,
     };
-
+  
     if (userDetails.userDetails[0].role == 'CONSUMER') {
       params.consumer_ext_id = userDetails.userDetails[0].ext_id;
       params.expiration_date = localToUTC(expiryDate);
@@ -49,7 +56,12 @@ const AddPaymentMethod = ({navigation}) => {
         successResponse => {
           setLoading(false);
           Alert.alert('Success', successResponse[0]._response.message, [
-            {text: 'OK', onPress: () => {}},
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.goBack(); 
+              },
+            },
           ]);
         },
         errorResponse => {
@@ -63,7 +75,6 @@ const AddPaymentMethod = ({navigation}) => {
       params.enterprise_ext = userDetails.userDetails[0].ext_id;
       params.is_del = 0;
       params.expiration_date = moment(expiryDate, 'MM/YY').format('YYYY-MM-DD');
-      console.log('params', params);
       addEnterprisePaymentMethod(
         params,
         successResponse => {
@@ -72,13 +83,12 @@ const AddPaymentMethod = ({navigation}) => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.pop();
+                navigation.goBack(); 
               },
             },
           ]);
         },
         errorResponse => {
-          console.log('errorResponse', errorResponse);
           setLoading(false);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
@@ -89,6 +99,7 @@ const AddPaymentMethod = ({navigation}) => {
       setLoading(false);
     }
   };
+  
 
   function formatExpiryDate(value) {
     let formattedValue = value.replace(/\D/g, '');
@@ -131,7 +142,7 @@ const AddPaymentMethod = ({navigation}) => {
           <View style={styles.addressCard}>
             <Image source={require('../../image/debitCard.png')} />
             <View style={{marginLeft: 5, flex: 1}}>
-              <Text style={styles.paymentPlateform}>Debit/credit card</Text>
+              <Text style={styles.paymentPlateform}>{localizationText('Common', 'debitCreditCard')}</Text>
             </View>
             <AntDesign name="down" size={15} color="#00000080" />
           </View>
@@ -145,43 +156,43 @@ const AddPaymentMethod = ({navigation}) => {
               zIndex: 9999,
             }}>
             <View>
-              <Text style={styles.textlable}>Name on card</Text>
+              <Text style={styles.textlable}>{nameOnCardText}</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                placeholder={typeHereText}
                 value={nameOnCard}
                 onChangeText={text => setNameOnCard(text)}
               />
             </View>
             <View>
-              <Text style={styles.textlable}>Card number</Text>
+              <Text style={styles.textlable}>{cardNumberText}</Text>
               <TextInput
                 style={styles.inputTextStyle}
                 placeholderTextColor="#999"
-                placeholder="Type here"
+                placeholder={typeHereText}
                 value={formatCardNumber(cardNumber)}
                 onChangeText={text => setCardNumber(text)}
               />
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <View style={{flex: 1, marginRight: 10}}>
-                <Text style={styles.textlable}>Expiry</Text>
+                <Text style={styles.textlable}>{expiryText}</Text>
                 <TextInput
                   style={styles.inputTextStyle}
                   placeholderTextColor="#999"
-                  placeholder="Type here"
+                  placeholder={typeHereText}
                   value={formatExpiryDate(expiryDate)}
                   onChangeText={text => setExpiryDate(text)}
                 />
               </View>
 
               <View style={{flex: 1, marginLeft: 10}}>
-                <Text style={styles.textlable}>CVV</Text>
+                <Text style={styles.textlable}>{cvvText}</Text>
                 <TextInput
                   style={styles.inputTextStyle}
                   placeholderTextColor="#999"
-                  placeholder="Type here"
+                  placeholder={typeHereText}
                   value={cvvNumber}
                   onChangeText={text => setCVVNumber(text)}
                 />
@@ -190,7 +201,7 @@ const AddPaymentMethod = ({navigation}) => {
             <TouchableOpacity
               onPress={consumerPaymentMethod}
               style={styles.buttonCard}>
-              <Text style={styles.okButton}>Submit</Text>
+              <Text style={styles.okButton}>{submitText}</Text>
             </TouchableOpacity>
           </View>
         )}

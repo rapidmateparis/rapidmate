@@ -11,25 +11,86 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
+import { getDeliveryBoyOrderSlots } from '../../data_manager';
+import { useUserDetails } from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
+import moment from 'moment';
+import { utcLocal } from '../../utils/common';
 
-const DeliveryScheduleDetails = ({navigation}) => {
+const DeliveryScheduleDetails = ({navigation,route}) => {
+
+  const orderDetails =  route?.params?.orderItem
+  console.log('orderDetails ====>',orderDetails)
+  const {userDetails} = useUserDetails();
+  const {setLoading} = useLoader();
+
+  const [slotList,updateSlotList]= useState([])
+  // 'http://localhost:3000/api/order/deliveryboy/myslots/D1735230921832/ES20250108113826
+
+  // deliveryBoyOrderSlots
+
+  useEffect(()=>{
+    setLoading(true);
+    getDeliveryBoyOrderSlots(
+      userDetails.userDetails[0].ext_id+'/'+orderDetails.order_number,
+      successRes=>{
+        console.log('successRes ====>',successRes)
+        if(successRes[0]?._response?.length > 0){
+          updateSlotList(successRes[0]?._response)
+        }else{
+          updateSlotList([])
+        }
+        setLoading(false);
+      },
+      errorRes=>{
+        setLoading(false);
+        console.log('errorRes ====>',errorRes)
+      }
+    )
+  },[])
+
+
+  
+
+
+
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View>
         <View style={styles.dateCard}>
           <View style={{width: '48%'}}>
             <Text style={styles.dateText}>Start date</Text>
-            <Text style={styles.startDate}>20/02/2024</Text>
+            <Text style={styles.startDate}>{moment(utcLocal(orderDetails.shift_from_date)).format('DD/MM/YYYY')}</Text>
           </View>
 
           <View style={{width: '48%'}}>
             <Text style={styles.dateText}>End date</Text>
-            <Text style={styles.startDate}>10/03/2024</Text>
+            <Text style={styles.startDate}>{moment(utcLocal(orderDetails.shift_tp_date)).format('DD/MM/YYYY')}</Text>
           </View>
         </View>
 
         <View style={{paddingHorizontal: 15}}>
-          <View style={styles.dateTimeCard}>
+          
+          {
+            slotList.length > 0 &&
+            slotList.map((slot)=>{
+              return(
+                <View style={styles.dateTimeCard}>
+                  <Text style={styles.siftDate}>
+                    {slot.day} <Text style={styles.dateTimeSift}>{moment(utcLocal(slot.slot_date)).format('DD MMMM')}</Text> {moment(utcLocal(slot.slot_date)).format('YYYY')}
+                  </Text>
+
+                  <View style={styles.startTimeCard}>
+                    <Text style={styles.startTime}>{moment(slot.from_time,'HH:mm').format('hh:mm A')}</Text>
+                    <View style={styles.borderShowoff} />
+                    <Text style={styles.startTime}>{moment(slot.to_time,'HH:mm').format('hh:mm A')}</Text>
+
+                  </View>
+                </View>
+              )
+            })
+          }
+          {/* <View style={styles.dateTimeCard}>
             <Text style={styles.siftDate}>
               Tuesday <Text style={styles.dateTimeSift}>21 February,</Text> 2024
             </Text>
@@ -147,7 +208,7 @@ const DeliveryScheduleDetails = ({navigation}) => {
               <View style={styles.borderShowoff} />
               <Text style={styles.startTime}>02:00 PM</Text>
             </View>
-          </View>
+          </View> */}
         </View>
       </View>
     </ScrollView>

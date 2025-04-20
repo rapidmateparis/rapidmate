@@ -45,13 +45,14 @@ const EnterpriseShiftFillter = props => {
           </View>
           <View style={styles.modalCard}>
             <Text style={styles.textlable}>From date</Text>
-            <View style={styles.textInputDiv}>
+            <TouchableOpacity
+              style={styles.textInputDiv}
+              onPress={() => setFromDateOpen(true)}>
               <DatePicker
                 modal
                 open={fromDateOpen}
                 date={fromDate}
                 mode="date"
-                minimumDate={new Date()}
                 onConfirm={date => {
                   setFromDateOpen(false);
                   setFromDate(date);
@@ -68,24 +69,21 @@ const EnterpriseShiftFillter = props => {
                 editable={false}
                 value={fromPickupDate}
               />
-              <TouchableOpacity onPress={() => setFromDateOpen(true)}>
-                <Feather
-                  name="calendar"
-                  size={20}
-                  color="#FFC72B"
-                  style={{marginTop: 15}}
-                />
-              </TouchableOpacity>
-            </View>
+              <Feather
+                name="calendar"
+                size={20}
+                color="#FFC72B"
+                style={{marginTop: 15}}
+              />
+            </TouchableOpacity>
 
             <Text style={styles.textlable}>To date</Text>
-            <View style={styles.textInputDiv}>
+            <TouchableOpacity style={styles.textInputDiv} onPress={() => setToDateOpen(true)}>
               <DatePicker
                 modal
                 open={toDateOpen}
                 date={toDate}
                 mode="date"
-                minimumDate={new Date()}
                 onConfirm={date => {
                   setToDateOpen(false);
                   setToDate(date);
@@ -102,15 +100,13 @@ const EnterpriseShiftFillter = props => {
                 editable={false}
                 value={toPickupDate}
               />
-              <TouchableOpacity onPress={() => setToDateOpen(true)}>
-                <Feather
-                  name="calendar"
-                  size={20}
-                  color="#FFC72B"
-                  style={{marginTop: 15}}
-                />
-              </TouchableOpacity>
-            </View>
+              <Feather
+                name="calendar"
+                size={20}
+                color="#FFC72B"
+                style={{marginTop: 15}}
+              />
+            </TouchableOpacity>
 
             {/* <View style={styles.borderShowOff}></View> */}
 

@@ -123,7 +123,7 @@ const EnterpriseDeliveryboyReady = ({navigation}) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-        onPress={() => navigation.navigate('')}
+        onPress={() => navigation.navigate('EnterpriseShiftRequestNewDelivery')}
           style={styles.requstDeliveryBtn}>
           <View style={styles.activeCount}>
             <Image style={{width: 50, height: 30,}} source={require('../../image/ExpressPackage.png')} />

@@ -14,6 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {uploadDocumentsApi} from '../../data_manager';
@@ -36,25 +37,40 @@ const EnterpriseAddMultpleDropDetails = ({route, navigation}) => {
   const {userDetails} = useUserDetails();
   const [packageImage, setPackageImage] = useState(null);
   const [packageImageId, setPackageImageId] = useState(null);
+  const [errors, setErrors] = useState({});
   const {setLoading} = useLoader();
   const component = route?.params?.component ? route?.params?.component : '';
-  const branches = route?.params?.props?.branches && route?.params?.props?.branches?.length > 0 ? route?.params?.props.branches : [];
+  const branches =
+    route?.params?.props?.branches && route?.params?.props?.branches?.length > 0
+      ? route?.params?.props.branches
+      : [];
   const [branchList, setBranchList] = useState([]);
+  const dropInformationText =
+    localizationText('Common', 'dropInformation') || 'Drop Information';
+  const firstNameText = localizationText('Common', 'firstName') || 'First Name';
+  const lastNameText = localizationText('Common', 'lastName') || 'Last Name';
+  const companyNameText =
+    localizationText('Common', 'companyName') || 'Company Name';
+  const emailText = localizationText('Common', 'email') || 'Email';
+  const phoneNumber =
+    localizationText('Common', 'phoneNumber') || 'Phone Number';
+  const dropNotesText = localizationText('Common', 'dropNotes') || 'Drop Notes';
+  const typeHereText = localizationText('Common', 'typeHere') || '';
 
-
-
-  useEffect(()=>{
-    const list = []
+  useEffect(() => {
+    const list = [];
     for (const location of branches) {
-      const branchID = route?.params?.props?.branch_id ?route?.params?.props?.branch_id :''
-      if(branchID){
-        list.push({...location,branch_id:branchID})
-      }else{
-        list.push({...location})
+      const branchID = route?.params?.props?.branch_id
+        ? route?.params?.props?.branch_id
+        : '';
+      if (branchID) {
+        list.push({...location, branch_id: branchID});
+      } else {
+        list.push({...location});
       }
-      setBranchList([...list])
+      setBranchList([...list]);
     }
-  },[branches])
+  }, [branches]);
 
   const data = [
     {label: '+91', value: '+91'},
@@ -62,25 +78,52 @@ const EnterpriseAddMultpleDropDetails = ({route, navigation}) => {
   ];
 
   const validateForm = () => {
-    if (
-      !name ||
-      !lastname ||
-      !email ||
-      !number ||
-      !dropdownValue ||
-      !dropNotes
-    ) {
-      Alert.alert('Validation Error', 'Please fill all the required fields.');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^\d{9}$/; // Assuming 9-digit local number without country code
+  
+    let errors = {};
+    let hasError = false;
+  
+    branchList.forEach((location, index) => {
+      let dropErrors = {};
+  
+      if (!location.drop_first_name || location.drop_first_name.trim().length < 3) {
+        dropErrors.drop_first_name = 'First name is required and must be at least 3 characters.';
+      }
+  
+      if (!location.drop_email || !emailPattern.test(location.drop_email)) {
+        dropErrors.drop_email = 'Valid email is required.';
+      }
+  
+      if (!location.drop_mobile || !phonePattern.test(location.drop_mobile)) {
+        dropErrors.drop_mobile = 'Valid phone number (9 digits) is required.';
+      }
+  
+      if (!location.drop_notes || location.drop_notes.trim().length < 1) {
+        dropErrors.drop_notes = 'Drop notes are required.';
+      }
+  
+      if (Object.keys(dropErrors).length > 0) {
+        hasError = true;
+        errors[index] = dropErrors;
+      }
+    });
+  
+    setErrors(errors);
+  
+    if (hasError) {
+      Alert.alert('Validation Error', 'Please fill the correct details.');
       return false;
     }
+  
     return true;
   };
 
   const handleNextPress = () => {
-    // if (!validateForm()) return;
+    if (!validateForm()) return;
     const includeDropDetails = {
       ...route?.params,
-      branches:branchList
+      branches: branchList,
     };
     if (component === 'ENTERPRISE') {
       navigation.navigate('EnterprisePickupOrderPriview', {
@@ -90,141 +133,152 @@ const EnterpriseAddMultpleDropDetails = ({route, navigation}) => {
       navigation.navigate('PickupOrderPreview', {props: includeDropDetails});
     }
   };
-  
 
-
-  const updateDropDetails =(value,key,index)=>{
-    const list = [...branchList]
-    list[index][key]=value
-    setBranchList([...list])
-  }
+  const updateDropDetails = (value, key, index) => {
+    const list = [...branchList];
+    list[index][key] = value;
+    setBranchList([...list]);
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
-        {
-          branchList.length > 0 && 
-          branchList.map((loctaion,index)=>{
-            return(
-        <View style={styles.logFormView}>
-          <Text style={styles.dropInformationTitles}>Drop {index+1} Information</Text>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1, marginRight: 5}}>
-              <Text style={styles.textlable}>First name*</Text>
-              <TextInput
-                style={styles.inputTextStyle}
-                placeholderTextColor="#999"
-                placeholder="Type here"
-                value={loctaion.drop_first_name}
-                onChangeText={text => {
-                  updateDropDetails(text,'drop_first_name',index)
-                }}
-              />
-            </View>
+        {branchList.length > 0 &&
+          branchList.map((loctaion, index) => {
+            return (
+              <View style={styles.logFormView}>
+                <Text style={styles.dropInformationTitles}>
+                  {dropInformationText} {index + 1}
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Text style={styles.textlable}>{firstNameText}*</Text>
+                    <TextInput
+                      style={styles.inputTextStyle}
+                      placeholderTextColor="#999"
+                      maxLength={15}
+                      placeholder={typeHereText}
+                      value={loctaion.drop_first_name}
+                      onChangeText={text => {
+                        updateDropDetails(text, 'drop_first_name', index);
+                      }}
+                    />
+                  </View>
 
-            <View style={{flex: 1, marginLeft: 5}}>
-              <Text style={styles.textlable}>Last name*</Text>
-              <TextInput
-                style={styles.inputTextStyle}
-                placeholderTextColor="#999"
-                placeholder="Type here"
-                value={loctaion.drop_last_name}
-                onChangeText={text => updateDropDetails(text,'drop_last_name',index)}
-              />
-            </View>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1, marginRight: 5}}>
-              <Text style={styles.textlable}>Company</Text>
-              <TextInput
-                style={styles.inputTextStyle}
-                placeholderTextColor="#999"
-                placeholder="Type here"
-                value={loctaion.drop_company_name}
-                onChangeText={text => updateDropDetails(text,'drop_company_name',index)}
-              />
-            </View>
-            <View style={{flex: 1, marginLeft: 5}}>
-              <Text style={styles.textlable}>Email*</Text>
-              <TextInput
-                style={styles.inputTextStyle}
-                placeholderTextColor="#999"
-                placeholder="Type here"
-                value={loctaion.drop_email}
-                onChangeText={text => updateDropDetails(text,'drop_email',index)}
-              />
-            </View>
-          </View>
-          <View>
-            <Text style={styles.textlable}>Phone number*</Text>
-            <View style={styles.mobileNumberInput}>
-              <View style={{width: 95}}>
-                <View style={styles.containerDropdown}>
-                  <Dropdown
-                    data={data}
-                    search
-                    maxHeight={300}
-                    itemTextStyle={styles.itemtextStyle}
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={!isFocus ? '+33' : '...'}
-                    searchPlaceholder="+.."
-                    value={dropdownValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownValue(item.value);
-                      setIsFocus(false);
-                    }}
-                    renderLeftIcon={() => (
-                      <Image
-                        style={{marginRight: 10}}
-                        source={require('../../image/flagIcon.png')}
-                      />
-                    )}
+                  <View style={{flex: 1, marginLeft: 5}}>
+                    <Text style={styles.textlable}>{lastNameText}</Text>
+                    <TextInput
+                      style={styles.inputTextStyle}
+                      placeholderTextColor="#999"
+                      maxLength={15}
+                      placeholder={typeHereText}
+                      value={loctaion.drop_last_name}
+                      onChangeText={text =>
+                        updateDropDetails(text, 'drop_last_name', index)
+                      }
+                    />
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{flex: 1, marginRight: 5}}>
+                    <Text style={styles.textlable}>{companyNameText}</Text>
+                    <TextInput
+                      style={styles.inputTextStyle}
+                      placeholderTextColor="#999"
+                      placeholder={typeHereText}
+                      value={loctaion.drop_company_name}
+                      onChangeText={text =>
+                        updateDropDetails(text, 'drop_company_name', index)
+                      }
+                    />
+                  </View>
+                  <View style={{flex: 1, marginLeft: 5}}>
+                    <Text style={styles.textlable}>{emailText}*</Text>
+                    <TextInput
+                      style={styles.inputTextStyle}
+                      placeholderTextColor="#999"
+                      placeholder={typeHereText}
+                      value={loctaion.drop_email}
+                      onChangeText={text =>
+                        updateDropDetails(text, 'drop_email', index)
+                      }
+                    />
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.textlable}>{phoneNumber}*</Text>
+                  <View style={styles.mobileNumberInput}>
+                    <View style={{width: 95}}>
+                      <View style={styles.containerDropdown}>
+                        <Dropdown
+                          data={data}
+                          search
+                          maxHeight={300}
+                          itemTextStyle={styles.itemtextStyle}
+                          placeholderStyle={styles.placeholderStyle}
+                          selectedTextStyle={styles.selectedTextStyle}
+                          inputSearchStyle={styles.inputSearchStyle}
+                          labelField="label"
+                          valueField="value"
+                          placeholder={!isFocus ? '+33' : '...'}
+                          searchPlaceholder="+.."
+                          value={dropdownValue}
+                          onFocus={() => setIsFocus(true)}
+                          onBlur={() => setIsFocus(false)}
+                          onChange={item => {
+                            setDropdownValue(item.value);
+                            setIsFocus(false);
+                          }}
+                          renderLeftIcon={() => (
+                            <Image
+                              style={{marginRight: 10}}
+                              source={require('../../image/flagIcon.png')}
+                            />
+                          )}
+                        />
+                      </View>
+                    </View>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        {fontFamily: 'Montserrat-Regular', fontSize: 16},
+                      ]}
+                      placeholder="00 00 00 00 00)"
+                      placeholderTextColor="#999"
+                      keyboardType="numeric"
+                      maxLength={9}
+                      value={loctaion.drop_mobile}
+                      onChangeText={text =>
+                        updateDropDetails(text, 'drop_mobile', index)
+                      }
+                    />
+                  </View>
+                </View>
+                <View style={{flex: 1}}>
+                  <Text style={styles.textlable}>{dropNotesText}*</Text>
+                  <TextInput
+                    style={styles.inputTextStyle}
+                    multiline={true}
+                    numberOfLines={4}
+                    placeholderTextColor="#999"
+                    placeholder={typeHereText}
+                    textAlignVertical="top"
+                    value={loctaion.drop_notes}
+                    onChangeText={text =>
+                      updateDropDetails(text, 'drop_notes', index)
+                    }
                   />
                 </View>
               </View>
-              <TextInput
-                style={[
-                  styles.input,
-                  {fontFamily: 'Montserrat-Regular', fontSize: 16},
-                ]}
-                placeholder="00 00 00 00 00)"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-                maxLength={9}
-                value={loctaion.drop_mobile}
-                onChangeText={text => updateDropDetails(text,'drop_mobile',index)}
-              />
-            </View>
-          </View>
-          <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Drop notes*</Text>
-            <TextInput
-              style={styles.inputTextStyle}
-              multiline={true}
-              numberOfLines={4}
-              placeholderTextColor="#999"
-              placeholder="Type here"
-              textAlignVertical="top"
-              value={loctaion.drop_notes}
-              onChangeText={text => updateDropDetails(text,'drop_notes',index)}
-            />
-          </View>
-        </View>
-            )
-          })
-          
-        }
-       
+            );
+          })}
+
         <TouchableOpacity
           onPress={() => handleNextPress()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Next</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'next')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

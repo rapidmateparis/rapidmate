@@ -20,7 +20,7 @@ import {useUserDetails} from '../../commonComponent/StoreContext';
 import {FlatList} from 'react-native-gesture-handler';
 import moment from 'moment';
 import {useLoader} from '../../../utils/loaderContext';
-import { utcLocal } from '../../../utils/common';
+import {localizationText, utcLocal} from '../../../utils/common';
 
 function DeliveryboyTransactions() {
   const [searchText, setSearchText] = useState('');
@@ -31,6 +31,8 @@ function DeliveryboyTransactions() {
   const [walletBalance, setWalletBalance] = useState();
   const [activeOption, setActiveOption] = useState('');
   const {setLoading} = useLoader();
+  const orderID = localizationText('Common', 'orderID') || 'Order Id';
+  const from = localizationText('Common', 'from') || 'From';
 
   const handleOptionClick = option => {
     setActiveOption(option);
@@ -88,18 +90,20 @@ function DeliveryboyTransactions() {
       <View style={styles.transactioneMainCard}>
         <View>
           <Text style={styles.transactioneDate}>
-            {moment(utcLocal(transactionItem.item.order_date)).format('YYYY-MM-DD')}
+            {moment(utcLocal(transactionItem.item.order_date)).format(
+              'YYYY-MM-DD',
+            )}
           </Text>
           <Text style={styles.transactioneFrom}>
-            Order Number{' '}
+            {orderID}{' '}
             <Text style={styles.transactioneAddress}>
               {transactionItem.item.order_number}
             </Text>
           </Text>
-          <Text style={styles.transactioneFrom}>
-            From{' '}
+          {/* <Text style={styles.transactioneFrom}>
+            {from}{' '}
             <Text style={styles.transactioneAddress}>North Street, ABC</Text>
-          </Text>
+          </Text> */}
         </View>
         <View>
           <Text style={styles.moneyEarn}>€{transactionItem.item.amount}</Text>
@@ -126,7 +130,7 @@ function DeliveryboyTransactions() {
           <TextInput
             style={styles.searchinput}
             placeholderTextColor="#999"
-            placeholder="Search your transactions"
+            placeholder={localizationText('Common', 'searchYourTransactions')}
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -136,7 +140,7 @@ function DeliveryboyTransactions() {
           <Text style={styles.rupeesMain}>
             € {walletBalance ? walletBalance : ''}
           </Text>
-          <Text style={styles.earningTodays}>Today’s earning</Text>
+          <Text style={styles.earningTodays}>{localizationText('Common', 'todayEarning')}</Text>
         </View>
 
         <View style={styles.dayWiseCard}>
@@ -146,7 +150,7 @@ function DeliveryboyTransactions() {
                 styles.dayOption,
                 activeOption === 'Today' && styles.activeDay,
               ]}>
-              Today
+              {localizationText('Common', 'today')}
             </Text>
           </TouchableOpacity>
 
@@ -156,7 +160,7 @@ function DeliveryboyTransactions() {
                 styles.dayOption,
                 activeOption === 'This week' && styles.activeDay,
               ]}>
-              This week
+              {localizationText('Common', 'thisWeek')}
             </Text>
           </TouchableOpacity>
 
@@ -166,7 +170,7 @@ function DeliveryboyTransactions() {
                 styles.dayOption,
                 activeOption === 'This month' && styles.activeDay,
               ]}>
-              This month
+              {localizationText('Common', 'thisMonth')}
             </Text>
           </TouchableOpacity>
 
@@ -176,7 +180,7 @@ function DeliveryboyTransactions() {
                 styles.dayOption,
                 activeOption === 'This year' && styles.activeDay,
               ]}>
-              This year
+              {localizationText('Common', 'thisYear')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -290,7 +294,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   dayOption: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
     backgroundColor: '#fbe8ea',

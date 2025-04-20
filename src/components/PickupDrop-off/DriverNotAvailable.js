@@ -9,6 +9,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
 const DriverNotAvailable = ({navigation}) => {
   return (
@@ -23,9 +24,11 @@ const DriverNotAvailable = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/Driver-Not-Found.png')}
           />
-          <Text style={styles.text}>Couldn’t find driver</Text>
+          <Text style={styles.text}>
+            {localizationText('Main', 'couldntFindDriver')}
+          </Text>
           <Text style={styles.subText}>
-            No drivers available in your area for now, please try again later
+            {localizationText('Main', 'couldntFindDriverDescription')}
           </Text>
         </View>
         <View style={{flexDirection: 'row', paddingVertical: 10}}>

@@ -25,7 +25,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
 import {useLoader} from '../../utils/loaderContext';
 import {useFocusEffect} from '@react-navigation/native';
-import { titleFormat } from '../../utils/common';
+import {localizationText, titleFormat} from '../../utils/common';
 
 const EnterprisePlanning = ({navigation}) => {
   const getCurrentDate = () => {
@@ -42,6 +42,14 @@ const EnterprisePlanning = ({navigation}) => {
   const {setLoading} = useLoader();
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const [enterpriseBranches, setEnterpriseBranches] = useState([]);
+  const [enterpriseFetchData, setEnterpriseFetchData] = useState(false);
+  const noBranches = localizationText('Common', 'noBranches') || 'No Branches';
+  const noPlannings =
+    localizationText('Common', 'noPlannings') || 'No Plannings';
+  const hoursShift = localizationText('Common', 'hoursShift') || 'hours shift';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const orderID = localizationText('Common', 'orderID') || 'Order Id';
 
   useFocusEffect(
     useCallback(() => {
@@ -52,6 +60,18 @@ const EnterprisePlanning = ({navigation}) => {
       getBranchesList();
     }, []),
   );
+
+  useEffect(() => {
+    console.log('enterpriseBranches', enterpriseBranches);
+    console.log('enterpriseFetchData', enterpriseFetchData);
+    if (enterpriseBranches?.length === 0 && enterpriseFetchData) {
+      Alert.alert(
+        'Action Required',
+        "Please add branches in 'Manage Company Locations' and add 'Payment Methoad' to proceed.",
+        [{text: 'OK', onPress: () => {}}],
+      );
+    }
+  }, [enterpriseFetchData, enterpriseBranches]);
 
   const getEnterprisePlans = dateString => {
     let params = {
@@ -121,7 +141,10 @@ const EnterprisePlanning = ({navigation}) => {
     getEnterpriseBranch(
       userDetails.userDetails[0].ext_id,
       successResponse => {
-        console.log('successResponse =========>>',JSON.stringify(successResponse))
+        console.log(
+          'successResponse =========>>',
+          JSON.stringify(successResponse),
+        );
         setLoading(false);
         if (successResponse[0]._success) {
           if (successResponse[0]._response) {
@@ -130,6 +153,7 @@ const EnterprisePlanning = ({navigation}) => {
               //   {text: 'OK', onPress: () => {}},
               // ]);
               setEnterpriseBranches([]);
+              setEnterpriseFetchData(true);
             } else {
               var branches = [];
               for (
@@ -142,6 +166,7 @@ const EnterprisePlanning = ({navigation}) => {
                 branches.push(element);
               }
               setEnterpriseBranches(branches);
+              setEnterpriseFetchData(true);
             }
           }
         }
@@ -150,10 +175,10 @@ const EnterprisePlanning = ({navigation}) => {
         console.log('errorResponse', errorResponse[0]._errors.message);
         setLoading(false);
         setEnterpriseBranches([]);
+        setEnterpriseFetchData(true);
         // Alert.alert('Error Alert*', errorResponse[0]._errors.message, [
         //   {text: 'OK', onPress: () => {}},
         // ]);
-
       },
     );
   };
@@ -178,13 +203,16 @@ const EnterprisePlanning = ({navigation}) => {
       <View style={{backgroundColor: '#fff'}}>
         <View style={{paddingHorizontal: 15, paddingVertical: 10}}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Planning</Text>
+            <Text style={styles.headerText}>
+              {localizationText('Common', 'planning')}
+            </Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
+                style={styles.headerCommandeButton}
                 onPress={() =>
                   navigation.navigate('EnterpriseScheduleNewDelivery')
                 }>
-                <AntDesign name="pluscircle" size={25} color={colors.primary} />
+                <Text style={styles.headerCommande}>Commande</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -219,84 +247,111 @@ const EnterprisePlanning = ({navigation}) => {
           }}
         />
       </View>
-      <View style={styles.mainColorCard}>
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.primary} />
-          <Text style={styles.colorWiseText}>Restaurant</Text>
-        </View>
 
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.MountainMeadow} />
-          <Text style={styles.colorWiseText}>Supermarkets</Text>
+      {enterpriseBranches.length === 0 && (
+        <View style={styles.noBranchedView}>
+          <Text style={[styles.colorWiseText, {fontWeight: 'bold'}]}>
+            {noBranches}
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('EnterpriseLocation');
+            }}>
+            <AntDesign name="pluscircle" size={25} color={colors.primary} />
+          </TouchableOpacity>
         </View>
-
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.CuriousBlue} />
-          <Text style={styles.colorWiseText}>E-Commerce</Text>
+      )}
+      {enterprisePlans.length === 0 ? (
+        <View style={styles.noBranchedView}>
+          <Text style={[styles.colorWiseText, {fontWeight: 'bold'}]}>
+            {noPlannings}
+          </Text>
         </View>
-      </View>
-
-      <View style={styles.mainColorCard}>
-        <View style={styles.colorCardWise}>
-          <Octicons name="dot-fill" size={20} color={colors.Wisteria} />
-          <Text style={styles.colorWiseText}>Packers & Movers</Text>
-        </View>
-      </View>
-
-        {
-          enterpriseBranches.length === 0 &&
-            <View style={styles.noBranchedView}>
-              <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
-              <TouchableOpacity
-                onPress={() =>{navigation.navigate('EnterpriseLocation')}}>
-                <AntDesign name="pluscircle" size={25} color={colors.primary} />
-              </TouchableOpacity>
-            </View>
-        }
-      {
-        enterprisePlans.length === 0 ?
-          <View style={styles.noBranchedView}>
-                  <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Plannings</Text>
-             </View>
-        :
-      
-      <View style={{flex: 1}}>
-        <View style={{paddingHorizontal: 15, paddingTop: 5}}>
-          {enterprisePlans.map((item, index) => {
-            return (
-              <View>
-                {item.delivery_type_id == 3 ? (
-                  <View key={index} style={styles.packageDetailCard}>
-                    <TouchableOpacity style={styles.packageDetailCard}>
-                      <View style={styles.packageshiftHeader}>
+      ) : (
+        <View style={{flex: 1}}>
+          <View style={{paddingHorizontal: 15, paddingTop: 5}}>
+            {enterprisePlans.map((item, index) => {
+              return (
+                <View>
+                  {item.delivery_type_id == 3 ? (
+                    <View key={index} style={styles.packageDetailCard}>
+                      <TouchableOpacity style={styles.packageDetailCard}>
                         <View style={styles.packageshiftHeader}>
-                          <Image
-                            style={styles.imagesManage}
-                            source={require('../../image/Big-Calender.png')}
-                          />
+                          <View style={styles.packageshiftHeader}>
+                            <Image
+                              style={styles.imagesManage}
+                              source={require('../../image/Big-Calender.png')}
+                            />
+                            <Text style={styles.deliveryTime}>
+                              {item.slots[0]
+                                ? moment(
+                                    item.slots[0].from_time,
+                                    'HH:mm:ss',
+                                  ).format('hh A')
+                                : '--'}
+                              {' to '}
+                              {item.slots[0]
+                                ? moment(
+                                    item.slots[0].to_time,
+                                    'HH:mm:ss',
+                                  ).format('hh A')
+                                : '--'}
+                            </Text>
+                          </View>
                           <Text style={styles.deliveryTime}>
                             {item.slots[0]
-                              ? moment(
-                                  item.slots[0].from_time,
-                                  'HH:mm:ss',
-                                ).format('hh A')
-                              : '--'}
-                            {' to '}
-                            {item.slots[0]
-                              ? moment(
-                                  item.slots[0].to_time,
-                                  'HH:mm:ss',
-                                ).format('hh A')
-                              : '--'}
+                              ? moment(item.slots[0].to_time, 'HH:mm:ss').diff(
+                                  moment(item.slots[0].from_time, 'HH:mm:ss'),
+                                ) / 3600000
+                              : '0'}{' '}
+                            {hoursShift}
                           </Text>
                         </View>
+
+                        <View style={styles.packageMiddle}>
+                          <Ionicons
+                            name="location-outline"
+                            size={15}
+                            color="#717172"
+                          />
+                          <Text style={styles.fromshiftLocation}>
+                            {getBranchAddress(item.branch_id)}
+                          </Text>
+                        </View>
+
+                        <View style={styles.footerCard}>
+                          <Text
+                            style={[
+                              styles.orderActive,
+                              {
+                                color: colors.Pending,
+                                backgroundColor: '#F39C1212',
+                              },
+                            ]}>
+                            {item.order_status.replace(/_/g, ' ')}
+                          </Text>
+                          <Text style={styles.orderId}>
+                            {getVehicleType(item.vehicle_type_id)}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View key={index} style={styles.packageDetailCard}>
+                      <View style={styles.packageHeader}>
+                        <Image
+                          style={styles.manageImages}
+                          source={require('../../image/Big-Package.png')}
+                        />
                         <Text style={styles.deliveryTime}>
-                          {item.slots[0]
-                            ? moment(item.slots[0].to_time, 'HH:mm:ss').diff(
-                                moment(item.slots[0].from_time, 'HH:mm:ss'),
-                              ) / 3600000
-                            : '0'}{' '}
-                          hours shift
+                          {item.consumer_order_title}{' '}
+                          {item.is_show_datetime_in_title == 1
+                            ? item.order_status === 'ORDER_PLACED'
+                              ? titleFormat(
+                                  item.schedule_date_time || item.order_date,
+                                )
+                              : titleFormat(item.updated_on)
+                            : ''}
                         </Text>
                       </View>
 
@@ -306,92 +361,44 @@ const EnterprisePlanning = ({navigation}) => {
                           size={15}
                           color="#717172"
                         />
-                        <Text style={styles.fromshiftLocation}>
-                          {getBranchAddress(item.branch_id)}
+                        <Text style={styles.fromLocation}>
+                          {fromText}{' '}
+                          <Text style={styles.Location}>
+                            {getLocationAddress(item.pickup_location)}
+                          </Text>
+                        </Text>
+                      </View>
+
+                      <View style={styles.packageMiddle}>
+                        <MaterialIcons
+                          name="my-location"
+                          size={15}
+                          color="#717172"
+                        />
+                        <Text style={styles.fromLocation}>
+                          {toText}{' '}
+                          <Text style={styles.Location}>
+                            {getLocationAddress(item.dropoff_location)}
+                          </Text>
                         </Text>
                       </View>
 
                       <View style={styles.footerCard}>
-                        <Text
-                          style={[
-                            styles.orderActive,
-                            {
-                              color: colors.Pending,
-                              backgroundColor: '#F39C1212',
-                            },
-                          ]}>
-                          {item.order_status.replace(/_/g, ' ')}
-                        </Text>
                         <Text style={styles.orderId}>
+                          {orderID}: {item.order_number}
+                        </Text>
+                        <Text style={styles.valueMoney}>
                           {getVehicleType(item.vehicle_type_id)}
                         </Text>
                       </View>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View key={index} style={styles.packageDetailCard}>
-                    <View style={styles.packageHeader}>
-                      <Image
-                        style={styles.manageImages}
-                        source={require('../../image/Big-Package.png')}
-                      />
-                      <Text style={styles.deliveryTime}>
-                        {item.consumer_order_title}{' '}
-                        {item.is_show_datetime_in_title == 1
-                          ? item.order_status === 'ORDER_PLACED'
-                            ? titleFormat(
-                                item.schedule_date_time ||
-                                  item.order_date,
-                              )
-                            : titleFormat(item.updated_on)
-                          : ''}
-                      </Text>
                     </View>
-
-                    <View style={styles.packageMiddle}>
-                      <Ionicons
-                        name="location-outline"
-                        size={15}
-                        color="#717172"
-                      />
-                      <Text style={styles.fromLocation}>
-                        From{' '}
-                        <Text style={styles.Location}>
-                          {getLocationAddress(item.pickup_location)}
-                        </Text>
-                      </Text>
-                    </View>
-
-                    <View style={styles.packageMiddle}>
-                      <MaterialIcons
-                        name="my-location"
-                        size={15}
-                        color="#717172"
-                      />
-                      <Text style={styles.fromLocation}>
-                        To{' '}
-                        <Text style={styles.Location}>
-                          {getLocationAddress(item.dropoff_location)}
-                        </Text>
-                      </Text>
-                    </View>
-
-                    <View style={styles.footerCard}>
-                      <Text style={styles.orderId}>
-                        Order ID: {item.order_number}
-                      </Text>
-                      <Text style={styles.valueMoney}>
-                        {getVehicleType(item.vehicle_type_id)}
-                      </Text>
-                    </View>
-                  </View>
-                )}
-              </View>
-            );
-          })}
+                  )}
+                </View>
+              );
+            })}
+          </View>
         </View>
-      </View>
-      }
+      )}
     </ScrollView>
   );
 };
@@ -552,11 +559,28 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  noBranchedView:{
-    justifyContent:"space-between",paddingHorizontal:16,paddingVertical:8,flexDirection:"row",
-    backgroundColor:'#E5E4E4',
-    alignItems:"center",borderRadius:5,marginVertical:8,marginHorizontal:4
-  }
+  noBranchedView: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    backgroundColor: '#E5E4E4',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginVertical: 8,
+    marginHorizontal: 4,
+  },
+  headerCommande: {
+    fontSize: 13,
+    fontFamily: 'Montserrat-Bold',
+    color: colors.white,
+  },
+  headerCommandeButton: {
+    backgroundColor: colors.secondary,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
 });
 
 export default EnterprisePlanning;

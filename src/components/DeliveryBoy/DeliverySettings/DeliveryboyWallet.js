@@ -17,6 +17,7 @@ import {colors} from '../../../colors';
 import {getDeliveryBoyWallet} from '../../../data_manager';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {useLoader} from '../../../utils/loaderContext';
+import {localizationText} from '../../../utils/common';
 
 const DeliveryboyWallet = ({navigation}) => {
   const [walletAmount, setWalletAmount] = useState();
@@ -58,35 +59,45 @@ const DeliveryboyWallet = ({navigation}) => {
               <Text style={styles.dollerSymbol}>{`€ ${
                 walletAmount ? walletAmount : ''
               }`}</Text>
-              <Text style={styles.walletBalance}>Wallet balance</Text>
+              <Text style={styles.walletBalance}>
+                {localizationText('Common', 'walletBalance')}
+              </Text>
             </View>
             <View style={styles.actionCard}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.actionsBt}
                 onPress={() => {
                   navigation.navigate('WithdrawPayment');
                 }}>
-                <Text style={styles.btnText}>Withdraw</Text>
-              </TouchableOpacity>
+                <Text style={styles.btnText}>
+                  {localizationText('NavHeaderTitles', 'withdraw')}
+                </Text>
+              </TouchableOpacity> */}
 
-              <TouchableOpacity style={styles.actionsBt}>
-                <Text style={styles.btnText}>Add funds</Text>
-              </TouchableOpacity>
+              {/* <TouchableOpacity style={styles.actionsBt}>
+                <Text style={styles.btnText}>
+                  {localizationText('Common', 'addFunds')}
+                </Text>
+              </TouchableOpacity> */}
             </View>
           </View>
         </ImageBackground>
 
-        <View style={styles.addCardsHeader}>
-          <Text style={styles.subCardName}>Cards</Text>
+        {/* <View style={styles.addCardsHeader}>
+          <Text style={styles.subCardName}>
+            {localizationText('Common', 'cards')}
+          </Text>
           <View style={styles.addSection}>
             <TouchableOpacity>
               <AntDesign name="pluscircle" size={25} color="#FF0058" />
             </TouchableOpacity>
-            <Text style={styles.addCardText}>Add card</Text>
+            <Text style={styles.addCardText}>
+              {localizationText('Common', 'addCard')}
+            </Text>
           </View>
-        </View>
+        </View> */}
 
-        <View style={styles.addressCard}>
+        {/* <View style={styles.addressCard}>
           <Image source={require('../../../image/paypal-icon.png')} />
           <View style={{marginLeft: 5, flex: 1}}>
             <Text style={styles.paymentPlateform}>PayPal</Text>
@@ -106,12 +117,12 @@ const DeliveryboyWallet = ({navigation}) => {
           <TouchableOpacity>
             <Feather name="edit-2" size={20} color="#000" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.securePayment}>
           <FontAwesome name="shield" size={15} color="#1D1617" />
           <Text style={styles.paymentInfo}>
-            Your payment information is secure
+            {localizationText('Common', 'yourPaymentSecureText')}
           </Text>
         </View>
       </View>
@@ -159,8 +170,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.white,
     borderRadius: 20,
-    width: 100,
-    height: 40,
+    paddingHorizontal: 10,
     paddingVertical: 8,
   },
   btnText: {

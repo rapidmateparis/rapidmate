@@ -21,6 +21,7 @@ import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
 import {getAllVehicleTypes} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import { localizationText } from '../../utils/common';
 
 const AddVehicle = ({route, navigation}) => {
   const {setLoading} = useLoader();
@@ -142,7 +143,9 @@ const AddVehicle = ({route, navigation}) => {
             }
           }}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Next</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'next')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

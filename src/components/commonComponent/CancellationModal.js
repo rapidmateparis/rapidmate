@@ -4,6 +4,7 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import { colors } from '../../colors';
+import { localizationText } from '../../utils/common';
 
 function CancellationModal({
   setModalVisible,
@@ -20,6 +21,11 @@ function CancellationModal({
   const handleReasonSelect = reason => {
     setSelectedReason(reason);
   };
+  const changeOfPlans = localizationText('Common', 'changeOfPlans') || '';
+  const changeDeliveryTime = localizationText('Common', 'changeDeliveryTime') || '';
+  const incorrectAddressInformation = localizationText('Common', 'incorrectAddressInformation') || '';
+  const foundAnotherPerson = localizationText('Common', 'foundAnotherPerson') || '';
+  const TakingTooLong = localizationText('Common', 'TakingTooLong') || '';
 
   const renderReason = cancelItem => {
     const isSelected = selectedReason?.id === cancelItem.id;
@@ -53,24 +59,24 @@ function CancellationModal({
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Cancellation reason</Text>
+            <Text style={styles.headerTitle}>{localizationText('Common', 'cancellationReason')}</Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
           </View>
           <View style={styles.CancellationReasonCard}>
             {[
-              { id: 1, reason: 'Change of plans' },
-              { id: 2, reason: 'I want to change delivery time' },
-              { id: 3, reason: 'Incorrect address or information' },
-              { id: 4, reason: 'Found another person' },
-              { id: 5, reason: 'It is taking too long' },
+              { id: 1, reason: changeOfPlans },
+              { id: 2, reason: changeDeliveryTime },
+              { id: 3, reason: incorrectAddressInformation },
+              { id: 4, reason: foundAnotherPerson },
+              { id: 5, reason: TakingTooLong },
             ].map(reason => renderReason(reason))}
           </View>
           <TouchableOpacity
             onPress={handleSubmit}
             style={styles.buttonCard}>
-            <Text style={styles.okButton}>Submit</Text>
+            <Text style={styles.okButton}>{localizationText('Common', 'submit')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
