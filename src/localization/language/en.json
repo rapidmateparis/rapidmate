@@ -332,7 +332,8 @@
     "whoWeAre": "Who We Are",
     "ourMission": "Our Mission",
     "ourVision": "Our Vision",
-    "whyChooseUs": "Why Choose Us"
+    "whyChooseUs": "Why Choose Us",
+    "OrderStatus" : "Status"
   },
   "NavHeaderTitles": {
     "takeSelfie": "Take a selfie",
