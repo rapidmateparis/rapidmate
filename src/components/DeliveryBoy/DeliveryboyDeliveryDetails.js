@@ -501,7 +501,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             {localizationText('Common', 'orderID')}:
             <Text style={styles.detailsId}>
               {' '}
-              {order.order ? order.order.order_number : '123456'}
+              {order.order ? order.order.order_number : '*************'}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>
