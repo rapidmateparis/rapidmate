@@ -51,49 +51,67 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
-        {enterpriseBranches.map((item, index) => {
-          return (
-            <View key={index} style={styles.franchiseCard}>
-              <View style={styles.franchiseCardHeader}>
-                <Image
-                  style={styles.companyImga}
-                  source={require('../../image/home.png')}
-                />
-                <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
-              </View>
-
-              <View style={styles.bookedCardInfo}>
-                <View>
-                  <Text style={styles.bookedInfo}>Active booking</Text>
-                  <Text style={styles.bookedDetails}>{item.active_order}</Text>
+        {enterpriseBranches.length > 0 ? (
+          enterpriseBranches.map((item, index) => {
+            return (
+              <View key={index} style={styles.franchiseCard}>
+                <View style={styles.franchiseCardHeader}>
+                  <Image
+                    style={styles.companyImga}
+                    source={require('../../image/home.png')}
+                  />
+                  <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>Scheduled booking</Text>
-                  <Text style={styles.bookedDetails}>{item.schedule_order}</Text>
+                <View style={styles.bookedCardInfo}>
+                  <View>
+                    <Text style={styles.bookedInfo}>Active booking</Text>
+                    <Text style={styles.bookedDetails}>{item.active_order || 0}</Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>Scheduled booking</Text>
+                    <Text style={styles.bookedDetails}>
+                      {item.schedule_order || 0}
+                    </Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>All booking</Text>
+                    <Text style={styles.bookedDetails}>{item.total || 0}</Text>
+                  </View>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>All booking</Text>
-                  <Text style={styles.bookedDetails}>{item.total}</Text>
+                <View style={styles.companyLocation}>
+                  <EvilIcons name="location" size={22} color="#000" />
+                  <Text style={styles.locationAddress}>
+                    {item.address +
+                      ', ' +
+                      item.city +
+                      ', ' +
+                      item.state +
+                      ', ' +
+                      item.country}
+                  </Text>
                 </View>
               </View>
-
-              <View style={styles.companyLocation}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.locationAddress}>
-                  {item.address +
-                    ', ' +
-                    item.city +
-                    ', ' +
-                    item.state +
-                    ', ' +
-                    item.country}
-                </Text>
-              </View>
+            );
+          })
+        ) : (
+          <View style={styles.scrollViewContainer}>
+            <View style={styles.noDataContainer}>
+              <Image
+                style={styles.loaderMap}
+                source={require('../../image/No-Data-Table.png')}
+              />
+              <Text style={styles.text}>No Company Location</Text>
+              <Text style={styles.subText}>
+                Please add a company location from the manage company locations.
+              </Text>
             </View>
-          );
-        })}
+          </View>
+        )}
+
         <TouchableOpacity
           onPress={() => navigation.navigate('EnterpriseBottomNav')}
           style={styles.nextBt}>
@@ -408,6 +426,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat-Medium',
     textAlign: 'center',
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingTop: 50,
   },
 });
 
