@@ -310,6 +310,8 @@
     "submitOTP": "Soumettre l'OTP",
     "viewPhoto": "Voir la photo",
     "newDeliveryRequest": "Nouvelle demande de livraison !",
+    "newShiftRequest": "New Shift request!",
+    "shiftOverview": "Vue d'ensemble",
     "totalDistance": "Distance totale",
     "deliverTo": "Livrer à",
     "swipeToAccept": "Glisser pour accepter",
