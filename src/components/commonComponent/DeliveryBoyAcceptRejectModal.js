@@ -16,7 +16,7 @@ import Animated, {
 import {useLocationData} from './StoreContext';
 import {orderRequestAction, updateShiftOrderStatus} from '../../data_manager';
 import moment from 'moment';
-import { localizationText, utcLocal } from '../../utils/common';
+import {localizationText, utcLocal} from '../../utils/common';
 
 function DeliveryBoyAcceptRejectModal({
   isDeliveryBoyAcceptRejectModalModalVisible,
@@ -27,19 +27,27 @@ function DeliveryBoyAcceptRejectModal({
   const translateXReject = useSharedValue(0);
   const {locationData} = useLocationData();
 
-  const newDeliveryRequest = localizationText('Common', 'newDeliveryRequest') || 'New Delivery Request';
-  const estimatedCost = localizationText('Common', 'estimatedCost') || 'Estimated Cost';
-  const totalDistance = localizationText('Common', 'totalDistance') || 'Total Distance';
+  const newDeliveryRequest =
+    localizationText('Common', 'newDeliveryRequest') || 'New Delivery Request';
+  const newShiftRequest =
+    localizationText('Common', 'newShiftRequest') || 'New Shift Request';
+  const estimatedCost =
+    localizationText('Common', 'estimatedCost') || 'Estimated Cost';
+  const totalDistance =
+    localizationText('Common', 'totalDistance') || 'Total Distance';
   const orderIDText = localizationText('Common', 'orderID') || 'Order ID';
   const pickupFrom = localizationText('Common', 'pickupFrom') || 'Pickup From';
   const deliverTo = localizationText('Common', 'deliverTo') || 'Deliver To';
-  const swipeToAccept = localizationText('Common', 'swipeToAccept') || 'Swipe to accept';
-  const swipeToReject = localizationText('Common', 'swipeToReject') || 'Swipe to reject';
+  const swipeToAccept =
+    localizationText('Common', 'swipeToAccept') || 'Swipe to accept';
+  const swipeToReject =
+    localizationText('Common', 'swipeToReject') || 'Swipe to reject';
   const awayText = localizationText('Common', 'away') || 'away';
-  const shiftText = localizationText('Common', 'shift') || 'Shift';
+  const shiftOverview = localizationText('Common', 'shiftOverview') || 'Shift Overview';
   const totalDays = localizationText('Common', 'totalDays') || 'Total Days';
   const totalHours = localizationText('Common', 'totalHours') || 'Total Hours';
-  const aproxEarning = localizationText('Common', 'aproxEarning') || 'Aprox Earning';
+  const aproxEarning =
+    localizationText('Common', 'aproxEarning') || 'Aprox Earning';
   const fromText = localizationText('Common', 'from') || 'From';
   const toText = localizationText('Common', 'to') || 'To';
   const forText = localizationText('Common', 'for') || 'For';
@@ -56,7 +64,6 @@ function DeliveryBoyAcceptRejectModal({
     },
     onEnd: () => {
       if (translateXAccept.value > 100) {
-       
       }
       translateXAccept.value = withSpring(0);
     },
@@ -68,7 +75,6 @@ function DeliveryBoyAcceptRejectModal({
     },
     onEnd: () => {
       if (translateXReject.value > 100) {
-       
       }
       translateXReject.value = withSpring(0); // Reset animation
     },
@@ -86,25 +92,24 @@ function DeliveryBoyAcceptRejectModal({
     };
   });
 
-  const getLocationAddress = (locationId) => {
-    let result = locationData.filter(location => location.id === Number(locationId));
-    
+  const getLocationAddress = locationId => {
+    let result = locationData.filter(
+      location => location.id === Number(locationId),
+    );
+
     if (result?.length > 0) {
-        let location = result[0];
-        return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
     }
-    
-    return "Address not found";
-};
 
-const getLocationAddressByOrder = (address, city, state, country) => {
-  return `${address}, ${city}, ${state}, ${country}`;
-};
+    return 'Address not found';
+  };
 
-
+  const getLocationAddressByOrder = (address, city, state, country) => {
+    return `${address}, ${city}, ${state}, ${country}`;
+  };
 
   const handleOrderRequest = value => {
-
     let params = {
       delivery_boy_ext_id: deliveryBoyAcceptRejectMessage?.deliveryBoy?.ext_id,
       order_number: deliveryBoyAcceptRejectMessage?.order?.order_number,
@@ -115,13 +120,12 @@ const getLocationAddressByOrder = (address, city, state, country) => {
     orderRequestAction(
       params,
       successResponse => {
-
         // navigation.navigate('DeliveryboyDeliveryDetails', {
         //   order_number: deliveryBoyAcceptRejectMessage.order.order_number,
         //   package_photo: deliveryBoyAcceptRejectMessage.order.package_photo,
         //   orderItem: deliveryBoyAcceptRejectMessage.order,
         // });
-        // TODO go to delivery details 
+        // TODO go to delivery details
         toggleModal();
       },
       errorResponse => {
@@ -130,149 +134,157 @@ const getLocationAddressByOrder = (address, city, state, country) => {
     );
   };
 
-  console.log("first",deliveryBoyAcceptRejectMessage);
+  console.log('first', deliveryBoyAcceptRejectMessage);
 
+  const createShiftOrder = item => {
+    return (
+      <View style={styles.packageDetailCard}>
+        <View style={styles.packageHeader}>
+          <Image
+            style={{width: 25, height: 25}}
+            source={require('../../image/Big-Calender.png')}
+          />
+          <Text style={styles.deliveryTime}>{shiftOverview}</Text>
+        </View>
 
-
-  const createShiftOrder=(item)=>{
-
-    return( 
-    
-      <TouchableOpacity
-      style={styles.packageDetailCard}>
-          <View style={styles.packageHeader}>
-            <Image
-              style={{width: 25, height: 25}}
-              source={require('../../image/Big-Calender.png')}
-            />
-            <Text style={styles.deliveryTime}>{shiftText}</Text>
+        <View style={styles.overViewCard}>
+          <View>
+            <Text style={styles.requestOverview}>1</Text>
+            <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
           </View>
 
-          <View style={styles.overViewCard}>
-            <View>
-              <Text style={styles.requestOverview}>1</Text>
-              <Text style={styles.requestOverviewInfo}>{totalDays}</Text>
-            </View>
+          <View>
+            <Text style={styles.requestOverview}>
+              {item.total_hours ? item.total_hours.toFixed(2) : 0}
+            </Text>
+            <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
+          </View>
 
-            <View>
-              <Text style={styles.requestOverview}>{item.total_hours ? item.total_hours.toFixed(2) :0}</Text>
-              <Text style={styles.requestOverviewInfo}>{totalHours}</Text>
-            </View>
-
-            <View>
-              <Text style={styles.requestOverview}>
-                €<Text>{item.delivery_boy_amount ? item.delivery_boy_amount.toFixed(2) :0}</Text>
+          <View>
+            <Text style={styles.requestOverview}>
+              €
+              <Text>
+                {item.delivery_boy_amount
+                  ? item.delivery_boy_amount.toFixed(2)
+                  : 0}
               </Text>
-              <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
-            </View>
-          </View>
-
-          <View style={styles.scheduleDateTimeCard}>
-            <Text style={styles.schaduleInfo}>
-              {fromText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.slot_date)).format('DD-MM-YYYY')}</Text>
             </Text>
-            <View style={styles.borderShowoff} />
-            <Text style={styles.schaduleInfo}>
-              {toText} <Text style={styles.schaduleDateTime}>{moment(utcLocal(deliveryBoyAcceptRejectMessage?.order.slot_date)).format('DD-MM-YYYY')}</Text>
+            <Text style={styles.requestOverviewInfo}>{aproxEarning}</Text>
+          </View>
+        </View>
+
+        <View style={styles.scheduleDateTimeCard}>
+          <Text style={styles.schaduleInfo}>
+            {fromText}{' '}
+            <Text style={styles.schaduleDateTime}>
+              {moment(
+                utcLocal(deliveryBoyAcceptRejectMessage?.order.slot_date),
+              ).format('DD-MM-YYYY')}
             </Text>
-          </View>
+          </Text>
+          <View style={styles.borderShowoff} />
+          <Text style={styles.schaduleInfo}>
+            {toText}{' '}
+            <Text style={styles.schaduleDateTime}>
+              {moment(
+                utcLocal(deliveryBoyAcceptRejectMessage?.order.slot_date),
+              ).format('DD-MM-YYYY')}
+            </Text>
+          </Text>
+        </View>
 
-          {/* <View style={styles.borderShow}></View> */}
+        {/* <View style={styles.borderShow}></View> */}
 
-          <View style={styles.footerCard}>
-            <Text style={styles.orderId}>{forText} {deliveryBoyAcceptRejectMessage?.order.company_name}</Text>
-            {/* <Text style={styles.valueMoney}>€34.00</Text> */}
-          </View>
-        </TouchableOpacity>
-    )
-  }
+        <View style={styles.footerCard}>
+          <Text style={styles.orderId}>
+            {forText} {deliveryBoyAcceptRejectMessage?.order.company_name}
+          </Text>
+          {/* <Text style={styles.valueMoney}>€34.00</Text> */}
+        </View>
+      </View>
+    );
+  };
 
-  const changeCreateShiftOrder=(status,slot_id,hours)=>{
+  const changeCreateShiftOrder = (status, slot_id, hours) => {
     let parm = {
-      "order_number" : deliveryBoyAcceptRejectMessage?.order?.order_number,
-      "status" : status,
-      "slot_id" :  slot_id
+      order_number: deliveryBoyAcceptRejectMessage?.order?.order_number,
+      status: status,
+      slot_id: slot_id,
+    };
+    if (hours) {
+      parm = {...parm, total_duration_text: hours};
     }
-    if(hours){
-      parm = {...parm,total_duration_text:hours}
-    }
-      updateShiftOrderStatus(
-        parm,
-        successRes=>{
-          toggleModal()
-        },
-        errorRes=>{
-          toggleModal()
-        }
-      )
-    }
+    updateShiftOrderStatus(
+      parm,
+      successRes => {
+        toggleModal();
+      },
+      errorRes => {
+        toggleModal();
+      },
+    );
+  };
 
-    const getOrderType = (orderNumber)=>{
-      let orderTypeMessage = "Rapidmate Order";
-      if(String(orderNumber).includes("ES")){
-        orderTypeMessage = "Enterprise Shift Order : Shift Base";
-      }else if(String(orderNumber).includes("EM")){
-        orderTypeMessage = "Enterprise Multiple Order : One or More drop locations";
-      }else if(String(orderNumber).includes("EO")){
-        orderTypeMessage = "Enterprise Onetime Order : One Drop location";
-      }else if(String(orderNumber).includes("NS")){
-        orderTypeMessage = "Customer Scheduled Order : One Drop location";
-      }else if(String(orderNumber).includes("N")){
-        orderTypeMessage = "Customer Order : One Drop Location";
-      }  
-      return orderTypeMessage;
+  const getOrderType = orderNumber => {
+    let orderTypeMessage = 'Rapidmate Order';
+    if (String(orderNumber).includes('ES')) {
+      orderTypeMessage = 'Enterprise Shift Order : Shift Base';
+    } else if (String(orderNumber).includes('EM')) {
+      orderTypeMessage =
+        'Enterprise Multiple Order : One or More drop locations';
+    } else if (String(orderNumber).includes('EO')) {
+      orderTypeMessage = 'Enterprise Onetime Order : One Drop location';
+    } else if (String(orderNumber).includes('NS')) {
+      orderTypeMessage = 'Customer Scheduled Order : One Drop location';
+    } else if (String(orderNumber).includes('N')) {
+      orderTypeMessage = 'Customer Order : One Drop Location';
     }
-  
-
+    return orderTypeMessage;
+  };
 
   return (
     <Modal isVisible={isDeliveryBoyAcceptRejectModalModalVisible}>
       <GestureHandlerRootView>
         <View style={styles.modalContent}>
-          
-        {
-               deliveryBoyAcceptRejectMessage?.order.delivery_type_id === 3 ?
-               <View style={styles.imageContainer}>
-               <View style={styles.container}>
-                 <Image
-                   style={styles.loaderMap}
-                   source={require('../../image/Big-Package.png')}
-                 />
-                 <Text style={styles.maintext}>{newDeliveryRequest}</Text>
-                  
-               </View>
+          {deliveryBoyAcceptRejectMessage?.order.delivery_type_id === 3 ? (
+            <View style={styles.imageContainer}>
+              <View style={styles.mainShiftcontainer}>
+                <Image
+                  style={styles.loaderMap}
+                  source={require('../../image/Big-Calender.png')}
+                />
+                <Text style={styles.maintext}>{newShiftRequest}</Text>
+              </View>
 
-               <View style={styles.addressCard}>
-                 <View style={styles.devileryMap}>
-                   <View style={styles.Delivering}>
-                     <View style={{padding: 15}}>
-                       <Text style={styles.DeliveringText}>{deliveryBoyAcceptRejectMessage?.order
-                             ?.company_name}</Text>
-                       <Text style={styles.subAddress}>
-                         {deliveryBoyAcceptRejectMessage?.order?.address}
-                       </Text>
-                       <Text style={styles.distance}>{""}</Text>
-                     </View>
-                   </View>
-                   <View>
-                     <Image
-                       style={styles.mapAddress}
-                       source={require('../../image/dummyMap.png')}
-                     />
-                   </View>
-                 </View>
-               </View>
-            <View>
-              
-              {
-              deliveryBoyAcceptRejectMessage?.slots  && deliveryBoyAcceptRejectMessage?.slots?.length > 0 &&
-              deliveryBoyAcceptRejectMessage?.slots.map((slot)=>{
-                return createShiftOrder(slot)
-              })
-              
-              }
-            </View>
-               {/* <View style={styles.addressCard}>
+              <View style={styles.addressCard}>
+                <View style={styles.devileryMap}>
+                  <View style={styles.Delivering}>
+                    <View style={{padding: 15}}>
+                      <Text style={styles.DeliveringText}>
+                        {deliveryBoyAcceptRejectMessage?.order?.company_name}
+                      </Text>
+                      <Text style={styles.subAddress}>
+                        {deliveryBoyAcceptRejectMessage?.order?.address}
+                      </Text>
+                      <Text style={styles.distance}>{''}</Text>
+                    </View>
+                  </View>
+                  <View>
+                    <Image
+                      style={styles.mapAddress}
+                      source={require('../../image/dummyMap.png')}
+                    />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.shiftContainerCard}>
+                {deliveryBoyAcceptRejectMessage?.slots &&
+                  deliveryBoyAcceptRejectMessage?.slots?.length > 0 &&
+                  deliveryBoyAcceptRejectMessage?.slots.map(slot => {
+                    return createShiftOrder(slot);
+                  })}
+              </View>
+              {/* <View style={styles.addressCard}>
                  <View style={styles.devileryMap}>
                    <View style={styles.Delivering}>
                      <View style={{padding: 15}}>
@@ -294,7 +306,7 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                    </View>
                  </View>
                </View> */}
-               {/* <View style={styles.addressCard}>
+              {/* <View style={styles.addressCard}>
                  <View style={styles.devileryMap}>
                    <View style={styles.Delivering}>
                      <View style={{padding: 15}}>
@@ -316,28 +328,26 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                    </View>
                  </View>
                </View> */}
-             </View>
-               :
-          <View style={styles.imageContainer}>
-            <View style={styles.container}>
-              <Image
-                style={styles.loaderMap}
-                source={require('../../image/Big-Package.png')}
-              />
-              <Text style={styles.maintext}>{newDeliveryRequest}</Text>
+            </View>
+          ) : (
+            <View style={styles.imageContainer}>
+              <View style={styles.container}>
+                <Image
+                  style={styles.loaderMap}
+                  source={require('../../image/Big-Package.png')}
+                />
+                <Text style={styles.maintext}>{newDeliveryRequest}</Text>
                 <Text style={styles.subText}>
                   {estimatedCost}:{' '}
-                  <Text
-                    style={
-                      styles.boldSubText
-                    }>{`€${Number(deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount).toFixed(2)}`}</Text>
+                  <Text style={styles.boldSubText}>{`€${Number(
+                    deliveryBoyAcceptRejectMessage?.order?.delivery_boy_amount,
+                  ).toFixed(2)}`}</Text>
                 </Text>
                 <Text style={styles.subText}>
                   {totalDistance}:{' '}
-                  <Text
-                    style={
-                      styles.boldSubText
-                    }>{`${Number(deliveryBoyAcceptRejectMessage?.order?.distance).toFixed(2)} Km`}</Text>
+                  <Text style={styles.boldSubText}>{`${Number(
+                    deliveryBoyAcceptRejectMessage?.order?.distance,
+                  ).toFixed(2)} Km`}</Text>
                 </Text>
                 <Text style={styles.subText}>
                   {orderIDText}:{' '}
@@ -345,75 +355,90 @@ const getLocationAddressByOrder = (address, city, state, country) => {
                     {deliveryBoyAcceptRejectMessage?.order?.order_number}
                   </Text>
                 </Text>
-            </View>
-            <View style={styles.addressCard}>
-              <View style={styles.devileryMap}>
-                <View style={styles.Delivering}>
-                  <View style={{padding: 15}}>
-                    <Text style={styles.DeliveringText}>{pickupFrom}</Text>
-                    <Text style={styles.subAddress}>
-                      {getLocationAddressByOrder(
-                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.address || "Fetching...",
-                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.city  || "",
-                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.state  || "",
-                         deliveryBoyAcceptRejectMessage?.order?.pickup_details?.country  || ""                       
-                      )}
-                    </Text>
-                    <Text style={styles.distance}>{""}</Text>
+              </View>
+              <View style={styles.addressCard}>
+                <View style={styles.devileryMap}>
+                  <View style={styles.Delivering}>
+                    <View style={{padding: 15}}>
+                      <Text style={styles.DeliveringText}>{pickupFrom}</Text>
+                      <Text style={styles.subAddress}>
+                        {getLocationAddressByOrder(
+                          deliveryBoyAcceptRejectMessage?.order?.pickup_details
+                            ?.address || 'Fetching...',
+                          deliveryBoyAcceptRejectMessage?.order?.pickup_details
+                            ?.city || '',
+                          deliveryBoyAcceptRejectMessage?.order?.pickup_details
+                            ?.state || '',
+                          deliveryBoyAcceptRejectMessage?.order?.pickup_details
+                            ?.country || '',
+                        )}
+                      </Text>
+                      <Text style={styles.distance}>{''}</Text>
+                    </View>
+                  </View>
+                  <View>
+                    <Image
+                      style={styles.mapAddress}
+                      source={require('../../image/dummyMap.png')}
+                    />
                   </View>
                 </View>
-                <View>
-                  <Image
-                    style={styles.mapAddress}
-                    source={require('../../image/dummyMap.png')}
-                  />
-                </View>
               </View>
-            </View>
-            <View style={styles.addressCard}>
-              <View style={styles.devileryMap}>
-                <View style={styles.Delivering}>
-                  <View style={{padding: 15}}>
-                    <Text style={styles.DeliveringText}>{deliverTo}</Text>
-                    <Text style={styles.subAddress}>
-                    {getLocationAddressByOrder(
-                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.address  || "Fetching...",
-                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.city  || "",
-                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.state  || "",
-                         deliveryBoyAcceptRejectMessage?.order?.drop_details?.country  || ""
-                      )}
-                    </Text>
-                    <Text style={styles.distance}>{""}</Text>
+              <View style={styles.addressCard}>
+                <View style={styles.devileryMap}>
+                  <View style={styles.Delivering}>
+                    <View style={{padding: 15}}>
+                      <Text style={styles.DeliveringText}>{deliverTo}</Text>
+                      <Text style={styles.subAddress}>
+                        {getLocationAddressByOrder(
+                          deliveryBoyAcceptRejectMessage?.order?.drop_details
+                            ?.address || 'Fetching...',
+                          deliveryBoyAcceptRejectMessage?.order?.drop_details
+                            ?.city || '',
+                          deliveryBoyAcceptRejectMessage?.order?.drop_details
+                            ?.state || '',
+                          deliveryBoyAcceptRejectMessage?.order?.drop_details
+                            ?.country || '',
+                        )}
+                      </Text>
+                      <Text style={styles.distance}>{''}</Text>
+                    </View>
+                  </View>
+                  <View>
+                    <Image
+                      style={styles.mapAddress}
+                      source={require('../../image/dummyMap.png')}
+                    />
                   </View>
                 </View>
-                <View>
-                  <Image
-                    style={styles.mapAddress}
-                    source={require('../../image/dummyMap.png')}
-                  />
-                </View>
               </View>
-            </View>
-            <View style={styles.container}>
+              <View style={styles.container}>
                 <Text style={styles.subText}>
                   <Text style={styles.orderTypeHighlight}>
-                    {getOrderType(deliveryBoyAcceptRejectMessage?.order?.order_number)}
+                    {getOrderType(
+                      deliveryBoyAcceptRejectMessage?.order?.order_number,
+                    )}
                   </Text>
                 </Text>
+              </View>
             </View>
-          </View>
-      }
+          )}
           <View style={styles.swipeAcceptContainer}>
             <PanGestureHandler
               onEnded={() => {
-
-                if( deliveryBoyAcceptRejectMessage?.order.delivery_type_id === 3 && deliveryBoyAcceptRejectMessage?.slots?.length > 0){
-                  changeCreateShiftOrder('Start',deliveryBoyAcceptRejectMessage?.slots[0].id)
-                }else{
+                if (
+                  deliveryBoyAcceptRejectMessage?.order.delivery_type_id ===
+                    3 &&
+                  deliveryBoyAcceptRejectMessage?.slots?.length > 0
+                ) {
+                  changeCreateShiftOrder(
+                    'Start',
+                    deliveryBoyAcceptRejectMessage?.slots[0].id,
+                  );
+                } else {
                   handleOrderRequest(true);
                 }
                 toggleModal();
-
               }}
               onGestureEvent={gestureHandlerAccept}>
               <Animated.View
@@ -431,14 +456,20 @@ const getLocationAddressByOrder = (address, city, state, country) => {
           <View style={styles.swipeRejectContainer}>
             <PanGestureHandler
               onEnded={() => {
-
-                if( deliveryBoyAcceptRejectMessage?.order.delivery_type_id === 3 && deliveryBoyAcceptRejectMessage?.slots?.length > 0){
-                  changeCreateShiftOrder('End',deliveryBoyAcceptRejectMessage?.slots[0].id,'1')
-                }else{
+                if (
+                  deliveryBoyAcceptRejectMessage?.order.delivery_type_id ===
+                    3 &&
+                  deliveryBoyAcceptRejectMessage?.slots?.length > 0
+                ) {
+                  changeCreateShiftOrder(
+                    'End',
+                    deliveryBoyAcceptRejectMessage?.slots[0].id,
+                    '1',
+                  );
+                } else {
                   handleOrderRequest(false);
                 }
                 toggleModal();
-
               }}
               onGestureEvent={gestureHandlerReject}>
               <Animated.View
@@ -489,6 +520,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,
+    marginTop: 10,
+  },
+  mainShiftcontainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   text: {
     color: '#555',
@@ -548,12 +585,14 @@ const styles = StyleSheet.create({
   loaderMap: {
     width: 70,
     height: 70,
+    marginBottom: 15,
   },
   subText: {
     color: colors.text,
     fontSize: 13,
     fontFamily: 'Montserrat-Regular',
     textAlign: 'center',
+    marginVertical: 4,
   },
   devileryMap: {
     flexDirection: 'row',
@@ -603,7 +642,7 @@ const styles = StyleSheet.create({
   maintext: {
     color: colors.text,
     fontSize: 20,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat-Bold',
     marginBottom: 5,
     textAlign: 'center',
   },
@@ -615,14 +654,13 @@ const styles = StyleSheet.create({
 
   orderTypeHighlight: {
     marginTop: 10,
-    color: 'rgba(7, 59, 23, 0.86)',
+    color: colors.secondary,
     fontSize: 15,
     fontFamily: 'Montserrat-Bold',
   },
 
   packageDetailCard: {
     backgroundColor: colors.white,
-    padding: 13,
     borderRadius: 5,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
     shadowOffset: {
@@ -640,16 +678,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deliveryTime: {
-    fontSize: 13,
+    fontSize: 17,
     color: colors.text,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat-Bold',
     marginLeft: 10,
   },
   overViewCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 10,
+    marginVertical: 15,
   },
   requestOverview: {
     fontSize: 24,
@@ -683,8 +721,11 @@ const styles = StyleSheet.create({
     width: 20,
     marginHorizontal: 5,
   },
-
-
+  shiftContainerCard: {
+    width: '90%',
+    paddingHorizontal: 15,
+    marginTop: 20,
+  },
 });
 
 export default DeliveryBoyAcceptRejectModal;
