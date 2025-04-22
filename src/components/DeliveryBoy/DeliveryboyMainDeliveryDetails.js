@@ -266,24 +266,21 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>
-                {localizationText('Common', 'waiting')}
+                {localizationText('Common', 'commission')} @20%
               </Text>
               <Text style={styles.value}>
-                €{' '}
-                {orderDetails.waiting_fare
-                  ? orderDetails.waiting_fare.toFixed(2)
-                  : '0.00'}
+                0
               </Text>
             </View>
 
-            <View style={styles.cardHeader}>
+            {/* <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>
                 {localizationText('Common', 'promo')}
               </Text>
               <Text style={styles.value}>
                 {orderDetails.promo_value ? orderDetails.promo_value : '0%'}
               </Text>
-            </View>
+            </View> */}
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>
@@ -392,7 +389,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
   },
   orderFare: {
-    width: '75%',
+    width: '73%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',

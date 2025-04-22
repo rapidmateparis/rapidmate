@@ -155,10 +155,10 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                 <Text style={styles.value}>€00.00</Text>
               </View>
 
-              <View style={styles.cardHeader}>
+              {/* <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Promo</Text>
                 <Text style={styles.value}>€00.00</Text>
-              </View>
+              </View> */}
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Discount</Text>

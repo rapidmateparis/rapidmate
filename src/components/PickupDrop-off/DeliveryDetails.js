@@ -702,12 +702,12 @@ const DeliveryDetails = ({ navigation, route }) => {
               </Text>
             </View>
 
-            <View style={styles.cardHeader}>
+            {/* <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{promo}</Text>
               <Text style={styles.value}>
                 {order.promo_value ? order.promo_value : '0'}
               </Text>
-            </View>
+            </View> */}
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{`Discount @${order.discount}%`}</Text>
