@@ -38,10 +38,12 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const {setLoading} = useLoader();
   const paste = localizationText('Common', 'paste') || 'Paste';
   const copy = localizationText('Common', 'copy') || 'Copy';
+  const [weekText, setWeekText] = useState(0)
+  const [copiedSlots, setCopiedSlots] = useState(null);
 
-  useEffect(() => {
-    getCurrentTimeSlot();
-  }, [currentWeek]);
+  // useEffect(() => {
+  //   getCurrentTimeSlot();
+  // }, [currentWeek]);
 
   useEffect(() => {
     let currentYear = new Date().getFullYear();
@@ -53,6 +55,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setTotalMonthWeek(totalMonthWeek);
     setMaxWeekCount(totalMonthWeek.length);
     setCurrentWeek(totalMonthWeek[0].dates);
+    getCurrentTimeSlot();
+    console.log("Toggle boxxes===============>",toggleCheckBoxes)
+    console.log("set time slotes ==============>",timeSlots)
   }, []);
 
   const getCurrentTimeSlot = () => {
@@ -65,6 +70,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
     getCurrentPlanningSetup(
       params,
       successResponse => {
+        console.log("Get current palnning setup==========>",successResponse)
         if (successResponse[0]._success) {
           console.log('getCurrentPlanningSetup==>', successResponse[0]);
           setToggleApplySameForAll(
@@ -132,14 +138,40 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setTimeSlots(defaultTimeSlots);
   }, [toggleApplySameForAll, toggleAvailable24, currentWeek]);
 
+  // function getWeeksInMonth(year, month) {
+  //   const weeks = [],
+  //     firstDate = new Date(year, month, 1),
+  //     lastDate = new Date(year, month + 1, 0),
+  //     numDays = lastDate.getDate();
+
+  //   let dayOfWeekCounter = firstDate.getDay();
+
+  //   for (let date = 1; date <= numDays; date++) {
+  //     if (dayOfWeekCounter === 0 || weeks.length === 0) {
+  //       weeks.push([]);
+  //     }
+  //     weeks[weeks.length - 1].push(date);
+  //     dayOfWeekCounter = (dayOfWeekCounter + 1) % 7;
+  //   }
+
+  //   return weeks
+  //     .filter(w => !!w.length)
+  //     .map(w => ({
+  //       start: w[0],
+  //       end: w[w.length - 1],
+  //       dates: w,
+  //     }));
+  // }
+
   function getWeeksInMonth(year, month) {
     const weeks = [],
       firstDate = new Date(year, month, 1),
       lastDate = new Date(year, month + 1, 0),
       numDays = lastDate.getDate();
-
+  
     let dayOfWeekCounter = firstDate.getDay();
-
+  
+   
     for (let date = 1; date <= numDays; date++) {
       if (dayOfWeekCounter === 0 || weeks.length === 0) {
         weeks.push([]);
@@ -147,15 +179,45 @@ const DeliveryboySetAvailability = ({navigation}) => {
       weeks[weeks.length - 1].push(date);
       dayOfWeekCounter = (dayOfWeekCounter + 1) % 7;
     }
-
-    return weeks
-      .filter(w => !!w.length)
+  
+    const allWeeks = weeks
+      .filter(w => w.length)
       .map(w => ({
         start: w[0],
         end: w[w.length - 1],
         dates: w,
       }));
+  
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+  
+    let filteredWeeks = allWeeks;
+  
+  
+    if (year === todayYear && month === todayMonth) {
+      const currentWeekIndex = allWeeks.findIndex(week => week.end >= todayDate);
+      setWeekText(currentWeekIndex + 1)
+  
+      filteredWeeks = allWeeks.slice(currentWeekIndex).map((week, index) => {
+     
+        if (index === 0) {
+          const filteredDates = week.dates.filter(day => day >= todayDate);
+          return {
+            ...week,
+            dates: filteredDates,
+            start: filteredDates[0],
+            end: filteredDates[filteredDates.length - 1],
+          };
+        }
+        return week; 
+      });
+    }
+  
+    return filteredWeeks;
   }
+  
 
   const handleNextWeek = () => {
     if (weekCount < maxWeekCount) {
@@ -194,6 +256,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
       const newWeekCount = weekCount + 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
+      setWeekText(weekText + 1)
     }
   };
 
@@ -234,6 +297,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
       const newWeekCount = weekCount - 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
+      setWeekText(weekText - 1)
     }
   };
 
@@ -350,9 +414,10 @@ const DeliveryboySetAvailability = ({navigation}) => {
     planningSetupUpdate(
       params,
       successResponse => {
+        console.log("params=======================> successs", params)
         if (successResponse[0]._success) {
           setLoading(false);
-          Alert.alert('Error Alert', successResponse[0]._response, [
+          Alert.alert('Success', successResponse[0]._response, [
             {
               text: 'OK',
               onPress: () => {
@@ -371,6 +436,20 @@ const DeliveryboySetAvailability = ({navigation}) => {
     );
   };
 
+
+  const handleCopy = (day)=>{
+     let time = timeSlots[day]
+     setCopiedSlots(time)
+     console.log("Time slotes===============> copied",time)
+  }
+
+  const handlePaste = (day) =>{
+    if(copiedSlots){
+      setTimeSlots({...timeSlots, [day] : copiedSlots})
+      setCopiedSlots(null)
+    }
+  }
+
   return (
     <>
       <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -388,7 +467,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
                 {moment().format('MMM YYYY')}
               </Text>
               <Text style={styles.weekFillter}>
-                {localizationText('Common', 'week')} {weekCount}
+                {localizationText('Common', 'week')} {weekText}
               </Text>
             </View>
 
@@ -467,12 +546,15 @@ const DeliveryboySetAvailability = ({navigation}) => {
                     </View>
 
                     {toggleCheckBoxes[day] ? (
+                      
                       <View style={styles.bothActionBtn}>
-                        <TouchableOpacity style={styles.enabledPasteBt}>
+                        {console.log("styyle toggle", day,toggleCheckBoxes)}
+                        {console.log("All slots", timeSlots)}
+                        <TouchableOpacity style={styles.enabledPasteBt} onPress={()=> handlePaste(day)} >
                           <Text style={styles.enabledPasteText}>{paste}</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.copyCardBt}>
+                        <TouchableOpacity style={styles.copyCardBt}  onPress={()=>handleCopy(day)}>
                           <Text style={styles.enabledPasteText}>{copy}</Text>
                         </TouchableOpacity>
                       </View>
