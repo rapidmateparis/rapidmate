@@ -62,20 +62,52 @@ const EnterpriseShiftDeliverySchedule = ({route, navigation}) => {
     setDays([...updateDays]);
   }, [days.length]);
 
+  // const togglePromoEmails = () => {
+  //   setPromoEmails(!promoEmails);
+  //   var tempDays = days;
+  //   if (!promoEmails) {
+  //     tempDays.forEach(element => {
+  //       element.timeslots = tempDays[0].timeslots;
+  //     });
+  //   } else {
+  //     tempDays.forEach(element => {
+  //       element.timeslots = [];
+  //     });
+  //   }
+  //   setDays(tempDays);
+  // };
+
   const togglePromoEmails = () => {
-    setPromoEmails(!promoEmails);
-    var tempDays = days;
-    if (!promoEmails) {
-      tempDays.forEach(element => {
-        element.timeslots = tempDays[0].timeslots;
+    const updatedValue = !promoEmails;
+    setPromoEmails(updatedValue);
+  
+    
+    const tempDays = JSON.parse(JSON.stringify(days));
+  
+    if (!updatedValue) {
+      
+      const firstSlot = tempDays[0]?.timeslots[0] || {
+        from_time: '',
+        to_time: '',
+      };
+  
+      tempDays.forEach((element) => {
+        element.timeslots = [{
+          ...firstSlot,
+          slot_date: element.formattedDate,
+          day: element.day,
+        }];
       });
     } else {
-      tempDays.forEach(element => {
+    
+      tempDays.forEach((element) => {
         element.timeslots = [];
       });
     }
+  
     setDays(tempDays);
   };
+  
 
   const createSchedule = (startDateParam, endDateParam) => {
     if (startDateParam == '' || endDateParam == '') {
