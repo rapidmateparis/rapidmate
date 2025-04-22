@@ -312,16 +312,6 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
               </Text>
             </View>
 
-            <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>
-                €{' '}
-                {orderDetails.waiting_fare
-                  ? orderDetails.waiting_fare.toFixed(2)
-                  : '0.00'}
-              </Text>
-            </View>
-
             {/* <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>Platform fee</Text>
               <Text style={styles.value}>€01.00</Text>

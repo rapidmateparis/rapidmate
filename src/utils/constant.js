@@ -120,6 +120,7 @@ export const API = {
   deliveryBoyOrderSlots:BASE_URL + 'order/deliveryboy/myslots/',
   billingAddressDetails: BASE_URL+'enterprise/billing/address/',
   billingAddressDetailsUpdate: BASE_URL+'enterprise/billing/address/create',
+  enterpriseBranchDeleteUrl: BASE_URL + 'enterprisebranch/',
   appVersion: BASE_URL+'version'
 };
 
