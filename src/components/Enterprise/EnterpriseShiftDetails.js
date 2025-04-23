@@ -47,38 +47,40 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
             </View>
           </View>
 
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View style={styles.franchiseCard}>
-              <Image
-                style={styles.driverCard}
-                source={require('../../image/driver.jpeg')}
-              />
-              <View style={styles.driverHeaderMainCard}>
-                <View>
-                  <Text style={styles.franchiseStreet}>
-                    Jhon{' '}
-                    Dou
-                  </Text>
-                  <View style={styles.locationCard}>
-                    <Text style={styles.franchiseSubTitle}>
-                      {params.vehicleType}
-                    </Text>
+          {params.shiftItem?.order_status !== 'REQUEST_PENDING' && (
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View style={styles.franchiseCard}>
+                <Image
+                  style={styles.driverCard}
+                  source={require('../../image/driver.jpeg')}
+                />
+                <View style={styles.driverHeaderMainCard}>
+                  <View>
+                    <Text style={styles.franchiseStreet}>Jhon Dou</Text>
+                    <View style={styles.locationCard}>
+                      <Text style={styles.franchiseSubTitle}>
+                        {params.vehicleType}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-                <View style={{marginLeft: 'auto'}}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('EnterpriseShiftDeliveryboyAssigned')
-                    }>
-                    <Image
-                      style={{width: 120, height: 20}}
-                      source={AssignDelivery}
-                    />
-                  </TouchableOpacity>
+                  <View style={{marginLeft: 'auto'}}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate(
+                          'EnterpriseShiftDeliveryboyAssigned',
+                        )
+                      }>
+                      <Image
+                        style={{width: 120, height: 20}}
+                        source={AssignDelivery}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
+          )}
 
           <View style={styles.franchiseCard}>
             <Image
@@ -96,7 +98,9 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                   <Text style={styles.boldTexts}>
                     {moment(
                       utcLocal(
-                        params?.shiftItem ? params.shiftItem?.shift_from_date : new Date(),
+                        params?.shiftItem
+                          ? params.shiftItem?.shift_from_date
+                          : new Date(),
                       ),
                     ).format('DD-MM-YYYY')}
                   </Text>
@@ -106,7 +110,9 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                   <Text style={styles.boldTexts}>
                     {moment(
                       utcLocal(
-                        params?.shiftItem ? params.shiftItem?.shift_tp_date : new Date(),
+                        params?.shiftItem
+                          ? params.shiftItem?.shift_tp_date
+                          : new Date(),
                       ),
                     ).format('DD-MM-YYYY')}
                   </Text>
@@ -125,9 +131,7 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                 </Text>
                 <Text style={styles.franchiseSubTitle}>
                   Requested Vehicle:{' '}
-                  <Text style={styles.boldTexts}>
-                  {params.vehicleType}
-                  </Text>
+                  <Text style={styles.boldTexts}>{params.vehicleType}</Text>
                 </Text>
               </View>
             </View>
@@ -141,34 +145,40 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFare}>Total Order fare</Text>
                 <Text style={styles.totalmoney}>
-                  €{params.shiftItem.total_amount}
+                  €{params.shiftItem.total_amount.toFixed(2)}
                 </Text>
               </View>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Order fare</Text>
-                <Text style={styles.value}>€00.00</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.order_amount.toFixed(2)}
+                </Text>
               </View>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Tax {''}(20%)</Text>
-                <Text style={styles.value}>€00.00</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.tax.toFixed(2)}
+                </Text>
               </View>
 
               {/* <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Promo</Text>
-                <Text style={styles.value}>€00.00</Text>
+                <Text style={styles.value}>€00.00</Text> 
               </View> */}
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Discount</Text>
-                <Text style={styles.value}>€00.00</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.discount.toFixed(2)}
+                </Text>
               </View>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Amount charged</Text>
                 <Text style={styles.value}>
-                  €{params.shiftItem.total_amount}
+                  €{params.shiftItem.total_amount.toFixed(2)}
                 </Text>
               </View>
 
@@ -427,7 +437,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', // Add this line
   },
   orderFare: {
-    width: '75%',
+    width: '70%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
