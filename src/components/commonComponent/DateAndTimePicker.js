@@ -51,6 +51,7 @@ const DateAndTimePickerModal = ({
                   modal
                   open={dateOpen}
                   date={date}
+                  minimumDate={new Date()}
                   mode="date"
                   onConfirm={date => {
                     setDateOpen(false);
@@ -86,7 +87,8 @@ const DateAndTimePickerModal = ({
                 <DatePicker
                   modal
                   open={timeOpen}
-                  date={time}
+                  date={moment().add(15, 'minutes').toDate()}
+                  minimumDate={moment().add(15, 'minutes').toDate()}
                   mode="time"
                   is24hourSource="locale" // or "device", depending on your needs
                   locale="en-GB" // This typically uses 24-hour format
