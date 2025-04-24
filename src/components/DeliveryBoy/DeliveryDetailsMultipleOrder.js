@@ -224,7 +224,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                 <TouchableOpacity
                   style={{marginRight: 10}}
                   onPress={() => {
-                    const smsNumber = `sms:${orderDetails.enterpirse_mobile}`;
+                    const smsNumber = `sms:+33${orderDetails.enterpirse_mobile}`;
                     Linking.openURL(smsNumber);
                   }}>
                   <Image
@@ -234,7 +234,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    const phoneNumber = `tel:${orderDetails.enterpirse_mobile}`;
+                    const phoneNumber = `tel:+33${orderDetails.enterpirse_mobile}`;
                     Linking.openURL(phoneNumber);
                   }}>
                   <Image
@@ -297,7 +297,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                         <TouchableOpacity
                           style={{marginRight: 10}}
                           onPress={() => {
-                            const smsNumber = `sms:${location.drop_mobile}`;
+                            const smsNumber = `sms:+33${location.drop_mobile}`;
                             Linking.openURL(smsNumber);
                           }}>
                           <Image
@@ -307,7 +307,7 @@ const DeliveryDetailsMultipleOrder = ({route, navigation}) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() => {
-                            const phoneNumber = `tel:${location.drop_mobile}`;
+                            const phoneNumber = `tel:+33${location.drop_mobile}`;
                             Linking.openURL(phoneNumber);
                           }}>
                           <Image

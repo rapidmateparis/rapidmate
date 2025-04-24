@@ -155,6 +155,14 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
     }, 2000);
   };
 
+  const handleChat = phoneNumber => {
+    const url = `sms:+33${phoneNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to initiate chat:', err);
+      Alert.alert('Error', 'Unable to start a chat');
+    });
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setDeliveryTime(prevTime => {
@@ -188,7 +196,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
   };
 
   const handleCall = phoneNumber => {
-    const url = `tel:${phoneNumber}`;
+    const url = `tel:+33${phoneNumber}`;
     Linking.openURL(url).catch(err => {
       console.error('Failed to make the call:', err);
       Alert.alert('Error', 'Unable to make a call');
@@ -322,7 +330,7 @@ const EnterpriseOrderPickup = ({navigation, route}) => {
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
-                  onPress={() => handleCall(driverDetails?.deliveryBoy?.phone)}
+                  onPress={() => handleChat(driverDetails?.deliveryBoy?.phone)}
                   style={{marginRight: 5}}>
                   <Image
                     style={{width: 35, height: 35}}
