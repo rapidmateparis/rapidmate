@@ -66,7 +66,9 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
                 <View style={styles.bookedCardInfo}>
                   <View>
                     <Text style={styles.bookedInfo}>Active booking</Text>
-                    <Text style={styles.bookedDetails}>{item.active_order || 0}</Text>
+                    <Text style={styles.bookedDetails}>
+                      {item.active_order || 0}
+                    </Text>
                   </View>
 
                   <View>
@@ -104,7 +106,7 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
                 style={styles.loaderMap}
                 source={require('../../image/No-Data-Table.png')}
               />
-              <Text style={styles.text}>No Company Location</Text>
+              <Text style={styles.textCompany}>No Company Location</Text>
               <Text style={styles.subText}>
                 Please add a company location from the manage company locations.
               </Text>
@@ -438,6 +440,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingTop: 50,
+  },
+  textCompany: {
+    color: colors.text,
+    fontSize: 16,
+    fontFamily: 'Montserrat-Medium',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  subText: {
+    color: colors.text,
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    textAlign: 'center',
   },
 });
 
