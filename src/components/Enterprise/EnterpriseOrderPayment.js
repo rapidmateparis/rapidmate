@@ -252,6 +252,14 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
   const placeEnterpriseOrder = async () => {
     console.log('total_duration ====>');
     console.log('requestParams from props ******', params);
+    
+    if(orderNumber !== null){
+      console.log("Order number is exist so goes to payment")
+      createPaymentIntent()
+      return
+    }else{
+      console.log("Order number Isn't Exist")
+    }
     // paymentAmount
     try {
       const time = params?.distanceTime?.time
