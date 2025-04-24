@@ -138,7 +138,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
   const handleCallPress = () => {
     const phoneNumber = orderDetails?.enterpirse_mobile;
     if (phoneNumber) {
-      Linking.openURL(`tel:${phoneNumber}`);
+      Linking.openURL(`tel:+33${phoneNumber}`);
     } else {
       Alert.alert('Error', 'Phone number not available');
     }
@@ -147,7 +147,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
   const handleChatPress = () => {
     const phoneNumber = orderDetails?.enterpirse_mobile;
     if (phoneNumber) {
-      Linking.openURL(`sms:${phoneNumber}`);
+      Linking.openURL(`sms:+33${phoneNumber}`);
     } else {
       Alert.alert('Error', 'Phone number not available');
     }
