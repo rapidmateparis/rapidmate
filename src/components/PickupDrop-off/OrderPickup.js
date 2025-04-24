@@ -138,10 +138,20 @@ const OrderPickup = ({route, navigation}) => {
   };
 
   const handleCall = phoneNumber => {
-    const url = `tel:${phoneNumber}`;
+    const formattedNumber = `+33${phoneNumber}`;
+    const url = `tel:${formattedNumber}`;
     Linking.openURL(url).catch(err => {
       console.error('Failed to make the call:', err);
       Alert.alert('Error', 'Unable to make a call');
+    });
+  };
+
+  const handleChat = phoneNumber => {
+    const formattedNumber = `+33${phoneNumber}`;
+    const url = `sms:${formattedNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to open chat:', err);
+      Alert.alert('Error', 'Unable to open chat');
     });
   };
 
@@ -298,7 +308,7 @@ const OrderPickup = ({route, navigation}) => {
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TouchableOpacity
-                  onPress={() => handleCall(driverDetails?.deliveryBoy?.phone)}
+                  onPress={() => handleChat(driverDetails?.deliveryBoy?.phone)}
                   style={{marginRight: 5}}>
                   <Image
                     style={{width: 35, height: 35}}
