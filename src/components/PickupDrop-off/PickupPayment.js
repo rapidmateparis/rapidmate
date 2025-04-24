@@ -48,7 +48,7 @@ const PickupPayment = ({route, navigation}) => {
   console.log('dsgdhsgadghsagh', params.userDetails.number);
   const [paymentAmount, setPaymentAmount] = useState(totalAmount);
   const [promoCodeResponse, setPromoCodeResponse] = useState();
-  const [orderNumber, setOrderNumber] = useState(0);
+  const [orderNumber, setOrderNumber] = useState(null);
   const [offerDiscount, setOfferDiscount] = useState(params.paymentDiscount);
   const [vechicleTax, setVechicleTax] = useState(20);
 
@@ -309,6 +309,15 @@ const PickupPayment = ({route, navigation}) => {
 
     setLoading(true);
 
+    if(orderNumber !== null){
+      console.log('Order already exists so goes to payment...')
+      console.log("order Number:::::::::::::::::", orderNumber)
+      createPaymentIntent()
+      return;
+    }else{
+      console.log("Order number isn't exist")
+    }
+
     createPickupOrder(
       requestParams,
       successResponse => {
@@ -318,6 +327,7 @@ const PickupPayment = ({route, navigation}) => {
           savePlacedOrderDetails(successResponse[0]._response);
           setOrderResponse(successResponse[0]._response);
           setOrderNumber(successResponse[0]._response[0].order_number);
+          console.log("response order number :::::::::::::::::;",successResponse[0]._response[0].order_number)
         }
         console.log('requestParams===', requestParams);
       },
