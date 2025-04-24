@@ -203,7 +203,7 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
                   if (serviceType.id === 1  || serviceType.id === 2) {
                     return (
                       <TouchableOpacity
-                        disabled={disableServiceType()}
+                        //disabled={disableServiceType()}
                         style={[
                           styles.selectDeliveryboyTypeCard,
                           selectedOption === serviceType.id && {},
