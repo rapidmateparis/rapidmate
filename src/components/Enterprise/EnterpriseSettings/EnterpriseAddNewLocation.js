@@ -27,7 +27,7 @@ const EnterpriseAddNewLocation = ({route, navigation}) => {
   },[])
 
   return (
-    <KeyboardAvoidingView>
+    <KeyboardAvoidingView style={{flex: 1}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.mainCardAddress}>
           <View style={styles.homeIconCard}>
@@ -58,8 +58,8 @@ const EnterpriseAddNewLocation = ({route, navigation}) => {
           />
         </View>
       </View>
-      <View style={{width: '100%', height: 430}}>
-        <EnterpriseAddNewLocationsMap title = {title} location = {params} />
+      <View style={{flex: 1}}>
+        <EnterpriseAddNewLocationsMap title={title} location={params} />
       </View>
     </KeyboardAvoidingView>
   );
