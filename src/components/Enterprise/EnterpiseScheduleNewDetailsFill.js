@@ -627,7 +627,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
 
             <View>
               <Text style={styles.textlable}>
-                {localizationText('Common', 'phoneNumber')}
+                {localizationText('Common', 'phoneNumber')}*
               </Text>
               <View style={styles.mobileNumberInput}>
                 <View style={{ width: 95 }}>
@@ -701,7 +701,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
 
             <View style={{ flex: 1 }}>
               <Text style={styles.textlable}>
-                {localizationText('Common', 'packageId')}
+                {localizationText('Common', 'packageId')}*
               </Text>
               <TextInput
                 style={styles.inputTextStyle}
@@ -717,7 +717,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
             ) : null}
             <View style={{ flex: 1 }}>
               <Text style={styles.textlable}>
-                {localizationText('Common', 'pickupNotes')}
+                {localizationText('Common', 'pickupNotes')}*
               </Text>
               <TextInput
                 style={styles.inputTextStyle}
