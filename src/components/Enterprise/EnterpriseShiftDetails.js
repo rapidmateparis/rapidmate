@@ -97,11 +97,11 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                   {localizationText('Common', 'from')}{' '}
                   <Text style={styles.boldTexts}>
                     {moment(
-                      utcLocal(
+                     
                         params?.shiftItem
                           ? params.shiftItem?.shift_from_date
-                          : new Date(),
-                      ),
+                          : new Date()
+                    
                     ).format('DD-MM-YYYY')}
                   </Text>
                 </Text>
@@ -109,11 +109,11 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                   {localizationText('Common', 'to')}{' '}
                   <Text style={styles.boldTexts}>
                     {moment(
-                      utcLocal(
+                     
                         params?.shiftItem
                           ? params.shiftItem?.shift_tp_date
-                          : new Date(),
-                      ),
+                          : new Date()
+                     
                     ).format('DD-MM-YYYY')}
                   </Text>
                 </Text>

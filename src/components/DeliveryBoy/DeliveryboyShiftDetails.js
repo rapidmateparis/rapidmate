@@ -251,11 +251,11 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                     {localizationText('Common', 'from')}{' '}
                     <Text style={styles.schaduleDateTime}>
                       {moment(
-                        utcLocal(
+                       
                           orderDetails?.slots
                             ? orderDetails.slots[0].slot_date
-                            : new Date(),
-                        ),
+                            : new Date()
+                        
                       ).format('DD-MM-YYYY')}
                     </Text>
                   </Text>
@@ -264,11 +264,11 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                     {localizationText('Common', 'to')}{' '}
                     <Text style={styles.schaduleDateTime}>
                       {moment(
-                        utcLocal(
+                        
                           orderDetails?.slots
                             ? orderDetails.slots[0].slot_date
-                            : new Date(),
-                        ),
+                            : new Date()
+                        
                       ).format('DD-MM-YYYY')}
                     </Text>
                   </Text>

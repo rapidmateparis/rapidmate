@@ -415,7 +415,7 @@ const ShiftsList = ({ orders, branches, vehicles, navigation, onActive }) => {
                 <Text style={styles.schaduleInfo}>
                   {fromText}{' '}
                   <Text style={styles.schaduleDateTime}>
-                    {moment(utcLocal(item.shift_from_date)).format(
+                    {moment(item.shift_from_date).format(
                       'DD-MM-YYYY',
                     )}
                   </Text>
@@ -424,7 +424,7 @@ const ShiftsList = ({ orders, branches, vehicles, navigation, onActive }) => {
                 <Text style={styles.schaduleInfo}>
                   {toText}{' '}
                   <Text style={styles.schaduleDateTime}>
-                    {moment(utcLocal(item.shift_tp_date)).format('DD-MM-YYYY')}
+                    {moment(item.shift_tp_date).format('DD-MM-YYYY')}
                   </Text>
                 </Text>
               </View>
