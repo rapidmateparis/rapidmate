@@ -43,7 +43,6 @@ const AddDropDetails = ({route, navigation}) => {
   const component = route?.params?.component ? route?.params?.component : '';
 
   const data = [
-    {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 
