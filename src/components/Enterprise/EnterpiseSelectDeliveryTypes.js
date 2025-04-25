@@ -196,11 +196,10 @@ const EnterpiseSelectDeliveryTypes = ({route, navigation}) => {
           <Text style={styles.selectServiceTitle}>
             {localizationText('Main', 'selectServiceType')}
           </Text>
-
           {lookupData?.enterpriseServiceType?.length > 0
             ? lookupData?.enterpriseServiceType.map(serviceType => {
                 if (disableServiceType()) {
-                  if (serviceType.id === 1  || serviceType.id === 2) {
+                  if (serviceType.id === 1 ) {
                     return (
                       <TouchableOpacity
                         //disabled={disableServiceType()}
