@@ -794,7 +794,7 @@ function EnterpriseHistory({ navigation }) {
   const searchFunction = params => {
     params.enterprise_ext_id = userDetails?.userDetails?.[0]?.ext_id;
     setLoading(true);
-
+    setEnterpriseOrderList([])
     searchOrderApi(
       params,
       successResponse => {
