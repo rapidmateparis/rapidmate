@@ -44,6 +44,27 @@ const EnterpriseShiftDeliveryboyAssigned = ({ route, navigation }) => {
     });
   };
 
+  const vehicleType = (id) => {
+    switch (id) {
+      case 1:
+        return BicycleImage;
+      case 2:
+        return MotorbikeImage;
+      case 3:
+        return CarImage;
+      case 4:
+        return PartnerImage;
+      case 5:
+        return MiniTruckImage;
+      case 6:
+        return MiniVanImage;
+      case 7:
+        return SemiTruckImage;
+      default:
+        return PickupIcon; // fallback image
+    }
+  };
+  
 
   return (
     <ScrollView style={{ width: '100%', backgroundColor: '#FBFAF5' }}>
@@ -82,7 +103,7 @@ const EnterpriseShiftDeliveryboyAssigned = ({ route, navigation }) => {
             <View style={styles.profileReadyCard}>
               <Image
                 style={{ width: 60, height: 60, borderRadius: 30 }}
-                source={require('../../image/driver.jpeg')}
+                source={{uri : API.viewImageUrl + deliveryBoyDetail.profile_pic}}
               />
               <View style={styles.readyCard}>
                 <Text style={styles.readyforDelivery}>Ready</Text>
@@ -98,7 +119,7 @@ const EnterpriseShiftDeliveryboyAssigned = ({ route, navigation }) => {
                   height: 40,
                   resizeMode: 'center',
                 }}
-                source={require('../../image/Pickup-Icon.png')}
+                source={vehicleType(deliveryBoyDetail.vehicle_type_id)}
               />
             </View>
           </View>
