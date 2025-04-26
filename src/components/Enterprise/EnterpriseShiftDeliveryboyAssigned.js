@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import BicycleImage from '../../image/Bicycle.png';
 import MotorbikeImage from '../../image/Motorbike.png';
 import CarImage from '../../image/Car-Img.png';
@@ -19,30 +19,45 @@ import MiniTruckImage from '../../image/Mini-Truck.png';
 import MiniVanImage from '../../image/Mini-Van.png';
 import SemiTruckImage from '../../image/Semi-Truck.png';
 import OtherImage from '../../image/Big-Package.png';
-import {createPickupOrder} from '../../data_manager';
-import {useLoader} from '../../utils/loaderContext';
-import {useUserDetails} from '../commonComponent/StoreContext';
+import { createPickupOrder } from '../../data_manager';
+import { useLoader } from '../../utils/loaderContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
-import {API} from '../../utils/constant';
-import {debounce} from 'lodash';
+import { API } from '../../utils/constant';
+import { debounce } from 'lodash';
 
-const EnterpriseShiftDeliveryboyAssigned = ({route, navigation}) => {
+const EnterpriseShiftDeliveryboyAssigned = ({ route, navigation }) => {
+  const deliveryBoyDetail = route?.params?.deliveryBoyDetail;
+  console.log("USer Params:::::::::::::>", deliveryBoyDetail)
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isImageModalVisible, setImageModalVisible] = useState(false);
   const toggleModal = () => {
     setImageModalVisible(!isImageModalVisible);
   };
 
+  const formatTime = (timeStr) => {
+    const date = new Date(`1970-01-01T${timeStr}Z`);
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+
   return (
-    <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
-      <View style={{paddingHorizontal: 15}}>
+    <ScrollView style={{ width: '100%', backgroundColor: '#FBFAF5' }}>
+      <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.container}>
           <Image
             style={styles.deliveryboyProfile}
             source={require('../../image/Big-Calender.png')}
           />
-          <Text style={styles.maintext}>11 AM to 04 PM</Text>
-          <Text style={styles.deliveryboySubtitle}>5 hours shift</Text>
+          <Text style={styles.maintext}>
+            {formatTime(deliveryBoyDetail?.from_time)} to {formatTime(deliveryBoyDetail?.to_time)}
+          </Text>
+
+          <Text style={styles.deliveryboySubtitle}>{`${deliveryBoyDetail.total_hours} hours shift`}</Text>
         </View>
 
         <View style={styles.ShiftOrderDetailsCard}>
@@ -53,7 +68,7 @@ const EnterpriseShiftDeliveryboyAssigned = ({route, navigation}) => {
 
           <View style={styles.ShiftOrderDetailsMainCard}>
             <Text style={styles.ShiftOrderSubtitle}>Order Id</Text>
-            <Text style={styles.ShiftOrderTitle}>98237469</Text>
+            <Text style={styles.ShiftOrderTitle}>{deliveryBoyDetail.order_number}</Text>
           </View>
 
           <View style={styles.ShiftOrderDetailsMainCard}>
@@ -66,16 +81,16 @@ const EnterpriseShiftDeliveryboyAssigned = ({route, navigation}) => {
           <View style={styles.driverCard}>
             <View style={styles.profileReadyCard}>
               <Image
-                style={{width: 60, height: 60, borderRadius: 30}}
+                style={{ width: 60, height: 60, borderRadius: 30 }}
                 source={require('../../image/driver.jpeg')}
               />
               <View style={styles.readyCard}>
                 <Text style={styles.readyforDelivery}>Ready</Text>
               </View>
             </View>
-            <View style={{width: '40%', marginLeft: 10}}>
-              <Text style={styles.driverName}>John Doe</Text>
-              <Text style={styles.truckName}>VOLVO FH16 2022</Text>
+            <View style={{ width: '40%', marginLeft: 10 }}>
+              <Text style={styles.driverName}>{deliveryBoyDetail.first_name}</Text>
+              <Text style={styles.truckName}>{deliveryBoyDetail.plat_no}</Text>
             </View>
             <View>
               <Image
@@ -275,7 +290,7 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
     backgroundColor: colors.white,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
-    shadowOffset: {width: 0, height: 0.0625},
+    shadowOffset: { width: 0, height: 0.0625 },
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5,
@@ -324,7 +339,7 @@ const styles = StyleSheet.create({
     borderColor: '#0000001A',
     backgroundColor: colors.white,
     shadowColor: 'rgba(0, 0, 0, 0.16)',
-    shadowOffset: {width: 0, height: 0.0625},
+    shadowOffset: { width: 0, height: 0.0625 },
     shadowOpacity: 1,
     shadowRadius: 5,
     elevation: 0.5,
