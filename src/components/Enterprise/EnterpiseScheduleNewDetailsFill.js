@@ -27,7 +27,7 @@ import {
 } from '../../utils/common';
 import MapAddress from '../commonComponent/MapAddress';
 import { useLoader } from '../../utils/loaderContext';
-import { getLocationId, uploadDocumentsApi } from '../../data_manager';
+import { getLocationId, uploadDocumentsApi, getDistancePriceList} from '../../data_manager';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import MultpleMapAddress from '../commonComponent/MultipleMapAddress';
@@ -90,6 +90,60 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
   const [imageViewId, setImageViewId] = useState(null);
 
   const [isInstantDate, setIsInstantDate] = useState(null);
+
+  const [Totalamount, setTotalamount] = useState(0);
+
+  const vehicleTypeId = route.params.vehicle_type.vehicle_type_id;
+
+  console.log("params::::::::::::::::>",route.params)
+
+// const GetTotalAmount = (Type, Distance) => {
+//   getDistancePriceList(Distance,
+//     successResponse => {
+//       const responseArray = successResponse[0]?._response || [];
+//       const matchedType = responseArray.find(item => item.vehicle_type_id === Type);
+      
+//       if (matchedType) {
+//         setTotalamount(matchedType.total_price);
+//         console.log("Total Price::::::::::::::::>",matchedType.total_price)
+//       }
+//     },
+//     errorResponse => {
+//       setTotalamount(0);
+//     }
+//   );
+// };
+
+const GetTotalAmount = (Type, Distance) => {
+  return new Promise((resolve, reject) => {
+    getDistancePriceList(
+      Distance,
+      successResponse => {
+        const responseArray = successResponse[0]?._response || [];
+        const matchedType = responseArray.find(item => item.vehicle_type_id === Type);
+
+        if (matchedType) {
+          setTotalamount(matchedType.total_price);
+          console.log("Total Price::::::::::::::::>", matchedType.total_price);
+          resolve(matchedType.total_price); // 🚀 return the total price immediately
+        } else {
+          setTotalamount(0);
+          resolve(0);
+        }
+      },
+      errorResponse => {
+        setTotalamount(0);
+        reject(errorResponse);
+      }
+    );
+  });
+};
+
+
+// useEffect(() => {
+//   console.log("Updated TOTAL::::::::::::::::::", amount);
+// }, [amount]);
+
 
   const handleDayPress = day => {
     let updatedSelectedDays;
@@ -384,9 +438,13 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
   //   ]);
   // }
 
-  const onFetchDistanceAndTime = value => {
+  const onFetchDistanceAndTime = async (value) => {
     console.log('onFetchDistanceAndTime', value);
     setDistanceTime(value);
+    if(Number(deliveryType) !== 2){
+      GetTotalAmount(vehicleTypeId, value.distance)
+    }
+   
   };
 
   useEffect(() => {
@@ -440,12 +498,25 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
     setSourceLocationId(location.location_id);*/
   };
 
-  const onMultpleDestinationLocation = locations => {
+  const onMultpleDestinationLocation = async (locations) => {
     console.log('Locations==========>', locations);
     var branches = [];
     var totalAmount = 0;
     var totalDistance = 0;
     var totalHours = 0;
+    let TotalDistanceLoaction = 0;
+    locations.forEach(element => {
+      if (element.destinationDescription && element?.distance) {
+        TotalDistanceLoaction += element.distance; // Add up distances
+      }
+    });
+
+    console.log("TOTAL DISTNACE in MULITPL :::", TotalDistanceLoaction)
+
+    GetTotalAmount(vehicleTypeId, Number(TotalDistanceLoaction).toFixed(2))
+
+    // console.log("ToTALAAAAAAAAAAAAAAAAAAAL:::", totalAmount)
+
     locations.forEach(element => {
       if (element.destinationDescription && element?.distance) {
         var currentElement = {};
@@ -482,7 +553,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
       });
       setDestinationLocation(locations[0]);
       setDestinationLocationId(locations[0].locationId);
-      setMultipleDestinationAmount(totalAmount);
+      setMultipleDestinationAmount(Totalamount);
       setMultipleDestinationHours(totalHours);
       setMultipleDestinationDistance(totalDistance);
     }
@@ -1296,7 +1367,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
 
           <View>
             <TouchableOpacity
-              onPress={() => {
+              onPress={async() => {
                 if (!validateForm()) {
                   Alert.alert(
                     'Error Alert',
@@ -1327,6 +1398,10 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                     sourceOfBranchLocationId &&
                     destinationBranches.length > 0
                   ) {
+
+                    const TotalDistanceLoaction = destinationBranches.reduce((sum, branch) => sum + parseFloat(branch.distance), 0);
+
+                    const totalAmount = await GetTotalAmount(vehicleTypeId, TotalDistanceLoaction);
                     let params = {
                       ...route.params,
                       delivery_type_id: deliveryType,
@@ -1342,7 +1417,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                       pickup_time: moment(time).format('HH:mm'),
                       is_repeat_mode: promoEmails ? 1 : 0,
                       package_id: orderid,
-                      amount: multipleDestinationAmount.toFixed(2),
+                      amount: Number(totalAmount).toFixed(2),
                       branches: destinationBranches,
                       distance: multipleDestinationDistance.toFixed(2),
                       time: multipleDestinationHours.toFixed(2),
@@ -1351,6 +1426,10 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
                       is_scheduled_order: isInstantDate ? 0 : 1,
+                      schedule_date_time:
+                        moment(date).format('YYYY-MM-DD') +
+                        ' ' +
+                        moment(time).format('hh:mm'),
                     };
 
                     navigation.navigate('EnterpriseAddMultpleDropDetails', {
@@ -1381,11 +1460,7 @@ const EnterpiseScheduleNewDetailsFill = ({ route, navigation }) => {
                       pickup_time: moment(time).format('HH:mm'),
                       is_repeat_mode: promoEmails ? 1 : 0,
                       package_id: orderid,
-                      amount: Math.round(
-                        route.params.vehicle_type.base_price +
-                        route.params.vehicle_type.km_price *
-                        distanceTime.distance,
-                      ).toFixed(2),
+                      amount: Totalamount,
                       distance: distanceTime.distance.toFixed(2),
                       time: distanceTime.time.toFixed(0),
                       repeat_mode: repeatOrder,

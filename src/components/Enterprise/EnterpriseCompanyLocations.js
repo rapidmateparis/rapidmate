@@ -13,10 +13,16 @@ import {colors} from '../../colors';
 import {getEnterpriseBranch} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import { localizationText } from '../../utils/common';
 
 const EnterpriseCompanyLocations = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  const noCompanyLocation = localizationText('Common', 'noCompanyLocation') || 'No Company Location';
+  const activeBookings = localizationText('Common', 'activeBookings') || 'Active booking';
+  const scheduledBookings = localizationText('Common', 'scheduledBookings') || 'Scheduled Bookings';
+  const allBookings = localizationText('Common', 'allBookings') || 'All Bookings';
+  const pleaseAddCompanyLocation = localizationText('Common', 'pleaseAddCompanyLocation') || 'Please add a company location from the manage company locations.';
   const [enterpriseBranches, setEnterpriseBranches] = useState(
     route.params.branches,
   );
@@ -65,21 +71,21 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
 
                 <View style={styles.bookedCardInfo}>
                   <View>
-                    <Text style={styles.bookedInfo}>Active booking</Text>
+                    <Text style={styles.bookedInfo}>{activeBookings}</Text>
                     <Text style={styles.bookedDetails}>
                       {item.active_order || 0}
                     </Text>
                   </View>
 
                   <View>
-                    <Text style={styles.bookedInfo}>Scheduled booking</Text>
+                    <Text style={styles.bookedInfo}>{scheduledBookings}</Text>
                     <Text style={styles.bookedDetails}>
                       {item.schedule_order || 0}
                     </Text>
                   </View>
 
                   <View>
-                    <Text style={styles.bookedInfo}>All booking</Text>
+                    <Text style={styles.bookedInfo}>{allBookings}</Text>
                     <Text style={styles.bookedDetails}>{item.total || 0}</Text>
                   </View>
                 </View>
@@ -106,9 +112,9 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
                 style={styles.loaderMap}
                 source={require('../../image/No-Data-Table.png')}
               />
-              <Text style={styles.textCompany}>No Company Location</Text>
+              <Text style={styles.textCompany}>{noCompanyLocation}</Text>
               <Text style={styles.subText}>
-                Please add a company location from the manage company locations.
+                {pleaseAddCompanyLocation}
               </Text>
             </View>
           </View>
@@ -117,7 +123,7 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
         <TouchableOpacity
           onPress={() => navigation.navigate('EnterpriseBottomNav')}
           style={styles.nextBt}>
-          <Text style={styles.btnText}>Go to Home</Text>
+          <Text style={styles.btnText}>{localizationText('Common', 'goHome')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
