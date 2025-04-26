@@ -67,7 +67,7 @@ const EnterprisePlanning = ({navigation}) => {
     if (enterpriseBranches?.length === 0 && enterpriseFetchData) {
       Alert.alert(
         'Action Required',
-        "Please add branches in 'Manage Company Locations' and add 'Payment Methoad' to proceed.",
+        "Please add branches in 'Manage Company Locations' to proceed.",
         [{text: 'OK', onPress: () => {}}],
       );
     }

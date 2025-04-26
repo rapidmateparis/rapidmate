@@ -336,7 +336,9 @@
     "ourMission": "Notre mission",
     "ourVision": "Notre vision",
     "whyChooseUs": "Pourquoi nous choisir ?",
-    "OrderStatus" : "Statut"
+    "OrderStatus" : "Statut",
+    "noCompanyLocation" : "Non Lieu de l'entreprise",
+    "pleaseAddCompanyLocation" : "Veuillez ajouter un site d'entreprise à partir de la gestion des sites d'entreprise."
   },
   "NavHeaderTitles": {
     "takeSelfie": "Prendre un selfie",
