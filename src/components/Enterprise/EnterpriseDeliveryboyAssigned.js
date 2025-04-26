@@ -100,7 +100,7 @@ const EnterpriseDeliveryboyAssigned = ({navigation}) => {
                   </Text>
                 </View>
               </View>
-              <View style={styles.moreDetails}>
+              {/* <View style={styles.moreDetails}>
                 <Text style={styles.distance}>See details</Text>
                 <TouchableOpacity
                   onPress={() =>
@@ -108,7 +108,7 @@ const EnterpriseDeliveryboyAssigned = ({navigation}) => {
                   }>
                   <AntDesign name="arrowright" size={18} color="#FF0058" />
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
           <TouchableOpacity
