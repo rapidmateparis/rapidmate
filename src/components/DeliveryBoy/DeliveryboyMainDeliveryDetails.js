@@ -266,10 +266,13 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>
-                {localizationText('Common', 'commission')} @20%
+                {localizationText('Common', 'commission')} @{orderDetails.commission_percentage ? orderDetails.commission_percentage : ''}%
               </Text>
               <Text style={styles.value}>
-                0
+              €{' '}
+                {orderDetails.commission_amount
+                  ? orderDetails.commission_amount.toFixed(2)
+                  : '0.00'}
               </Text>
             </View>
 

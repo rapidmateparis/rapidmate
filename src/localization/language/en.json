@@ -212,7 +212,7 @@
     "bothDescription": "Work as shift wise and pickup/dropoff both",
     "activeBookings": "Active bookings",
     "scheduledBookings": "Scheduled bookings",
-    "allBookings": "All bookings",
+    "allBookings": "All Bookings",
     "bookingOverview": "Booking Overview",
     "companyLocations": "Company locations",
     "manageCompanyLocations": "Manage company locations",
@@ -336,7 +336,9 @@
     "ourMission": "Our Mission",
     "ourVision": "Our Vision",
     "whyChooseUs": "Why Choose Us",
-    "OrderStatus" : "Status"
+    "OrderStatus" : "Status",
+    "noCompanyLocation" : "No Company location",
+    "pleaseAddCompanyLocation" : "Please add a company location from the manage company locations."
   },
   "NavHeaderTitles": {
     "takeSelfie": "Take a selfie",
