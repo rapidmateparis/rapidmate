@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
   searchinput: {
     flex: 1,
     fontSize: 14,
+    color: colors.text,
     fontFamily: 'Montserrat-Regular',
   },
   transactioneDetailCard: {
