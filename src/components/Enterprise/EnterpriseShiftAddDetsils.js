@@ -50,7 +50,6 @@ const EnterpriseShiftAddDetsils = ({route, navigation}) => {
   };
 
   const data = [
-    {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 

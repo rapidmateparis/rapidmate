@@ -253,7 +253,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             {fromText}{' '}
             <Text style={styles.schaduleDateTime}>
               {moment(
-                utcLocal(item?.slots ? item.slots[0]?.slot_date : new Date()),
+               item?.slots ? item.slots[0]?.slot_date : new Date()
               ).format('DD-MM-YYYY')}
             </Text>
           </Text>
@@ -262,7 +262,7 @@ const TodayList = ({navigation, filterCriteria, searchText}) => {
             {toText}{' '}
             <Text style={styles.schaduleDateTime}>
               {moment(
-                utcLocal(item?.slots ? item.slots[0]?.slot_date : new Date()),
+               item?.slots ? item.slots[0]?.slot_date : new Date()
               ).format('DD-MM-YYYY')}
             </Text>
           </Text>

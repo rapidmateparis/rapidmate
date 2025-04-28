@@ -13,10 +13,16 @@ import {colors} from '../../colors';
 import {getEnterpriseBranch} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useUserDetails} from '../commonComponent/StoreContext';
+import { localizationText } from '../../utils/common';
 
 const EnterpriseCompanyLocations = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
+  const noCompanyLocation = localizationText('Common', 'noCompanyLocation') || 'No Company Location';
+  const activeBookings = localizationText('Common', 'activeBookings') || 'Active booking';
+  const scheduledBookings = localizationText('Common', 'scheduledBookings') || 'Scheduled Bookings';
+  const allBookings = localizationText('Common', 'allBookings') || 'All Bookings';
+  const pleaseAddCompanyLocation = localizationText('Common', 'pleaseAddCompanyLocation') || 'Please add a company location from the manage company locations.';
   const [enterpriseBranches, setEnterpriseBranches] = useState(
     route.params.branches,
   );
@@ -51,53 +57,73 @@ const EnterpriseCompanyLocations = ({route, navigation}) => {
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
-        {enterpriseBranches.map((item, index) => {
-          return (
-            <View key={index} style={styles.franchiseCard}>
-              <View style={styles.franchiseCardHeader}>
-                <Image
-                  style={styles.companyImga}
-                  source={require('../../image/home.png')}
-                />
-                <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
-              </View>
-
-              <View style={styles.bookedCardInfo}>
-                <View>
-                  <Text style={styles.bookedInfo}>Active booking</Text>
-                  <Text style={styles.bookedDetails}>{item.active_order}</Text>
+        {enterpriseBranches.length > 0 ? (
+          enterpriseBranches.map((item, index) => {
+            return (
+              <View key={index} style={styles.franchiseCard}>
+                <View style={styles.franchiseCardHeader}>
+                  <Image
+                    style={styles.companyImga}
+                    source={require('../../image/home.png')}
+                  />
+                  <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>Scheduled booking</Text>
-                  <Text style={styles.bookedDetails}>{item.schedule_order}</Text>
+                <View style={styles.bookedCardInfo}>
+                  <View>
+                    <Text style={styles.bookedInfo}>{activeBookings}</Text>
+                    <Text style={styles.bookedDetails}>
+                      {item.active_order || 0}
+                    </Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>{scheduledBookings}</Text>
+                    <Text style={styles.bookedDetails}>
+                      {item.schedule_order || 0}
+                    </Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>{allBookings}</Text>
+                    <Text style={styles.bookedDetails}>{item.total || 0}</Text>
+                  </View>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>All booking</Text>
-                  <Text style={styles.bookedDetails}>{item.total}</Text>
+                <View style={styles.companyLocation}>
+                  <EvilIcons name="location" size={22} color="#000" />
+                  <Text style={styles.locationAddress}>
+                    {item.address +
+                      ', ' +
+                      item.city +
+                      ', ' +
+                      item.state +
+                      ', ' +
+                      item.country}
+                  </Text>
                 </View>
               </View>
-
-              <View style={styles.companyLocation}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.locationAddress}>
-                  {item.address +
-                    ', ' +
-                    item.city +
-                    ', ' +
-                    item.state +
-                    ', ' +
-                    item.country}
-                </Text>
-              </View>
+            );
+          })
+        ) : (
+          <View style={styles.scrollViewContainer}>
+            <View style={styles.noDataContainer}>
+              <Image
+                style={styles.loaderMap}
+                source={require('../../image/No-Data-Table.png')}
+              />
+              <Text style={styles.textCompany}>{noCompanyLocation}</Text>
+              <Text style={styles.subText}>
+                {pleaseAddCompanyLocation}
+              </Text>
             </View>
-          );
-        })}
+          </View>
+        )}
+
         <TouchableOpacity
           onPress={() => navigation.navigate('EnterpriseBottomNav')}
           style={styles.nextBt}>
-          <Text style={styles.btnText}>Go to Home</Text>
+          <Text style={styles.btnText}>{localizationText('Common', 'goHome')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -404,6 +430,32 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   btnText: {
+    color: colors.text,
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    textAlign: 'center',
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingTop: 50,
+  },
+  textCompany: {
+    color: colors.text,
+    fontSize: 16,
+    fontFamily: 'Montserrat-Medium',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  subText: {
     color: colors.text,
     fontSize: 14,
     fontFamily: 'Montserrat-Medium',

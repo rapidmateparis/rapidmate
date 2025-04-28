@@ -2487,17 +2487,7 @@ const AppNavigator = () => {
                 name="EnterpriseOrderPickup"
                 component={EnterpriseOrderPickup}
                 options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
+                  headerLeft: () => null,
                   headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',

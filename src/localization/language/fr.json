@@ -186,6 +186,7 @@
     "lostSomething": "Perdu quelque chose ?",
     "lostSomethingDescription": "Signalez-nous si vous avez perdu un objet ou s'il en manque un",
     "waiting": "Attente",
+    "commission": "Commission",
     "comments": "Comments",
     "companyInformation": "Informations sur l'entreprise",
     "shiftDifferentSlots": "Certains jours ont des créneaux horaires différents, voir les détails !",
@@ -310,6 +311,8 @@
     "submitOTP": "Soumettre l'OTP",
     "viewPhoto": "Voir la photo",
     "newDeliveryRequest": "Nouvelle demande de livraison !",
+    "newShiftRequest": "New Shift request!",
+    "shiftOverview": "Vue d'ensemble",
     "totalDistance": "Distance totale",
     "deliverTo": "Livrer à",
     "swipeToAccept": "Glisser pour accepter",
@@ -332,7 +335,10 @@
     "whoWeAre": "Qui sommes-nous ?",
     "ourMission": "Notre mission",
     "ourVision": "Notre vision",
-    "whyChooseUs": "Pourquoi nous choisir ?"
+    "whyChooseUs": "Pourquoi nous choisir ?",
+    "OrderStatus" : "Statut",
+    "noCompanyLocation" : "Non Lieu de l'entreprise",
+    "pleaseAddCompanyLocation" : "Veuillez ajouter un site d'entreprise à partir de la gestion des sites d'entreprise."
   },
   "NavHeaderTitles": {
     "takeSelfie": "Prendre un selfie",

@@ -14,10 +14,13 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../../colors';
 import MapDeliveryDetails from '../../commonComponent/MapDeliveryDetails';
-import {getEnterpriseBranch} from '../../../data_manager';
+import {
+  deleteEnterpriseBranch,
+  getEnterpriseBranch,
+} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import {useUserDetails} from '../../commonComponent/StoreContext';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const EnterpriseLocation = ({navigation}) => {
@@ -28,7 +31,7 @@ const EnterpriseLocation = ({navigation}) => {
   const isVisible = useIsFocused();
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     getEnterpriseBranch(
       userDetails.userDetails[0].ext_id,
       successResponse => {
@@ -65,7 +68,41 @@ const EnterpriseLocation = ({navigation}) => {
     );
   }, [isVisible]);
 
-  const renderItem = ({item,index}) => (
+  const handleDeleteBranch = branchId => {
+    Alert.alert(
+      'Delete Branch',
+      'Are you sure you want to delete this branch?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            setLoading(true);
+            deleteEnterpriseBranch(
+              branchId,
+              successResponse => {
+                setLoading(false);
+                console.log('update list', enterpriseBranches)
+                const updatedList = enterpriseBranches.filter(
+                  branch => branch.id !== branchId,
+                );
+                setEnterpriseBranches(updatedList);
+                Alert.alert('Success', 'Branch deleted successfully');
+              },
+              errorResponse => {
+                setLoading(false);
+                console.log('Delete error:', errorResponse);
+                Alert.alert('Error', 'Failed to delete branch');
+              },
+            );
+          },
+        },
+      ],
+    );
+  };
+
+  const renderItem = ({item, index}) => (
     <View>
       <View style={styles.addressCard}>
         <Image
@@ -77,13 +114,28 @@ const EnterpriseLocation = ({navigation}) => {
           <Text style={styles.franchiseLocations}>{item.branch_name}</Text>
           <View style={styles.locationCard}>
             <Ionicons name="location-outline" size={13} color="#000" />
-            <Text style={styles.franchiseAddress}>{item.city}, {item.state}, {item.country}</Text>
+            <Text style={styles.franchiseAddress}>
+              {item.city}, {item.state}, {item.country}
+            </Text>
           </View>
         </View>
         <TouchableOpacity>
-          <FontAwesome6 onPress={()=>{
-            navigation.navigate('EnterpriseAddNewLocation',{location:item})
-          }} name="pencil" size={20} color="#000" />
+          <FontAwesome6
+            onPress={() => {
+              navigation.navigate('EnterpriseAddNewLocation', {location: item});
+            }}
+            name="pencil"
+            size={18}
+            color="#000"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{marginLeft: 10}}
+          onPress={() => {
+            // console.log('branch id', item);
+            handleDeleteBranch(item.id);
+          }}>
+          <FontAwesome6 name="trash-can" size={18} color="#FF0058" />
         </TouchableOpacity>
       </View>
     </View>
@@ -91,24 +143,23 @@ const EnterpriseLocation = ({navigation}) => {
 
   return (
     <View style={{flex: 1, paddingHorizontal: 15}}>
-{/* <TouchableOpacity
+      {/* <TouchableOpacity
                 onPress={() =>{navigation.navigate('EnterpriseBottomNav')}}>
               <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
                 </TouchableOpacity> */}
-            
-        {
-          enterpriseBranches.length === 0 ?
-            <View style={styles.noBranchedView}>
-              {/* <TouchableOpacity
-                onPress={() =>{navigation.navigate('EnterpriseBottomNav')}}> */}
-              <Text style={[styles.colorWiseText,{fontWeight:"bold"}]}>No Branches</Text>
-                {/* </TouchableOpacity> */}
-            </View>
-            :
-          <FlatList data={enterpriseBranches} renderItem={renderItem} />
-        }
 
-      
+      {enterpriseBranches.length === 0 ? (
+        <View style={styles.noBranchedView}>
+          {/* <TouchableOpacity
+                onPress={() =>{navigation.navigate('EnterpriseBottomNav')}}> */}
+          <Text style={[styles.colorWiseText, {fontWeight: 'bold'}]}>
+            No Branches
+          </Text>
+          {/* </TouchableOpacity> */}
+        </View>
+      ) : (
+        <FlatList data={enterpriseBranches} renderItem={renderItem} />
+      )}
     </View>
   );
 };
@@ -187,10 +238,16 @@ const styles = StyleSheet.create({
     width: 35,
     height: 30,
   },
-  noBranchedView:{
-    justifyContent:"space-between",paddingHorizontal:16,paddingVertical:8,flexDirection:"row",
-    backgroundColor:'#E5E4E4',
-    alignItems:"center",borderRadius:5,marginVertical:8,marginHorizontal:4
+  noBranchedView: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    backgroundColor: '#E5E4E4',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginVertical: 8,
+    marginHorizontal: 4,
   },
   colorWiseText: {
     fontSize: 12,
@@ -198,7 +255,6 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginHorizontal: 8,
   },
-
 });
 
 export default EnterpriseLocation;

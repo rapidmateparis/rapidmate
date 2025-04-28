@@ -67,7 +67,7 @@ const EnterprisePlanning = ({navigation}) => {
     if (enterpriseBranches?.length === 0 && enterpriseFetchData) {
       Alert.alert(
         'Action Required',
-        "Please add branches in 'Manage Company Locations' and add 'Payment Methoad' to proceed.",
+        "Please add branches in 'Manage Company Locations' to proceed.",
         [{text: 'OK', onPress: () => {}}],
       );
     }
@@ -300,9 +300,15 @@ const EnterprisePlanning = ({navigation}) => {
                           </View>
                           <Text style={styles.deliveryTime}>
                             {item.slots[0]
-                              ? moment(item.slots[0].to_time, 'HH:mm:ss').diff(
-                                  moment(item.slots[0].from_time, 'HH:mm:ss'),
-                                ) / 3600000
+                              ? (moment(
+                                  item.slots[0].to_time,
+                                  'HH:mm:ss',
+                                ).diff(
+                                  moment(
+                                    item.slots[0].from_time,
+                                    'HH:mm:ss',
+                                  ),
+                                ) / 3600000).toFixed(2)
                               : '0'}{' '}
                             {hoursShift}
                           </Text>

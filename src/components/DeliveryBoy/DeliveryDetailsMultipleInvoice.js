@@ -44,6 +44,8 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
   const paidWith = localizationText('Common', 'paidWith') || 'Paid with';
   const downloadInvoice =
     localizationText('Common', 'downloadInvoice') || 'Download invoice';
+    const orderStatus =
+    localizationText('Common', 'OrderStatus') || 'Status';
 
   useEffect(() => {
     if (route?.params?.orderItem) {
@@ -272,6 +274,11 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
               <Text style={styles.orderFareValue}>{vehicleText}:</Text>
               <Text style={styles.value}>{orderDetails.vehicle_type}</Text>
             </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>{orderStatus}:</Text>
+              <Text style={styles.value}>{orderDetails.order_status}</Text>
+            </View>
           </View>
         </View>
 
@@ -301,16 +308,6 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
                 €{' '}
                 {orderDetails.order_amount
                   ? orderDetails.order_amount.toFixed(2)
-                  : '0.00'}
-              </Text>
-            </View>
-
-            <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
-              <Text style={styles.value}>
-                €{' '}
-                {orderDetails.waiting_fare
-                  ? orderDetails.waiting_fare.toFixed(2)
                   : '0.00'}
               </Text>
             </View>

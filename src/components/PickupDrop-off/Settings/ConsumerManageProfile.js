@@ -40,7 +40,6 @@ const ConsumerManageProfile = ({navigation}) => {
   }, [userDetails]);
 
   const data = [
-    {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 
@@ -75,9 +74,12 @@ const ConsumerManageProfile = ({navigation}) => {
 
     setErrors(errors)
 
-    return Object.keys(errors).length === 0;
+    if (Object.keys(errors).length !== 0) {
+      return false; 
+    }
 
     setLoading(true);
+
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       first_name: vehicleModel,
