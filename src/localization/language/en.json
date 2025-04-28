@@ -336,7 +336,9 @@
     "ourMission": "Our Mission",
     "ourVision": "Our Vision",
     "whyChooseUs": "Why Choose Us",
-    "OrderStatus": "Status"
+    "OrderStatus": "Status",
+    "noCompanyLocation" : "No Company Location",
+    "pleaseAddCompanyLocation" : "Please add your company location to see the details"
   },
   "NavHeaderTitles": {
     "takeSelfie": "Take a selfie",
