@@ -90,7 +90,7 @@ function DeliveryboyTransactions() {
       <View style={styles.transactioneMainCard}>
         <View>
           <Text style={styles.transactioneDate}>
-            {moment(utcLocal(transactionItem.item.order_date)).format(
+            {moment(transactionItem.item.order_date).format(
               'YYYY-MM-DD',
             )}
           </Text>
