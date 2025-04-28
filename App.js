@@ -4,7 +4,7 @@ import {StoreContext} from './src/components/commonComponent/StoreContext';
 import {NetworkProvider} from './src/utils/networkContext';
 import {StripeProvider} from '@stripe/stripe-react-native';
 import {MenuProvider} from 'react-native-popup-menu';
-
+import './src/localization/localizationUtils'
 const App = () => {
   return (
     <StripeProvider

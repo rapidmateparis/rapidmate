@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
-import {colors} from '../../colors';
+import { colors } from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {
   cancelOrderConsumer,
@@ -28,16 +28,17 @@ import {
   getViewEnterpriseOrderDetail,
   getViewOrderDetail,
 } from '../../data_manager';
-import {useLoader} from '../../utils/loaderContext';
+import { useLoader } from '../../utils/loaderContext';
 import CancellationModal from '../commonComponent/CancellationModal';
 import RNFS from 'react-native-fs';
-import {Buffer} from 'buffer';
-import {API} from '../../utils/constant';
+import { Buffer } from 'buffer';
+import { API } from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
-import {useUserDetails} from '../commonComponent/StoreContext';
+import { useUserDetails } from '../commonComponent/StoreContext';
+import { localizationText, utcLocal } from '../../utils/common';
 
-const DeliveryDetails = ({navigation, route}) => {
-  const {setLoading} = useLoader();
+const DeliveryDetails = ({ navigation, route }) => {
+  const { setLoading } = useLoader();
   const orderNumber = route.params?.orderItem?.order_number;
   const componentType = route.params?.componentType;
   const [order, setOrder] = useState({});
@@ -47,8 +48,52 @@ const DeliveryDetails = ({navigation, route}) => {
   const [destinationAddress, setDestinationAddress] = useState({});
   const [vehicleType, setVehicleType] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
-  const {userDetails} = useUserDetails();
+  const { userDetails } = useUserDetails();
   const [locations, setLocations] = useState([]);
+  const [multipleOrderLocation, setMultipleOrderLocation] = useState([]);
+  const pickupInformation =
+    localizationText('Main', 'pickupInformation') || 'Pickup Information';
+  const dropOffInformation =
+    localizationText('Main', 'dropOffInformation') || 'Drop off Information';
+  const packageInformation =
+    localizationText('Main', 'packageInformation') || 'Package information';
+  const orderID = localizationText('Common', 'orderID') || 'Order ID';
+  const orderDate = localizationText('Common', 'orderDate') || 'Order Date';
+  const vehicleText = localizationText('Common', 'vehicle') || 'Vehicle';
+  const pickupOTP = localizationText('Common', 'pickupOTP') || 'Pickup OTP';
+  const deliveredOTP =
+    localizationText('Common', 'deliveredOTP') || 'Delivered OTP';
+  const totalOrderFare =
+    localizationText('Common', 'totalOrderFare') || 'Total Order fare';
+  const orderFare = localizationText('Common', 'orderFare') || 'Order fare';
+  const travelled = localizationText('Common', 'travelled') || 'Travelled';
+  const inText = localizationText('Common', 'inText') || 'in';
+  const tax = localizationText('Common', 'tax') || 'Tax';
+  const promo = localizationText('Common', 'promo') || 'Promo';
+  const amountCharged =
+    localizationText('Common', 'amountCharged') || 'Amount charged';
+  const paidWith = localizationText('Common', 'paidWith') || 'Paid with';
+  const downloadInvoice =
+    localizationText('Common', 'downloadInvoice') || 'Download invoice';
+  const cancelRequest =
+    localizationText('Common', 'cancelRequest') || 'Cancel request';
+  const orderStatus =
+    localizationText('Common', 'OrderStatus') || 'Status';
+
+  const enterpriseDestinationList = route?.params?.orderItem?.locations || [];
+
+  console.log('first', enterpriseDestinationList);
+
+  const getTaxAmount = () => {
+    const tax = route?.params?.orderItem?.tax
+      ? route?.params?.orderItem?.tax
+      : 0;
+    const amount = order.order_amount ? order.order_amount.toFixed(2) : 0;
+
+    console.log('amount is ', amount, 'and vechile tax is ', tax);
+    const taxAmount = (parseFloat(amount) * parseFloat(tax)) / 100;
+    return taxAmount ? taxAmount.toFixed(2) : 0;
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -80,14 +125,16 @@ const DeliveryDetails = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
+    console.log('ARUNS 1==>');
     if (componentType == 'ENTERPRISE') {
+      console.log('ARUNS 2==>');
       enterpriseOrderDetail();
     } else {
       orderDetail();
     }
   }, []);
 
-  useEffect(() => {}, [locations]);
+  useEffect(() => { }, [locations]);
 
   const enterpriseOrderDetail = () => {
     setLoading(true);
@@ -96,23 +143,33 @@ const DeliveryDetails = ({navigation, route}) => {
       successResponse => {
         setLoading(false);
         if (successResponse[0]._success) {
+          console.log(
+            'Enterprise new details  =====>',
+            JSON.stringify(successResponse[0]._response),
+          );
+          console.log('ARUNS 3==>');
           let data = successResponse[0]._response.order;
-          if (data.orderLines && data.orderLines.length > 0) {
+          let orderLines = successResponse[0]._response.orderLines;
+          if (orderLines && orderLines.length > 0) {
             getAllLocations();
+            setMultipleOrderLocation(orderLines);
           }
           setOrder(data);
+          console.log('ARUNS 4==>', data);
           setDeliveryboy(successResponse[0]._response.deliveryBoy);
+          getSourceAddress(successResponse[0]._response.order.pickup_location);
           getDestinationAddress(
             successResponse[0]._response.order.dropoff_location,
           );
           vehicleDetail(successResponse[0]._response.order.vehicle_type_id);
+          setVehicle(successResponse[0]._response.vehicle);
         }
       },
       errorResponse => {
         setLoading(false);
         console.log('orderDetail==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -123,6 +180,7 @@ const DeliveryDetails = ({navigation, route}) => {
     getViewOrderDetail(
       orderNumber,
       successResponse => {
+        console.log('Order details ---- >', JSON.stringify(successResponse));
         setLoading(false);
         if (successResponse[0]._success) {
           setOrder(successResponse[0]._response.order);
@@ -143,7 +201,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('orderDetail==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -163,7 +221,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('locations==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -175,7 +233,13 @@ const DeliveryDetails = ({navigation, route}) => {
       locationId,
       successResponse => {
         setLoading(false);
+
         if (successResponse[0]._success) {
+          console.log(
+            'successResponse[0]._response[0]',
+            successResponse[0]._response[0],
+          );
+
           setDestinationAddress(successResponse[0]._response[0]);
         }
       },
@@ -183,7 +247,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('destination==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -203,7 +267,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('destination==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -223,7 +287,7 @@ const DeliveryDetails = ({navigation, route}) => {
         setLoading(false);
         console.log('vehicleDetail==>errorResponse', errorResponse[0]);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
+          { text: 'OK', onPress: () => { } },
         ]);
       },
     );
@@ -285,7 +349,7 @@ const DeliveryDetails = ({navigation, route}) => {
 
     if (fileExists) {
       FileViewer.open(filePath)
-        .then(() => {})
+        .then(() => { })
         .catch(error => {
           Alert.alert('Error', 'Unable to open file: ' + error);
         });
@@ -294,41 +358,91 @@ const DeliveryDetails = ({navigation, route}) => {
     }
   };
 
-  const downloadInvoiceFile = async () => {
+  const downloadFile = pdf => {
     setLoading(true);
+    let date = new Date();
+    let exe = '.pdf';
+    let filename =
+      `invoice_${orderNumber}` +
+      Math.floor(date.getTime() + date.getSeconds() / 2) +
+      exe;
+    const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
+
+    const options = {
+      fromUrl: pdf,
+      toFile: localFile,
+    };
+    console.log('localFile =====>', localFile);
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+        setTimeout(() => {
+          FileViewer.open(localFile);
+        }, 300);
+      })
+      .then(() => {
+        setLoading(false);
+        Linking.openURL(pdf);
+      })
+      .catch(error => {
+        setLoading(false);
+      });
+  };
+
+  const openPdfInBrowser = pdf => {
+    if (pdf) {
+      Linking.canOpenURL(pdf)
+        .then(canOpen =>
+          canOpen ? Linking.openURL(pdf) : console.error('invalid url url:'),
+        )
+        .catch(err => console.error('An error occurred opening the url:', err));
+    }
+  };
+
+  const downloadInvoiceFile = async () => {
     try {
+      const type =
+        componentType == 'ENTERPRISE'
+          ? 'enterprise'
+          : componentType == 'DELIVERBOY'
+            ? 'deliveryboy'
+            : 'consumer';
+
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderNumber, resolve, reject);
+        downloadInvoiceOrder(orderNumber, type, resolve, reject);
       });
 
-      const invoiceData = successResponse;
-      const filePath =
-        Platform.OS === 'android'
-          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
-          : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
+      const pdf = API.downloadInvoice + orderNumber + '/' + type + '?show=true';
+      downloadFile(pdf);
+      // const invoiceData = successResponse;
+      // const filePath =
+      //   Platform.OS === 'android'
+      //     ? `${RNFS.ExternalDirectoryPath}/invoice_${orderNumber}.pdf`
+      //     : `${RNFS.DocumentDirectoryPath}/invoice_${orderNumber}.pdf`;
+      //     console.log('type ***** type',type,filePath)
 
-      // Convert binary data to base64
-      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+      // // Convert binary data to base64
+      // const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
 
-      // Write the file to the document directory
-      await RNFS.writeFile(filePath, base64Data, 'base64');
+      // // Write the file to the document directory
+      // await RNFS.writeFile(filePath, base64Data, 'base64');
 
-      // Verify the file exists
-      const fileExists = await RNFS.exists(filePath);
-      if (fileExists) {
-        Alert.alert('Success', 'Invoice saved successfully.', [
-          {
-            text: 'Open Invoice',
-            onPress: () => {
-              openPDFWithNativeViewer(filePath);
-            },
-          },
-        ]);
-        console.log('Invoice saved to: ', filePath);
-      } else {
-        Alert.alert('Error', 'Failed to save invoice file.');
-      }
+      // // Verify the file exists
+      // const fileExists = await RNFS.exists(invoiceData);
+      // if (fileExists) {
+      //   Alert.alert('Success', 'Invoice saved successfully.', [
+      //     {
+      //       text: 'Open Invoice',
+      //       onPress: () => {
+      //         openPDFWithNativeViewer(filePath);
+      //       },
+      //     },
+      //   ]);
+      //   console.log('Invoice saved to: ', filePath);
+      // } else {
+      //   Alert.alert('Error', 'Failed to save invoice file.');
+      // }
     } catch (error) {
+      setLoading(false);
       Alert.alert('Error', 'Failed to save invoice file.');
       console.error('File saving error:', error);
     } finally {
@@ -374,18 +488,21 @@ const DeliveryDetails = ({navigation, route}) => {
         backgroundColor: '#FBFAF5',
         marginBottom: 20,
       }}>
-      <View style={{paddingHorizontal: 15}}>
-        <View style={{width: '100%', height: 250}}>
+      <View style={{ paddingHorizontal: 15 }}>
+        <View style={{ width: '100%', height: 250 }}>
           <MapDeliveryDetails
             addressData={{
               sourceAddress: sourceAddress,
               destinationAddress: destinationAddress,
             }}
+            multipleToAddress={
+              multipleOrderLocation?.length > 0 ? multipleOrderLocation : []
+            }
           />
         </View>
 
         <View>
-          {route.params?.orderItem?.is_delivery_boy_allocated === 1 ? (
+          {order?.is_delivery_boy_allocated === 1 ? (
             <View style={styles.driverCard}>
               <Image
                 style={styles.driverImage}
@@ -393,110 +510,160 @@ const DeliveryDetails = ({navigation, route}) => {
                   uri: API.viewImageUrl + deliveryboy?.profile_pic,
                 }}
               />
-              <View style={{marginLeft: 10}}>
-                <Text style={styles.driverName}>{deliveryboy?.first_name}</Text>
+              <View style={{ marginLeft: 10 }}>
+                <Text style={styles.driverName}>
+                  {deliveryboy?.first_name} {''}
+                  {deliveryboy?.last_name}
+                </Text>
                 <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
-          ) : route.params?.orderItem?.service_type_id === 1 ? null : (
-            <View style={{alignContent: 'flex-end'}}>
-              <Button
-                title="Allocate Driver"
-                color={colors.primary}
-                onPress={getDeliveryBoyAllocation}
-              />
+          ) : order?.service_type_id === 
+            1 ? null : (order?.is_delivery_boy_allocated === 0 && order?.order_status === 'ORDER_PLACED')? (
+              <View style={{ alignContent: 'flex-end' }}>
+                <Button
+                  title="Allocate Driver"
+                  color={colors.primary}
+                  onPress={getDeliveryBoyAllocation}
+                />
+              </View>
+            ) : null}
+        </View>
+        <View style={styles.packageCard}>
+          <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/Pickup-Package-Icon.png')}
+            />
+            <View style={{ marginLeft: 10 }}>
+              <Text style={styles.dropInfo}>{pickupInformation}</Text>
+              {order.company_name && (
+                <Text style={styles.companyInfo}>
+                  {order.company_name ? order.company_name : ''}
+                </Text>
+              )}
+
+              <View>
+                <Text style={styles.dropInfo}>
+                  {sourceAddress.address}, {sourceAddress.city},{' '}
+                  {sourceAddress.state}
+                </Text>
+              </View>
+              <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
             </View>
+          </View>
+
+          {order.package_photo && (
+            <Image
+              style={styles.driverImage}
+              source={{
+                uri: API.viewImageUrl + order.package_photo,
+              }}
+            />
           )}
         </View>
         <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/Pickup-Package-Icon.png')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup information</Text>
-            <Text style={styles.companyInfo}>
-              {order.company_name ? order.company_name : 'Company Name'}
-            </Text>
-
-            <View>
-              <Text style={styles.dropInfo}>
-                {sourceAddress.address}, {sourceAddress.city},{' '}
-                {sourceAddress.state}
-              </Text>
-            </View>
-            <Text style={styles.value}>{order.pickup_notes || '-'}</Text>
-          </View>
-        </View>
-        <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/package-img.png')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>
-              {order.company_name ? order.drop_company_name : 'Company Name'}
-            </Text>
-            {order.orderLines && order.orderLines.length > 0 ? (
-              <View>
-                {order.orderLines.map((item, index) => {
-                  var branch = locations.filter(
-                    i => i.id == item.dropoff_location,
-                  );
-                  return (
-                    <Text style={styles.dropInfo}>
-                      {branch[0] && branch[0].address},{' '}
-                      {branch[0] && branch[0].city},{' '}
-                      {branch[0] && branch[0].state}
-                    </Text>
-                  );
-                })}
-              </View>
-            ) : (
-              <View>
-                <Text style={styles.dropInfo}>
-                  {destinationAddress.address}, {destinationAddress.city},{' '}
-                  {destinationAddress.state}
+          <View style={styles.packageLeftsideCard}>
+            <Image
+              style={styles.packageManager}
+              source={require('../../image/package-img.png')}
+            />
+            <View style={{ marginLeft: 10 }}>
+              <Text style={styles.dropInfo}>{dropOffInformation}</Text>
+              {order.drop_company_name && (
+                <Text style={styles.companyInfo}>
+                  {order.drop_company_name ? order.drop_company_name : ''}
                 </Text>
-              </View>
-            )}
-            <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+              )}
+              {componentType == 'ENTERPRISE' ? (
+                <View>
+                  {enterpriseDestinationList &&
+                    enterpriseDestinationList.length > 0 ? (
+                    enterpriseDestinationList.map(location => {
+                      return (
+                        <Text style={styles.dropInfo}>
+                          {location?.destination_description || ''}
+                        </Text>
+                      );
+                    })
+                  ) : (
+                    <Text style={styles.dropInfo}>
+                      {destinationAddress.address}, {destinationAddress.city},{' '}
+                      {destinationAddress.state}
+                    </Text>
+                  )}
+                </View>
+              ) : order.orderLines && order.orderLines.length > 0 ? (
+                <View>
+                  {order.orderLines.map((item, index) => {
+                    var branch = locations.filter(
+                      i => i.id == item.dropoff_location,
+                    );
+                    return (
+                      <Text style={styles.dropInfo}>
+                        {branch[0] && branch[0].address},{' '}
+                        {branch[0] && branch[0].city},{' '}
+                        {branch[0] && branch[0].state}
+                      </Text>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View>
+                  <Text style={styles.dropInfo}>
+                    {destinationAddress.address}, {destinationAddress.city},{' '}
+                    {destinationAddress.state}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.value}>{order.drop_notes || '-'}</Text>
+            </View>
           </View>
         </View>
 
         <View style={styles.invoiceMainCard}>
           <View>
             <Image
-              style={{height: 26, width: 26}}
+              style={{ height: 26, width: 26 }}
               source={require('../../image/Big-Package.png')}
             />
           </View>
-          <View style={{marginLeft: 10}}>
+          <View style={{ marginLeft: 10 }}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Package information</Text>
+              <Text style={styles.orderFare}>{packageInformation}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Order ID:</Text>
+              <Text style={styles.orderFareValue}>{orderID}:</Text>
               <Text style={styles.value}>{order.order_number}</Text>
             </View>
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>{orderDate}:</Text>
+              <Text style={styles.value}>{utcLocal(order.order_date)}</Text>
+            </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Vehicle:</Text>
+              <Text style={styles.orderFareValue}>{vehicleText}:</Text>
               <Text style={styles.value}>{vehicleType.vehicle_type}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Pickup OTP:</Text>
+              <Text style={styles.orderFareValue}>{pickupOTP}:</Text>
               <Text style={styles.value}>{route.params?.orderItem?.otp}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
-              <Text style={styles.orderFareValue}>Delivered OTP:</Text>
+              <Text style={styles.orderFareValue}>{deliveredOTP}:</Text>
               <Text style={styles.value}>
-                {route.params?.orderItem?.delivered_otp}
+                {order?.delivered_otp?.length > 0
+                  ? order?.delivered_otp
+                  : '****'}
               </Text>
+            </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>{orderStatus}:</Text>
+              <Text style={styles.value}>{route.params?.orderItem?.order_status}</Text>
             </View>
           </View>
         </View>
@@ -505,42 +672,50 @@ const DeliveryDetails = ({navigation, route}) => {
           <View>
             <Image source={require('../../image/order-fare.png')} />
           </View>
-          <View style={{marginLeft: 10}}>
+          <View style={{ marginLeft: 10 }}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare</Text>
+              <Text style={styles.orderFare}>{totalOrderFare}</Text>
               <Text style={styles.totalmoney}>
                 € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
             <Text style={styles.travel}>
-              Travelled {order.distance ? order.distance.toFixed(2) : '0.00'} km
-              in {order.total_duration ? order.total_duration : '00'}
+              {travelled} {order.distance ? order.distance.toFixed(2) : '0.00'}{' '}
+              km {''}
+              {inText} {order.total_duration ? order.total_duration : '00'}
             </Text>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Order fare</Text>
+              <Text style={styles.orderFareValue}>{orderFare}</Text>
               <Text style={styles.value}>
                 € {order.order_amount ? order.order_amount.toFixed(2) : '0.00'}
               </Text>
             </View>
 
+            {console.log("Oder ================>", order)}
+
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
+              <Text style={styles.orderFareValue}>{`${tax} @20%`}</Text>
               <Text style={styles.value}>
-                € {order.waiting_fare ? order.waiting_fare.toFixed(2) : '0.00'}
+                € {order.order_amount ? (order.order_amount * 0.2).toFixed(2) : '0.00'}
               </Text>
             </View>
 
-            <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Promo</Text>
+            {/* <View style={styles.cardHeader}>
+              <Text style={styles.orderFareValue}>{promo}</Text>
               <Text style={styles.value}>
                 {order.promo_value ? order.promo_value : '0'}
               </Text>
+            </View> */}
+
+            <View style={styles.cardHeader}>
+              <Text style={styles.orderFareValue}>{`Discount @${order.discount}%`}</Text>
+              <Text style={styles.value}>€ {(order.order_amount * (order.discount / 100)).toFixed(2)}</Text>
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Amount charged</Text>
+              <Text style={styles.orderFareValue}>{amountCharged}</Text>
               <Text style={styles.value}>
                 € {order.amount ? order.amount.toFixed(2) : '0.00'}
               </Text>
@@ -549,7 +724,7 @@ const DeliveryDetails = ({navigation, route}) => {
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
               <Text style={styles.paidWith}>
-                Paid with {order.paid_with ? order.paid_with : ''}
+                {paidWith} {''} {order.paid_with ? order.paid_with : ''}
               </Text>
             </View>
           </View>
@@ -561,11 +736,11 @@ const DeliveryDetails = ({navigation, route}) => {
             onPress={downloadInvoiceFile}>
             <View style={styles.invoiceCard}>
               <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
-              <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+              <Text style={styles.downloadInvoiceText}>{downloadInvoice}</Text>
             </View>
             <View>
               <Feather
-                style={{marginTop: 5}}
+                style={{ marginTop: 5 }}
                 name="download"
                 size={20}
                 color="#FF0058"
@@ -579,7 +754,7 @@ const DeliveryDetails = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => toggleModal()}
           style={styles.requestTouch}>
-          <Text style={styles.cancelRequest}>Cancel request</Text>
+          <Text style={styles.cancelRequest}>{cancelRequest}</Text>
         </TouchableOpacity>
       ) : null}
 
@@ -612,6 +787,8 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   packageCard: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: colors.white,
     padding: 10,
@@ -627,6 +804,12 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 7,
   },
+
+  packageLeftsideCard: {
+    flexDirection: 'row',
+    flex: 0.7,
+  },
+
   driverImage: {
     width: 40,
     height: 40,
@@ -662,11 +845,12 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '71%',
   },
   cardHeaderValues: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '72%',
+    width: '74%',
   },
   orderFare: {
     width: '70%',

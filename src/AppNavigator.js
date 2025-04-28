@@ -124,6 +124,17 @@ import AddDropDetails from './components/PickupDrop-off/AddDropDetails';
 import WithdrawPayment from './components/PickupDrop-off/Settings/WithdrawPayment';
 import WithdrawAmountTransfered from './components/PickupDrop-off/Settings/WithdrawAmountTransfered';
 import ScheduleOrderSuccess from './components/PickupDrop-off/ScheduleOrderSuccess';
+import DeliveryboyBillingDetails from './components/DeliveryBoy/DeliverySettings/DeliveryboyBillingDetails';
+import EnterpriseAddMultpleDropDetails from './components/Enterprise/EnterpriseAddMultpleDropDetails';
+import PrivacyPolicy from './common/PrivacyPolicy';
+import TermsAndConditions from './common/TermsOfService';
+import EnterpriseBillingDetail from './components/Enterprise/EnterpriseSettings/EnterpriseBillingDetail';
+import {localizationText, saveCurrentUserDetailsInStore} from './utils/common';
+import EnterpriseShiftRequestNewDelivery from './components/Enterprise/EnterpriseShiftRequestNewDelivery';
+import EnterpriseShiftAddDetsils from './components/Enterprise/EnterpriseShiftAddDetsils';
+import EnterpriseShiftOrderPreview from './components/Enterprise/EnterpriseShiftOrderPreview';
+import EnterpriseShiftDeliveryboyAssigned from './components/Enterprise/EnterpriseShiftDeliveryboyAssigned';
+import DeliveryboyMainShiftDetails from './components/DeliveryBoy/DeliveryboyMainShiftDetails';
 
 const Stack = createStackNavigator();
 
@@ -132,6 +143,89 @@ const AppNavigator = () => {
   const [userDetails, setUserDetail] = useState(null);
   const {saveUserDetails} = useUserDetails();
   const [isLoading, setIsLoading] = useState(true);
+  const takeSelfie =
+    localizationText('NavHeaderTitles', 'takeSelfie') || 'Take a selfie';
+  const privacyPolicy =
+    localizationText('Common', 'privacyPolicy') || 'Privacy Policy';
+  const termsAndConditions =
+    localizationText('Common', 'privacyPolicy') || 'Terms And Conditions';
+  const addPaymentMethod =
+    localizationText('NavHeaderTitles', 'addPaymentMethod') ||
+    'Add Payment Method';
+  const withdraw =
+    localizationText('NavHeaderTitles', 'withdraw') || 'Withdraw';
+  const addPickupDetails =
+    localizationText('NavHeaderTitles', 'addPickupDetails') ||
+    'Add Pickup Details';
+  const addDropDetails =
+    localizationText('NavHeaderTitles', 'addDropDetails') || 'Add Drop Details';
+  const orderPreview =
+    localizationText('NavHeaderTitles', 'orderPreview') || 'Order Preview';
+  const orderConfirmed =
+    localizationText('NavHeaderTitles', 'orderConfirmed') || 'Order Confirmed';
+  const payment = localizationText('NavHeaderTitles', 'payment') || 'Payment';
+  const paymentSuccess =
+    localizationText('NavHeaderTitles', 'paymentSuccess') || 'Payment Success';
+  const scheduleOrderSuccess =
+    localizationText('NavHeaderTitles', 'scheduleOrderSuccess') ||
+    'Schedule Order Success';
+  const notificationSettings =
+    localizationText('NavHeaderTitles', 'notificationSettings') ||
+    'Notification Settings';
+  const notifications =
+    localizationText('Common', 'notifications') || 'Notifications';
+  const wallet = localizationText('Common', 'wallet') || 'Wallet';
+  const deliveryDetails =
+    localizationText('NavHeaderTitles', 'deliveryDetails') ||
+    'Delivery Details';
+  const changePassword =
+    localizationText('Common', 'changePassword') || 'Change Password';
+  const manageProfile =
+    localizationText('NavHeaderTitles', 'manageProfile') || 'Manage Profile';
+  const billingDetails =
+    localizationText('Common', 'billingDetails') || 'Billing Details';
+  const addVehicle =
+    localizationText('NavHeaderTitles', 'addVehicle') || 'Add Vehicle';
+  const addPickup =
+    localizationText('NavHeaderTitles', 'addPickup') || 'Add Pickup';
+  const setAvailability =
+    localizationText('Common', 'setAvailability') || 'Set Availability';
+  const support = localizationText('NavHeaderTitles', 'support') || 'Support';
+  const scheduleDetails =
+    localizationText('NavHeaderTitles', 'scheduleDetails') ||
+    'Schedule Details';
+  const transactions =
+    localizationText('Common', 'transactions') || 'Transactions';
+  const deliveryPreferance =
+    localizationText('NavHeaderTitles', 'deliveryPreferance') ||
+    'Delivery Preferance';
+  const companyLocations =
+    localizationText('Common', 'companyLocations') || 'Company Locations';
+  const selectCompanyLocation =
+    localizationText('NavHeaderTitles', 'selectCompanyLocation') ||
+    'Select Company Location';
+  const createNewDelivery =
+    localizationText('NavHeaderTitles', 'createNewDelivery') ||
+    'Create New Delivery';
+  const createNewSchedule =
+    localizationText('NavHeaderTitles', 'createNewSchedule') ||
+    'Create New Schedule';
+  const preview = localizationText('NavHeaderTitles', 'preview') || 'Preview';
+  const shiftDetails =
+    localizationText('NavHeaderTitles', 'shiftDetails') || 'Shift Details';
+  const activeDeliveries =
+    localizationText('NavHeaderTitles', 'activeDeliveries') ||
+    'Active Deliveries';
+  const locations =
+    localizationText('NavHeaderTitles', 'locations') || 'Locations';
+  const add = localizationText('NavHeaderTitles', 'add') || 'Add';
+  const addNewLocations =
+    localizationText('NavHeaderTitles', 'addNewLocations') ||
+    'Add New Locations';
+  const manageAds =
+    localizationText('NavHeaderTitles', 'manageAds') || 'Manage Ads';
+  const listNewAd =
+    localizationText('NavHeaderTitles', 'listNewAd') || 'List New Ad';
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -146,6 +240,7 @@ const AppNavigator = () => {
           saveUserDetails(JSON.parse(getUserDetails));
           let userDetails = JSON.parse(getUserDetails);
           setUserDetail(userDetails);
+          saveCurrentUserDetailsInStore(userDetails);
         }
         setIsLoading(false);
       } catch (error) {}
@@ -214,7 +309,63 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Take a selfie',
+                  headerTitle: takeSelfie,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="PrivacyPolicy"
+                component={PrivacyPolicy}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: privacyPolicy,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="TermsAndConditions"
+                component={TermsAndConditions}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: termsAndConditions,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -242,7 +393,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Payment Method',
+                  headerTitle: addPaymentMethod,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -270,7 +421,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Withdraw',
+                  headerTitle: withdraw,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -447,7 +598,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add pickup details',
+                  headerTitle: addPickupDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -475,7 +626,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add drop details',
+                  headerTitle: addDropDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -503,7 +654,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Order preview',
+                  headerTitle: orderPreview,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -521,7 +672,7 @@ const AppNavigator = () => {
                 component={OrderPickup}
                 options={() => ({
                   headerLeft: null,
-                  headerTitle: 'Order Confirmed',
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -549,7 +700,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Payment',
+                  headerTitle: payment,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -577,7 +728,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Payment Success',
+                  headerTitle: paymentSuccess,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -605,7 +756,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule Order Success',
+                  headerTitle: scheduleOrderSuccess,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -648,7 +799,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Order Confirmed',
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -686,7 +837,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Notification settings',
+                  headerTitle: notificationSettings,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -714,7 +865,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Notifications',
+                  headerTitle: notifications,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -742,7 +893,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Wallet',
+                  headerTitle: wallet,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -770,7 +921,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -861,7 +1012,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Change password',
+                  headerTitle: changePassword,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -889,7 +1040,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Pickup',
+                  headerTitle: addPickup,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -966,7 +1117,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -994,7 +1145,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add Vehicle',
+                  headerTitle: addVehicle,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1022,7 +1173,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1061,7 +1212,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Support',
+                  headerTitle: support,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1089,7 +1240,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1128,7 +1279,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1169,7 +1320,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery Details',
+                  headerTitle: deliveryDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1217,7 +1368,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Shift Details',
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1229,7 +1380,9 @@ const AppNavigator = () => {
                     elevation: 0,
                   },
                   headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}}>
+                    <TouchableOpacity
+                      style={{paddingRight: 10}}
+                      onPress={() => navigation.navigate('Supports')}>
                       <Ionicons
                         name="settings-outline"
                         size={25}
@@ -1242,18 +1395,8 @@ const AppNavigator = () => {
               <Stack.Screen
                 name="DeliveryboyShiftStarted"
                 component={DeliveryboyShiftStarted}
-                options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
+                options={{
+                  headerLeft: () => null,
                   headerTitle: 'Shift started',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
@@ -1265,17 +1408,10 @@ const AppNavigator = () => {
                     borderBottomWidth: 0,
                     elevation: 0,
                   },
-                  headerRight: () => (
-                    <TouchableOpacity style={{paddingRight: 10}}>
-                      <Ionicons
-                        name="settings-outline"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
-                })}
+                  headerRight: () => null,
+                }}
               />
+
               <Stack.Screen
                 name="DeliveryboyShiftStaredRequest"
                 component={DeliveryboyShiftStaredRequest}
@@ -1328,7 +1464,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule Details',
+                  headerTitle: scheduleDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1384,7 +1520,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Take a selfie',
+                  headerTitle: takeSelfie,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1412,7 +1548,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Delivery preferance',
+                  headerTitle: deliveryPreferance,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1440,7 +1576,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Wallet',
+                  headerTitle: wallet,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1468,7 +1604,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Transactions',
+                  headerTitle: transactions,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1529,7 +1665,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage Profile',
+                  headerTitle: manageProfile,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1557,7 +1693,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Set availability',
+                  headerTitle: setAvailability,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1590,6 +1726,52 @@ const AppNavigator = () => {
                 component={DeliveryPackageScheduleRequest}
                 options={{headerShown: false}}
               />
+              <Stack.Screen
+                name="DeliveryboyBillingDetails"
+                component={DeliveryboyBillingDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: billingDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="DeliveryboyMainShiftDetails"
+                component={DeliveryboyMainShiftDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => null,
+                  headerTitle: shiftDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
               {/* Enterprises Start Here  */}
               <Stack.Screen
                 name="EnterprisesTakeSelfie"
@@ -1606,7 +1788,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Take a selfie',
+                  headerTitle: takeSelfie,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1667,7 +1849,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Active deliveries',
+                  headerTitle: activeDeliveries,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1695,7 +1877,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Add new locations',
+                  headerTitle: addNewLocations,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1723,7 +1905,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage profile',
+                  headerTitle: manageProfile,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1751,7 +1933,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Billing Details',
+                  headerTitle: billingDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1779,7 +1961,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Locations',
+                  headerTitle: locations,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1806,7 +1988,7 @@ const AppNavigator = () => {
                               color: colors.secondary,
                               marginRight: 5,
                             }}>
-                            Add
+                            {add}
                           </Text>
                           <AntDesign
                             name="plussquare"
@@ -1834,7 +2016,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage profile',
+                  headerTitle: manageProfile,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1892,7 +2074,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Company locations',
+                  headerTitle: companyLocations,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1920,7 +2102,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Manage Ads',
+                  headerTitle: manageAds,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1959,7 +2141,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Shift Details',
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -1973,9 +2155,7 @@ const AppNavigator = () => {
                   headerRight: () => (
                     <View style={{flexDirection: 'row'}}>
                       <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate('EnterpriseListNewAd')
-                        }
+                        onPress={() => navigation.navigate('Supports')}
                         style={{paddingRight: 10}}>
                         <Ionicons
                           name="settings-outline"
@@ -2002,7 +2182,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'John Doe’s shift',
+                  headerTitle: shiftDetails,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2030,7 +2210,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'List New Ad',
+                  headerTitle: listNewAd,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2086,7 +2266,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2114,7 +2294,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Select company location',
+                  headerTitle: selectCompanyLocation,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2142,7 +2322,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2170,7 +2350,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2198,7 +2378,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Schedule New Delivery',
+                  headerTitle: createNewDelivery,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2226,7 +2406,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Create New Schedule',
+                  headerTitle: createNewSchedule,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2254,7 +2434,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Preview',
+                  headerTitle: preview,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2307,18 +2487,8 @@ const AppNavigator = () => {
                 name="EnterpriseOrderPickup"
                 component={EnterpriseOrderPickup}
                 options={({navigation}) => ({
-                  headerLeft: () => (
-                    <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={{paddingLeft: 10}}>
-                      <MaterialIcons
-                        name="keyboard-backspace"
-                        size={25}
-                        color={colors.text}
-                      />
-                    </TouchableOpacity>
-                  ),
-                  headerTitle: 'Order Confirmed',
+                  headerLeft: () => null,
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2346,7 +2516,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Order Confirmed',
+                  headerTitle: orderConfirmed,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2374,7 +2544,7 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Preview',
+                  headerTitle: preview,
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,
@@ -2402,7 +2572,152 @@ const AppNavigator = () => {
                       />
                     </TouchableOpacity>
                   ),
-                  headerTitle: 'Payment',
+                  headerTitle: payment,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseAddMultpleDropDetails"
+                component={EnterpriseAddMultpleDropDetails}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: addDropDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseBillingDetail"
+                component={EnterpriseBillingDetail}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: billingDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftRequestNewDelivery"
+                component={EnterpriseShiftRequestNewDelivery}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftAddDetsils"
+                component={EnterpriseShiftAddDetsils}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: addDropDetails,
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftOrderPreview"
+                component={EnterpriseShiftOrderPreview}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Order Preview',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
+              />
+              <Stack.Screen
+                name="EnterpriseShiftDeliveryboyAssigned"
+                component={EnterpriseShiftDeliveryboyAssigned}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Shift Details',
                   headerTitleStyle: {
                     fontFamily: 'Montserrat-SemiBold',
                     fontSize: 16,

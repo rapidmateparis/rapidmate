@@ -10,12 +10,14 @@ import {
   ImageBackground,
 } from 'react-native';
 import {colors} from '../../colors';
+import { localizationText } from '../../utils/common';
 
 const PickupFeedbackThanks = ({navigation}) => {
   return (
-    <ScrollView style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
+    <ScrollView
+      style={{width: '100%', height: '100%', backgroundColor: '#fff'}}>
       <ImageBackground
-        style={{width: '100%', marginTop: '25%', paddingTop: '20%',}}
+        style={{width: '100%', marginTop: '25%', paddingTop: '20%'}}
         source={require('../../image/DeliveryRequest-bg.png')}>
         <View style={{paddingHorizontal: 15}}>
           <View style={styles.boxCard}>
@@ -31,23 +33,31 @@ const PickupFeedbackThanks = ({navigation}) => {
           </View>
 
           <View>
-            <Text style={styles.mainTitle}>Thanks for your feedback!</Text>
+            <Text style={styles.mainTitle}>
+              {localizationText('Common', 'thanksForFeedback')}
+            </Text>
             <View style={styles.textContainer}>
               <Text style={styles.oderIdText}>
-                Thanks for sharing your experience
+                {localizationText('Common', 'thanksForFeedbackDes')}
               </Text>
             </View>
           </View>
 
           <View style={styles.mainBtnCard}>
-            <TouchableOpacity onPress={() => navigation.navigate('PickupBottomNav')} style={styles.remindlaterBtn}>
-              <Text style={styles.trackText}>Go home</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('PickupBottomNav')}
+              style={styles.remindlaterBtn}>
+              <Text style={styles.trackText}>
+                {localizationText('Common', 'goHome')}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => navigation.navigate('')}
               style={styles.trackOrderBtn}>
-              <Text style={styles.trackText}>Order again</Text>
+              <Text style={styles.trackText}>
+                {localizationText('Common', 'orderAgain')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -202,8 +212,8 @@ const styles = StyleSheet.create({
   mainBtnCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-   marginTop: '30%',
-   marginBottom: 150,
+    marginTop: '30%',
+    marginBottom: 150,
   },
   invoiceDownload: {
     flexDirection: 'row',

@@ -12,6 +12,7 @@ import Modal from 'react-native-modal';
 import DatePicker from 'react-native-date-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
+import {localizationText} from '../../utils/common';
 
 const DateAndTimePickerModal = ({
   setScheduleModalVisible,
@@ -33,19 +34,24 @@ const DateAndTimePickerModal = ({
       <View style={styles.modalContent}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Date and Time Picker</Text>
+            <Text style={styles.headerTitle}>
+              {localizationText('Common', 'dateAndTimePicker')}
+            </Text>
             <TouchableOpacity onPress={toggleModal}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
           </View>
           <View style={styles.datetimeCard}>
             <View style={{width: '90%'}}>
-              <Text style={styles.pickupDates}>Pickup date</Text>
+              <Text style={styles.pickupDates}>
+                {localizationText('Common', 'pickupDate')}
+              </Text>
               <View style={styles.nameInputDiv}>
                 <DatePicker
                   modal
                   open={dateOpen}
                   date={date}
+                  minimumDate={new Date()}
                   mode="date"
                   onConfirm={date => {
                     setDateOpen(false);
@@ -74,22 +80,28 @@ const DateAndTimePickerModal = ({
             </View>
 
             <View style={{width: '90%'}}>
-              <Text style={styles.pickupDates}>Pickup time</Text>
+              <Text style={styles.pickupDates}>
+                {localizationText('Common', 'pickupTime')}
+              </Text>
               <View style={styles.nameInputDiv}>
                 <DatePicker
                   modal
                   open={timeOpen}
-                  date={time}
+                  date={moment().add(15, 'minutes').toDate()}
+                  minimumDate={moment().add(15, 'minutes').toDate()}
                   mode="time"
+                  is24hourSource="locale" // or "device", depending on your needs
+                  locale="en-GB" // This typically uses 24-hour format
                   onConfirm={date => {
                     setTimeOpen(false);
                     setTime(date);
-                    setPickupTime(moment(date).format('hh:mm A'));
+                    setPickupTime(moment(date).format('HH:mm'));
                   }}
                   onCancel={() => {
                     setTimeOpen(false);
                   }}
                 />
+
                 <TextInput
                   style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
                   placeholder="Time"
@@ -116,7 +128,9 @@ const DateAndTimePickerModal = ({
                 setPickupTime('');
                 toggleModal();
               }}>
-              <Text style={styles.okButtonText}>Schedule Pickup</Text>
+              <Text style={styles.okButtonText}>
+                {localizationText('Common', 'schedule')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

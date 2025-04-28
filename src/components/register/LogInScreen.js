@@ -16,7 +16,10 @@ import {authenticateUser} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {requestNotificationPermission} from '../../utils/common';
+import {
+  localizationText,
+  requestNotificationPermission,
+} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 
@@ -117,10 +120,16 @@ const LogInScreen = ({navigation}) => {
                 ]);
               } else {
                 saveUserDetails({
-                  rapidToken : successResponse[0]._response.rapid_token,
+                  rapidToken: successResponse[0]._response.rapid_token,
                   userInfo: successResponse[0]._response.user?.idToken?.payload,
                   userDetails: successResponse[0]._response.user_profile,
                 });
+                 saveUserDetailsInAsync({
+                      rapidToken: successResponse[0]._response.rapid_token,
+                      userInfo: successResponse[0]._response.user.idToken.payload,
+                      userDetails: successResponse[0]._response.user_profile,
+                 });
+                 saveRapidTokenInAsync(successResponse[0]._response.rapid_token);
                 console.log('userDetials===>', successResponse[0]._response);
                 if (
                   successResponse[0]._response.user_profile[0].role ==
@@ -147,12 +156,7 @@ const LogInScreen = ({navigation}) => {
                     navigation.navigate('EnterpriseBottomNav');
                   }
                 }
-                saveUserDetailsInAsync({
-                  rapidToken : successResponse[0]._response.rapid_token,
-                  userInfo: successResponse[0]._response.user.idToken.payload,
-                  userDetails: successResponse[0]._response.user_profile,
-                });
-                saveRapidTokenInAsync(successResponse[0]._response.rapid_token);
+
               }
             }
           } else {
@@ -178,9 +182,11 @@ const LogInScreen = ({navigation}) => {
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
-        <Text style={styles.logInText}>Login</Text>
+        <Text style={styles.logInText}>
+          {localizationText('Common', 'login')}
+        </Text>
         <Text style={styles.loginAccessText}>
-          Please login to your account and pick up where you left!
+          {localizationText('Main', 'loginDescription')}
         </Text>
         <View>
           <View style={styles.logFormView}>
@@ -191,7 +197,7 @@ const LogInScreen = ({navigation}) => {
               <AntDesign name="user" size={18} color="#131314" />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Email/Phone"
+                placeholder={localizationText('Common', 'email')}
                 placeholderTextColor="#999"
                 value={emailPhone}
                 onChangeText={text => setEmailPhone(text)}
@@ -204,8 +210,9 @@ const LogInScreen = ({navigation}) => {
               <AntDesign name="lock" size={18} color="#131314" />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Password"
+                placeholder={localizationText('Common', 'password')}
                 placeholderTextColor="#999"
+                maxLength={10}
                 secureTextEntry={!passwordVisible} // Use the secureTextEntry prop based on passwordVisible state
                 value={password}
                 onChangeText={text => setPassword(text)}
@@ -221,20 +228,20 @@ const LogInScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('PasswordRecovery')}>
               <Text style={[styles.forgotPasswordText, {color: colors.text}]}>
-                Forgot your password?
+              {localizationText('Common', 'passwordForgot')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.logbutton, {backgroundColor: colors.primary}]}
               onPress={handleLogin}>
-              <Text style={styles.loginBtn}>Login</Text>
+              <Text style={styles.loginBtn}>{localizationText('Common', 'login')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate('ProfileChoose')}
               style={styles.signUpContainer}>
               <Text style={styles.signUpText}>
-                Don't have an account yet?{' '}
-                <Text style={{color: colors.primary}}>Register</Text>
+              {localizationText('Common', 'dontHaveAccount')}{' '}
+                <Text style={{color: colors.primary}}>{localizationText('Common', 'register')}</Text>
               </Text>
             </TouchableOpacity>
           </View>

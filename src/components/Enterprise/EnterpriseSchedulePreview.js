@@ -23,6 +23,43 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
 
+  const getTotalHoursForOneSlot=(from_time,to_time)=>{
+    const start = moment(from_time, 'HH:mm');
+      const end = moment(to_time, 'HH:mm');
+      const diffMinutes = end.diff(start, 'minutes');
+      const totalHours = Math.floor(diffMinutes / 60).toString().padStart(2, '0');
+      const remainingMinutes = (diffMinutes % 60).toString().padStart(2, '0');
+      return totalHours+'.'+remainingMinutes
+  
+  }
+
+  const calculateTotalHours =(slots)=>{
+    let totalMinutes = 0;
+    slots.forEach(slot => {
+      const start = moment(slot.from_time, 'HH:mm');
+      const end = moment(slot.to_time, 'HH:mm');
+      const diffMinutes = end.diff(start, 'minutes');
+      totalMinutes += diffMinutes;
+    });    
+    const totalHours = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
+    const remainingMinutes = (totalMinutes % 60).toString().padStart(2, '0');
+    return totalHours+'.'+remainingMinutes
+  }
+
+  const calculateTotalDays =(startDate,endDate)=>{
+    const start = moment(startDate, 'DD/MM/YYYY');
+    const end = moment(endDate, 'DD/MM/YYYY');
+    const totalDays = end.diff(start, 'days') + 1;
+    return totalDays
+  }
+
+  const calculateTotalAmount =(totalHours,perHourAmount)=>{
+    console.log(totalHours,perHourAmount)
+    const [hours, minutes] = totalHours.split('.').map(Number);
+    const totalDecimalHours = hours + minutes / 60;
+    return  totalDecimalHours * perHourAmount;
+  }
+
   const placeEnterpriseOrder = async () => {
     var slots = [];
     for (let index = 0; index < params.schedule.days.length; index++) {
@@ -30,9 +67,11 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       for (let dayIndex = 0; dayIndex < day.timeslots.length; dayIndex++) {
         const element = day.timeslots[dayIndex];
         slots.push({
+          slot_date:moment(element.slot_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
           day: day.day,
-          from_time: moment(element.fromTimeText, 'hh:mm A').format('HH:MM'),
-          to_time: moment(element.toTimeText, 'hh:mm A').format('HH:MM'),
+          from_time: moment(element.from_time, 'hh:mm A').format('HH:mm'),
+          to_time: moment(element.to_time, 'hh:mm A').format('HH:mm'),
+          total_hours:getTotalHoursForOneSlot(element.from_time,element.to_time)
         });
       }
     }
@@ -41,12 +80,19 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
       branch_id: params.branch_id,
       delivery_type_id: params.delivery_type_id,
       service_type_id: params.service_type_id,
-      vehicle_type_id: params.vehicle_type.vehicle_type_id,
-      shift_from_date: localToUTC(params.schedule.startDate),
-      shift_tp_date: localToUTC(params.schedule.endDate),
+      vehicle_type_id: params.vehicle_type?.vehicle_type_id || 8,
+      shift_from_date: localToUTC(moment(params.schedule.startDate,'DD/MM/YYYY').toDate()),
+      shift_tp_date: localToUTC(moment(params.schedule.endDate,'DD/MM/YYYY').toDate()),
       is_same_slot_all_days: 0,
-      slots: slots
+      slots: slots,
+      amount:params.amount,
+      total_hours:calculateTotalHours(slots),
+      total_days:calculateTotalDays(params.schedule.startDate,params.schedule.endDate),
+      total_amount:calculateTotalAmount(calculateTotalHours(slots),parseFloat(params.amount))
     };
+
+    console.log('requestParams =======>',requestParams)
+ 
     setLoading(true);
     createEnterpriseOrder(
       requestParams,
@@ -95,11 +141,11 @@ const DeliveryScheduleDetails = ({route, navigation}) => {
                   return (
                     <View key={timeSlotIndex} style={styles.startTimeCard}>
                       <Text style={styles.startTime}>
-                        {timeSlot.fromTimeText}
+                        {timeSlot.from_time}
                       </Text>
                       <View style={styles.borderShowoff} />
                       <Text style={styles.startTime}>
-                        {timeSlot.toTimeText}
+                        {timeSlot.to_time}
                       </Text>
                     </View>
                   );

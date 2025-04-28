@@ -11,15 +11,17 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import { forgotPasswordApi } from '../../data_manager';
-import { useLoader } from '../../utils/loaderContext';
-import { useForgotPasswordDetails } from '../commonComponent/StoreContext';
+import {forgotPasswordApi} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {useForgotPasswordDetails} from '../commonComponent/StoreContext';
+import {localizationText} from '../../utils/common';
 
 const PasswordRecovery = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
-  const { setLoading } = useLoader();
-  const { forgotPasswordDetails, saveForgotPasswordDetails } = useForgotPasswordDetails();
+  const {setLoading} = useLoader();
+  const {forgotPasswordDetails, saveForgotPasswordDetails} =
+    useForgotPasswordDetails();
 
   const validateForm = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,35 +38,44 @@ const PasswordRecovery = ({navigation}) => {
 
   const handleResetPassword = async () => {
     const isValid = validateForm();
-    if(isValid) {
+    if (isValid) {
       let params = {
         info: {
-          userName:email
-        }
+          userName: email,
+        },
       };
-      setLoading(true)
-      forgotPasswordApi(params, (successResponse) => {
-        console.log('successResponse',successResponse)
-        setLoading(false)
-        if(successResponse[0]._success){
-          if(successResponse[0]._response) {
-            if(successResponse[0]._response.name == 'NotAuthorizedException') {
-              Alert.alert('Error Alert', successResponse[0]._response.name, [
-                {text: 'OK', onPress: () => {}},
-              ]);
-            } else {
-              saveForgotPasswordDetails({...forgotPasswordDetails, userName:email})
-              navigation.navigate('ForgotPassword')
+      setLoading(true);
+      forgotPasswordApi(
+        params,
+        successResponse => {
+          console.log('successResponse', successResponse);
+          setLoading(false);
+          if (successResponse[0]._success) {
+            if (successResponse[0]._response) {
+              if (
+                successResponse[0]._response.name == 'NotAuthorizedException'
+              ) {
+                Alert.alert('Error Alert', successResponse[0]._response.name, [
+                  {text: 'OK', onPress: () => {}},
+                ]);
+              } else {
+                saveForgotPasswordDetails({
+                  ...forgotPasswordDetails,
+                  userName: email,
+                });
+                navigation.navigate('ForgotPassword');
+              }
             }
           }
-        }
-      }, (errorResponse)=> {
-        console.log('errorResponse',errorResponse)
-        setLoading(false)
-        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-          {text: 'OK', onPress: () => {}},
-        ]);
-      })
+        },
+        errorResponse => {
+          console.log('errorResponse', errorResponse);
+          setLoading(false);
+          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+            {text: 'OK', onPress: () => {}},
+          ]);
+        },
+      );
     }
   };
 
@@ -72,22 +83,18 @@ const PasswordRecovery = ({navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#fff'}}>
       <View style={{paddingHorizontal: 15}}>
         <Text style={[styles.logInText, {color: colors.text}]}>
-          Forgot password
+          {localizationText('Common', 'forgotPassword')}
         </Text>
         <Text style={styles.loginAccessText}>
-          Please confirm your email address, we will send OTP there
+          {localizationText('Common', 'passwordRecoveryDescription')}
         </Text>
         <View>
           <View style={styles.logFormView}>
             <View style={styles.textInputDiv}>
-              <AntDesign
-                name="mail"
-                size={15}
-                color="#131314"
-              />
+              <AntDesign name="mail" size={15} color="#131314" />
               <TextInput
                 style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-                placeholder="Email"
+                placeholder={localizationText('Common', 'email')}
                 placeholderTextColor="#999"
                 value={email}
                 onChangeText={text => setEmail(text)}
@@ -97,9 +104,8 @@ const PasswordRecovery = ({navigation}) => {
               onPress={handleResetPassword}
               // onPress={() => navigation.navigate('ForgotPassword')}
               style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-              <Text
-                style={styles.submitBtn}>
-                Submit
+              <Text style={styles.submitBtn}>
+                {localizationText('Common', 'submit')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingHorizontal: 10,
     width: '90%',
-    color:colors.text
+    color: colors.text,
   },
   forgotPasswordText: {
     fontSize: 16,

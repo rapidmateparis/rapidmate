@@ -21,10 +21,11 @@ import EnterprisesSettins from './EnterpriseSettings/EnterprisesSettins';
 import EnterpriseHistory from './EnterpriseHistory';
 import Notifications from '../PickupDrop-off/Settings/Notifications';
 import RNExitApp from 'react-native-exit-app';
-import {requestNotificationPermission} from '../../utils/common';
+import {localizationText, requestNotificationPermission} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {
+  getNotificationCount,
   getViewEnterpriseOrderDetail,
   updateUserProfile,
 } from '../../data_manager';
@@ -34,7 +35,12 @@ import DeliveryBoyAcceptRejectModal from '../commonComponent/DeliveryBoyAcceptRe
 
 const Bottom = createBottomTabNavigator();
 const EnterpriseBottomNav = ({navigation}) => {
-  const {userDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
+  const homeText = localizationText('BottomTabNav', 'home');
+  const chatText = localizationText('BottomTabNav', 'chat');
+  const planningText = localizationText('BottomTabNav', 'planning');
+  const ordersText = localizationText('BottomTabNav', 'orders');
+  const accountText = localizationText('BottomTabNav', 'account');
   const {setLoading} = useLoader();
   const [
     isDeliveryBoyAcceptRejectModalModalVisible,
@@ -104,8 +110,58 @@ const EnterpriseBottomNav = ({navigation}) => {
     );
   };
 
+  const getNotificationAllCount = () => {
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        console.log(
+          'getNotificationAllCount==>successResponse',
+          '' + JSON.stringify(successResponse[0]._response.notificationCount),
+        );
+        userDetails.userDetails[0].notificationCount;
+        const newUserDetails = userDetails.userDetails[0];
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount'] =
+            successResponse[0]._response.notificationCount;
+        } else {
+          newUserDetails['notificationCount'] = 0;
+        }
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+      },
+      errorResponse => {
+        console.log(
+          'getNotificationAllCount==>errorResponse',
+          '' + errorResponse[0],
+        );
+      },
+    );
+  };
+
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
+      if (remoteMessage.data?.delivered_otp) {
+        saveUserDetails({
+          ...userDetails,
+          delivered_otp: remoteMessage.data?.delivered_otp,
+        });
+      }
+
+      if (remoteMessage.data?.progressTypeId) {
+        saveUserDetails({
+          ...userDetails,
+          progressTypeId: remoteMessage.data?.progressTypeId,
+        });
+      }
+
+      if (remoteMessage.data?.otp) {
+        saveUserDetails({
+          ...userDetails,
+          otp: remoteMessage.data?.otp,
+        });
+      }
+
+      setLoading(true)
+      getNotificationAllCount();
       setDeliveryBoyAcceptRejectModalModalVisible(true);
       console.log('remoteMessage', JSON.stringify(remoteMessage));
       getViewEnterpriseOrderDetail(
@@ -158,7 +214,7 @@ const EnterpriseBottomNav = ({navigation}) => {
         }}>
         <Bottom.Screen
           key="EnterpriseHome"
-          name="Home"
+          name={homeText}
           component={EnterpriseHome}
           options={{
             headerShown: false,
@@ -172,9 +228,9 @@ const EnterpriseBottomNav = ({navigation}) => {
           }}
         />
 
-        <Bottom.Screen
+        {/* <Bottom.Screen
           key="Notifications"
-          name="Chat"
+          name={chatText}
           component={Notifications}
           options={{
             headerShown: false,
@@ -186,11 +242,11 @@ const EnterpriseBottomNav = ({navigation}) => {
               />
             ),
           }}
-        />
+        /> */}
 
         <Bottom.Screen
           key="EnterprisePlanning"
-          name="Planning"
+          name={planningText}
           component={EnterprisePlanning}
           options={{
             headerShown: false,
@@ -206,7 +262,7 @@ const EnterpriseBottomNav = ({navigation}) => {
 
         <Bottom.Screen
           key="EnterpriseHistory"
-          name="Orders"
+          name={ordersText}
           component={EnterpriseHistory}
           options={{
             headerShown: false,
@@ -222,10 +278,10 @@ const EnterpriseBottomNav = ({navigation}) => {
 
         <Bottom.Screen
           key="EnterprisesSettins"
-          name="Account"
+          name={accountText}
           component={EnterprisesSettins}
           options={{
-            headerTitle: 'Settings',
+            headerTitle: `${localizationText('Common','settings')}`,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,

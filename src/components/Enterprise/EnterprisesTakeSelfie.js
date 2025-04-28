@@ -14,6 +14,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
@@ -22,7 +23,7 @@ import {
   updateUserProfileEnterprise,
   uploadDocumentsApi,
 } from '../../data_manager';
-import { API } from '../../utils/constant';
+import {API} from '../../utils/constant';
 
 const EnterprisesTakeSelfie = ({navigation}) => {
   const [isModalVisibleCamera, setModalVisibleCamera] = useState(false);
@@ -30,6 +31,8 @@ const EnterprisesTakeSelfie = ({navigation}) => {
   const [image, setImage] = useState(null); // State for photo
   const {setLoading} = useLoader();
   const {userDetails, saveUserDetails} = useUserDetails();
+  const tryAgain = localizationText('Common', 'tryAgain') || 'Try Again';
+  const useThis = localizationText('Common', 'useThis') || 'Use This';
 
   const toggleModal = () => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -96,9 +99,17 @@ const EnterprisesTakeSelfie = ({navigation}) => {
           updateUserProfileEnterprise(
             params,
             successResponseProfile => {
-              console.log('successResponseProfile', successResponseProfile);
+              console.log(
+                'successResponseProfile',
+                successResponseProfile,
+                userDetails.userDetails.is_active,
+              );
               setLoading(false);
-              navigation.navigate('EnterpriseThanksPage');
+              if (userDetails?.userDetails[0].is_active === 0) {
+                navigation.navigate('EnterpriseThanksPage');
+              } else {
+                navigation.navigate('EnterpriseManageProfile');
+              }
             },
             errorResponseProfile => {
               console.log(
@@ -106,7 +117,7 @@ const EnterprisesTakeSelfie = ({navigation}) => {
                 '' + errorResponseProfile,
               );
               setLoading(false);
-              Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+              Alert.alert('Error Alert', 'Server busy. Please try again!!!' , [
                 {text: 'OK', onPress: () => {}},
               ]);
             },
@@ -118,7 +129,7 @@ const EnterprisesTakeSelfie = ({navigation}) => {
             '' + errorResponse,
           );
           setLoading(false);
-          Alert.alert('Error Alert', '' + JSON.stringify(errorResponse), [
+          Alert.alert('Error Alert', 'Server busy. Please try again!!!' , [
             {text: 'OK', onPress: () => {}},
           ]);
         },
@@ -170,21 +181,22 @@ const EnterprisesTakeSelfie = ({navigation}) => {
 
         <View style={styles.titlesCard}>
           <Text style={styles.statusTitle}>
-            Please upload a Profile Picture
+            {localizationText('Main', 'uploadProfilePic')}
           </Text>
           <Text style={styles.statusSubtitle}>
-            Please see if this looks good, you can try once more if you want to.
+            {localizationText('Main', 'uploadProfilePicDescription')}
           </Text>
         </View>
-
-        <View style={styles.buttonCard}>
-          <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
-            <Text style={styles.buttonText}>Try again</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
-            <Text style={styles.okButton}>Use this</Text>
-          </TouchableOpacity>
-        </View>
+        {image && (
+          <View style={styles.buttonCard}>
+            <TouchableOpacity onPress={toggleModal} style={styles.logbutton}>
+              <Text style={styles.buttonText}>{tryAgain}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={uploadImage} style={styles.saveBTn}>
+              <Text style={styles.okButton}>{useThis}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       {/* -------------- Modal --------------------- */}
       <ChoosePhotoByCameraGallaryModal

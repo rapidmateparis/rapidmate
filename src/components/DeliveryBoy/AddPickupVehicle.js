@@ -17,6 +17,7 @@ import ChoosePhotoByCameraGallaryModal from '../commonComponent/ChoosePhotoByCam
 import {
   handleCameraLaunchFunction,
   handleImageLibraryLaunchFunction,
+  localizationText,
 } from '../../utils/common';
 import {useLoader} from '../../utils/loaderContext';
 import {addVehicleApi, uploadDocumentsApi} from '../../data_manager';
@@ -81,47 +82,96 @@ const AddPickupVehicle = ({route, navigation}) => {
     }
   };
 
+  // const uploadImage = async image => {
+  //   setLoading(true);
+  //   if (image != null) {
+  //     var photo = {
+  //       uri: image.data.uri,
+  //       type: image.data.type,
+  //       name: image.data.fileName,
+  //     };
+  //     const formdata = new FormData();
+  //     formdata.append('file', photo);
+  //     uploadDocumentsApi(
+  //       formdata,
+  //       successResponse => {
+  //         console.log(successResponse, 'UpoladDocumentApi')
+  //         setLoading(false);
+  //         if (imageFileUrl === 'VehicleRegistration') {
+  //           setRegDocId(JSON.parse(successResponse).id);
+  //         } else if (imageFileUrl === 'DrivingLicense') {
+  //           setDrivingLicenseDocId(JSON.parse(successResponse).id);
+  //         } else if (imageFileUrl === 'VehicleInsurance') {
+  //           setInsuranceDocId(JSON.parse(successResponse).id);
+  //         } else if (imageFileUrl === 'Passport') {
+  //           setPassportDocId(JSON.parse(successResponse).id);
+  //         }
+  //       },
+  //       errorResponse => {
+  //         console.log(
+  //           'print_data==>errorResponseuploadDocumentsApi',
+  //           '' + errorResponse,
+  //         );
+  //         setLoading(false);
+  //         Alert.alert('Error Alert', '' + errorResponse, [
+  //           {text: 'OK', onPress: () => {}},
+  //         ]);
+  //       },
+  //     );
+  //   } else {
+  //     Alert.alert('Error Alert', 'Please choose a picture', [
+  //       {text: 'OK', onPress: () => {}},
+  //     ]);
+  //   }
+  // };
+
   const uploadImage = async image => {
+    if (!image) {
+      Alert.alert('Error Alert', 'Please choose a picture', [{ text: 'OK', onPress: () => {} }]);
+      return; 
+    }
+
     setLoading(true);
-    if (image != null) {
-      var photo = {
+    try {
+      const photo = {
         uri: image.data.uri,
         type: image.data.type,
         name: image.data.fileName,
       };
+
       const formdata = new FormData();
       formdata.append('file', photo);
+
       uploadDocumentsApi(
         formdata,
         successResponse => {
+          console.log(successResponse, 'UploadDocumentApi');
           setLoading(false);
+          
+          const responseData = JSON.parse(successResponse);
           if (imageFileUrl === 'VehicleRegistration') {
-            setRegDocId(JSON.parse(successResponse).id);
+            setRegDocId(responseData.id);
           } else if (imageFileUrl === 'DrivingLicense') {
-            setDrivingLicenseDocId(JSON.parse(successResponse).id);
+            setDrivingLicenseDocId(responseData.id);
           } else if (imageFileUrl === 'VehicleInsurance') {
-            setInsuranceDocId(JSON.parse(successResponse).id);
+            setInsuranceDocId(responseData.id);
           } else if (imageFileUrl === 'Passport') {
-            setPassportDocId(JSON.parse(successResponse).id);
+            setPassportDocId(responseData.id);
           }
         },
         errorResponse => {
-          console.log(
-            'print_data==>errorResponseuploadDocumentsApi',
-            '' + errorResponse,
-          );
+          console.log('print_data==>errorResponseuploadDocumentsApi', errorResponse);
           setLoading(false);
-          Alert.alert('Error Alert', '' + errorResponse, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
+          Alert.alert('Error Alert', "Server busy. Please try again!!!", [{ text: 'OK', onPress: () => {} }]);
+        }
       );
-    } else {
-      Alert.alert('Error Alert', 'Please choose a picture', [
-        {text: 'OK', onPress: () => {}},
-      ]);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      Alert.alert('Error Alert', 'Server busy. Please try again!!!', [{ text: 'OK', onPress: () => {} }]);
+      setLoading(false);
     }
-  };
+};
+
 
   const handleCameraLaunch = async item => {
     setModalVisibleCamera(!isModalVisibleCamera);
@@ -154,8 +204,8 @@ const AddPickupVehicle = ({route, navigation}) => {
     const startIndex = uri.lastIndexOf('/') + 1;
     let fileName = uri.substr(startIndex);
     // Get last 20 characters or the whole string if shorter
-    fileName = fileName.substr(-30);
-    return fileName.length > 30 ? '...' + fileName : fileName;
+    fileName = fileName.substr(-20);
+    return fileName.length > 20 ? '...' + fileName : fileName;
   };
 
   const validateForm = () => {
@@ -193,7 +243,7 @@ const AddPickupVehicle = ({route, navigation}) => {
         insurance: insuranceDocId,
         passport: passportDocId,
       };
-      console.log("print_data===>", params)
+      console.log('print_data===>', params);
       setLoading(true);
       addVehicleApi(
         params,
@@ -217,7 +267,7 @@ const AddPickupVehicle = ({route, navigation}) => {
         },
         errorResponse => {
           setLoading(false);
-          console.log("print_data===>", JSON.stringify(errorResponse))
+          console.log('print_data===>', JSON.stringify(errorResponse));
           // Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           //   {text: 'OK', onPress: () => {}},
           // ]);
@@ -259,7 +309,9 @@ const AddPickupVehicle = ({route, navigation}) => {
         </View>
         <View style={styles.logFormView}>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Vehicle No.</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleNo')}
+            </Text>
             {errors.vehicleNo ? (
               <Text style={[{color: 'red'}]}>{errors.vehicleNo}</Text>
             ) : null}
@@ -267,12 +319,15 @@ const AddPickupVehicle = ({route, navigation}) => {
               style={styles.inputTextStyle}
               placeholder="Type here"
               placeholderTextColor={'#999'}
+              maxLength={10}
               value={vehicleNo}
               onChangeText={text => setVehicleNo(text)}
             />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.textlable}>Vehicle Model</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleModel')}
+            </Text>
             {errors.vehicleModel ? (
               <Text style={[{color: 'red'}]}>{errors.vehicleModel}</Text>
             ) : null}
@@ -280,13 +335,16 @@ const AddPickupVehicle = ({route, navigation}) => {
               style={styles.inputTextStyle}
               placeholder="Type here"
               placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleModel}
               onChangeText={text => setVehicleModel(text)}
             />
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, marginRight: 10}}>
-              <Text style={styles.textlable}>Vehicle make</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'vehicleMake')}
+              </Text>
               {errors.vehicleMake ? (
                 <Text style={[{color: 'red'}]}>{errors.vehicleMake}</Text>
               ) : null}
@@ -294,12 +352,15 @@ const AddPickupVehicle = ({route, navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
+                maxLength={18}
                 value={vehicleMake}
                 onChangeText={text => setVehicleMake(text)}
               />
             </View>
             <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>Vehicle variant</Text>
+              <Text style={styles.textlable}>
+                {localizationText('Common', 'vehicleVariant')}
+              </Text>
               {errors.vehicleVariant ? (
                 <Text style={[{color: 'red'}]}>{errors.vehicleVariant}</Text>
               ) : null}
@@ -307,18 +368,23 @@ const AddPickupVehicle = ({route, navigation}) => {
                 style={styles.inputTextStyle}
                 placeholder="Type here"
                 placeholderTextColor={'#999'}
+                maxLength={18}
                 value={vehicleVariant}
                 onChangeText={text => setVehicleVariant(text)}
               />
             </View>
           </View>
           <View>
-            <Text style={styles.uploadDoc}>Upload documents</Text>
+            <Text style={styles.uploadDoc}>
+              {localizationText('Common', 'uploadDocuments')}
+            </Text>
           </View>
           <TouchableOpacity
             onPress={() => toggleModal('VehicleRegistration')}
             style={{flex: 1}}>
-            <Text style={styles.textlable}>Vehicle registration document</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleRegistrationDocument')}
+            </Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
@@ -326,7 +392,9 @@ const AddPickupVehicle = ({route, navigation}) => {
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+              <Text style={styles.tapUploadDoc}>
+                {localizationText('Common', 'tapToUpload')}
+              </Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
                   {imageFileVehicleReg
@@ -340,7 +408,9 @@ const AddPickupVehicle = ({route, navigation}) => {
           <TouchableOpacity
             onPress={() => toggleModal('DrivingLicense')}
             style={{flex: 1}}>
-            <Text style={styles.textlable}>Driving license</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'drivingLicense')}
+            </Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
@@ -348,7 +418,9 @@ const AddPickupVehicle = ({route, navigation}) => {
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+              <Text style={styles.tapUploadDoc}>
+                {localizationText('Common', 'tapToUpload')}
+              </Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
                   {imageFileDrivingLicense
@@ -362,7 +434,9 @@ const AddPickupVehicle = ({route, navigation}) => {
           <TouchableOpacity
             onPress={() => toggleModal('VehicleInsurance')}
             style={{flex: 1}}>
-            <Text style={styles.textlable}>Vehicle insurance</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleInsurance')}
+            </Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
@@ -370,7 +444,9 @@ const AddPickupVehicle = ({route, navigation}) => {
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+              <Text style={styles.tapUploadDoc}>
+                {localizationText('Common', 'tapToUpload')}
+              </Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
                   {imageFileVehicleInsurance
@@ -385,7 +461,9 @@ const AddPickupVehicle = ({route, navigation}) => {
           <TouchableOpacity
             onPress={() => toggleModal('Passport')}
             style={{flex: 1}}>
-            <Text style={styles.textlable}>Passport</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'passport')}
+            </Text>
             <View style={styles.dottedLine}>
               <Entypo
                 name="attachment"
@@ -393,7 +471,9 @@ const AddPickupVehicle = ({route, navigation}) => {
                 color="#131314"
                 style={{marginTop: 13}}
               />
-              <Text style={styles.tapUploadDoc}>Tap to upload</Text>
+              <Text style={styles.tapUploadDoc}>
+                {localizationText('Common', 'tapToUpload')}
+              </Text>
               <View style={styles.docPathCard}>
                 <Text style={styles.docPath}>
                   {imageFilePassport ? getFileName(imageFilePassport.uri) : ''}
@@ -408,7 +488,9 @@ const AddPickupVehicle = ({route, navigation}) => {
               handleSubmit();
             }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'next')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

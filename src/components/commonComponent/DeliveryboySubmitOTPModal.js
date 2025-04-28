@@ -13,6 +13,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import {TextInput} from 'react-native-gesture-handler';
+import { localizationText } from '../../utils/common';
 
 function DeliveryboySubmitOTPModal({
   setOTPModalVisible,
@@ -38,7 +39,7 @@ function DeliveryboySubmitOTPModal({
       <Modal isVisible={isOTPModalVisible}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.headerTitle}>Submit OTP</Text>
+            <Text style={styles.headerTitle}>{localizationText('Common', 'submitOTP')}</Text>
             <TouchableOpacity onPress={toggleModalOTP}>
               <AntDesign name="close" size={20} color="#000000" />
             </TouchableOpacity>
@@ -54,7 +55,7 @@ function DeliveryboySubmitOTPModal({
                 // Use caretHidden={false} when users can't paste a text value, because context menu doesn't appear
                 value={value}
                 onChangeText={value1 => {
-                  if (value1.length == 4) {
+                  if (value1?.length == 4) {
                     setEnableBtn(true);
                     setError('');
                   } else {
@@ -108,7 +109,7 @@ function DeliveryboySubmitOTPModal({
             onPress={() => {
               submitOTP(value);
             }}>
-            <Text style={styles.okButton}>Submit</Text>
+            <Text style={styles.okButton}>{localizationText('Common', 'submit')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>

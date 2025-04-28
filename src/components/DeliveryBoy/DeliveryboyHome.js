@@ -19,10 +19,13 @@ import {
   getLocations,
   getLookupData,
   getCompanyList,
+  getNotificationCount,
 } from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {useLookupData, useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
+import {useFocusEffect} from '@react-navigation/native';
+import {localizationText, saveCurrentUserDetailsInStore} from '../../utils/common';
 
 const DeliveryboyHome = ({navigation}) => {
   const {setLoading} = useLoader();
@@ -30,26 +33,44 @@ const DeliveryboyHome = ({navigation}) => {
   const [recentOrderList, setRecentOrderList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
-  const {userDetails} = useUserDetails();
   const {saveLookupData} = useLookupData();
+  const {userDetails, saveUserDetails} = useUserDetails();
+  const noOrdersToShow = localizationText('Common', 'noOrdersToShow') || 'No Orders To Show';
+  const noCompanyDetails = localizationText('Common', 'noCompanyDetails') || 'No Company Details';
+  const fromText = localizationText('Common', 'from') || 'From';
+  const toText = localizationText('Common', 'to') || 'To';
+  const orderIdText = localizationText('Common', 'orderID') || 'Order ID';
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await Promise.all([
-          getLocationsData(),
-          getOrderList(0),
-          getOrderList(1),
-          getLookup(),
-          getCompanyConnectionList(),
-        ]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchData();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+      return () => {
+        // Do something when the screen is unfocused
+      };
+    }, []),
+  );
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      await Promise.all([
+        getLocationsData(),
+        getOrderList(0),
+        getOrderList(1),
+        getLookup(),
+        getCompanyConnectionList(),
+        getNotificationAllCount(),
+      ]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }finally{
+      setLoading(false)
+    }
+  };
 
   const getCompanyConnectionList = () => {
     getCompanyList(
@@ -81,7 +102,7 @@ const DeliveryboyHome = ({navigation}) => {
   };
 
   const getLocationsData = () => {
-    setLoading(true);
+    // setLoading(true);
     getLocations(
       null,
       successResponse => {
@@ -91,8 +112,38 @@ const DeliveryboyHome = ({navigation}) => {
         }
       },
       errorResponse => {
-        setLoading(false);
+        // setLoading(false);
         console.log('getLocationsData==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
+  const getNotificationAllCount = () => {
+    // setLoading(true);
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        // setLoading(false);
+        console.log(
+          'getNotificationAllCount==>successResponse',
+          '' + JSON.stringify(successResponse[0]._response.notificationCount),
+        );
+        const newUserDetails = userDetails.userDetails[0];
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount'] =
+            successResponse[0]._response.notificationCount;
+        } else {
+          newUserDetails['notificationCount'] = 0;
+        }
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        saveCurrentUserDetailsInStore(userDetails);
+      },
+      errorResponse => {
+        // setLoading(false);
+        console.log(
+          'getNotificationAllCount==>errorResponse',
+          '' + errorResponse[0],
+        );
       },
     );
   };
@@ -139,7 +190,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From{' '}
+          {fromText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.pickup_location_id)}
           </Text>
@@ -149,7 +200,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To{' '}
+          {toText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.dropoff_location_id)}
           </Text>
@@ -157,7 +208,7 @@ const DeliveryboyHome = ({navigation}) => {
       </View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>{orderIdText}: {item.order_number}</Text>
       </View>
     </View>
   );
@@ -172,7 +223,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <Ionicons name="location-outline" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          From{' '}
+          {fromText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.pickup_location_id)}
           </Text>
@@ -182,7 +233,7 @@ const DeliveryboyHome = ({navigation}) => {
       <View style={styles.packageMiddle}>
         <MaterialIcons name="my-location" size={15} color="#717172" />
         <Text style={styles.fromLocation}>
-          To{' '}
+          {toText}{' '}
           <Text style={styles.Location}>
             {getLocationAddress(item.dropoff_location_id)}
           </Text>
@@ -190,7 +241,7 @@ const DeliveryboyHome = ({navigation}) => {
       </View>
 
       <View style={styles.footerCard}>
-        <Text style={styles.orderId}>Order ID: {item.order_number}</Text>
+        <Text style={styles.orderId}>{orderIdText}: {item.order_number}</Text>
       </View>
     </View>
   );
@@ -211,7 +262,7 @@ const DeliveryboyHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome{' '}
+              {localizationText('Common', 'welcome')}{' '}
               <Text style={styles.userName}>
                 {userDetails.userDetails[0].first_name +
                   ' ' +
@@ -219,21 +270,34 @@ const DeliveryboyHome = ({navigation}) => {
               </Text>
             </Text>
             <Text style={styles.aboutPage}>
-              This is your Rapidmate dashboard!
+              {localizationText('Main', 'consumerWelcomeDescription')}
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() => {
+              const newUserDetails = userDetails.userDetails[0];
+              newUserDetails['notificationCount'] = 0;
+              saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+
+              navigation.navigate('Notifications');
+            }}>
             <EvilIcons name="bell" size={40} color="#000" />
+            {userDetails.userDetails[0].notificationCount > 0 && (
+              <View style={styles.notificationCountStyle}>
+                <Text style={styles.notificationCountText}>
+                  {userDetails.userDetails[0].notificationCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
         <View style={styles.recentlyInfo}>
-          <Text style={styles.deliveryRecently}>Upcoming deliveries</Text>
+          <Text style={styles.deliveryRecently}>{localizationText('Common', 'upcomingDeliveries')}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyHistory')}
             style={styles.allinfoSee}>
-            <Text style={styles.seAllText}>See All</Text>
+            <Text style={styles.seAllText}>{localizationText('Common', 'seeAll')}</Text>
             <AntDesign name="right" size={15} color="#000" />
           </TouchableOpacity>
         </View>
@@ -246,7 +310,7 @@ const DeliveryboyHome = ({navigation}) => {
               backgroundColor: '#FBFAF5',
             }}>
             {orderList.length === 0 ? (
-              <Text style={styles.userName}>No orders to show</Text>
+              <Text style={styles.noDataShowText}>{noOrdersToShow}</Text>
             ) : (
               <FlatList horizontal data={orderList} renderItem={renderItem} />
             )}
@@ -254,11 +318,11 @@ const DeliveryboyHome = ({navigation}) => {
         </View>
 
         <View style={styles.recentlyInfo}>
-          <Text style={styles.deliveryRecently}>Recently delivered</Text>
+          <Text style={styles.deliveryRecently}>{localizationText('Common', 'recentlyDelivered')}</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('DeliveryboyHistory')}
             style={styles.allinfoSee}>
-            <Text style={styles.seAllText}>See All</Text>
+            <Text style={styles.seAllText}>{localizationText('Common', 'seeAll')}</Text>
             <AntDesign name="right" size={15} color="#000" />
           </TouchableOpacity>
         </View>
@@ -271,7 +335,7 @@ const DeliveryboyHome = ({navigation}) => {
             backgroundColor: '#FBFAF5',
           }}>
           {recentOrderList.length === 0 ? (
-            <Text style={styles.userName}>No orders to show</Text>
+            <Text style={styles.noDataShowText}>{noOrdersToShow}</Text>
           ) : (
             <FlatList
               horizontal
@@ -286,12 +350,12 @@ const DeliveryboyHome = ({navigation}) => {
         </ScrollView>
 
         <View style={styles.recentlyInfo}>
-          <Text style={styles.deliveryRecently}>My companies</Text>
+          <Text style={styles.deliveryRecently}>{localizationText('Common', 'myCompanies')}</Text>
         </View>
 
         <View style={styles.companyLogoCard}>
           {companyList.length === 0 ? (
-            <Text style={styles.userName}>No Company Details</Text>
+            <Text style={styles.noDataShowText}>{noCompanyDetails}</Text>
           ) : (
             <FlatList
               data={companyList}
@@ -320,6 +384,11 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 20,
+    fontFamily: 'Montserrat-Bold',
+    color: colors.text,
+  },
+  noDataShowText: {
+    fontSize: 16,
     fontFamily: 'Montserrat-Bold',
     color: colors.text,
   },
@@ -516,6 +585,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
     paddingVertical: 5,
+  },
+  notificationCountStyle: {
+    position: 'absolute',
+    right: 0,
+    backgroundColor: 'red',
+    borderRadius: 50,
+    height: 16,
+    width: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationCountText: {
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
   },
 });
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -13,8 +13,18 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNRestart from 'react-native-restart';
+import {localizationText} from '../../utils/common';
 
 const EnterpriseThanksPage = ({navigation}) => {
+  useEffect(() => {
+    clearUserDetailsInAsync();
+  }, []);
+
+  const clearUserDetailsInAsync = async () => {
+    await AsyncStorage.clear();
+  };
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5'}}
@@ -31,15 +41,19 @@ const EnterpriseThanksPage = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/ThanksPage-Timer.png')}
           />
-          <Text style={styles.text}>Thank you for signing up</Text>
+          <Text style={styles.text}>
+            {localizationText('Main', 'thankForSigningUp')}
+          </Text>
           <Text style={styles.subText}>
-            We are reviewing your request and we will notify you soon via email
-            or phone call
+            {localizationText('Main', 'thankSigningDescription')}
           </Text>
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('EnterpriseBottomNav')}
+        onPress={() => {
+          // navigation.navigate('EnterpriseBottomNav')
+          navigation.popToTop();
+        }}
         style={[styles.logbutton, {backgroundColor: colors.primary}]}>
         <Text style={styles.buttonText}>Ok</Text>
       </TouchableOpacity>

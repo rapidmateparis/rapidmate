@@ -1,51 +1,29 @@
 import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StatusBar,
-  Button,
-  StyleSheet,
-} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, StyleSheet} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import SwipeButton from 'rn-swipe-button';
 import iconAccept from '../../image/correct.png';
 import iconReject from '../../image/multiply.png';
 import {colors} from '../../colors';
 import DeliveryboyScheduleCancellationModal from '../DeliveryBoy/DeliveryboyScheduleCancellationModal';
+import { localizationText } from '../../utils/common';
 
 const ScheduledDeliverySwipe = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
   };
-  const [disableCBButton, setDisableCBButton] = useState(false);
-  const defaultStatusMessage = 'Swipe to accept the request';
-  const [swipeStatusMessage, setSwipeStatusMessage] =
-    useState(defaultStatusMessage);
-  const [forceResetLastButton, setForceResetLastButton] = useState(null);
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setSwipeStatusMessage(defaultStatusMessage),
-      5000,
-    );
-    return () => clearInterval(interval);
-  }, [defaultStatusMessage]);
-
-  const updateSwipeStatusMessage = message => setSwipeStatusMessage(message);
 
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <View style={styles.container}>
-          <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
           <SwipeButton
-            onSwipeFail={() => updateSwipeStatusMessage('Incomplete swipe!')}
-            onSwipeStart={() => updateSwipeStatusMessage('Swipe started!')}
+            onSwipeFail={() => console.log('Incomplete swipe')}
+            onSwipeStart={() => console.log('Swipe started')}
             onSwipeSuccess={() => {
-              updateSwipeStatusMessage('Request accepted');
+              console.log('Request accepted');
               toggleModal();
             }}
             thumbIconImageSource={iconAccept}
@@ -60,7 +38,7 @@ const ScheduledDeliverySwipe = () => {
             thumbIconWidth={50}
             title={
               <View style={styles.swipeTitleComp}>
-                <Text>I am ready</Text>
+                <Text>{localizationText('Common', 'iAmReady')}</Text>
                 <AntDesign
                   name="doubleright"
                   size={18}
@@ -79,9 +57,9 @@ const ScheduledDeliverySwipe = () => {
             }}
           />
           <SwipeButton
-            onSwipeFail={() => updateSwipeStatusMessage('Incomplete swipe!')}
-            onSwipeStart={() => updateSwipeStatusMessage('Swipe started!')}
-            onSwipeSuccess={() => updateSwipeStatusMessage('Request rejected')}
+            onSwipeFail={() => console.log('Incomplete swipe!')}
+            onSwipeStart={() => console.log('Swipe started!')}
+            onSwipeSuccess={() => console.log('Request rejected')}
             thumbIconImageSource={iconReject}
             railBackgroundColor="#BA1A1A0A"
             railStyles={{
@@ -93,7 +71,7 @@ const ScheduledDeliverySwipe = () => {
             thumbIconWidth={50}
             title={
               <View style={styles.swipeTitleComp}>
-                <Text>Not available</Text>
+                <Text>{localizationText('Common', 'notAvailable')}</Text>
                 <AntDesign
                   name="doubleright"
                   size={18}

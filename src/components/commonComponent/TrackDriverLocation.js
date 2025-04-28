@@ -99,7 +99,7 @@ const TrackDriverLocation = () => {
           <Text style={[styles.distanceText, {marginBottom: 5}]}>
             Distance: {distance} km
           </Text>
-          <Text style={styles.distanceText}>Time left: {time} min</Text>
+          <Text style={styles.distanceText}>Time: {time} min</Text>
         </View>
       )}
 

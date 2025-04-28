@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Dimensions,
 } from 'react-native';
 import {colors} from '../../../colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,6 +18,9 @@ import {
 } from '../../commonComponent/StoreContext';
 import {updateUserProfile} from '../../../data_manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {localizationText} from '../../../utils/common';
+
+const {height: screenHeight} = Dimensions.get('window');
 
 const DeliveryPreferance = ({navigation}) => {
   const [selectedOption, setSelectedOption] = useState({});
@@ -47,7 +51,7 @@ const DeliveryPreferance = ({navigation}) => {
       case 2:
         return require('../../../image/Location-Icon2x.png');
       case 3:
-        return require('../../../image/Calender-icon2x.png');
+        return require('../../../image/Calender-Both2x.png');
     }
   };
 
@@ -77,7 +81,7 @@ const DeliveryPreferance = ({navigation}) => {
             {...userDetails.userDetails[0], work_type_id: selectedOption.id},
           ],
         });
-        Alert.alert('Success', '' + successResponse[0]._response, [
+        Alert.alert('Success', 'Delivery preferance updated successfully', [
           {
             text: 'OK',
             onPress: () => {
@@ -96,7 +100,7 @@ const DeliveryPreferance = ({navigation}) => {
     <ScrollView>
       <View style={styles.contentContainer}>
         <Text style={[styles.logInText, {color: colors.text}]}>
-          Select how would you like to work?
+          {localizationText('Common', 'selectDeliveryPreference')}
         </Text>
         <View style={{marginTop: 20}}>
           {deliveryPreferenceList.map(item => (
@@ -172,7 +176,7 @@ const DeliveryPreferance = ({navigation}) => {
               color: colors.text,
               fontFamily: 'Montserrat-Medium',
             }}>
-            Save
+            {localizationText('Common', 'save')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -191,6 +195,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 15,
+    minHeight: screenHeight,
     paddingTop: 10,
     backgroundColor: '#fff',
   },

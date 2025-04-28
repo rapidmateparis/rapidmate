@@ -12,26 +12,80 @@ import {
   BackHandler,
   Dimensions,
 } from 'react-native';
+import StepIndicator from 'react-native-step-indicator';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
-import {usePlacedOrderDetails} from '../commonComponent/StoreContext';
+import {
+  usePlacedOrderDetails,
+  useUserDetails,
+} from '../commonComponent/StoreContext';
 import {API} from '../../utils/constant';
+import { localizationText } from '../../utils/common';
 
 const {height: screenHeight} = Dimensions.get('window');
 
 const OrderPickup = ({route, navigation}) => {
-  const [showCopiedOrderIdMessage, setShowCopiedOrderIdMessage] =
-    useState(false);
-  const [showCopiedOtpMessage, setShowCopiedOtpMessage] = useState(false);
+  const {saveUserDetails, userDetails} = useUserDetails();
+
   const [deliveryTime, setDeliveryTime] = useState(60 * 30); // 30 minutes in seconds
   const {placedOrderDetails} = usePlacedOrderDetails();
+  const [isCopied, setIsCopied] = useState(false);
+  const [otpCopied, setOtpCopied] = useState(false);
+  const [otpDeliveredCopied, setOtpDeliveredCopied] = useState(false);
   const [driverDetails, setDriverDetails] = useState(
     route.params.driverDetails,
   );
+  console.log("OrderPickupRoutesData------", route.params.driverDetails)
   const [locationList, setLocationList] = useState(route.params.locationList);
   const [orderId, setOrderID] = useState(placedOrderDetails[0]?.order_number);
   const [otp, setOtp] = useState(placedOrderDetails[0]?.otp);
+  const [deliveredOtp, setDeliveredOtp] = useState(
+    placedOrderDetails[0]?.delivered_otp,
+  );
+
+  useEffect(() => {
+    userDetails.progressTypeId &&
+      setCurrentPosition(userDetails.progressTypeId);
+    userDetails.delivered_otp && setDeliveredOtp(userDetails.delivered_otp);
+  }, [userDetails.progressTypeId, userDetails.delivered_otp]);
+
+  const [currentPosition, setCurrentPosition] = useState(0);
+
+  const stepCount = 5;
+
+  // Labels for each step in the step indicator
+  const labels = [
+    localizationText('OrderStatus', 'driverAssigned'),
+    localizationText('OrderStatus', 'pickupInProgress'),
+    localizationText('OrderStatus', 'orderPickedUp'),
+    localizationText('OrderStatus', 'orderArrivingSoon'),
+    localizationText('OrderStatus', 'completed'),
+  ];
+
+  const customStyles = {
+    stepIndicatorSize: 25,
+    currentStepIndicatorSize: 30,
+    separatorStrokeWidth: 2,
+    currentStepStrokeWidth: 2,
+    stepStrokeCurrentColor: '#fe7013',
+    stepStrokeWidth: 2,
+    stepStrokeFinishedColor: '#fe7013',
+    stepStrokeUnFinishedColor: '#aaaaaa',
+    separatorFinishedColor: '#fe7013',
+    separatorUnFinishedColor: '#aaaaaa',
+    stepIndicatorFinishedColor: '#fe7013',
+    stepIndicatorUnFinishedColor: '#ffffff',
+    stepIndicatorCurrentColor: '#ffffff',
+    stepIndicatorLabelFontSize: 12,
+    currentStepIndicatorLabelFontSize: 12,
+    stepIndicatorLabelCurrentColor: '#fe7013',
+    stepIndicatorLabelFinishedColor: '#ffffff',
+    stepIndicatorLabelUnFinishedColor: '#aaaaaa',
+    labelColor: '#999999',
+    labelSize: 11,
+    currentStepLabelColor: '#fe7013',
+  };
 
   useEffect(() => {
     const onBackPress = () => true;
@@ -45,23 +99,33 @@ const OrderPickup = ({route, navigation}) => {
 
   const handleCopyOrderId = () => {
     Clipboard.setString(orderId);
-    setShowCopiedOrderIdMessage(true);
-    setTimeout(() => {
-      setShowCopiedOrderIdMessage(false);
-    }, 2000);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleCopyOtp = () => {
     Clipboard.setString(otp);
-    setShowCopiedOtpMessage(true);
+    setOtpCopied(true);
     setTimeout(() => {
-      setShowCopiedOtpMessage(false);
+      setOtpCopied(false);
+    }, 2000);
+  };
+
+  const handleCopyDeliveredOtp = () => {
+    Clipboard.setString(deliveredOtp);
+    setOtpDeliveredCopied(true);
+    setTimeout(() => {
+      setOtpDeliveredCopied(false);
     }, 2000);
   };
 
   const getLocationAddress = locationId => {
     let result = locationList.filter(location => location.id == locationId);
-    return result[0]?.address;
+    if (result[0]) {
+      let location = result[0];
+      return `${location.address}, ${location.city}, ${location.state}, ${location.country}`;
+    }
+    return null;
   };
 
   const formatTime = timeInSeconds => {
@@ -74,10 +138,20 @@ const OrderPickup = ({route, navigation}) => {
   };
 
   const handleCall = phoneNumber => {
-    const url = `tel:${phoneNumber}`;
+    const formattedNumber = `+33${phoneNumber}`;
+    const url = `tel:${formattedNumber}`;
     Linking.openURL(url).catch(err => {
       console.error('Failed to make the call:', err);
       Alert.alert('Error', 'Unable to make a call');
+    });
+  };
+
+  const handleChat = phoneNumber => {
+    const formattedNumber = `+33${phoneNumber}`;
+    const url = `sms:${formattedNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to open chat:', err);
+      Alert.alert('Error', 'Unable to open chat');
     });
   };
 
@@ -88,59 +162,74 @@ const OrderPickup = ({route, navigation}) => {
           style={{flex: 1, height: screenHeight}}
           source={require('../../image/DeliveryRequest-bg.png')}>
           <View style={{paddingHorizontal: 20, flex: 1}}>
-            <Text style={styles.mainTitle}>
-              Delivery boy is on the way to pick your order up
-            </Text>
             <View style={styles.textContainer}>
-              <Text style={styles.oderIdText}>Order ID: </Text>
+              <Text style={styles.oderIdText}>
+                {localizationText('Common', 'orderID')}:{' '}
+              </Text>
               <TouchableOpacity onPress={handleCopyOrderId}>
                 <Text style={styles.text}>{orderId}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleCopyOrderId}>
                 <AntDesign
-                  name="copy1"
+                  name={isCopied ? 'checkcircle' : 'copy1'}
                   size={18}
-                  color="#FF0058"
+                  color={isCopied ? '#00C851' : '#FF0058'}
                   style={styles.copyIcon}
                 />
               </TouchableOpacity>
-              {showCopiedOrderIdMessage && (
-                <Text style={styles.copiedMessage}>Copied to clipboard!</Text>
-              )}
             </View>
-            <View style={styles.textContainer}>
-              <Text style={styles.oderIdText}>OTP: </Text>
-              <TouchableOpacity onPress={handleCopyOtp}>
-                <Text style={styles.text}>{otp}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCopyOtp}>
-                <AntDesign
-                  name="copy1"
-                  size={18}
-                  color="#FF0058"
-                  style={styles.copyIcon}
-                />
-              </TouchableOpacity>
-              {showCopiedOtpMessage && (
-                <Text style={styles.copiedMessage}>Copied to clipboard!</Text>
-              )}
-            </View>
-            <View style={styles.textContainer}>
-              <Text style={styles.oderIdText}>
-                Delivery in:{' '}
-                <Text style={styles.text}>{formatTime(deliveryTime)}</Text>
-              </Text>
+            <View style={styles.textOtpContainer}>
+              <View style={[styles.textContainer, {marginRight: 10}]}>
+                <Text style={styles.oderIdText}>
+                  {localizationText('Common', 'pickupOTP')}:{' '}
+                </Text>
+                <TouchableOpacity onPress={handleCopyOtp}>
+                  <Text style={styles.text}>{otp}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleCopyOtp}>
+                  <AntDesign
+                    name={otpCopied ? 'checkcircle' : 'copy1'}
+                    size={18}
+                    color={otpCopied ? '#00C851' : '#FF0058'}
+                    style={styles.copyIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.textContainer}>
+                <Text style={styles.oderIdText}>
+                  {localizationText('Common', 'deliveredOTP')}:{' '}
+                </Text>
+                <TouchableOpacity onPress={handleCopyDeliveredOtp}>
+                  <Text style={styles.text}>{deliveredOtp}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleCopyDeliveredOtp}>
+                  <AntDesign
+                    name={otpDeliveredCopied ? 'checkcircle' : 'copy1'}
+                    size={18}
+                    color={otpDeliveredCopied ? '#00C851' : '#FF0058'}
+                    style={styles.copyIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.boxCard}>
-                <Image source={require('../../image/Delivery-Box-Imga.png')}/>
-                <Image style={styles.cloud1} source={require('../../image/Cloud-Graphic.png')}/>
-                <Image style={styles.cloud2} source={require('../../image/Cloud-Graphic.png')}/>
+              <Image
+                style={styles.cloud1}
+                source={require('../../image/Cloud-Graphic.png')}
+              />
+              <Image
+                style={styles.cloud2}
+                source={require('../../image/Cloud-Graphic.png')}
+              />
             </View>
 
             <View style={styles.devileryMap}>
               <View style={styles.Delivering}>
-                <Text style={styles.DeliveringText}>Pickup from</Text>
+                <Text style={styles.DeliveringText}>
+                  {localizationText('Common', 'pickupFrom')}
+                </Text>
                 <Text style={styles.subAddress}>
                   {getLocationAddress(
                     placedOrderDetails[0]?.pickup_location_id,
@@ -150,6 +239,32 @@ const OrderPickup = ({route, navigation}) => {
               <View>
                 <Image source={require('../../image/dummyMap.png')} />
               </View>
+            </View>
+
+            <View style={styles.devileryMap}>
+              <View style={styles.Delivering}>
+                <Text style={styles.DeliveringText}>
+                  {localizationText('Common', 'deliveringTo')}
+                </Text>
+                <Text style={styles.subAddress}>
+                  {getLocationAddress(
+                    placedOrderDetails[0]?.dropoff_location_id,
+                  )}
+                </Text>
+              </View>
+              <View>
+                <Image source={require('../../image/dummyMap.png')} />
+              </View>
+            </View>
+
+            <View style={{marginVertical: 30}}>
+              <StepIndicator
+                customStyles={customStyles}
+                currentPosition={currentPosition}
+                labels={labels}
+                stepCount={stepCount}
+                // onPress={position => setCurrentPosition(position)}
+              />
             </View>
 
             <View style={styles.driverCard}>
@@ -169,7 +284,7 @@ const OrderPickup = ({route, navigation}) => {
                     source={require('../../image/driver.jpeg')}
                   />
                 )}
-                <Image
+                {/* <Image
                   style={{
                     position: 'absolute',
                     bottom: 0,
@@ -179,7 +294,7 @@ const OrderPickup = ({route, navigation}) => {
                     borderRadius: 30,
                   }}
                   source={require('../../image/Drivers-Truck.jpg')}
-                />
+                /> */}
               </View>
               <View style={{width: '48%'}}>
                 <Text style={styles.driverName}>
@@ -192,16 +307,16 @@ const OrderPickup = ({route, navigation}) => {
                 </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TouchableOpacity style={{marginRight: 5}}>
+                <TouchableOpacity
+                  onPress={() => handleChat(driverDetails?.deliveryBoy?.phone)}
+                  style={{marginRight: 5}}>
                   <Image
                     style={{width: 35, height: 35}}
                     source={require('../../image/chat-icon.png')}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() =>
-                    handleCall(driverDetails?.deliveryBoy?.phone_number)
-                  }>
+                  onPress={() => handleCall(driverDetails?.deliveryBoy?.phone)}>
                   <Image
                     style={{width: 35, height: 35}}
                     source={require('../../image/call-icon.png')}
@@ -210,19 +325,54 @@ const OrderPickup = ({route, navigation}) => {
               </View>
             </View>
 
-            <TouchableOpacity
-              onPress={() =>{
+            {/* <TouchableOpacity
+              onPress={() => {
                 // navigation.navigate('OrderConfirm', {
                 //   driverDetails: route.params.driverDetails,
                 //   locationList: route.params.locationList,
                 //   placedOrderDetails: placedOrderDetails[0],
                 // })
-                navigation.navigate('PickupBottomNav')
-              }
-              }
+                navigation.navigate('DeliveryDetails', {
+                  orderItem: placedOrderDetails[0],
+                });
+              }}
               style={styles.trackOrderBtn}>
-              <Text style={styles.trackText}>Go To Home</Text>
-            </TouchableOpacity>
+              <Text style={styles.trackText}>View Order Details</Text>
+            </TouchableOpacity> */}
+
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingVertical: 10,
+                justifyContent: 'space-evenly',
+              }}>
+              <TouchableOpacity
+                style={styles.requestTouch}
+                onPress={() => {
+                  // TODO: Because this screen only show when delivery boy allocated for this order so manually change the id
+                  const changeStatus = {
+                    ...placedOrderDetails[0],
+                    is_delivery_boy_allocated: 1,
+                  };
+
+                  navigation.navigate('DeliveryDetails', {
+                    orderItem: changeStatus,
+                  });
+                }}>
+                <Text style={styles.cancelRequest}>
+                  {localizationText('Common', 'viewOrderDetails')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.requestTouch}
+                onPress={() => {
+                  navigation.navigate('PickupBottomNav');
+                }}>
+                <Text style={styles.cancelRequest}>
+                  {localizationText('Common', 'goHome')}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ImageBackground>
       </View>
@@ -339,7 +489,7 @@ const styles = StyleSheet.create({
   boxCard: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: 50,
+    paddingVertical: 25,
     position: 'relative',
   },
   cloud1: {
@@ -351,6 +501,25 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: '5%',
     top: '50%',
+  },
+  textOtpContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  requestTouch: {
+    backgroundColor: colors.primary,
+    borderRadius: 5,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    // marginLeft: 10,
+    marginTop: 10,
+  },
+  cancelRequest: {
+    color: colors.text,
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    textAlign: 'center',
   },
 });
 

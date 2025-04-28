@@ -1,20 +1,27 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
-  ImageBackground,
 } from 'react-native';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import CancellationModal from '../commonComponent/CancellationModal';
+
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DeliveryboyThanksPage = ({navigation}) => {
+
+   useEffect(() => {
+      clearUserDetailsInAsync();
+    }, []);
+
+    const clearUserDetailsInAsync = async () => {
+      await AsyncStorage.clear();
+    };
+    
   return (
     <ScrollView
       style={{width: '100%', backgroundColor: '#FBFAF5'}}
@@ -31,10 +38,11 @@ const DeliveryboyThanksPage = ({navigation}) => {
             style={styles.loaderMap}
             source={require('../../image/ThanksPage-Timer.png')}
           />
-          <Text style={styles.text}>Thank you for signing up</Text>
+          <Text style={styles.text}>
+            {localizationText('Main', 'thankForSigningUp')}
+          </Text>
           <Text style={styles.subText}>
-            We are reviewing your request and we will update you about it
-            shortly.
+            {localizationText('Main', 'thankSigningDescription')}
           </Text>
         </View>
       </View>

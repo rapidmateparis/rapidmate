@@ -14,49 +14,124 @@ import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
-import { updateUserProfile } from '../../../data_manager';
-import { useLoader } from '../../../utils/loaderContext';
+import {updateUserProfile} from '../../../data_manager';
+import {useLoader} from '../../../utils/loaderContext';
+import {localizationText} from '../../../utils/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DeliveryboyManageProfile = ({navigation}) => {
-  const {userDetails,saveUserDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
 
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
-  const [number, setNumber] = useState(userDetails?.userDetails[0]?.phone || '');
+  const [errors, setErrors] = useState({});
+  const [number, setNumber] = useState(
+    userDetails?.userDetails[0]?.phone || '',
+  );
   const [email, setEmail] = useState(userDetails?.userDetails[0]?.email || '');
-  const [vehicleNo, setVehicleNo] = useState(userDetails?.userDetails[0]?.plat_no || '');
-  const [vehicleModel, setVehicleModel] = useState(userDetails?.userDetails[0]?.modal || '');
-  const [vehicleMake, setVehicleMake] = useState(userDetails?.userDetails[0]?.make || '');
-  const [vehicleVariant, setVehicleVariant] = useState(userDetails?.userDetails[0]?.variant || '');
+  const [vehicleNo, setVehicleNo] = useState(
+    userDetails?.userDetails[0]?.plat_no || '',
+  );
+  const [vehicleModel, setVehicleModel] = useState(
+    userDetails?.userDetails[0]?.modal || '',
+  );
+  const [vehicleMake, setVehicleMake] = useState(
+    userDetails?.userDetails[0]?.make || '',
+  );
+  const [vehicleVariant, setVehicleVariant] = useState(
+    userDetails?.userDetails[0]?.variant || '',
+  );
 
-  const fullName = `${userDetails.userDetails[0].first_name} ${userDetails.userDetails[0].last_name}`;
-
-  const [userName, setUserName] = useState(fullName);
+  const [firstName, setFirstName] = useState(
+    userDetails.userDetails[0].first_name,
+  );
+  const [lastName, setLastName] = useState(
+    userDetails.userDetails[0].last_name,
+  );
   const {setLoading} = useLoader();
 
   useEffect(() => {
-    setUserName(fullName);
+    //setUserName(fullName);
   }, [userDetails]);
 
+  const loadUserDetails = async () => {
+    try {
+      const storedUserDetails = await AsyncStorage.getItem('userDetails');
+      if (storedUserDetails) {
+        saveUserDetails(JSON.parse(storedUserDetails));
+      }
+    } catch (error) {
+      console.error('Error loading user details:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadUserDetails();
+  }, []);
+
   const data = [
-    {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+  // const saveUserDetailsInAsync = async userDetails => {
+  //   await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  // };
+
+  const saveUserDetailsInAsync = async updatedUserDetails => {
+    try {
+      await AsyncStorage.setItem(
+        'userDetails',
+        JSON.stringify(updatedUserDetails),
+      );
+      console.log('User details saved successfully');
+    } catch (error) {
+      console.error('Error saving user details:', error);
+    }
+  };
 
   const saveProfileDetails = () => {
+    let errors = {};
+
+    // Validation
+    if (!firstName.trim()) {
+      errors.firstName = 'Name is required';
+    } else if (firstName.length < 3) {
+      errors.firstName = 'Name must be at least 3 characters long';
+    }else if (!/^[A-Za-z\s]+$/.test(firstName)) {
+      // console.log("name ======>", name);
+      errors.firstName = 'Names should only contain letters';
+    }
+
+    if (lastName && !/^[A-Za-z\s]+$/.test(lastName)) {
+      errors.lastname = 'Last name should contain letters only';
+    }
+
+    if (!number.trim()) {
+      errors.number = 'Number is required';
+    } else if (!/^\d+$/.test(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
+    }
+    if (!dropdownValue) {
+      errors.dropdownValue = 'Please select country';
+    }
+    setErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return false; // Stop if there are validation errors
+    }
+
     setLoading(true);
-    let profileParams = {
+
+    const profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
-      first_name: userName,
-      last_name: '',
+      first_name: firstName,
+      last_name: lastName,
       phone: dropdownValue + number,
-      email: email,
-
-      plat_no:vehicleNo,
-      modal:vehicleModel,
-      make:vehicleMake,
-      variant:vehicleVariant
-
+      plat_no: vehicleNo,
+      modal: vehicleModel,
+      make: vehicleMake,
+      variant: vehicleVariant,
     };
 
     updateUserProfile(
@@ -64,33 +139,43 @@ const DeliveryboyManageProfile = ({navigation}) => {
       profileParams,
       successResponse => {
         setLoading(false);
-        const newUserDetails = userDetails.userDetails[0]
-        newUserDetails['email'] = email
-        newUserDetails['first_name'] = userName
-        newUserDetails['phone'] = number
 
-        newUserDetails['plat_no'] = vehicleNo
-        newUserDetails['modal'] = vehicleModel
-        newUserDetails['make'] = vehicleMake
-        newUserDetails['variant'] = vehicleVariant
+        const updatedUserDetails = {
+          ...userDetails,
+          userDetails: [
+            {
+              ...userDetails.userDetails[0],
+              email,
+              first_name: firstName,
+              last_name: lastName,
+              phone: number,
+              plat_no: vehicleNo,
+              modal: vehicleModel,
+              make: vehicleMake,
+              variant: vehicleVariant,
+              profile_pic:
+                successResponse?.profile_pic ||
+                userDetails.userDetails[0].profile_pic,
+            },
+          ],
+        };
 
-        saveUserDetails({ ...userDetails, userDetails: [newUserDetails] });
-        console.log('updateUserProfile response ', successResponse);
-        Alert.alert('Success', 'Profile updates duccessfully', [
-          {
-            text: 'OK',
-            onPress: () => {},
-          },
-        ]);
+        console.log('Update profile TEST', updatedUserDetails);
+
+        saveUserDetails(updatedUserDetails);
+        saveUserDetailsInAsync(updatedUserDetails);
+
+        console.log('updateUserProfile response', successResponse);
+        Alert.alert('Success', 'Profile updated successfully', [{text: 'OK'}]);
       },
       errorResponse => {
         setLoading(false);
         console.log('updateUserProfile', errorResponse);
       },
     );
-  }
 
-
+    return true;
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -119,19 +204,45 @@ const DeliveryboyManageProfile = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-
+        {errors.firstName ? (
+          <Text style={[{color: 'red'}]}>{errors.firstName}</Text>
+        ) : null}
         <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Name</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'firstName')}
+          </Text>
           <TextInput
             style={styles.inputTextStyle}
-            placeholder="Type here"
+            placeholder={localizationText('Common', 'typeHere')}
             placeholderTextColor={'#999'}
-            value={userName}
-            onChangeText={text => setUserName(text)}
+            maxLength={15}
+            value={firstName}
+            onChangeText={text => setFirstName(text)}
           />
         </View>
+        {errors.lastname ? (
+          <Text style={[{color: 'red'}]}>{errors.lastname}</Text>
+        ) : null}
+        <View style={{flex: 1}}>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'lastName')}
+          </Text>
+          <TextInput
+            style={styles.inputTextStyle}
+            placeholder={localizationText('Common', 'typeHere')}
+            placeholderTextColor={'#999'}
+            maxLength={15}
+            value={lastName}
+            onChangeText={text => setLastName(text)}
+          />
+        </View>
+        {errors.number ? (
+          <Text style={[{color: 'red'}]}>{errors.number}</Text>
+        ) : null}
         <View>
-          <Text style={styles.textlable}>Phone Number</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'phoneNumber')}
+          </Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -165,17 +276,21 @@ const DeliveryboyManageProfile = ({navigation}) => {
               </View>
             </View>
             <TextInput
-              style={styles.input}
+              style={{
+                fontFamily: 'Montserrat-Regular',
+                fontSize: 12,
+                color: colors.text,
+              }}
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={11}
+              maxLength={9}
               value={number}
               onChangeText={text => setNumber(text)}
             />
           </View>
         </View>
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -184,55 +299,69 @@ const DeliveryboyManageProfile = ({navigation}) => {
             value={email}
             onChangeText={text => setEmail(text)}
           />
-        </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1, marginRight: 10}}>
-              <Text style={styles.textlable}>Vehicle No.</Text>
-              <TextInput
-                style={styles.inputTextStyle}
-                placeholder="Type here"
-                placeholderTextColor={'#999'}
-                value={vehicleNo}
-                onChangeText={text => setVehicleNo(text)}
-              />
-            </View>
-            <View style={{flex: 1, marginLeft: 10}}>
-              <Text style={styles.textlable}>Vehicle model</Text>
-              <TextInput
-                style={styles.inputTextStyle}
-                placeholder="Type here"
-                placeholderTextColor={'#999'}
-                value={vehicleModel}
-                onChangeText={text => setVehicleModel(text)}
-              />
-            </View>
-          </View>
+        </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{flex: 1, marginRight: 10}}>
-            <Text style={styles.textlable}>Vehicle make</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleNo')}
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor={'#999'}
+              maxLength={10}
+              value={vehicleNo}
+              onChangeText={text => setVehicleNo(text)}
+            />
+          </View>
+          <View style={{flex: 1, marginLeft: 10}}>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleModel')}
+            </Text>
+            <TextInput
+              style={styles.inputTextStyle}
+              placeholder={localizationText('Common', 'typeHere')}
+              placeholderTextColor={'#999'}
+              maxLength={18}
+              value={vehicleModel}
+              onChangeText={text => setVehicleModel(text)}
+            />
+          </View>
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flex: 1, marginRight: 10}}>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleMake')}
+            </Text>
+            <TextInput
+              style={styles.inputTextStyle}
+              placeholder={localizationText('Common', 'typeHere')}
+              placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleMake}
               onChangeText={text => setVehicleMake(text)}
             />
           </View>
           <View style={{flex: 1, marginLeft: 10}}>
-            <Text style={styles.textlable}>Vehicle variant</Text>
+            <Text style={styles.textlable}>
+              {localizationText('Common', 'vehicleVariant')}
+            </Text>
             <TextInput
               style={styles.inputTextStyle}
-              placeholder="Type here"
+              placeholder={localizationText('Common', 'typeHere')}
               placeholderTextColor={'#999'}
+              maxLength={18}
               value={vehicleVariant}
               onChangeText={text => setVehicleVariant(text)}
             />
           </View>
         </View>
         <TouchableOpacity
-          onPress={()=>saveProfileDetails()}
+          onPress={() => saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

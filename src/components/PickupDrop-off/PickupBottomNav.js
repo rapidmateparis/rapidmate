@@ -20,15 +20,21 @@ import Notifications from './Settings/Notifications';
 import PickupHome from './PickupHome';
 import History from './History';
 import RNExitApp from 'react-native-exit-app';
-import {requestNotificationPermission} from '../../utils/common';
+import {requestNotificationPermission,localizationText} from '../../utils/common';
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
-import {getViewOrderDetail, updateUserProfile} from '../../data_manager';
+import {getNotificationCount, getViewOrderDetail, updateUserProfile} from '../../data_manager';
 import {useUserDetails} from '../commonComponent/StoreContext';
 
 const Bottom = createBottomTabNavigator();
 const PickupBottomNav = ({navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
+  const homeText = localizationText('BottomTabNav', 'home');
+  const chatText = localizationText('BottomTabNav', 'chat');
+  const requestsText = localizationText('BottomTabNav', 'requests');
+  const ordersText = localizationText('BottomTabNav', 'orders');
+  const accountText = localizationText('BottomTabNav', 'account');
+  const notifications = localizationText('Common', 'notifications');
 
   useEffect(() => {
     const onBackPress = () => {
@@ -59,9 +65,41 @@ const PickupBottomNav = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
+
+  const getNotificationAllCount = () => {
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        userDetails.userDetails[0].notificationCount
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+      },
+      errorResponse => {
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
+
+
   useEffect(async () => {
     messaging().onMessage(async remoteMessage => {
-      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      console.log('remoteMessage *Consumer*', JSON.stringify(remoteMessage));
+      if(remoteMessage.data?.delivered_otp){
+        saveUserDetails({...userDetails,delivered_otp:remoteMessage.data?.delivered_otp});
+      }
+      
+      if(remoteMessage.data?.progressTypeId){
+        saveUserDetails({...userDetails,progressTypeId:remoteMessage.data?.progressTypeId});
+      }
+      
+      getNotificationAllCount()
       getViewOrderDetail(
         remoteMessage.data?.orderNumber,
         successResponse => {
@@ -142,7 +180,7 @@ const PickupBottomNav = ({navigation}) => {
         }}>
         <Bottom.Screen
           key="PickupHome"
-          name="Home"
+          name={homeText}
           component={PickupHome}
           options={{
             headerShown: false,
@@ -155,12 +193,12 @@ const PickupBottomNav = ({navigation}) => {
             ),
           }}
         />
-        <Bottom.Screen
+        {/* <Bottom.Screen
           key="Notifications"
-          name="Chat"
+          name={chatText}
           component={Notifications}
           options={{
-            headerTitle: 'Notifications',
+            headerTitle: notifications,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,
@@ -180,10 +218,10 @@ const PickupBottomNav = ({navigation}) => {
               />
             ),
           }}
-        />
+        /> */}
         <Bottom.Screen
           key="PickupAddress"
-          name="Requsts"
+          name={requestsText}
           component={PickupAddress}
           options={{
             headerShown: false,
@@ -198,7 +236,7 @@ const PickupBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="History"
-          name="Orders"
+          name={ordersText}
           component={History}
           options={{
             headerShown: false,
@@ -213,10 +251,10 @@ const PickupBottomNav = ({navigation}) => {
         />
         <Bottom.Screen
           key="Settings"
-          name="Account"
+          name={accountText}
           component={Settings}
           options={{
-            headerTitle: 'Settings',
+            headerTitle: `${localizationText('Common','settings')}`,
             headerTitleStyle: {
               fontFamily: 'Montserrat-SemiBold',
               fontSize: 16,

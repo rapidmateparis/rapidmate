@@ -17,6 +17,8 @@ import moment from 'moment';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {planningSetupUpdate, getCurrentPlanningSetup} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import DatePicker from 'react-native-date-picker';
+import {localizationText} from '../../utils/common';
 
 const DeliveryboySetAvailability = ({navigation}) => {
   const [toggleAvailable24, setToggleAvailable24] = useState(false);
@@ -31,12 +33,17 @@ const DeliveryboySetAvailability = ({navigation}) => {
   const [currentMonthWords, setCurrentMonthWords] = useState(0);
   const [currentYear, setCurrentYear] = useState(0);
   const [allWeeksSlots, setAllWeeksSlots] = useState([]);
+  const [time, setTime] = useState(new Date());
   const {userDetails} = useUserDetails();
   const {setLoading} = useLoader();
+  const paste = localizationText('Common', 'paste') || 'Paste';
+  const copy = localizationText('Common', 'copy') || 'Copy';
+  const [weekText, setWeekText] = useState(0)
+  const [copiedSlots, setCopiedSlots] = useState(null);
 
-  useEffect(() => {
-    getCurrentTimeSlot();
-  }, [currentWeek]);
+  // useEffect(() => {
+  //   getCurrentTimeSlot();
+  // }, [currentWeek]);
 
   useEffect(() => {
     let currentYear = new Date().getFullYear();
@@ -48,6 +55,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setTotalMonthWeek(totalMonthWeek);
     setMaxWeekCount(totalMonthWeek.length);
     setCurrentWeek(totalMonthWeek[0].dates);
+    getCurrentTimeSlot();
+    console.log("Toggle boxxes===============>",toggleCheckBoxes)
+    console.log("set time slotes ==============>",timeSlots)
   }, []);
 
   const getCurrentTimeSlot = () => {
@@ -60,11 +70,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
     getCurrentPlanningSetup(
       params,
       successResponse => {
+        console.log("Get current palnning setup==========>",successResponse)
         if (successResponse[0]._success) {
-          console.log(
-            'getCurrentPlanningSetup==>',
-            successResponse[0],
-          );
+          console.log('getCurrentPlanningSetup==>', successResponse[0]);
           setToggleApplySameForAll(
             successResponse[0]._response.is_apply_for_all_days == 1
               ? true
@@ -95,7 +103,6 @@ const DeliveryboySetAvailability = ({navigation}) => {
             });
             setTimeSlots(defaultTimeSlots);
           }
-          
         }
       },
       errorResponse => {
@@ -131,14 +138,40 @@ const DeliveryboySetAvailability = ({navigation}) => {
     setTimeSlots(defaultTimeSlots);
   }, [toggleApplySameForAll, toggleAvailable24, currentWeek]);
 
+  // function getWeeksInMonth(year, month) {
+  //   const weeks = [],
+  //     firstDate = new Date(year, month, 1),
+  //     lastDate = new Date(year, month + 1, 0),
+  //     numDays = lastDate.getDate();
+
+  //   let dayOfWeekCounter = firstDate.getDay();
+
+  //   for (let date = 1; date <= numDays; date++) {
+  //     if (dayOfWeekCounter === 0 || weeks.length === 0) {
+  //       weeks.push([]);
+  //     }
+  //     weeks[weeks.length - 1].push(date);
+  //     dayOfWeekCounter = (dayOfWeekCounter + 1) % 7;
+  //   }
+
+  //   return weeks
+  //     .filter(w => !!w.length)
+  //     .map(w => ({
+  //       start: w[0],
+  //       end: w[w.length - 1],
+  //       dates: w,
+  //     }));
+  // }
+
   function getWeeksInMonth(year, month) {
     const weeks = [],
       firstDate = new Date(year, month, 1),
       lastDate = new Date(year, month + 1, 0),
       numDays = lastDate.getDate();
-
+  
     let dayOfWeekCounter = firstDate.getDay();
-
+  
+   
     for (let date = 1; date <= numDays; date++) {
       if (dayOfWeekCounter === 0 || weeks.length === 0) {
         weeks.push([]);
@@ -146,15 +179,45 @@ const DeliveryboySetAvailability = ({navigation}) => {
       weeks[weeks.length - 1].push(date);
       dayOfWeekCounter = (dayOfWeekCounter + 1) % 7;
     }
-
-    return weeks
-      .filter(w => !!w.length)
+  
+    const allWeeks = weeks
+      .filter(w => w.length)
       .map(w => ({
         start: w[0],
         end: w[w.length - 1],
         dates: w,
       }));
+  
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+  
+    let filteredWeeks = allWeeks;
+  
+  
+    if (year === todayYear && month === todayMonth) {
+      const currentWeekIndex = allWeeks.findIndex(week => week.end >= todayDate);
+      setWeekText(currentWeekIndex + 1)
+  
+      filteredWeeks = allWeeks.slice(currentWeekIndex).map((week, index) => {
+     
+        if (index === 0) {
+          const filteredDates = week.dates.filter(day => day >= todayDate);
+          return {
+            ...week,
+            dates: filteredDates,
+            start: filteredDates[0],
+            end: filteredDates[filteredDates.length - 1],
+          };
+        }
+        return week; 
+      });
+    }
+  
+    return filteredWeeks;
   }
+  
 
   const handleNextWeek = () => {
     if (weekCount < maxWeekCount) {
@@ -193,6 +256,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
       const newWeekCount = weekCount + 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
+      setWeekText(weekText + 1)
     }
   };
 
@@ -233,6 +297,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
       const newWeekCount = weekCount - 1;
       setWeekCount(newWeekCount);
       setCurrentWeek(totalMonthWeek[newWeekCount - 1].dates);
+      setWeekText(weekText - 1)
     }
   };
 
@@ -349,9 +414,10 @@ const DeliveryboySetAvailability = ({navigation}) => {
     planningSetupUpdate(
       params,
       successResponse => {
+        console.log("params=======================> successs", params)
         if (successResponse[0]._success) {
           setLoading(false);
-          Alert.alert('Error Alert', successResponse[0]._response, [
+          Alert.alert('Success', successResponse[0]._response, [
             {
               text: 'OK',
               onPress: () => {
@@ -370,6 +436,20 @@ const DeliveryboySetAvailability = ({navigation}) => {
     );
   };
 
+
+  const handleCopy = (day)=>{
+     let time = timeSlots[day]
+     setCopiedSlots(time)
+     console.log("Time slotes===============> copied",time)
+  }
+
+  const handlePaste = (day) =>{
+    if(copiedSlots){
+      setTimeSlots({...timeSlots, [day] : copiedSlots})
+      setCopiedSlots(null)
+    }
+  }
+
   return (
     <>
       <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -386,7 +466,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
               <Text style={styles.monthByYear}>
                 {moment().format('MMM YYYY')}
               </Text>
-              <Text style={styles.weekFillter}>Week {weekCount}</Text>
+              <Text style={styles.weekFillter}>
+                {localizationText('Common', 'week')} {weekText}
+              </Text>
             </View>
 
             <TouchableOpacity
@@ -403,7 +485,9 @@ const DeliveryboySetAvailability = ({navigation}) => {
               {backgroundColor: toggleApplySameForAll ? '#F0F0F0' : '#FBFAF5'},
             ]}
             pointerEvents={toggleApplySameForAll ? 'none' : 'auto'}>
-            <Text style={styles.applySlotText}>I am available 24/7</Text>
+            <Text style={styles.applySlotText}>
+              {localizationText('Common', 'availableAllTime')}
+            </Text>
             <TouchableOpacity onPress={toggleAvailable}>
               <MaterialCommunityIcons
                 name={toggleAvailable24 ? 'toggle-switch' : 'toggle-switch-off'}
@@ -420,7 +504,7 @@ const DeliveryboySetAvailability = ({navigation}) => {
             ]}
             pointerEvents={toggleAvailable24 ? 'none' : 'auto'}>
             <Text style={styles.applySlotText}>
-              Apply same slots to all days
+              {localizationText('Common', 'applySameSlots')}
             </Text>
             <TouchableOpacity onPress={toggleApplySame}>
               <MaterialCommunityIcons
@@ -462,121 +546,213 @@ const DeliveryboySetAvailability = ({navigation}) => {
                     </View>
 
                     {toggleCheckBoxes[day] ? (
+                      
                       <View style={styles.bothActionBtn}>
-                        <TouchableOpacity style={styles.enabledPasteBt}>
-                          <Text style={styles.enabledPasteText}>Paste</Text>
+                        {console.log("styyle toggle", day,toggleCheckBoxes)}
+                        {console.log("All slots", timeSlots)}
+                        <TouchableOpacity style={styles.enabledPasteBt} onPress={()=> handlePaste(day)} >
+                          <Text style={styles.enabledPasteText}>{paste}</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.copyCardBt}>
-                          <Text style={styles.enabledPasteText}>Copy</Text>
+                        <TouchableOpacity style={styles.copyCardBt}  onPress={()=>handleCopy(day)}>
+                          <Text style={styles.enabledPasteText}>{copy}</Text>
                         </TouchableOpacity>
                       </View>
                     ) : (
                       <View style={styles.bothActionBtn}>
                         <TouchableOpacity style={styles.disablePasteBt}>
-                          <Text style={styles.disablePasteText}>Paste</Text>
+                          <Text style={styles.disablePasteText}>{paste}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.disablePasteBt}>
-                          <Text style={styles.disablePasteText}>Copy</Text>
+                          <Text style={styles.disablePasteText}>{copy}</Text>
                         </TouchableOpacity>
                       </View>
                     )}
                   </View>
 
                   {timeSlots[day] &&
-                    timeSlots[day].map((slot, slotIndex) => (
-                      <View key={slotIndex} style={styles.selectTimeCard}>
-                        <View style={styles.textInputDiv}>
-                          <TextInput
-                            style={styles.loginput}
-                            placeholder="From HH:MM"
-                            placeholderTextColor="#999"
-                            value={slot.from_time}
-                            onChangeText={text =>
+                    timeSlots[day].map((slot, slotIndex) => {
+                      return (
+                        <View key={slotIndex} style={styles.selectTimeCard}>
+                          <DatePicker
+                            modal
+                            open={!!slot.showFromTimePicker}
+                            date={time}
+                            mode="time"
+                            is24hourSource="locale"
+                            locale="en-GB"
+                            onConfirm={date => {
                               setTimeSlots({
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
                                   idx === slotIndex
-                                    ? {...s, from_time: formatTime(text)}
+                                    ? {
+                                        ...s,
+                                        from_time: moment(date).format('HH:mm'), // 24-hour format
+                                        showFromTimePicker: false,
+                                      }
                                     : s,
                                 ),
-                              })
-                            }
-                          />
-                          <TouchableOpacity>
-                            <MaterialCommunityIcons
-                              name="clock-time-four"
-                              size={20}
-                              color={colors.secondary}
-                              style={{marginTop: 15}}
-                            />
-                          </TouchableOpacity>
-                        </View>
-
-                        <View style={styles.textInputDiv}>
-                          <TextInput
-                            style={styles.loginput}
-                            placeholder="To HH:MM"
-                            placeholderTextColor="#999"
-                            value={slot.to_time}
-                            onChangeText={text =>
+                              });
+                            }}
+                            onCancel={() => {
                               setTimeSlots({
                                 ...timeSlots,
                                 [day]: timeSlots[day].map((s, idx) =>
                                   idx === slotIndex
-                                    ? {...s, to_time: formatTime(text)}
+                                    ? {...s, showFromTimePicker: false}
                                     : s,
                                 ),
-                              })
-                            }
+                              });
+                            }}
                           />
-                          <TouchableOpacity>
-                            <MaterialCommunityIcons
-                              name="clock-time-four"
-                              size={20}
-                              color={colors.secondary}
-                              style={{marginTop: 15}}
+                          <View style={styles.textInputDiv}>
+                            <TextInput
+                              style={styles.loginput}
+                              placeholder="From HH:MM"
+                              placeholderTextColor="#999"
+                              value={slot.from_time}
+                              editable={false}
+                              // onChangeText={text =>
+                              // setTimeSlots({
+                              //   ...timeSlots,
+                              //   [day]: timeSlots[day].map((s, idx) =>
+                              //     idx === slotIndex
+                              //       ? {...s, from_time: formatTime(text)}
+                              //       : s,
+                              //   ),
+                              // })
+                              // }
                             />
-                          </TouchableOpacity>
-                        </View>
-
-                        {slotIndex == 0 ? (
-                          <View style={styles.selectTimeCard}>
                             <TouchableOpacity
-                              style={[
-                                styles.plusNewCardDisabled,
-                                toggleCheckBoxes[day]
-                                  ? styles.plusNewCardEnabled
-                                  : styles.plusNewCardDisabled,
-                              ]}
-                              onPress={
-                                toggleCheckBoxes[day]
-                                  ? () => handleAddSlot(day)
-                                  : null
-                              }>
-                              <AntDesign
-                                name="plus"
+                              onPress={() => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {...s, showFromTimePicker: true}
+                                      : s,
+                                  ),
+                                });
+                              }}>
+                              <MaterialCommunityIcons
+                                name="clock-time-four"
                                 size={20}
-                                color="#000"
+                                color={colors.secondary}
                                 style={{marginTop: 15}}
                               />
                             </TouchableOpacity>
                           </View>
-                        ) : (
-                          <TouchableOpacity
-                            onPress={() => handleDeleteSlot(day, slotIndex)}
-                            style={styles.deleteCard}>
-                            <AntDesign
-                              name="delete"
-                              size={20}
-                              color="#FF0000"
-                              style={{marginTop: 15}}
+
+                          <View style={styles.textInputDiv}>
+                            <DatePicker
+                              modal
+                              open={!!slot.showToTimePicker}
+                              date={time}
+                              mode="time"
+                              is24hourSource="locale"
+                              locale="en-GB"
+                              onConfirm={date => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {
+                                          ...s,
+                                          to_time:
+                                            moment(date).format('hh:mm A'),
+                                          showToTimePicker: false,
+                                        }
+                                      : s,
+                                  ),
+                                });
+                              }}
+                              onCancel={() => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {...s, showToTimePicker: false}
+                                      : s,
+                                  ),
+                                });
+                              }}
                             />
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    ))}
+                            <TextInput
+                              style={styles.loginput}
+                              placeholder="To HH:MM"
+                              placeholderTextColor="#999"
+                              value={slot.to_time}
+                              editable={false}
+                              // onChangeText={text =>
+                              //   setTimeSlots({
+                              //     ...timeSlots,
+                              //     [day]: timeSlots[day].map((s, idx) =>
+                              //       idx === slotIndex
+                              //         ? {...s, to_time: formatTime(text)}
+                              //         : s,
+                              //     ),
+                              //   })
+                              // }
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                setTimeSlots({
+                                  ...timeSlots,
+                                  [day]: timeSlots[day].map((s, idx) =>
+                                    idx === slotIndex
+                                      ? {...s, showToTimePicker: true}
+                                      : s,
+                                  ),
+                                });
+                              }}>
+                              <MaterialCommunityIcons
+                                name="clock-time-four"
+                                size={20}
+                                color={colors.secondary}
+                                style={{marginTop: 15}}
+                              />
+                            </TouchableOpacity>
+                          </View>
+
+                          {slotIndex == 0 ? (
+                            <View style={styles.selectTimeCard}>
+                              <TouchableOpacity
+                                style={[
+                                  styles.plusNewCardDisabled,
+                                  toggleCheckBoxes[day]
+                                    ? styles.plusNewCardEnabled
+                                    : styles.plusNewCardDisabled,
+                                ]}
+                                onPress={
+                                  toggleCheckBoxes[day]
+                                    ? () => handleAddSlot(day)
+                                    : null
+                                }>
+                                <AntDesign
+                                  name="plus"
+                                  size={20}
+                                  color="#000"
+                                  style={{marginTop: 15}}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          ) : (
+                            <TouchableOpacity
+                              onPress={() => handleDeleteSlot(day, slotIndex)}
+                              style={styles.deleteCard}>
+                              <AntDesign
+                                name="delete"
+                                size={20}
+                                color="#FF0000"
+                                style={{marginTop: 15}}
+                              />
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      );
+                    })}
                 </View>
               </View>
             ))}
@@ -586,10 +762,14 @@ const DeliveryboySetAvailability = ({navigation}) => {
 
       <View style={styles.buttonCard}>
         <TouchableOpacity style={styles.logbutton}>
-          <Text style={styles.buttonText}>Cancel</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'cancel')}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleSave} style={styles.saveBTn}>
-          <Text style={styles.okButton}>Save</Text>
+          <Text style={styles.okButton}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </>

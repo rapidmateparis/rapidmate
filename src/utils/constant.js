@@ -109,6 +109,19 @@ export const API = {
   enterprisePaymentMethodUrl: BASE_URL + 'enterprise/paymentmethod',
   searchOrder: BASE_URL + 'enterprise/order/search',
   calendarPlanDate: BASE_URL + 'order/deliveryboy/plan/calendar/data/',
+
+  notificationCount:BASE_URL + 'notification/count/',
+
+  deliveryBoyBillingAddressUpdate:BASE_URL + 'deliveryboy/billing/address/update/',
+  deliveryBoyBillingAddressGet: BASE_URL + 'deliveryboy/billing/address/get/',
+  downloadInvoice: BASE_URL + 'admin/invoice/view/',
+  vechicleTaxList: BASE_URL + 'vehicletypes/tax/list',
+  changeCreateShiftStatus:BASE_URL + 'order/update/shift/status',
+  deliveryBoyOrderSlots:BASE_URL + 'order/deliveryboy/myslots/',
+  billingAddressDetails: BASE_URL+'enterprise/billing/address/',
+  billingAddressDetailsUpdate: BASE_URL+'enterprise/billing/address/create',
+  enterpriseBranchDeleteUrl: BASE_URL + 'enterprisebranch/',
+  appVersion: BASE_URL+'version'
 };
 
 export const DATE_FORMAT ={

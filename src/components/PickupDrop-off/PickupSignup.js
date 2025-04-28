@@ -18,6 +18,7 @@ import {colors} from '../../colors';
 import {useSignUpDetails} from '../commonComponent/StoreContext';
 import {getCountryList, signUpUser} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 // import DropDownDropdown from '../common component/dropdown';
 
 const PickupSignup = ({navigation}) => {
@@ -29,7 +30,9 @@ const PickupSignup = ({navigation}) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedAccountType, setSelectedAccountType] = useState('');
   const [number, setNumber] = useState('');
-  const [dropdownValue, setDropdownValue] = useState('+33');
+  const [dropdownValue, setDropdownValue] = useState('33');
+  const [dropdownCountryCodeValue, setDropdownCountryCodeValue] =
+    useState('33');
   const [dropdownCountryValue, setDropdownCountryValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const {signUpDetails, saveSignUpDetails} = useSignUpDetails();
@@ -37,6 +40,7 @@ const PickupSignup = ({navigation}) => {
   const {setLoading} = useLoader();
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
+  const [countryCodeList, setCountryCodeList] = useState([]);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -57,6 +61,11 @@ const PickupSignup = ({navigation}) => {
     let errors = {};
     if (!name.trim()) {
       errors.name = 'Name is required';
+    } else if (name.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
     }
     if (!email.trim()) {
       errors.email = 'Email is required';
@@ -71,14 +80,26 @@ const PickupSignup = ({navigation}) => {
     if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords does not match';
     }
-    if (!selectedAccountType) {
+    /* if (!selectedAccountType) {
       errors.selectedAccountType = 'Please select an account type';
-    }
+    } */
+    // if (!number.trim()) {
+    //   errors.number = 'Number is required';
+    // } else if (isNaN(number)) {
+    //   errors.number = 'Number should be numeric';
+    // } else if (number.trim().length < 9) {
+    //   errors.number = 'Invalid number';
+    // }
+
     if (!number.trim()) {
       errors.number = 'Number is required';
-    } else if (isNaN(number)) {
+    }else if (!/^\d+$/.test(number)) {
       errors.number = 'Number should be numeric';
+    } else if (number.trim().length < 9) {
+      errors.number = 'Invalid number';
     }
+
+    
     if (!dropdownCountryValue) {
       errors.dropdownCountryValue = 'Please select a country';
     }
@@ -88,11 +109,11 @@ const PickupSignup = ({navigation}) => {
   };
 
   const data = [
-    {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 
   useEffect(() => {
+    setLoading(true);
     getCountryList(
       (param = {}),
       successResponse => {
@@ -106,13 +127,22 @@ const PickupSignup = ({navigation}) => {
             } else {
               setMasterCountryList(successResponse[0]._response);
               var formattedCountryList = [];
+              var formattedCountryCodeList = [];
               successResponse[0]._response.forEach(element => {
                 formattedCountryList.push({
                   label: element.country_name,
                   value: element.id,
+                  code: element.phone_code,
+                });
+                formattedCountryCodeList.push({
+                  label: '+' + element.phone_code,
+                  value: element.id,
                 });
               });
               setCountryList(formattedCountryList);
+              setCountryCodeList(formattedCountryCodeList);
+              setDropdownValue(formattedCountryCodeList[0].value);
+              setDropdownCountryCodeValue(formattedCountryCodeList[0].label);
             }
           }
         }
@@ -135,11 +165,12 @@ const PickupSignup = ({navigation}) => {
         info: {
           userName: email,
           email: email,
-          phoneNumber: '+91' + number,
+          phoneNumber: number,
           password: password,
           userrole: 'CONSUMER',
           firstName: name,
           lastName: '',
+          phone_code: dropdownCountryCodeValue.toString(),
           country: dropdownCountryValue.toString(),
         },
       };
@@ -148,6 +179,7 @@ const PickupSignup = ({navigation}) => {
         params,
         successResponse => {
           setLoading(false);
+          console.log('successResponse =====>', successResponse);
           if (successResponse[0]._success) {
             if (successResponse[0]._response) {
               if (
@@ -190,12 +222,13 @@ const PickupSignup = ({navigation}) => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '85%'}}>
             <Text style={[styles.logInText, {color: colors.black}]}>
-              Pickup & Drop-off{' '}
-              <Text style={{fontFamily: 'Montserrat-Medium'}}>signup</Text>
+              {localizationText('Common', 'pickupAndDropoff')}{' '}
+              <Text style={{fontFamily: 'Montserrat-Medium'}}>
+                {localizationText('Common', 'signup')}
+              </Text>
             </Text>
             <Text style={styles.loginAccessText}>
-              Let’s create your profile so you can have a complete experience of
-              the app.
+              {localizationText('Main', 'pickupDropSignupDescription')}
             </Text>
           </View>
           <Image
@@ -211,8 +244,9 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="user" size={18} color="#131314" />
             <TextInput
               style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
-              placeholder="Name"
+              placeholder={localizationText('Common', 'fullName')}
               placeholderTextColor="#999"
+              maxLength={15}
               value={name}
               onChangeText={text => setName(text)}
             />
@@ -224,7 +258,7 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="mail" size={18} color="#131314" />
             <TextInput
               style={styles.loginput}
-              placeholder="Email"
+              placeholder={localizationText('Common', 'email')}
               placeholderTextColor="#999"
               value={email}
               onChangeText={text => setEmail(text)}
@@ -237,8 +271,9 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={[styles.input, {fontFamily: 'Montserrat-Regular'}]}
-              placeholder="New Password"
+              placeholder={localizationText('Common', 'password')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!passwordVisible}
               value={password}
               onChangeText={text => setPassword(text)}
@@ -259,8 +294,9 @@ const PickupSignup = ({navigation}) => {
             <AntDesign name="lock" size={18} color="#131314" />
             <TextInput
               style={styles.input}
-              placeholder="Confirm New Password"
+              placeholder={localizationText('Common', 'confirmPassword')}
               placeholderTextColor="#999"
+              maxLength={10}
               secureTextEntry={!confirmPasswordVisible}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}
@@ -281,7 +317,7 @@ const PickupSignup = ({navigation}) => {
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
                 <Dropdown
-                  data={data}
+                  data={countryCodeList}
                   search
                   maxHeight={300}
                   labelField="label"
@@ -298,6 +334,7 @@ const PickupSignup = ({navigation}) => {
                   onBlur={() => setIsFocus(false)}
                   onChange={item => {
                     setDropdownValue(item.value);
+                    setDropdownCountryCodeValue(item.label);
                     setIsFocus(false);
                   }}
                   renderLeftIcon={() => (
@@ -314,7 +351,7 @@ const PickupSignup = ({navigation}) => {
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={11}
+              maxLength={9}
               value={number}
               onChangeText={text => setNumber(text)}
             />
@@ -354,74 +391,39 @@ const PickupSignup = ({navigation}) => {
               )}
             />
           </View>
-          {errors.selectedAccountType ? (
-            <Text style={[{color: 'red'}]}>{errors.selectedAccountType}</Text>
-          ) : null}
-          <View>
-            <Text style={styles.accountType}>Create account as:</Text>
-
-            {/* Individual Account Type */}
-            <TouchableOpacity
-              style={[
-                styles.accountCard,
-                selectedAccountType !== 'individual' && styles.notSelectedCard,
-                selectedAccountType === 'individual' && styles.selectedCard,
-              ]}
-              onPress={() => handleAccountTypeSelection('individual')}>
-              <AntDesign name="user" size={20} color="#131314" />
-              <Text style={styles.accountTitle}>Individual</Text>
-              {selectedAccountType === 'individual' && (
-                <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={15} color={colors.white} />
-                </View>
-              )}
-              {selectedAccountType !== 'individual' && (
-                <View style={styles.cricleRound} />
-              )}
-            </TouchableOpacity>
-
-            {/* Company Account Type */}
-            <TouchableOpacity
-              style={[
-                styles.accountCard,
-                selectedAccountType !== 'company' && styles.notSelectedCard,
-                selectedAccountType === 'company' && styles.selectedCard,
-              ]}
-              onPress={() => handleAccountTypeSelection('company')}>
-              <Image source={require('../../image/bulding.png')} />
-              <Text style={styles.accountTitle}>Company</Text>
-              {selectedAccountType === 'company' && (
-                <View style={styles.checkIcon}>
-                  <MaterialIcons name="check" size={15} color={colors.white} />
-                </View>
-              )}
-              {selectedAccountType !== 'company' && (
-                <View style={styles.cricleRound} />
-              )}
-            </TouchableOpacity>
-          </View>
-
           <TouchableOpacity
             onPress={() => {
               handleSignUp();
-              // navigation.navigate('SignUpVerify');
             }}
             style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-            <Text style={styles.buttonText}>Continue</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'continue')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('LogInScreen')}
             style={styles.signUpContainer}>
             <Text style={styles.signUpText}>
-              Already have an account yet?{' '}
-              <Text style={{color: colors.primary}}>Login</Text>
+              {localizationText('Common', 'alreadyHaveAccount')}{' '}
+              <Text style={{color: colors.primary}}>
+                {localizationText('Common', 'login')}
+              </Text>
             </Text>
 
             <View>
               <Text style={styles.termOfRapidmate}>
-                By signing up you agree to{' '}
-                <Text style={{color: colors.primary}}>Privacy policy</Text> &{' '}
-                <Text style={{color: colors.primary}}>Terms</Text> of RapidMate
+                {localizationText('Common', 'bySigningAgreeText')}{' '}
+                <Text
+                  onPress={() => navigation.navigate('PrivacyPolicy')}
+                  style={{color: colors.primary}}>
+                  {localizationText('Common', 'privacyPolicy')}
+                </Text>{' '}
+                &{' '}
+                <Text
+                  onPress={() => navigation.navigate('TermsAndConditions')}
+                  style={{color: colors.primary}}>
+                  {localizationText('Common', 'termsOfRapidmate')}
+                </Text>{' '}
               </Text>
             </View>
           </TouchableOpacity>

@@ -14,14 +14,18 @@ import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {API} from '../../../utils/constant';
 import {Dropdown} from 'react-native-element-dropdown';
-import { useLoader } from '../../../utils/loaderContext';
-import { updateUserProfile } from '../../../data_manager';
+import {useLoader} from '../../../utils/loaderContext';
+import {updateUserProfile} from '../../../data_manager';
+import {localizationText} from '../../../utils/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ConsumerManageProfile = ({navigation}) => {
-  const {userDetails,saveUserDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
   const [isFocus, setIsFocus] = useState(false);
   const [dropdownValue, setDropdownValue] = useState('+33');
-  const [number, setNumber] = useState(userDetails?.userDetails[0]?.phone || '');
+  const [number, setNumber] = useState(
+    userDetails?.userDetails[0]?.phone || '',
+  );
   const [email, setEmail] = useState(userDetails?.userDetails[0]?.email || '');
   const {setLoading} = useLoader();
 
@@ -29,48 +33,79 @@ const ConsumerManageProfile = ({navigation}) => {
 
   const [vehicleModel, setVehicleModel] = useState(fullName);
 
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     setVehicleModel(fullName);
   }, [userDetails]);
 
   const data = [
-    {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
+
+  const saveUserDetailsInAsync = async userDetails => {
+    await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+  };
+
   const saveProfileDetails = () => {
+    // if (number.length < 9) {
+    //   Alert.alert('Invalid Number', 'Phone number must be at least 9 digits.');
+    //   return;
+    // }
+
+    let errors = {};
+
+    if (!vehicleModel) {
+      errors.name = 'First name is required';
+    } else if (vehicleModel.length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
+    } else if (!/^[A-Za-z\s]+$/.test(vehicleModel)) {
+      // console.log("name ======>", name);
+      errors.name = 'Names should only contain letters';
+    }
+
+    if (!number) {
+      errors.number = 'Number is required';
+    } else if (!/^\d+$/.test(number)) {
+      errors.number = 'Number should be numeric';
+    } else if (number.length < 9) {
+      errors.number = 'Invalid number';
+    }
+
+    setErrors(errors)
+
+    if (Object.keys(errors).length !== 0) {
+      return false; 
+    }
+
     setLoading(true);
+
     let profileParams = {
       ext_id: userDetails.userDetails[0].ext_id,
       first_name: vehicleModel,
       last_name: '',
       phone: dropdownValue + number,
-      email: email
     };
     updateUserProfile(
       userDetails.userDetails[0].role,
       profileParams,
       successResponse => {
         setLoading(false);
-        const newUserDetails = userDetails.userDetails[0]
-        newUserDetails['email'] = email
-        newUserDetails['first_name'] = vehicleModel
-        newUserDetails['phone'] = number
-        saveUserDetails({ ...userDetails, userDetails: [newUserDetails] });
+        const newUserDetails = userDetails.userDetails[0];
+        newUserDetails['email'] = email;
+        newUserDetails['first_name'] = vehicleModel;
+        newUserDetails['phone'] = number;
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+        saveUserDetailsInAsync(userDetails);
         console.log('updateUserProfile response ', successResponse);
-        Alert.alert('Success', 'Profile updates duccessfully', [
-          {
-            text: 'OK',
-            onPress: () => {},
-          },
-        ]);
+        Alert.alert('Success', 'Profile updated successfully', [{text: 'OK'}]);
       },
       errorResponse => {
         setLoading(false);
         console.log('updateUserProfile', errorResponse);
       },
     );
-  }
-
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FFF'}}>
@@ -100,8 +135,10 @@ const ConsumerManageProfile = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={{flex: 1}}>
-          <Text style={styles.textlable}>Name</Text>
+        <View style={{flex: 1,marginBottom:15}}>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'name')}
+          </Text>
           <TextInput
             style={styles.inputTextStyle}
             placeholder="Type here"
@@ -109,9 +146,12 @@ const ConsumerManageProfile = ({navigation}) => {
             value={vehicleModel}
             onChangeText={text => setVehicleModel(text)}
           />
+          {errors.name ? (<Text style={{color : 'red'}} >{errors.name}</Text>) : (null)}
         </View>
         <View>
-          <Text style={styles.textlable}>Phone Number</Text>
+          <Text style={styles.textlable}>
+            {localizationText('Common', 'phoneNumber')}
+          </Text>
           <View style={styles.mobileNumberInput}>
             <View style={{width: 95}}>
               <View style={styles.containerDropdown}>
@@ -145,17 +185,22 @@ const ConsumerManageProfile = ({navigation}) => {
               </View>
             </View>
             <TextInput
-              style={styles.input}
+              style={{
+                fontFamily: 'Montserrat-Regular',
+                fontSize: 12,
+                color: colors.text,
+              }}
               placeholder="00 00 00 00 00)"
               placeholderTextColor="#999"
               keyboardType="numeric"
-              maxLength={11}
+              maxLength={9}
               value={number}
               onChangeText={text => setNumber(text)}
             />
           </View>
+          {errors.number ? (<Text style={{color:'red'}}>{errors.number}</Text>) : (null)}
         </View>
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <Text style={styles.textlable}>Email</Text>
           <TextInput
             style={styles.inputTextStyle}
@@ -164,11 +209,13 @@ const ConsumerManageProfile = ({navigation}) => {
             value={email}
             onChangeText={text => setEmail(text)}
           />
-        </View>
+        </View> */}
         <TouchableOpacity
-          onPress={()=>saveProfileDetails()}
+          onPress={() => saveProfileDetails()}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'save')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -213,7 +260,7 @@ const styles = StyleSheet.create({
     padding: 10,
     color: colors.text,
     fontFamily: 'Montserrat-Regular',
-    marginBottom: 15,
+    marginBottom: 5,
   },
   mobileNumberInput: {
     flexDirection: 'row',
@@ -222,7 +269,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     paddingHorizontal: 8,
-    marginBottom: 15,
+    marginBottom: 5,
   },
   containerDropdown: {
     borderRightWidth: 1,

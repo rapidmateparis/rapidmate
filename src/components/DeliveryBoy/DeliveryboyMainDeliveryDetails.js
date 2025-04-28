@@ -9,6 +9,7 @@ import {
   Image,
   Platform,
   Alert,
+  Linking,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,6 +21,7 @@ import {Buffer} from 'buffer';
 import {API} from '../../utils/constant';
 import FileViewer from 'react-native-file-viewer';
 import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 
 const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
   const {setLoading} = useLoader();
@@ -27,7 +29,10 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
   const [pickUpLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
 
+  console.log('first', orderDetails);
+
   useEffect(() => {
+    console.log('orderDetails.pickup_location_id', orderDetails);
     getLocationInfoById(orderDetails.pickup_location_id, 0);
     getLocationInfoById(orderDetails.dropoff_location_id, 1);
   }, []);
@@ -36,42 +41,84 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     setLoading(true);
     try {
       const successResponse = await new Promise((resolve, reject) => {
-        downloadInvoiceOrder(orderDetails.order_number, resolve, reject);
+        downloadInvoiceOrder(
+          orderDetails.order_number,
+          'deliveryboy',
+          resolve,
+          reject,
+        );
       });
 
-      const invoiceData = successResponse;
-      const filePath =
-        Platform.OS === 'android'
-          ? `${RNFS.ExternalDirectoryPath}/invoice_${orderDetails.order_number}.pdf`
-          : `${RNFS.DocumentDirectoryPath}/invoice_${orderDetails.order_number}.pdf`;
+      const pdf =
+        API.downloadInvoice +
+        orderDetails.order_number +
+        '/' +
+        'deliveryboy' +
+        '?show=true';
+      downloadFile(pdf);
+      // const invoiceData = successResponse;
+      // const filePath =
+      //   Platform.OS === 'android'
+      //     ? `${RNFS.ExternalDirectoryPath}/invoice_${orderDetails.order_number}.pdf`
+      //     : `${RNFS.DocumentDirectoryPath}/invoice_${orderDetails.order_number}.pdf`;
 
-      // Convert binary data to base64
-      const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
+      // // Convert binary data to base64
+      // const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
 
-      // Write the file to the document directory
-      await RNFS.writeFile(filePath, base64Data, 'base64');
+      // // Write the file to the document directory
+      // await RNFS.writeFile(filePath, base64Data, 'base64');
 
-      // Verify the file exists
-      const fileExists = await RNFS.exists(filePath);
-      if (fileExists) {
-        Alert.alert('Success', 'Invoice saved successfully.', [
-          {
-            text: 'Open Invoice',
-            onPress: () => {
-              openPDFWithNativeViewer(filePath);
-            },
-          },
-        ]);
-        console.log('Invoice saved to: ', filePath);
-      } else {
-        Alert.alert('Error', 'Failed to save invoice file.');
-      }
+      // // Verify the file exists
+      // const fileExists = await RNFS.exists(filePath);
+      // if (fileExists) {
+      //   Alert.alert('Success', 'Invoice saved successfully.', [
+      //     {
+      //       text: 'Open Invoice',
+      //       onPress: () => {
+      //         openPDFWithNativeViewer(filePath);
+      //       },
+      //     },
+      //   ]);
+      //   console.log('Invoice saved to: ', filePath);
+      // } else {
+      //   Alert.alert('Error', 'Failed to save invoice file.');
+      // }
     } catch (error) {
       Alert.alert('Error', 'Failed to save invoice file.');
       console.error('File saving error:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const downloadFile = pdf => {
+    setLoading(true);
+    let date = new Date();
+    let exe = '.pdf';
+    let filename =
+      `invoice_${orderDetails.order_number}` +
+      Math.floor(date.getTime() + date.getSeconds() / 2) +
+      exe;
+    const localFile = `${RNFS.DocumentDirectoryPath}${filename}`;
+
+    const options = {
+      fromUrl: pdf,
+      toFile: localFile,
+    };
+
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+        setTimeout(() => {
+          FileViewer.open(localFile);
+        }, 300);
+      })
+      .then(() => {
+        setLoading(false);
+        Linking.openURL(pdf);
+      })
+      .catch(error => {
+        setLoading(false);
+      });
   };
 
   const openPDFWithNativeViewer = async filePath => {
@@ -114,12 +161,14 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
         <View style={{width: '100%', height: 250}}>
-          <MapDeliveryDetails
-            addressData={{
-              sourceAddress: pickUpLocation,
-              destinationAddress: dropOffLocation,
-            }}
-          />
+          {pickUpLocation && dropOffLocation && (
+            <MapDeliveryDetails
+              addressData={{
+                sourceAddress: pickUpLocation,
+                destinationAddress: dropOffLocation,
+              }}
+            />
+          )}
         </View>
 
         <View style={styles.packageCard}>
@@ -128,15 +177,23 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             source={require('../../image/Pickup-Package-Icon.png')}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Pickup information</Text>
-            <Text style={styles.companyInfo}>
-              {orderDetails.company_name
-                ? orderDetails.company_name
-                : 'Company Name'}
+            <Text style={styles.dropInfo}>
+              {localizationText('Main', 'pickupInformation')}
+            </Text>
+            {orderDetails.company_name ? (
+              <Text style={styles.companyInfo}>
+                {orderDetails.company_name}
+              </Text>
+            ) : null}
+            <Text style={styles.dropInfo}>
+              {pickUpLocation?.address || ''}
+              {', '}
+              {pickUpLocation?.city}
+              {', '}
+              {pickUpLocation?.state}
             </Text>
             <Text style={styles.dropInfo}>
-              {pickUpLocation.address}, {pickUpLocation.city},{' '}
-              {pickUpLocation.state}
+              {orderDetails.pickup_notes ? orderDetails.pickup_notes : ''}
             </Text>
           </View>
         </View>
@@ -147,15 +204,28 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             source={require('../../image/package-img.png')}
           />
           <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off information</Text>
-            <Text style={styles.companyInfo}>
-              {orderDetails.drop_company_name
-                ? orderDetails.drop_company_name
-                : 'Company Name'}
-            </Text>
             <Text style={styles.dropInfo}>
-              {dropOffLocation.address}, {dropOffLocation.city},{' '}
-              {dropOffLocation.state}
+              {localizationText('Main', 'dropOffInformation')}
+            </Text>
+            {orderDetails.drop_company_name ? (
+              <Text style={styles.companyInfo}>
+                {orderDetails.drop_company_name}
+              </Text>
+            ) : null}
+            {dropOffLocation &&
+              dropOffLocation?.address &&
+              dropOffLocation.city &&
+              dropOffLocation.state && (
+                <Text style={styles.dropInfo}>
+                  {dropOffLocation.address}
+                  {', '}
+                  {dropOffLocation.city}
+                  {', '}
+                  {dropOffLocation.state}
+                </Text>
+              )}
+            <Text style={styles.dropInfo}>
+              {orderDetails.pickup_notes ? orderDetails.drop_notes : ''}
             </Text>
           </View>
         </View>
@@ -166,21 +236,26 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           </View>
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFare}>Order fare</Text>
-              <Text style={styles.totalmoney}>€ {orderDetails.amount}</Text>
+              <Text style={styles.orderFare}>
+                {localizationText('Common', 'totalOrderFare')}
+              </Text>
+              <Text style={styles.totalmoney}>
+                € {orderDetails.delivery_boy_amount.toFixed(2)}
+              </Text>
             </View>
 
             <Text style={styles.travel}>
-              Travelled{' '}
+              {localizationText('Common', 'travelled')}{' '}
               {orderDetails.distance
                 ? orderDetails.distance.toFixed(2)
                 : '0.00'}{' '}
-              km in{' '}
-              {orderDetails.total_duration ? orderDetails.total_duration : '00'}
+              km
             </Text>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Order fare</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'orderFare')}
+              </Text>
               <Text style={styles.value}>
                 €{' '}
                 {orderDetails.order_amount
@@ -190,59 +265,68 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Waiting</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'commission')} @{orderDetails.commission_percentage ? orderDetails.commission_percentage : ''}%
+              </Text>
               <Text style={styles.value}>
-                €{' '}
-                {orderDetails.waiting_fare
-                  ? orderDetails.waiting_fare.toFixed(2)
+              €{' '}
+                {orderDetails.commission_amount
+                  ? orderDetails.commission_amount.toFixed(2)
                   : '0.00'}
               </Text>
             </View>
 
-            <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Promo</Text>
+            {/* <View style={styles.cardHeader}>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'promo')}
+              </Text>
               <Text style={styles.value}>
                 {orderDetails.promo_value ? orderDetails.promo_value : '0%'}
               </Text>
-            </View>
+            </View> */}
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Amount charged</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'amountCharged')}
+              </Text>
               <Text style={styles.value}>
                 €{' '}
-                {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
+                {orderDetails.delivery_boy_amount
+                  ? orderDetails.delivery_boy_amount.toFixed(2)
+                  : '0.00'}
               </Text>
             </View>
 
             <View style={styles.masterCard}>
               <Image source={require('../../image/logos_mastercard.png')} />
               <Text style={styles.paidWith}>
-                Paid with {orderDetails.paid_with ? orderDetails.paid_with : ''}
+                {localizationText('Common', 'paidWith')}{' '}
+                {orderDetails.paid_with ? orderDetails.paid_with : ''}
               </Text>
             </View>
           </View>
         </View>
         {console.log(orderDetails)}
         <View style={styles.packageInformationCard}>
-          <Text style={styles.packageTitle}>Package information</Text>
-          <Text style={styles.orderdetails}>
-            Order ID:{' '}
+          <Text style={styles.packageTitle}>
+            {localizationText('Main', 'packageInformation')}
+          </Text>
+          <View style={styles.cardHeader}>
+            <Text style={styles.orderdetails}>
+              {localizationText('Common', 'orderID')} :
+            </Text>
             <Text style={styles.detailsId}>
               {orderDetails.order_number ? orderDetails.order_number : ''}
             </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Comments:{' '}
-            <Text style={styles.detailsId}>
-              {orderDetails.pickup_notes ? orderDetails.pickup_notes : ''}
+          </View>
+          <View style={styles.cardHeader}>
+            <Text style={styles.orderdetails}>
+              {localizationText('Common', 'vehicleRequested')} :
             </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            Vehicle:{' '}
             <Text style={styles.detailsId}>
               {orderDetails.vehicle_type ? orderDetails.vehicle_type : ''}
             </Text>
-          </Text>
+          </View>
         </View>
 
         <TouchableOpacity
@@ -251,7 +335,9 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           <View style={styles.invoiceCardBtn}>
             <FontAwesome5 name="file-invoice" size={20} color="#FF0058" />
 
-            <Text style={styles.downloadInvoiceText}>Download invoice</Text>
+            <Text style={styles.downloadInvoiceText}>
+              {localizationText('Common', 'downloadInvoice')}
+            </Text>
           </View>
           <View>
             <Feather
@@ -288,7 +374,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
-    marginBottom: 10,
+    marginBottom: 3,
+    marginTop: 3,
   },
   companyInfo: {
     fontSize: 14,
@@ -302,10 +389,10 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Add this line
+    justifyContent: 'space-between', 
   },
   orderFare: {
-    width: '75%',
+    width: '73%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
@@ -366,16 +453,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
+    marginBottom: 5,
   },
   orderdetails: {
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     color: colors.subText,
-    marginVertical: 3,
   },
   detailsId: {
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+    marginVertical: 4,
   },
   invoiceCard: {
     flexDirection: 'row',

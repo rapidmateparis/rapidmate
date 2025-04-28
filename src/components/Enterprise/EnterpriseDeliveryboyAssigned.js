@@ -15,7 +15,7 @@ import CancellationModal from '../commonComponent/CancellationModal';
 import {colors} from '../../colors';
 import SwipeButtonComponent from '../commonComponent/SwipeButton';
 
-const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
+const EnterpriseDeliveryboyAssigned = ({navigation}) => {
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15}}>
@@ -100,7 +100,7 @@ const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
                   </Text>
                 </View>
               </View>
-              <View style={styles.moreDetails}>
+              {/* <View style={styles.moreDetails}>
                 <Text style={styles.distance}>See details</Text>
                 <TouchableOpacity
                   onPress={() =>
@@ -108,7 +108,7 @@ const EnterpriseScheduleRequestSubmitted = ({navigation}) => {
                   }>
                   <AntDesign name="arrowright" size={18} color="#FF0058" />
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
           <TouchableOpacity
@@ -338,4 +338,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EnterpriseScheduleRequestSubmitted;
+export default EnterpriseDeliveryboyAssigned;

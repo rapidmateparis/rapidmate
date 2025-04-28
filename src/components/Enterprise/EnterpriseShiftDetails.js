@@ -13,22 +13,40 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors} from '../../colors';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import moment from 'moment';
+import {localizationText, utcLocal} from '../../utils/common';
+import AssignDelivery from '../../image/AssignDelivery.png';
+import {
+ 
+  getViewEnterpriseOrderDetail,
+  
+} from '../../data_manager';
 
 const EnterpriseShiftDetails = ({route, navigation}) => {
   const params = route.params;
   const {userDetails} = useUserDetails();
   const [totalHours, setTotalHours] = useState(0);
-
+  const [apiOrderNumber, setApiOrderNumber] = useState(null);
+  const [deliveryBoyDetail, setDeliveryBoyDetail] = useState([])
+  
   useEffect(() => {
-    var hours = 0;
-    params.shiftItem.slots.forEach(element => {
-      hours +=
-        moment(element.to_time, 'HH:mm:ss').diff(
-          moment(element.from_time, 'HH:mm:ss'),
-        ) / 3600000;
-    });
+    setApiOrderNumber(params?.["shiftItem"]?.order_number);
+    if(apiOrderNumber){
+      getViewEnterpriseOrderDetail(
+        apiOrderNumber,
+        successResponse =>{
+           setDeliveryBoyDetail(successResponse?.[0]?._response?.slots?.[0])
+        },
+        errorResponse=>{
+          console.log("delivey boy detail error", errorResponse)
+        })
+    }
+    var hours = params?.shiftItem?.total_hours
+      ? params?.shiftItem?.total_hours.toFixed(2)
+      : 0;
     setTotalHours(hours);
-  }, []);
+  }, [apiOrderNumber]);
+
+  console.log('first_name', deliveryBoyDetail);
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
@@ -49,23 +67,7 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
             </View>
           </View>
 
-          <View style={styles.franchiseCard}>
-            <Image
-              style={styles.driverCard}
-              source={require('../../image/driver.jpeg')}
-            />
-            <View style={styles.franchiseCardHeader}>
-              <Text style={styles.franchiseStreet}>
-                {userDetails.userDetails[0].first_name}{' '}
-                {userDetails.userDetails[0].last_name}
-              </Text>
-              <View style={styles.locationCard}>
-                <Text style={styles.franchiseSubTitle}>
-                  {params.vehicleType}
-                </Text>
-              </View>
-            </View>
-          </View>
+          
 
           <View style={styles.franchiseCard}>
             <Image
@@ -74,54 +76,97 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
             />
             <View style={styles.franchiseCardHeader}>
               <Text style={styles.franchiseStreet}>
-                Started {params.fromTime} to {params.toTime}
+                {localizationText('Common', 'started')} {params.fromTime} to{' '}
+                {params.toTime}
               </Text>
               <View>
                 <Text style={styles.franchiseSubTitle}>
-                  Total duration:{' '}
-                  <Text style={styles.boldTexts}>{totalHours} hours</Text>
+                  {localizationText('Common', 'from')}{' '}
+                  <Text style={styles.boldTexts}>
+                    {moment(
+                     
+                        params?.shiftItem
+                          ? params.shiftItem?.shift_from_date
+                          : new Date()
+                    
+                    ).format('DD-MM-YYYY')}
+                  </Text>
                 </Text>
                 <Text style={styles.franchiseSubTitle}>
-                  Total deliveries:{' '}
+                  {localizationText('Common', 'to')}{' '}
+                  <Text style={styles.boldTexts}>
+                    {moment(
+                     
+                        params?.shiftItem
+                          ? params.shiftItem?.shift_tp_date
+                          : new Date()
+                     
+                    ).format('DD-MM-YYYY')}
+                  </Text>
+                </Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {localizationText('Common', 'totalDuration')}:{' '}
+                  <Text style={styles.boldTexts}>
+                    {totalHours} {localizationText('Common', 'hours')}
+                  </Text>
+                </Text>
+                <Text style={styles.franchiseSubTitle}>
+                  {localizationText('Common', 'totalDays')}:{' '}
                   <Text style={styles.boldTexts}>
                     {params.shiftItem.slots.length}
                   </Text>
                 </Text>
-                <Text style={styles.franchiseSubTitle}>{params.vehicleType}</Text>
+                <Text style={styles.franchiseSubTitle}>
+                  Requested Vehicle:{' '}
+                  <Text style={styles.boldTexts}>{params.vehicleType}</Text>
+                </Text>
               </View>
             </View>
           </View>
 
-          {/* <View style={styles.invoiceCard}>
+          <View style={styles.invoiceCard}>
             <View>
               <Image source={require('../../image/order-fare.png')} />
             </View>
             <View style={{marginLeft: 10}}>
               <View style={styles.cardHeader}>
-                <Text style={styles.orderFare}>Order fare</Text>
-                <Text style={styles.totalmoney}>€34.00</Text>
+                <Text style={styles.orderFare}>Total Order fare</Text>
+                <Text style={styles.totalmoney}>
+                  €{params.shiftItem.total_amount.toFixed(2)}
+                </Text>
               </View>
-
-              <Text style={styles.travel}>Travelled 12 km in 32 mins</Text>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Order fare</Text>
-                <Text style={styles.value}>€30.00</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.order_amount.toFixed(2)}
+                </Text>
               </View>
 
               <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Waiting</Text>
-                <Text style={styles.value}>€03.00</Text>
+                <Text style={styles.orderFareValue}>Tax {''}(20%)</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.tax.toFixed(2)}
+                </Text>
               </View>
 
+              {/* <View style={styles.cardHeader}>
+                <Text style={styles.orderFareValue}>Promo</Text>
+                <Text style={styles.value}>€00.00</Text> 
+              </View> */}
+
               <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Platform fee</Text>
-                <Text style={styles.value}>€01.00</Text>
+                <Text style={styles.orderFareValue}>Discount</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.discount.toFixed(2)}
+                </Text>
               </View>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Amount charged</Text>
-                <Text style={styles.value}>€34.00</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.total_amount.toFixed(2)}
+                </Text>
               </View>
 
               <View style={styles.masterCard}>
@@ -129,7 +174,41 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                 <Text style={styles.paidWith}>Paid with mastercard</Text>
               </View>
             </View>
-          </View> */}
+          </View>
+          {params.shiftItem?.order_status !== 'REQUEST_PENDING' && (
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View style={styles.franchiseCard}>
+                <Image
+                  style={styles.driverCard}
+                  source={require('../../image/driver.jpeg')}
+                />
+                <View style={styles.driverHeaderMainCard}>
+                  <View>
+                    <Text style={styles.franchiseStreet}>{deliveryBoyDetail.first_name}</Text>
+                    <View style={styles.locationCard}>
+                      <Text style={styles.franchiseSubTitle}>
+                        {params.vehicleType}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={{marginLeft: 'auto'}}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate(
+                          'EnterpriseShiftDeliveryboyAssigned',{deliveryBoyDetail: deliveryBoyDetail}
+                        )
+                      }>
+                      <Image
+                        style={{width: 120, height: 20}}
+                        source={AssignDelivery}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </ScrollView>
@@ -270,6 +349,11 @@ const styles = StyleSheet.create({
     width: '87%',
     marginLeft: 10,
   },
+  driverHeaderMainCard: {
+    flexDirection: 'row',
+    width: '87%',
+    marginLeft: 10,
+  },
   franchiseStreet: {
     fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
@@ -343,7 +427,6 @@ const styles = StyleSheet.create({
   },
   locationCard: {
     flexDirection: 'row',
-    marginVertical: 5,
   },
   driverCard: {
     width: 35,
@@ -371,10 +454,11 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between', // Add this line
   },
   orderFare: {
-    width: '75%',
+    width: '70%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',

@@ -24,15 +24,24 @@ import {colors} from '../../colors';
 import {Dimensions} from 'react-native';
 import {useUserDetails} from '../commonComponent/StoreContext';
 import {useLoader} from '../../utils/loaderContext';
-import {getEnterpriseDashboardInfo} from '../../data_manager';
+import {getEnterpriseDashboardInfo, getNotificationCount} from '../../data_manager';
 import {useFocusEffect} from '@react-navigation/native';
+import { localizationText, saveCurrentUserDetailsInStore } from '../../utils/common';
 const screenWidth = Dimensions.get('window').width;
 
 const EnterpriseHome = ({navigation}) => {
+  const dropdownData2 = [
+    {label: 'All', value: 'all'},
+    {label: 'Today', value: 'today'},
+    {label: 'This week', value: 'week'},
+    {label: 'This month', value: 'month'},
+    {label: 'This year', value: 'year'},
+  ];
+
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
   const [selectedDropdownBranch, setSelectedDropdownBranch] = useState({});
-  const [dropdownWeek, setDropdownWeek] = useState(null);
+  const [dropdownWeek, setDropdownWeek] = useState(dropdownData2[0]);
   const [dropdownBranches, setDropdownBranches] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
   const [isBranchFocus, setIsBranchFocus] = useState(false);
@@ -41,6 +50,9 @@ const EnterpriseHome = ({navigation}) => {
   const {setLoading} = useLoader();
   const [dashboardData, setDashboardData] = useState(null);
   const [bookingHour, setBookingHour] = useState(0);
+  const activeBookings = localizationText('Common', 'activeBookings') || 'Active Bookings';
+  const scheduledBookings = localizationText('Common', 'scheduledBookings') || 'Scheduled Bookings';
+  const allBookings = localizationText('Common', 'allBookings') || 'All Bookings';
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -51,6 +63,19 @@ const EnterpriseHome = ({navigation}) => {
   });
   const [branches, setBranches] = useState([]);
 
+  useEffect(()=>{
+    if(selectedDropdownBranch?.value){
+      getEnterpriseDashboardAllInfo(selectedDropdownBranch.value)
+    }else if(dropdownWeek?.value){
+      getEnterpriseDashboardAllInfo()
+    }
+  },[selectedDropdownBranch,dropdownWeek])
+
+
+  useEffect(()=>{
+    getNotificationAllCount()
+  },[])
+
   const togglePushNotifications = () => {
     setPushNotifications(!pushNotifications);
   };
@@ -58,13 +83,6 @@ const EnterpriseHome = ({navigation}) => {
   const togglePromoEmails = () => {
     setPromoEmails(!promoEmails);
   };
-
-  const dropdownData2 = [
-    {label: 'Today', value: 'Today'},
-    {label: 'This week', value: 'This week'},
-    {label: 'This month', value: 'This month'},
-    {label: 'This year', value: 'This year'},
-  ];
 
   const chartConfig = {
     backgroundGradientFrom: '#1E2923',
@@ -83,26 +101,9 @@ const EnterpriseHome = ({navigation}) => {
   };
 
   const displayChartData = branch => {
-    console.log('branch', branch);
-    let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    let hours = [0, 0, 0, 0, 0, 0, 0];
-    branch.chartData.forEach(element => {
-      if (element.day == 'Monday') {
-        hours[0] = element.booked_hours;
-      } else if (element.day == 'Tuesday') {
-        hours[1] = element.booked_hours;
-      } else if (element.day == 'Wednesday') {
-        hours[2] = element.booked_hours;
-      } else if (element.day == 'Thursday') {
-        hours[3] = element.booked_hours;
-      } else if (element.day == 'Friday') {
-        hours[4] = element.booked_hours;
-      } else if (element.day == 'Saturday') {
-        hours[5] = element.booked_hours;
-      } else if (element.day == 'Sunday') {
-        hours[6] = element.booked_hours;
-      }
-    });
+    const days = branch.map((day)=>day.month)
+    const hours = branch.map((day)=>day.count)
+
     const data = {
       labels: days,
       datasets: [
@@ -117,42 +118,82 @@ const EnterpriseHome = ({navigation}) => {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
-      getEnterpriseDashboardInfo(
-        userDetails.userDetails[0].ext_id,
-        successResponse => {
-          setLoading(false);
-          if (successResponse[0]._response.length > 0) {
-            setDashboardData(successResponse[0]._response[0].dashboard);
-            setBranches(successResponse[0]._response[0].dashboard.branch);
-            var tempdropDownBranches = [];
-            successResponse[0]._response[0].dashboard.branch.forEach(
-              element => {
-                var item = {};
-                item.label = element.branch_name;
-                item.value = element.branch_id;
-                tempdropDownBranches.push(item);
-              },
-            );
-            if (successResponse[0]._response[0].dashboard.branch.length > 0) {
-              setDropdownBranches(tempdropDownBranches);
-              setSelectedDropdownBranch(tempdropDownBranches[0]);
-              setDropdownWeek(dropdownData2[0]);
-              displayChartData(
-                successResponse[0]._response[0].dashboard.branch[0],
-              );
-            }
-          }
-        },
-        errorResponse => {
-          setLoading(false);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
-        },
-      );
+      getEnterpriseDashboardAllInfo()
     }, []),
   );
+
+  const getEnterpriseDashboardAllInfo =(branchId)=>{
+    setLoading(true);
+    let url = userDetails.userDetails[0].ext_id
+    if(branchId && dropdownWeek?.value){
+      url = url+'?branch='+branchId+'&type='+dropdownWeek?.value
+    }else if(branchId){
+      url = url+'?branch='+branchId
+    }else if(dropdownWeek?.value){
+      url = url+'?type='+dropdownWeek?.value
+    }
+
+    getEnterpriseDashboardInfo(
+      url,
+      successResponse => {
+        console.log('successResponse ------>',successResponse)
+        setLoading(false);
+        if (successResponse[0]._response) {
+          
+          setDashboardData(successResponse[0]._response);
+          var tempdropDownBranches = [];
+          if(successResponse[0]?._response?.branchOverviewData && successResponse[0]?._response?.branchOverviewData.length > 0){
+            const branchList = successResponse[0]?._response?.branchOverviewData
+            const getList = branchList.map(branch=>{
+              return{
+                label : branch.branch_name,
+                value : branch.id,
+              }
+            })
+            tempdropDownBranches = getList
+          }
+          if (successResponse[0]._response) {
+            setDropdownBranches(tempdropDownBranches);
+            displayChartData(
+              successResponse[0]._response.weekData,
+            );
+          }
+        }
+      },
+      errorResponse => {
+        setLoading(false);
+        Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      },
+    );
+  }
+
+
+
+  const getNotificationAllCount = () => {
+    setLoading(true);
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>successResponse', '' + JSON.stringify(successResponse[0]._response.notificationCount));
+        const newUserDetails = userDetails.userDetails[0]
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount']=successResponse[0]._response.notificationCount  
+        }else{
+          newUserDetails['notificationCount']=0
+        }
+        saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+        saveCurrentUserDetailsInStore(userDetails);
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log('getNotificationAllCount==>errorResponse', '' + errorResponse[0]);
+      },
+    );
+  };
+
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -160,7 +201,7 @@ const EnterpriseHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome{' '}
+              {localizationText('Common', 'welcome')}{' '}
               <Text style={styles.userName}>
                 {userDetails.userDetails[0].first_name +
                   ' ' +
@@ -168,52 +209,60 @@ const EnterpriseHome = ({navigation}) => {
               </Text>
             </Text>
             <Text style={styles.aboutPage}>
-              This is your Rapidmate enterprise dashboard!
+            {localizationText('Main', 'consumerWelcomeDescription')}
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() =>{ 
+                const newUserDetails = userDetails.userDetails[0]
+                newUserDetails['notificationCount']=0
+                saveUserDetails({...userDetails,userDetails:[newUserDetails]});
+                navigation.navigate('Notifications')
+              }}>
             <EvilIcons name="bell" size={40} color="#000" />
+            {userDetails.userDetails[0].notificationCount > 0 && <View style={styles.notificationCountStyle}>
+              <Text style={styles.notificationCountText}>{userDetails.userDetails[0].notificationCount}</Text>
+            </View>}
           </TouchableOpacity>
         </View>
 
         <View style={styles.allInformatinCard}>
           <View style={styles.informatinMainCard}>
             <View style={styles.informatinCard}>
-              <Text style={styles.informationText}>Active bookings</Text>
+              <Text style={styles.informationText}>{localizationText('Common', 'activeBookings')}</Text>
               <TouchableOpacity>
                 <Image source={require('../../image/Info-Cricle.png')} />
               </TouchableOpacity>
             </View>
             <Text style={styles.bookingsInfo}>
               {dashboardData &&
-                (dashboardData.bookings.active < 10 &&
-                dashboardData.bookings.active > 0
-                  ? '0' + dashboardData.bookings.active
-                  : dashboardData.bookings.active)}
+                (dashboardData?.overviewData?.active_order < 10 &&
+                dashboardData?.overviewData?.active_order > 0
+                  ? '0' + dashboardData?.overviewData?.active_order
+                  : dashboardData?.overviewData?.active_order)}
             </Text>
           </View>
 
           <View style={styles.informatinMainCard}>
             <View style={styles.informatinCard}>
-              <Text style={styles.informationText}>Scheduled bookings</Text>
+              <Text style={styles.informationText}>{localizationText('Common', 'scheduledBookings')}</Text>
               <TouchableOpacity>
                 <Image source={require('../../image/Info-Cricle.png')} />
               </TouchableOpacity>
             </View>
             <Text style={styles.bookingsInfo}>
               {dashboardData &&
-                (dashboardData.bookings.scheduled < 10 &&
-                dashboardData.bookings.scheduled > 0
-                  ? '0' + dashboardData.bookings.scheduled
-                  : dashboardData.bookings.scheduled)}
+                (dashboardData?.overviewData?.schedule_order < 10 &&
+                dashboardData?.overviewData?.schedule_order > 0
+                  ? '0' + dashboardData?.overviewData?.schedule_order
+                  : dashboardData?.overviewData?.schedule_order)}
             </Text>
           </View>
 
           <View style={styles.informatinMainCard}>
             <View style={styles.informatinCard}>
               <Text style={[styles.informationText, {paddingRight: 22}]}>
-                All bookings
+              {localizationText('Common', 'allBookings')}
               </Text>
               <TouchableOpacity>
                 <Image source={require('../../image/Info-Cricle.png')} />
@@ -222,17 +271,17 @@ const EnterpriseHome = ({navigation}) => {
             <Text style={styles.bookingsInfo}>
               {' '}
               {dashboardData &&
-                (dashboardData.bookings.all < 10 &&
-                dashboardData.bookings.all > 0
-                  ? '0' + dashboardData.bookings.all
-                  : dashboardData.bookings.all)}
+                (dashboardData?.overviewData?.total_order < 10 &&
+                dashboardData?.overviewData?.total_order > 0
+                  ? '0' + dashboardData?.overviewData?.total_order
+                  : dashboardData?.overviewData?.total_order)}
             </Text>
           </View>
         </View>
       </View>
       <View style={styles.barChartCard}>
         <View style={styles.hoursInfoCard}>
-          <Text style={styles.hoursBooked}>Hours booked</Text>
+          <Text style={styles.hoursBooked}>{localizationText('Common', 'bookingOverview')}</Text>
           <Text style={styles.hoursNumberCount}>{bookingHour}</Text>
         </View>
         <View style={styles.dropdownCard}>
@@ -248,7 +297,7 @@ const EnterpriseHome = ({navigation}) => {
               labelField="label"
               valueField="value"
               placeholder={
-                !isBranchFocus ? selectedDropdownBranch.label : '...'
+                !isBranchFocus ? selectedDropdownBranch?.label : '...'
               }
               searchPlaceholder="Search.."
               value={selectedDropdownBranch}
@@ -257,9 +306,9 @@ const EnterpriseHome = ({navigation}) => {
               onChange={item => {
                 setSelectedDropdownBranch(item);
                 setIsBranchFocus(false);
-                displayChartData(
-                  branches.filter(br => br.branch_id == item.value)[0],
-                );
+                // displayChartData(
+                //   branches.filter(br => br.id == item.value)[0],
+                // );
               }}
             />
           </View>
@@ -281,7 +330,7 @@ const EnterpriseHome = ({navigation}) => {
               onFocus={() => setIsWeekFocus(true)}
               onBlur={() => setIsWeekFocus(false)}
               onChange={item => {
-                setDropdownWeek(item.value);
+                setDropdownWeek(item);
                 setIsWeekFocus(false);
               }}
             />
@@ -296,59 +345,63 @@ const EnterpriseHome = ({navigation}) => {
             yAxisLabel=""
             chartConfig={chartConfig}
             verticalLabelRotation={0}
+            showValuesOnTopOfBars = {true}
+            showBarTops = {true}
           />
         </View>
       </View>
       <View style={{paddingHorizontal: 15, paddingTop: 8}}>
         <View style={styles.recentlyInfo}>
-          <Text style={styles.deliveryRecently}>Company locations</Text>
+          <Text style={styles.deliveryRecently}>{localizationText('Common', 'companyLocations')}</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('EnterpriseCompanyLocations',{branches:branches})}>
-            <Text style={styles.seAllText}>See All</Text>
+            onPress={() => navigation.navigate('EnterpriseCompanyLocations',{branches:dashboardData?.branchOverviewData?.length > 0 ? dashboardData?.branchOverviewData : []})}>
+            <Text style={styles.seAllText}>{localizationText('Common', 'seeAll')}</Text>
           </TouchableOpacity>
         </View>
-        {branches.slice(0, 1).map((item, index) => {
-          return (
-            <View key={index} style={styles.franchiseCard}>
-              <View style={styles.franchiseCardHeader}>
-                <Image
-                  style={styles.companyImga}
-                  source={require('../../image/home.png')}
-                />
-                <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
-              </View>
-
-              <View style={styles.bookedCardInfo}>
-                <View>
-                  <Text style={styles.bookedInfo}>Hours booked</Text>
-                  <Text style={styles.bookedDetails}>{item.bookinghr}</Text>
+        {dashboardData?.branchOverviewData?.length > 0 && dashboardData?.branchOverviewData.map((item, index) => {
+          if(index < 5 ){
+            return (
+              <View key={index} style={styles.franchiseCard}>
+                <View style={styles.franchiseCardHeader}>
+                  <Image
+                    style={styles.companyImga}
+                    source={require('../../image/home.png')}
+                  />
+                  <Text style={styles.franchiseStreet}>{item.branch_name}</Text>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>Hours spent</Text>
-                  <Text style={styles.bookedDetails}>{item.spenthr}</Text>
+                <View style={styles.bookedCardInfo}>
+                  <View>
+                    <Text style={styles.bookedInfo}>Active booking</Text>
+                    <Text style={styles.bookedDetails}>{item.active_order? item.active_order:0}</Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>Scheduled booking</Text>
+                    <Text style={styles.bookedDetails}>{item.schedule_order ? item.schedule_order :0}</Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.bookedInfo}>All booking</Text>
+                    <Text style={styles.bookedDetails}>{item.total ? item.total:0}</Text>
+                  </View>
                 </View>
 
-                <View>
-                  <Text style={styles.bookedInfo}>Bookings</Text>
-                  <Text style={styles.bookedDetails}>{item.bookings}</Text>
+                <View style={styles.companyLocation}>
+                  <EvilIcons name="location" size={22} color="#000" />
+                  <Text style={styles.locationAddress}>
+                    {item.address +
+                      ', ' +
+                      item.city +
+                      ', ' +
+                      item.state +
+                      ', ' +
+                      item.country}
+                  </Text>
                 </View>
               </View>
-
-              <View style={styles.companyLocation}>
-                <EvilIcons name="location" size={22} color="#000" />
-                <Text style={styles.locationAddress}>
-                  {item.address +
-                    ', ' +
-                    item.city +
-                    ', ' +
-                    item.state +
-                    ', ' +
-                    item.country}
-                </Text>
-              </View>
-            </View>
-          );
+            );
+          }
         })}
       </View>
     </ScrollView>
@@ -711,6 +764,22 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 12,
   },
+  notificationCountStyle:{
+    position:'absolute',
+    right:0,
+    backgroundColor:'red',
+    borderRadius:50,
+    height:16, 
+    width:16,
+    justifyContent:'center',
+    alignItems:'center' 
+  },
+  notificationCountText:{
+    color:'#FFFFFF',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
+  }
+
 });
 
 export default EnterpriseHome;

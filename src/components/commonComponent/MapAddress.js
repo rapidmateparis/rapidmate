@@ -14,11 +14,12 @@ import {
 import {MAPS_API_KEY} from '../../common/GoogleAPIKey';
 import {colors} from '../../colors';
 import SavedAddressModal from './SavedAddressModal';
+import { localizationText } from '../../utils/common';
 // import { locationPermission, getCurrentLocation } from '../../common/CurrentLocation';
 
 // Constants
-const LATITUDE_DELTA = 0.0922; // Adjusted for more zoom
-const ASPECT_RATIO = 0.752;
+const LATITUDE_DELTA = 0.08; // Adjusted for more zoom
+const ASPECT_RATIO = 0.07;
 
 // Custom Marker Components
 const MyCustomMarkerView = () => (
@@ -48,7 +49,23 @@ const MapAddress = props => {
   const [selectedDistinationAddress, setSelectedDistinationAddress] =
     useState();
   const [addressType, setAddressType] = useState();
+  const [sourceDisabled, setSourceDisabled] = useState();
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const sourceLocation = props.sourceLocation;
+    const [sourceLocationText, setSourceLocationText] = useState('');
+  useEffect(()=>{
+    setSourceDisabled(props.sourceDisabled || "auto")
+    if(sourceLocation?.address &&  sourceLocation?.city){
+      var sourceLocationTextVal = sourceLocation?.address;
+      sourceLocationTextVal += sourceLocation?.city ? ', ' + sourceLocation.city : '';
+      sourceLocationTextVal += sourceLocation?.state ? ', ' + sourceLocation.state : '';
+      sourceLocationTextVal += sourceLocation?.country ? ', ' + sourceLocation?.country : ', france';
+        console.log(sourceLocationTextVal);
+        sourceLocationTextVal &&  setSourceLocationText(sourceLocationTextVal)
+      }
+    
+  },[sourceLocation])
 
   const toggleModal = addressType => {
     setAddressType(addressType);
@@ -68,8 +85,11 @@ const MapAddress = props => {
       //   moveToLocation({latitude, longitude});
       // }
       // Example code (without actual location logic)
-      const latitude = 48.85754309772872;
-      const longitude = 2.3513877855537912;
+      // const latitude = 48.85754309772872;
+      // const longitude = 2.3513877855537912;
+      const latitude = sourceLocation?.latitude ? parseFloat(sourceLocation.latitude) : 48.85754309772872;
+      const longitude = sourceLocation?.longitude ?  parseFloat(sourceLocation.longitude) : 2.3513877855537912;
+      sourceLocation && setSelectedSourceAddress(sourceLocation)
       setOrigin({latitude, longitude});
       moveToLocation({latitude, longitude});
     } catch (error) {
@@ -99,6 +119,7 @@ const MapAddress = props => {
     if (address) {
       if (addressType == 0) {
         setSelectedSourceAddress(address);
+        setSourceLocationText(address);
       } else {
         setSelectedDistinationAddress(address);
       }
@@ -110,7 +131,7 @@ const MapAddress = props => {
       {/* GooglePlacesAutocomplete */}
       <View style={{zIndex: 1, paddingTop: 10}}>
         <View style={styles.locationCard}>
-          <View style={styles.locationAddress}>
+          <View style={styles.locationAddress} pointerEvents={sourceDisabled}>
             <Ionicons
               style={{marginTop: 15}}
               name="location-outline"
@@ -119,17 +140,19 @@ const MapAddress = props => {
             />
             <GooglePlacesAutocomplete
               fetchDetails
-              placeholder="Enter pickup address"
+              placeholder={localizationText('Common', 'enterPickupAddress')}
               styles={{
                 textInput: {
                   color: colors.black,
+                  disabled : true
                 },
                 description: {color: colors.black},
                 color: colors.black,
+                disabled : true
               }}
               ref={ref => {
-                if (selectedSourceAddress) {
-                  ref?.setAddressText(selectedSourceAddress);
+                if (sourceLocationText) {
+                  ref?.setAddressText(sourceLocationText);
                 }
               }}
               textInputProps={{
@@ -159,13 +182,13 @@ const MapAddress = props => {
               }}
               onFail={() => console.error('Error')}
             />
-            <MaterialIcons
+            {/* <MaterialIcons
               style={{marginTop: 15}}
               name="favorite-outline"
               size={18}
               color="#000000"
               onPress={() => toggleModal(0)}
-            />
+            /> */}
           </View>
 
           <View style={styles.borderDummy}></View>
@@ -178,7 +201,7 @@ const MapAddress = props => {
             />
             <GooglePlacesAutocomplete
               fetchDetails
-              placeholder="Enter drop address"
+              placeholder={localizationText('Common', 'enterDropAddress')}
               styles={{
                 textInput: {
                   color: colors.black,
@@ -218,13 +241,13 @@ const MapAddress = props => {
               }}
               onFail={() => console.error('Error')}
             />
-            <MaterialIcons
+            {/* <MaterialIcons
               style={{marginTop: 15}}
               name="favorite-outline"
               size={18}
               color="#000000"
               onPress={() => toggleModal(1)}
-            />
+            /> */}
           </View>
           <View style={styles.borderShowOff}></View>
         </View>
@@ -237,7 +260,7 @@ const MapAddress = props => {
             Distance: {distance} km
           </Text>
           <Text style={styles.distanceText}>
-            Time left: {time.toFixed(2)} min
+            Time: {time.toFixed(2)} min
           </Text>
         </View>
       )}

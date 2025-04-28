@@ -164,7 +164,7 @@ const DeliveryboyShiftStaredRequest = ({navigation}) => {
           <View style={styles.container}>
             <Text style={styles.swipeInfo}>
               If you are at company’s location and ready to start the shift,
-              please swipe below!
+              please swipe belows!
             </Text>
             <Text style={styles.swipeStatus}>{swipeStatusMessage}</Text>
             <TouchableOpacity onPress={() => setStartTimerChange(false)}>

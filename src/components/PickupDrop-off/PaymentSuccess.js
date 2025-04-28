@@ -2,18 +2,19 @@ import React, {useEffect} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
   Image,
   BackHandler,
 } from 'react-native';
 import {colors} from '../../colors';
+import {localizationText} from '../../utils/common';
 
-const PaymentSuccess = ({navigation,route}) => {
-
+const PaymentSuccess = ({navigation, route}) => {
   const params = route.params;
+
   useEffect(() => {
+    // Disable back button
     const onBackPress = () => {
       return true;
     };
@@ -22,8 +23,42 @@ const PaymentSuccess = ({navigation,route}) => {
       'hardwareBackPress',
       onBackPress,
     );
-    return () => backHandler.remove();
+
+    // Automatic navigation after 3 seconds
+    const timer = setTimeout(() => {
+      if (params.serviceTypeId === 1) {
+        navigation.navigate('ScheduleOrderSuccess', {
+          schedule_date_time: params.schedule_date_time,
+          serviceTypeId: params.serviceTypeId,
+        });
+      } else {
+        navigation.navigate('LoaderForDriver');
+      }
+    }, 2000);
+
+    // Cleanup on unmount
+    return () => {
+      backHandler.remove();
+      clearTimeout(timer);
+    };
+  }, [navigation, params]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      reDirectToNextPage();
+    }, 2000);
   }, []);
+
+  const reDirectToNextPage = () => {
+    if (params.serviceTypeId === 1) {
+      navigation.navigate('ScheduleOrderSuccess', {
+        schedule_date_time: params.schedule_date_time,
+        serviceTypeId: params.serviceTypeId,
+      });
+    } else {
+      navigation.navigate('LoaderForDriver');
+    }
+  };
 
   return (
     <ScrollView
@@ -40,27 +75,13 @@ const PaymentSuccess = ({navigation,route}) => {
             style={{width: 100, height: 100}}
             source={require('../../image/payment_success.png')}
           />
-          <Text style={styles.text}>Payment Successful!</Text>
+          <Text style={styles.text}>
+            {localizationText('Common', 'paymentSuccessful')}
+          </Text>
           <Text style={styles.subText}>
-            Your payment was successful, let’s look for a delivery boy now...
+            {localizationText('Common', 'paymentSuccessfulDescription')}
           </Text>
         </View>
-      </View>
-      <View style={styles.actionBtnCard}>
-        <TouchableOpacity
-          onPress={() =>{ 
-            if(params.serviceTypeId === 1){
-              navigation.navigate('ScheduleOrderSuccess',{
-                schedule_date_time: params.schedule_date_time,
-                serviceTypeId:params.serviceTypeId
-              })
-            }else{
-              navigation.navigate('LoaderForDriver')
-            }
-            }}
-          style={styles.goHomeBtn}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );

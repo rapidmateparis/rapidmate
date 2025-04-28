@@ -1,8 +1,13 @@
 import axios from 'axios';
-import {DATE_FORMAT, apiHost} from './constant';
-import {PermissionsAndroid} from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { DATE_FORMAT, apiHost } from './constant';
+import { PermissionsAndroid } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import moment from 'moment-timezone';
+import { useTranslation } from 'react-i18next';
+import Sound from 'react-native-sound'
+import ImageResizer from '@bam.tech/react-native-image-resizer';
+import RNFS from 'react-native-fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const formatDate = date => {
   var d = new Date(date),
@@ -59,6 +64,9 @@ export const getData = async (url, data) => {
     });
   // console.log(" response ", response);
   // return response.data;
+};
+export const saveCurrentUserDetailsInStore = async userDetails => {
+  await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
 };
 
 export const postData = async (url, data) => {
@@ -167,10 +175,10 @@ export const requestNotificationPermission = async () => {
 export const getEstablishmentYear = () => {
   const currentYear = new Date().getFullYear();
   const startYear = currentYear - 100;
-  const yearRange = Array.from({length: 101}, (_, index) => startYear + index);
+  const yearRange = Array.from({ length: 101 }, (_, index) => startYear + index);
   let establishmentYearData = [];
   for (let i = 0; i < yearRange.length; i++) {
-    let tmp = {label: yearRange[i], value: yearRange[i]};
+    let tmp = { label: yearRange[i], value: yearRange[i] };
     establishmentYearData.push({
       label: `${yearRange[i]}`,
       value: `${yearRange[i]}`,
@@ -182,34 +190,101 @@ export const getEstablishmentYear = () => {
 export const handleCameraLaunchFunction = async () => {
   return new Promise(async (resolve, reject) => {
     let permission = await requestCameraPermission();
-    if (permission) {
-      const options = {
-        mediaType: 'photo',
-        includeBase64: true,
-        maxHeight: 1500,
-        maxWidth: 1500,
-      };
-      launchCamera(options, response => {
-        if (!response.didCancel && !response.error) {
+    if (!permission) {
+      const errorData = { status: 'error', message: 'Camera permission not granted' };
+      return reject(errorData);
+    }
+
+    const options = {
+      mediaType: 'photo',
+      includeBase64: true,
+      maxHeight: 1500,
+      maxWidth: 1500,
+    };
+
+    launchCamera(options, async response => {
+      if (response.didCancel) {
+        const errorData = { status: 'error', message: 'Camera capture canceled.' };
+        return reject(errorData);
+      }
+      if (response.error || !response.assets || response.assets.length === 0) {
+        const errorData = { status: 'error', message: 'Failed to capture image.' };
+        return reject(errorData);
+      }
+      try {
+        let image = response.assets[0];
+        console.log(image.fileSize, 'Original photo size');
+        console.log(image, 'Original photo size');
+        const base64Data = await RNFS.readFile(image.uri, 'base64');
+        if (image.fileSize <= 1000 * 1024) {
           const data = {
-            status: 'success',
-            data: response.assets[0],
-          };
-          resolve(data);
+            status: "success",
+            data: {
+              base64: base64Data,
+              fileName: image.fileName,
+              fileSize: image.fileSize,
+              height: image.height,
+              originalPath: image.originalPath,
+              type: "image/jpeg",
+              uri: image.uri,
+              width: image.width,
+              status: 'success'
+            }
+          }
+          return resolve(data);
+        }
+
+      } catch (error) {
+        console.log("------------------Block 1-------------------------------------");
+        console.log(error);
+        const errorData = {
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
+      }
+
+      try {
+        const compressedImage = await ImageResizer.createResizedImage(image.uri, 1000, 1000, 'JPEG', 80, 0)
+        console.log(compressedImage.size, "Compressed Image size");
+        console.log(compressedImage, "Compressed Image size");
+        const base64Data = await RNFS.readFile(compressedImage.uri, 'base64');
+        if (compressedImage.size <= 1000 * 1024) {
+          const data = {
+            status: "success",
+            data: {
+              base64: base64Data,
+              fileName: compressedImage.name,
+              fileSize: compressedImage.size,
+              height: compressedImage.height,
+              originalPath: compressedImage.path,
+              type: "image/jpeg",
+              uri: compressedImage.uri,
+              width: compressedImage.width,
+              status: 'success'
+            }
+          }
+          console.log('Smaller')
+          return resolve(data)
         } else {
           const errorData = {
             status: 'error',
-          };
-          reject(errorData);
+            message: "Compressed file is still larger than 1MB"
+          }
+
+          return reject(errorData)
         }
-      });
-    } else {
-      const errorData = {
-        status: 'error',
-        message: 'Camera permission not granted',
-      };
-      reject(errorData);
-    }
+      } catch (error) {
+        console.log("---------------------Block 2----------------------------------");
+        console.log(error);
+        const errorData = {
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
+      }
+    })
+
   });
 };
 
@@ -221,19 +296,79 @@ export const handleImageLibraryLaunchFunction = () => {
       maxHeight: 1500,
       maxWidth: 1500,
     };
-    launchImageLibrary(options, response => {
-      if (!response.didCancel && !response.error) {
-        const data = {
-          status: 'success',
-          data: response.assets[0],
-        };
-        resolve(data);
-      } else {
-        const errorData = {
-          status: 'error',
-        };
-        reject(errorData);
+    launchImageLibrary(options, async response => {
+      if (response.didCancel) {
+        const errorData = { status: 'error', message: 'Image selection canceled.' }
+        return reject(errorData);
       }
+
+      if (response.error || !response.assets || response.assets.length === 0) {
+        const errorData = { status: 'error', message: 'Failed to select an image.' }
+        return reject(errorData);
+      }
+
+      let image = response.assets[0];
+      console.log(image.fileSize, 'Original photo size');
+      try{
+        if (image.fileSize <= 1000 * 1024) {
+          const data = {
+            status: 'success',
+            data: image,
+          }
+          return resolve(data);
+        }
+      }catch (error) {
+        console.log("--------------------Block 3-----------------------------------");
+        console.log(error);
+        const errorData = {
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
+      }
+      
+
+      try {
+
+        const compressedImage = await ImageResizer.createResizedImage(image.uri, 1000, 1000, 'JPEG', 80, 0)
+        console.log(compressedImage.size, "Compressed Image size");
+        console.log(compressedImage, "Compressed Image size");
+        const base64Data = await RNFS.readFile(compressedImage.uri, 'base64');
+        if (compressedImage.size <= 1000 * 1024) {
+          const data = {
+            status: "success",
+            data: {
+              base64: base64Data,
+              fileName: compressedImage.name,
+              fileSize: compressedImage.size,
+              height: compressedImage.height,
+              originalPath: compressedImage.path,
+              type: "image/jpeg",
+              uri: compressedImage.uri,
+              width: compressedImage.width,
+              status: 'success'
+            }
+          }
+          console.log('Smaller')
+          return resolve(data)
+        } else {
+          const errorData = {
+            status: 'error',
+            message: "Compressed file is still larger than 1MB"
+          }
+          console.log('git problem')
+          return reject(errorData)
+        }
+      } catch (error) {
+        console.log("--------------------Block 4-----------------------------------");
+        console.log(error);
+        const errorData = {
+          status: "error",
+          message: "Image compression failed."
+        }
+        return reject(errorData)
+      }
+
     });
   });
 };
@@ -319,15 +454,57 @@ export const handleImageLibraryLaunchFunction = () => {
 
 
 
-export const localToUTC=(date=new Date(),timezone,format='YYYY-MM-DD HH:mm:ss')=>{
-  return moment.tz(date,timezone || Intl.DateTimeFormat().resolvedOptions().timeZone).utc().format(format)
+export const localToUTC = (date = new Date(), timezone, format = 'YYYY-MM-DD HH:mm:ss') => {
+  return moment.tz(date, timezone || Intl.DateTimeFormat().resolvedOptions().timeZone).utc().format(format)
 }
 
-export const utcLocal=(date=new Date(),format='YYYY-MM-DD HH:mm:ss')=>{
+export const utcLocal = (date = new Date(), format = 'DD-MM-YYYY HH:mm') => {
   return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(format);
 }
 
-export const titleFormat=(date=new Date())=>{
+export const titleFormat = (date = new Date()) => {
   return moment.utc(date).tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format(DATE_FORMAT.titleFormat);
 }
 
+
+export const localizationText = (parentKey, childKey) => {
+  const { t } = useTranslation()
+  if (parentKey && childKey)
+    return t(`${parentKey}.${childKey}`)
+  else
+    return t(`${parentKey}`)
+}
+
+
+
+let soundInstance;
+
+export const playNotificationSound = () => {
+  soundInstance = new Sound('samplenotification.mp3', Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+
+    console.log('duration in seconds: ' + soundInstance.getDuration() + 'number of channels: ' + soundInstance.getNumberOfChannels());
+    soundInstance.setNumberOfLoops(-1)
+    soundInstance.play((success) => {
+      if (success) {
+        console.log('successfully finished playing');
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+    });
+
+
+  });
+}
+
+export const stopNotificationSound = () => {
+  if (soundInstance) {
+    soundInstance.stop(() => {
+      console.log('Sound stopped');
+      soundInstance.release(); // Release the resource
+    });
+  }
+};

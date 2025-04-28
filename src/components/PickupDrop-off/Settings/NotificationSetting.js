@@ -12,6 +12,7 @@ import {colors} from '../../../colors';
 import {useUserDetails} from '../../commonComponent/StoreContext';
 import {updateUserProfile} from '../../../data_manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {localizationText} from '../../../utils/common';
 
 const NotificationSetting = ({navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
@@ -68,7 +69,7 @@ const NotificationSetting = ({navigation}) => {
         };
         saveUserDetails(updatedDetails);
         saveUserDetailsInAsync(updatedDetails);
-        Alert.alert('Success', '' + successResponse[0]._response, [
+        Alert.alert('Success', 'Changes saved successfully!', [
           {
             text: 'OK',
             onPress: () => {
@@ -88,7 +89,9 @@ const NotificationSetting = ({navigation}) => {
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.addressCard}>
           <View style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Receive push notifications</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'receivePushNotifications')}
+            </Text>
             <TouchableOpacity onPress={togglePushNotifications}>
               <MaterialCommunityIcons
                 name={pushNotifications ? 'toggle-switch' : 'toggle-switch-off'}
@@ -101,7 +104,9 @@ const NotificationSetting = ({navigation}) => {
 
         <View style={styles.addressCard}>
           <View style={styles.bookAddress}>
-            <Text style={styles.cardTitle}>Receive promotional emails</Text>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'receivePromotionalEmails')}
+            </Text>
             <TouchableOpacity onPress={togglePromoEmails}>
               <MaterialCommunityIcons
                 name={promoEmails ? 'toggle-switch' : 'toggle-switch-off'}

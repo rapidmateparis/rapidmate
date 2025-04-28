@@ -106,64 +106,107 @@ export default function MapDeliveryDetails(probs = null) {
   const navigation = useNavigation();
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
-
-  useEffect(() => {
-    if (probs?.addressData) {
-      setOrigin({
-        latitude: probs.addressData.sourceAddress.latitude
-          ? parseFloat(probs.addressData.sourceAddress.latitude)
-          : 48.85754309772872,
-        longitude: probs.addressData.sourceAddress.longitude
-          ? parseFloat(probs.addressData.sourceAddress.longitude)
-          : 2.3513877855537912,
-      });
-
-      setDestination({
-        latitude: probs.addressData.destinationAddress.latitude
-          ? parseFloat(probs.addressData.destinationAddress.latitude)
-          : 48.86020382046169,
-        longitude: probs.addressData.destinationAddress.longitude
-          ? parseFloat(probs.addressData.destinationAddress.longitude)
-          : 2.3565536180821782,
-      });
-    }
-  }, [probs?.addressData]);
-
-  const polylineCoordinates = [
-    {
-      latitude: probs.addressData.sourceAddress.latitude
-        ? parseFloat(probs.addressData.sourceAddress.latitude)
-        : 48.85754309772872,
-      longitude: probs.addressData.sourceAddress.longitude
-        ? parseFloat(probs.addressData.sourceAddress.longitude)
-        : 2.3513877855537912,
-    },
-    {
-      latitude: probs.addressData.destinationAddress.latitude
-        ? parseFloat(probs.addressData.destinationAddress.latitude)
-        : 48.86020382046169,
-      longitude: probs.addressData.destinationAddress.longitude
-        ? parseFloat(probs.addressData.destinationAddress.longitude)
-        : 2.3565536180821782,
-    },
-  ];
-
-  const markers = [
+  const [dropLocations, setDropLocations] = useState([]);
+  
+  const [markers, setMarks] = useState([
     {
       id: 1,
       title: 'My Location',
       description: 'I am here',
       coordinate: {
-        latitude: probs.addressData.sourceAddress.latitude
+        latitude: probs?.addressData?.sourceAddress?.latitude
           ? parseFloat(probs.addressData.sourceAddress.latitude)
           : 48.85754309772872,
-        longitude: probs.addressData.sourceAddress.longitude
+        longitude: probs?.addressData?.sourceAddress?.longitude
           ? parseFloat(probs.addressData.sourceAddress.longitude)
           : 2.3513877855537912,
       },
     },
-    // Add more markers if needed
+  ]);
+
+  // console.log('probs =========>',probs)
+
+  const multipleToAddress = probs?.multipleToAddress ?probs?.multipleToAddress :[]
+
+  useEffect(() => {
+    if (multipleToAddress?.length > 0) {
+      const newList = multipleToAddress.map((location) => ({
+        latitude: location.to_latitude,
+        longitude: location.to_longitude,
+      }));
+  
+      // Check if dropLocations are changed before updating it
+      if (JSON.stringify(newList) !== JSON.stringify(dropLocations)) {
+        setDropLocations(newList);
+      }
+    }
+  }, [JSON.stringify(multipleToAddress)]);
+
+  useEffect(() => {
+    if (probs?.addressData) {
+      setOrigin({
+        latitude: probs?.addressData?.sourceAddress?.latitude
+          ? parseFloat(probs.addressData.sourceAddress.latitude)
+          : 48.85754309772872,
+        longitude: probs?.addressData?.sourceAddress?.longitude
+          ? parseFloat(probs.addressData.sourceAddress.longitude)
+          : 2.3513877855537912,
+      });
+
+      if(multipleToAddress?.length > 0){
+        const lastDestination = multipleToAddress[multipleToAddress.length -1]
+        setDestination({
+          latitude: lastDestination.to_latitude,
+          longitude: lastDestination.to_longitude,
+        });
+      }else{
+      setDestination({
+        latitude: probs?.addressData?.destinationAddress?.latitude
+          ? parseFloat(probs.addressData.destinationAddress.latitude)
+          : 48.86020382046169,
+        longitude: probs?.addressData?.destinationAddress?.longitude
+          ? parseFloat(probs.addressData.destinationAddress.longitude)
+          : 2.3565536180821782,
+      });
+    }
+    }
+  }, [JSON.stringify(probs?.addressData), JSON.stringify(multipleToAddress)]);
+
+  const polylineCoordinates = [
+    {
+      latitude: probs?.addressData?.sourceAddress?.latitude
+        ? parseFloat(probs.addressData.sourceAddress.latitude)
+        : 48.85754309772872,
+      longitude: probs?.addressData?.sourceAddress?.longitude
+        ? parseFloat(probs.addressData.sourceAddress.longitude)
+        : 2.3513877855537912,
+    },
+    {
+      latitude: probs?.addressData?.destinationAddress?.latitude
+        ? parseFloat(probs.addressData.destinationAddress.latitude)
+        : 48.86020382046169,
+      longitude: probs?.addressData?.destinationAddress?.longitude
+        ? parseFloat(probs.addressData.destinationAddress.longitude)
+        : 2.3565536180821782,
+    },
   ];
+
+  // const markers = [
+  //   // {
+  //   //   id: 1,
+  //   //   title: 'My Location',
+  //   //   description: 'I am here',
+  //   //   coordinate: {
+  //   //     latitude: probs?.addressData?.sourceAddress?.latitude
+  //   //       ? parseFloat(probs.addressData.sourceAddress.latitude)
+  //   //       : 48.85754309772872,
+  //   //     longitude: probs?.addressData?.sourceAddress?.longitude
+  //   //       ? parseFloat(probs.addressData.sourceAddress.longitude)
+  //   //       : 2.3513877855537912,
+  //   //   },
+  //   // },
+  //   // Add more markers if needed
+  // ];
 
   return (
     <View style={styles.container}>
@@ -172,14 +215,14 @@ export default function MapDeliveryDetails(probs = null) {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={{
-          latitude: probs.addressData.sourceAddress.latitude
+          latitude: probs?.addressData?.sourceAddress?.latitude
             ? parseFloat(probs.addressData.sourceAddress.latitude)
             : 48.85754309772872,
-          longitude: probs.addressData.sourceAddress.longitude
+          longitude: probs?.addressData?.sourceAddress?.longitude
             ? parseFloat(probs.addressData.sourceAddress.longitude)
             : 2.3513877855537912,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.08,
+          longitudeDelta: 0.07,
         }}>
         {/* Markers */}
         {markers.map(marker => (
@@ -197,15 +240,32 @@ export default function MapDeliveryDetails(probs = null) {
         {/* Flag Marker */}
         <Marker
           coordinate={{
-            latitude: probs.addressData.destinationAddress.latitude
+            latitude: probs?.addressData?.destinationAddress?.latitude
               ? parseFloat(probs.addressData.destinationAddress.latitude)
               : 48.86020382046169,
-            longitude: probs.addressData.destinationAddress.longitude
+            longitude: probs?.addressData?.destinationAddress?.longitude
               ? parseFloat(probs.addressData.destinationAddress.longitude)
               : 2.3565536180821782,
           }}>
           <MyCustomFlagMarker />
         </Marker>
+
+
+        {
+          multipleToAddress.map((dropMarks)=>{
+            if(dropMarks.to_latitude&& dropMarks.to_longitude){
+              return(
+                <Marker
+                  coordinate={{
+                    latitude: parseFloat(dropMarks.to_latitude),
+                    longitude: parseFloat(dropMarks.to_longitude),
+                  }}>
+                  <MyCustomFlagMarker />
+                </Marker>
+              )
+            }else return null
+          })
+        }
         {/* Polyline */}
         {origin != undefined && destination != undefined ? (
           <MapViewDirections
@@ -215,6 +275,9 @@ export default function MapDeliveryDetails(probs = null) {
             strokeWidth={3}
             strokeColor={colors.secondary}
             mode="DRIVING"
+            waypoints={ dropLocations?.length > 0 ? dropLocations :  []}
+            // waypoints={ multipleToAddress.length > 2? multipleToAddress.slice(1, -1) :  []}
+            // waypoints={ multipleToAddress}
           />
         ) : null}
       </MapView>

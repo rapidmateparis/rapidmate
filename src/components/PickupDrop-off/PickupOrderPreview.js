@@ -28,6 +28,7 @@ import {useUserDetails} from '../commonComponent/StoreContext';
 import DeliveryboyPackagePreviewModal from '../commonComponent/DeliveryboyPackagePreviewModal';
 import {API} from '../../utils/constant';
 import {debounce} from 'lodash';
+import { localizationText } from '../../utils/common';
 
 const PickupOrderPreview = ({route, navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -36,7 +37,7 @@ const PickupOrderPreview = ({route, navigation}) => {
     setImageModalVisible(!isImageModalVisible);
   };
   const params = route.params.props;
-  
+
   const {setLoading} = useLoader();
   const {userDetails} = useUserDetails();
   var finalPrice;
@@ -45,8 +46,6 @@ const PickupOrderPreview = ({route, navigation}) => {
   } else {
     finalPrice = params.selectedVehiclePrice;
   }
-
-  console.log("<===params===>", params)
 
   const pickupOrderRequest = () => {
     navigation.navigate('PickupPayment', {props: params});
@@ -59,7 +58,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.locationAddress}>
             <Ionicons name="location-outline" size={18} color="#000000" />
             <Text style={styles.TextAddress}>
-              {params.sourceLocation.sourceDescription
+              {params.sourceLocation?.sourceDescription
                 ? params.sourceLocation.sourceDescription
                 : null}
             </Text>
@@ -76,7 +75,9 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.borderShowOff}></View>
         </View>
         <View style={styles.pickupCard}>
-          <Text style={styles.vehicleDetails}>Vehicle details</Text>
+          <Text style={styles.vehicleDetails}>
+            {localizationText('Common', 'vehicleDetails')}
+          </Text>
           <View style={styles.semiTruckDetails}>
             <View>
               <Text style={styles.vehicleName}>{params.selectedVehicle}</Text>
@@ -84,7 +85,7 @@ const PickupOrderPreview = ({route, navigation}) => {
                 {params.selectedVehicleDetails.vehicle_type_desc
                   ? params.selectedVehicleDetails.vehicle_type_desc
                   : null}{' '}
-                max capacity
+                {localizationText('Common', 'maxCapacity')}
               </Text>
             </View>
             <View>
@@ -114,10 +115,12 @@ const PickupOrderPreview = ({route, navigation}) => {
         </View>
 
         <View style={styles.pickupCard}>
-          <Text style={styles.pickupDetails}>Pickup details</Text>
+          <Text style={styles.pickupDetails}>
+            {localizationText('Common', 'pickupDetails')}
+          </Text>
           <View style={styles.packageBasicInfo}>
             <View>
-              <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
+              <Text style={styles.vehicleName}>{params.userDetails.name}{''}{params.userDetails.lastname}</Text>
               <Text style={styles.vehicleCapacity}>
                 {params.userDetails.company}
               </Text>
@@ -167,12 +170,15 @@ const PickupOrderPreview = ({route, navigation}) => {
           </View>
         </View>
 
-
         <View style={styles.pickupCard}>
-          <Text style={styles.pickupDetails}>Drop details</Text>
+          <Text style={styles.pickupDetails}>
+            {localizationText('Common', 'dropDetails')}
+          </Text>
           <View style={styles.packageBasicInfo}>
             <View>
-              <Text style={styles.vehicleName}>{params.drop_details.drop_first_name}</Text>
+              <Text style={styles.vehicleName}>
+                {params.drop_details.drop_first_name}{''} {params.drop_details.drop_last_name}
+              </Text>
               <Text style={styles.vehicleCapacity}>
                 {params.drop_details.drop_company_name}
               </Text>
@@ -186,7 +192,9 @@ const PickupOrderPreview = ({route, navigation}) => {
                 size={12}
                 color="#000000"
               />
-              <Text style={styles.contactInfo}>{params.drop_details.drop_email}</Text>
+              <Text style={styles.contactInfo}>
+                {params.drop_details.drop_email}
+              </Text>
             </View>
 
             <View style={styles.pickupManDetails}>
@@ -210,7 +218,9 @@ const PickupOrderPreview = ({route, navigation}) => {
         </View>
 
         <View style={styles.pickupCard}>
-          <Text style={styles.vehicleDetails}>Estimated cost</Text>
+          <Text style={styles.vehicleDetails}>
+            {localizationText('Common', 'estimatedCost')}
+          </Text>
           <View style={styles.semiTruckDetails}>
             <View style={{marginTop: 10}}>
               <Text style={styles.vehicleName}>€ {finalPrice}</Text>
@@ -237,7 +247,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           </View>
         </View>
 
-        <View style={styles.checkboxContainer}>
+        {/* <View style={styles.checkboxContainer}>
           <CheckBox
             disabled={false}
             value={toggleCheckBox}
@@ -246,14 +256,16 @@ const PickupOrderPreview = ({route, navigation}) => {
             tintColors={{true: '#FFC72B', false: '#999'}}
           />
           <Text style={styles.checkboxText}>
-            Save these addresses for later
+            {localizationText('Common', 'saveAddresses')}
           </Text>
-        </View>
+        </View> */}
 
         <TouchableOpacity
           onPress={debounce(pickupOrderRequest, 500)}
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>
-          <Text style={styles.buttonText}>Proceed to payment</Text>
+          <Text style={styles.buttonText}>
+            {localizationText('Common', 'proceedPayment')}
+          </Text>
         </TouchableOpacity>
       </View>
       {/* Modal =========  */}

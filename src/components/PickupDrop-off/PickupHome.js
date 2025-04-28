@@ -14,25 +14,32 @@ import {
   useServiceTypeDetails,
   useUserDetails,
 } from '../commonComponent/StoreContext';
-import {getServiceTypeApi} from '../../data_manager';
+import {getNotificationCount, getServiceTypeApi} from '../../data_manager';
+import {useLoader} from '../../utils/loaderContext';
+import {localizationText} from '../../utils/common';
 
 const PickupHome = ({navigation}) => {
-  const {userDetails} = useUserDetails();
+  const {userDetails, saveUserDetails} = useUserDetails();
   const {serviceTypeDetails, saveServiceTypeDetails} = useServiceTypeDetails();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [promoEmails, setPromoEmails] = useState(false);
+  const {setLoading} = useLoader();
 
   useEffect(() => {
+    setLoading(true)
     getServiceTypeApi(
       null,
       successResponse => {
+        setLoading(false)
         console.log('getServiceTypeApi===>', successResponse[0]._response);
         saveServiceTypeDetails(successResponse[0]._response);
       },
       errorResponse => {
+        setLoading(false)
         console.log('errorResponse', errorResponse);
       },
     );
+    getNotificationAllCount();
   }, []);
 
   const togglePushNotifications = () => {
@@ -43,13 +50,46 @@ const PickupHome = ({navigation}) => {
     setPromoEmails(!promoEmails);
   };
 
-  const getScheduledServiceDetails =()=>{
-   return serviceTypeDetails.find((service=>service.service_name === 'Scheduled'))
-  }
+  const getScheduledServiceDetails = () => {
+    return serviceTypeDetails.find(
+      service => service.service_name === 'Scheduled',
+    );
+  };
 
-  const getNonScheduledServiceDetails =()=>{
-    return serviceTypeDetails.find((service=>service.service_name !== 'Scheduled'))
-   }
+  const getNonScheduledServiceDetails = () => {
+    return serviceTypeDetails.find(
+      service => service.service_name !== 'Scheduled',
+    );
+  };
+
+  const getNotificationAllCount = () => {
+    setLoading(true);
+    getNotificationCount(
+      userDetails.userDetails[0].ext_id,
+      successResponse => {
+        setLoading(false);
+        console.log(
+          'getNotificationAllCount==>successResponse',
+          '' + JSON.stringify(successResponse[0]._response.notificationCount),
+        );
+        const newUserDetails = userDetails.userDetails[0];
+        if (successResponse[0]?._response?.notificationCount) {
+          newUserDetails['notificationCount'] =
+            successResponse[0]._response.notificationCount;
+        } else {
+          newUserDetails['notificationCount'] = 0;
+        }
+        saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+      },
+      errorResponse => {
+        setLoading(false);
+        console.log(
+          'getNotificationAllCount==>errorResponse',
+          '' + errorResponse[0],
+        );
+      },
+    );
+  };
 
   return (
     <ScrollView style={{width: '100%', backgroundColor: '#FBFAF5'}}>
@@ -57,7 +97,7 @@ const PickupHome = ({navigation}) => {
         <View style={styles.welcomeHome}>
           <View>
             <Text style={styles.userWelcome}>
-              Welcome{' '}
+              {localizationText('Common', 'welcome')}{' '}
               <Text style={styles.userName}>
                 {userDetails.userDetails[0].first_name +
                   ' ' +
@@ -65,12 +105,24 @@ const PickupHome = ({navigation}) => {
               </Text>
             </Text>
             <Text style={styles.aboutPage}>
-              This is your Rapidmate dashboard!
+              {localizationText('Main', 'consumerWelcomeDescription')}
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}>
+            onPress={() => {
+              const newUserDetails = userDetails.userDetails[0];
+              newUserDetails['notificationCount'] = 0;
+              saveUserDetails({...userDetails, userDetails: [newUserDetails]});
+              navigation.navigate('Notifications');
+            }}>
             <EvilIcons name="bell" size={40} color="#000" />
+            {userDetails.userDetails[0].notificationCount > 0 && (
+              <View style={styles.notificationCountStyle}>
+                <Text style={styles.notificationCountText}>
+                  {userDetails.userDetails[0].notificationCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -78,13 +130,17 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
+              pickupService: serviceTypeDetails
+                ? getNonScheduledServiceDetails()
+                : [],
             });
           }}>
           <View style={styles.pickcard}>
-            <Text style={styles.packageRequst}>Request a Pick up</Text>
+            <Text style={styles.packageRequst}>
+              {localizationText('Main', 'consumerRequestPickup')}
+            </Text>
             <Text style={styles.packageDiscription}>
-              Avail any service for fixed time and location
+              {localizationText('Main', 'consumerRequestPickupDescription')}
             </Text>
           </View>
           <View>
@@ -99,7 +155,9 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
+              pickupService: serviceTypeDetails
+                ? getNonScheduledServiceDetails()
+                : [],
             });
           }}>
           <View>
@@ -109,9 +167,11 @@ const PickupHome = ({navigation}) => {
             />
           </View>
           <View style={styles.pickcard}>
-            <Text style={styles.packageRequst}>Request a Drop off</Text>
+            <Text style={styles.packageRequst}>
+              {localizationText('Main', 'consumerRequestDropoff')}
+            </Text>
             <Text style={styles.packageDiscription}>
-              Avail any service for fixed time and location
+              {localizationText('Main', 'consumerRequestDropoffDescription')}
             </Text>
           </View>
         </TouchableOpacity>
@@ -120,13 +180,17 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickup}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? getNonScheduledServiceDetails() : [],
+              pickupService: serviceTypeDetails
+                ? getNonScheduledServiceDetails()
+                : [],
             });
           }}>
           <View style={styles.pickcard}>
-            <Text style={styles.packageRequst}>Request a Mover</Text>
+            <Text style={styles.packageRequst}>
+              {localizationText('Main', 'consumerRequestMover')}
+            </Text>
             <Text style={styles.packageDiscription}>
-              Avail service of our professional packer & movers
+              {localizationText('Main', 'consumerRequestMoverDescription')}
             </Text>
           </View>
           <View>
@@ -141,7 +205,9 @@ const PickupHome = ({navigation}) => {
           style={styles.requestPickupPack}
           onPress={() => {
             navigation.push('PickupAddress', {
-              pickupService: serviceTypeDetails ? getScheduledServiceDetails() : [], //
+              pickupService: serviceTypeDetails
+                ? getScheduledServiceDetails()
+                : [], //
             });
           }}>
           <View style={styles.packingCardImgas}>
@@ -151,9 +217,11 @@ const PickupHome = ({navigation}) => {
             />
           </View>
           <View style={styles.packagePack}>
-            <Text style={styles.packageRequst}>Schedule your delivery</Text>
+            <Text style={styles.packageRequst}>
+              {localizationText('Main', 'consumerScheduleDelivery')}
+            </Text>
             <Text style={styles.packageDiscription}>
-              Avail any service for fixed time and location
+              {localizationText('Main', 'consumerScheduleDeliveryDescription')}
             </Text>
             <View style={styles.specialDiscount}>
               <MaterialCommunityIcons
@@ -298,7 +366,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   packageRequst: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
   },
@@ -328,7 +396,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   pickcard: {
-    width: '65%',
+    width: '60%',
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
@@ -363,6 +431,21 @@ const styles = StyleSheet.create({
     left: '30%',
     width: 35,
     height: 35,
+  },
+  notificationCountStyle: {
+    position: 'absolute',
+    right: 0,
+    backgroundColor: 'red',
+    borderRadius: 50,
+    height: 16,
+    width: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationCountText: {
+    color: '#FFFFFF',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 12,
   },
 });
 

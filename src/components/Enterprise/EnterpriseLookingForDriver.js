@@ -17,12 +17,20 @@ import {
   useUserDetails,
 } from '../commonComponent/StoreContext';
 import {getAllocatedEnterprise, getLocations} from '../../data_manager';
+import {useIsFocused} from '@react-navigation/native';
+import { localizationText } from '../../utils/common';
 
 const EnterpriseLookingForDriver = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {placedOrderDetails} = usePlacedOrderDetails();
   const {userDetails} = useUserDetails();
   const params = route.params;
+  const isVisible = useIsFocused();
+  const cancelRequestText = localizationText('Common', 'cancelRequest') || 'Cancel Request';
+
+  const [reTryCount, updateReTryCount] = useState(0);
+
+  const timeout = React.useRef(null);
 
   const toggleModal = vehicleDetails => {
     setModalVisible(!isModalVisible);
@@ -41,16 +49,20 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
           getAllocatedEnterprise(
             params,
             successResponse => {
+              updateReTryCount(null);
+              clearTimeout(timeout.current);
               navigation.navigate('EnterpriseOrderPickup', {
                 driverDetails: successResponse[0]._response,
                 locationList: tempOrderList,
               });
             },
             errorResponse => {
-              navigation.navigate(
-                'EnterpriseDriverNotAvailable',
-                errorResponse,
-              );
+              timeout.current = setTimeout(() => {
+                updateReTryCount(reTryCount + 1);
+                if (reTryCount === 5) {
+                  navigation.navigate('EnterpriseDriverNotAvailable', errorResponse);
+                }
+              }, 10000);
             },
           );
         }
@@ -66,8 +78,10 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    getLocationsData();
-  }, []);
+    if (isVisible && reTryCount !== null && reTryCount <= 5) {
+      getLocationsData();
+    }
+  }, [reTryCount, isVisible]);
 
   return (
     <ScrollView
@@ -89,10 +103,11 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
               style={styles.loaderMap}
               source={require('../../image/Driver-Looking-Map.png')}
             />
-            <Text style={styles.text}>Looking for driver</Text>
+            <Text style={styles.text}>
+              {localizationText('Common', 'lookingForDriver')}
+            </Text>
             <Text style={styles.subText}>
-              please wait, we are looking for a driver to pick up and deliver
-              your order..
+              {localizationText('Common', 'lookingForDriverDescription')}
             </Text>
           </View>
         </ImageBackground>
@@ -107,11 +122,11 @@ const EnterpriseLookingForDriver = ({route, navigation}) => {
           source={require('../../image/Driver-Bg2.png')}
         />
       </View>
-      {params.cancellable == 1 ? (
+      {params?.cancellable && params?.cancellable == 1 ? (
         <TouchableOpacity
           onPress={() => toggleModal()}
           style={styles.requestTouch}>
-          <Text style={styles.cancelRequest}>Cancel request</Text>
+          <Text style={styles.cancelRequest}>{cancelRequestText}</Text>
         </TouchableOpacity>
       ) : null}
 
