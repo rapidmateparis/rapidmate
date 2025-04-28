@@ -138,7 +138,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
   const handleCallPress = () => {
     const phoneNumber = orderDetails?.enterpirse_mobile;
     if (phoneNumber) {
-      Linking.openURL(`tel:${phoneNumber}`);
+      Linking.openURL(`tel:+33${phoneNumber}`);
     } else {
       Alert.alert('Error', 'Phone number not available');
     }
@@ -147,7 +147,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
   const handleChatPress = () => {
     const phoneNumber = orderDetails?.enterpirse_mobile;
     if (phoneNumber) {
-      Linking.openURL(`sms:${phoneNumber}`);
+      Linking.openURL(`sms:+33${phoneNumber}`);
     } else {
       Alert.alert('Error', 'Phone number not available');
     }
@@ -251,11 +251,11 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                     {localizationText('Common', 'from')}{' '}
                     <Text style={styles.schaduleDateTime}>
                       {moment(
-                        utcLocal(
+                       
                           orderDetails?.slots
                             ? orderDetails.slots[0].slot_date
-                            : new Date(),
-                        ),
+                            : new Date()
+                        
                       ).format('DD-MM-YYYY')}
                     </Text>
                   </Text>
@@ -264,11 +264,11 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
                     {localizationText('Common', 'to')}{' '}
                     <Text style={styles.schaduleDateTime}>
                       {moment(
-                        utcLocal(
+                        
                           orderDetails?.slots
                             ? orderDetails.slots[0].slot_date
-                            : new Date(),
-                        ),
+                            : new Date()
+                        
                       ).format('DD-MM-YYYY')}
                     </Text>
                   </Text>

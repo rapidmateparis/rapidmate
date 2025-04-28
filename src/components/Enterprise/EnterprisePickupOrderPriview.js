@@ -316,7 +316,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           </View>
         </View>
 
-        <View style={styles.checkboxContainer}>
+        {/* <View style={styles.checkboxContainer}>
           <CheckBox
             disabled={false}
             value={toggleCheckBox}
@@ -327,7 +327,7 @@ const EnterprisePickupOrderPriview = ({route, navigation}) => {
           <Text style={styles.checkboxText}>
             {localizationText('Common', 'saveAddresses')}
           </Text>
-        </View>
+        </View> */}
 
         <TouchableOpacity
           onPress={() => {

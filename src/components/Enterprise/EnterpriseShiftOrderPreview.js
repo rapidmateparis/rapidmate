@@ -120,7 +120,7 @@ const EnterpriseShiftOrderPreview = ({route, navigation}) => {
           </View>
         </View>
 
-        <View style={styles.checkboxContainer}>
+        {/* <View style={styles.checkboxContainer}>
           <CheckBox
             disabled={false}
             value={toggleCheckBox}
@@ -131,7 +131,7 @@ const EnterpriseShiftOrderPreview = ({route, navigation}) => {
           <Text style={styles.checkboxText}>
             Save these addresses for later
           </Text>
-        </View>
+        </View> */}
 
         <TouchableOpacity
           style={[styles.logbutton, {backgroundColor: colors.primary}]}>

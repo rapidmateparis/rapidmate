@@ -70,7 +70,6 @@ const AddPickupdetails = ({route, navigation}) => {
   };
 
   const data = [
-    {label: '+91', value: '+91'},
     {label: '+33', value: '+33'},
   ];
 
@@ -403,7 +402,7 @@ const AddPickupdetails = ({route, navigation}) => {
           </TouchableOpacity>
           <View style={{flex: 1}}>
             <Text style={styles.textlable}>
-              {localizationText('Common', 'packageId')}
+              {localizationText('Common', 'packageId')}*
             </Text>
             <TextInput
               style={styles.inputTextStyle}

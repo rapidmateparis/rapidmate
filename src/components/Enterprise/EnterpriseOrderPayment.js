@@ -290,7 +290,11 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
         is_scheduled_order: params.is_scheduled_order,
       };
-
+      requestParams.order_amount = parseFloat(params.amount);
+      const amount = typeof params.amount === 'number' ? params.amount.toFixed(2): parseFloat(params.amount);
+      const taxAmount = (parseFloat(amount) * parseFloat(20)) / 100;
+      let taxValue = taxAmount ? taxAmount.toFixed(2) : 0;
+      requestParams.tax = parseFloat(taxValue);
       if (params?.drop_details) {
         requestParams = {
           ...requestParams,
@@ -320,7 +324,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       if (promoCodeResponse) {
         requestParams.promo_code = promoCodeResponse.promoCode;
         requestParams.promo_value = promoCodeResponse.discount;
-        requestParams.order_amount = parseFloat(totalAmount);
+        //requestParams.order_amount = parseFloat(totalAmount);
       }
       if (orderNumber) {
         createPaymentIntent();
@@ -369,8 +373,10 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         : parseFloat(params.amount);
     console.log('amount is ', amount, 'and vechile tax is ', vechicleTax);
     const taxAmount = (parseFloat(amount) * parseFloat(vechicleTax)) / 100;
-    return taxAmount ? taxAmount.toFixed(2) : 0;
+    let taxValue = taxAmount ? taxAmount.toFixed(2) : 0;
+    return taxValue;
   };
+
   useEffect(() => {
     const amount =
       typeof params.amount === 'number'

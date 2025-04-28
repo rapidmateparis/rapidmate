@@ -142,10 +142,7 @@ const EnterpriseAddNewLocationsMap = props => {
       {/* GooglePlacesAutocomplete */}
       <View style={{zIndex: 1, paddingTop: 10}}>
         <View style={styles.locationCard}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('EnterpriseSetLocationAddressMap')
-            }>
+          <View>
             <View style={styles.locationAddress}>
               <GooglePlacesAutocomplete
                 styles={{
@@ -200,7 +197,7 @@ const EnterpriseAddNewLocationsMap = props => {
 
               {/* <AntDesign name="arrowright" size={18} color="#000000" /> */}
             </View>
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
 

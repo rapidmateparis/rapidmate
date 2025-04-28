@@ -64,15 +64,15 @@ const PickupPayment = ({route, navigation}) => {
     return taxAmount ? taxAmount.toFixed(2) : 0.0;
   };
 
-  const getDiscountAmount = amount => {
-    console.log('offerDiscount ------------', offerDiscount);
-    if (offerDiscount && parseFloat(offerDiscount) > 0) {
-      const discount = offerDiscount ? (amount * offerDiscount) / 100 : 0.0;
-      const totalDiscountAmount = amount - discount;
-      return totalDiscountAmount ? '- ' + totalDiscountAmount.toFixed(2) : 0.0;
+  const getDiscountAmount = (amount) => {
+    const discountPercent = parseFloat(offerDiscount);
+    if (discountPercent > 0 && amount > 0) {
+      const discount = (amount * discountPercent) / 100;
+      return discount;
     }
     return 0.0;
   };
+  
 
   useEffect(() => {
     const amount =
@@ -566,7 +566,7 @@ const PickupPayment = ({route, navigation}) => {
               {localizationText('Common', 'discount')}
             </Text>
             <Text style={styles.totalAmount}>
-              € {formatAmount(getDiscountAmount(params.selectedVehiclePrice))}
+              € {''}-{formatAmount(getDiscountAmount(params.selectedVehiclePrice))}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginVertical: 3}}>

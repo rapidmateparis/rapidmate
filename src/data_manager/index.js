@@ -1562,4 +1562,19 @@ export const getAppVersion = (successCallback, errorCallback) => {
   );
 };
 
+export const deleteEnterpriseBranch = (
+  branchId,
+  successCallback,
+  errorCallback
+) => {
+  axiosCall(
+    API.enterpriseBranchDeleteUrl + branchId,
+    HTTPMethod.DELETE,
+    {},
+    response => successCallback(response),
+    error => errorCallback(error),
+  );
+};
+
+
 

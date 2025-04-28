@@ -169,6 +169,23 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     setOTPModalVisible(!isOTPModalVisible);
   };
 
+  const handleCall = phoneNumber => {
+    const formattedNumber = `+33${phoneNumber}`;
+    const url = `tel:${formattedNumber}`;
+    Linking.openURL(url).catch(err => {
+      console.error('Failed to make the call:', err);
+      Alert.alert('Error', 'Unable to make a call');
+    });
+  };
+
+  const handleChat = phoneNumber => {
+    const formattedNumber = `+33${phoneNumber}`;
+    Linking.openURL(`sms:${formattedNumber}`).catch(err => {
+      console.error('Failed to send the message:', err);
+      Alert.alert('Error', 'Unable to send a message');
+    });
+  };
+
   useEffect(() => {
     orderDetail();
   }, []);
@@ -283,14 +300,6 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
     }
   };
 
-  const handleCall = phoneNumber => {
-    const url = `tel:${phoneNumber}`;
-    Linking.openURL(url).catch(err => {
-      console.error('Failed to make the call:', err);
-      Alert.alert('Error', 'Unable to make a call');
-    });
-  };
-
   const openInGoogleMaps = location => {
     if (location) {
       const {address, city, state} = location;
@@ -356,7 +365,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
                         ? order?.order?.consumer_mobile
                         : order?.order?.mobile;
 
-                    Linking.openURL(`sms:${phoneNumber}`);
+                    handleChat(phoneNumber);
                   }}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
@@ -479,9 +488,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
               <View style={styles.contactInfoIcons}>
                 <TouchableOpacity
                   style={{marginRight: 10}}
-                  onPress={() =>
-                    Linking.openURL(`sms:${order.order.drop_mobile}`)
-                  }>
+                  onPress={() => handleChat(order.order.drop_mobile)}>
                   <Image source={require('../../image/chat-icon.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -501,7 +508,7 @@ const DeliveryboyDeliveryDetails = ({route, navigation}) => {
             {localizationText('Common', 'orderID')}:
             <Text style={styles.detailsId}>
               {' '}
-              {order.order ? order.order.order_number : '123456'}
+              {order.order ? order.order.order_number : '*************'}
             </Text>
           </Text>
           <Text style={styles.orderdetails}>

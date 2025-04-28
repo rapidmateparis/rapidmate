@@ -120,7 +120,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           </Text>
           <View style={styles.packageBasicInfo}>
             <View>
-              <Text style={styles.vehicleName}>{params.userDetails.name}</Text>
+              <Text style={styles.vehicleName}>{params.userDetails.name}{''}{params.userDetails.lastname}</Text>
               <Text style={styles.vehicleCapacity}>
                 {params.userDetails.company}
               </Text>
@@ -177,7 +177,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <View style={styles.packageBasicInfo}>
             <View>
               <Text style={styles.vehicleName}>
-                {params.drop_details.drop_first_name}
+                {params.drop_details.drop_first_name}{''} {params.drop_details.drop_last_name}
               </Text>
               <Text style={styles.vehicleCapacity}>
                 {params.drop_details.drop_company_name}
@@ -247,7 +247,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           </View>
         </View>
 
-        <View style={styles.checkboxContainer}>
+        {/* <View style={styles.checkboxContainer}>
           <CheckBox
             disabled={false}
             value={toggleCheckBox}
@@ -258,7 +258,7 @@ const PickupOrderPreview = ({route, navigation}) => {
           <Text style={styles.checkboxText}>
             {localizationText('Common', 'saveAddresses')}
           </Text>
-        </View>
+        </View> */}
 
         <TouchableOpacity
           onPress={debounce(pickupOrderRequest, 500)}

@@ -180,11 +180,11 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             <Text style={styles.dropInfo}>
               {localizationText('Main', 'pickupInformation')}
             </Text>
-            <Text style={styles.companyInfo}>
-              {orderDetails.company_name
-                ? orderDetails.company_name
-                : ''}
-            </Text>
+            {orderDetails.company_name ? (
+              <Text style={styles.companyInfo}>
+                {orderDetails.company_name}
+              </Text>
+            ) : null}
             <Text style={styles.dropInfo}>
               {pickUpLocation?.address || ''}
               {', '}
@@ -207,11 +207,11 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
             <Text style={styles.dropInfo}>
               {localizationText('Main', 'dropOffInformation')}
             </Text>
-            <Text style={styles.companyInfo}>
-              {orderDetails.drop_company_name
-                ? orderDetails.drop_company_name
-                : ''}
-            </Text>
+            {orderDetails.drop_company_name ? (
+              <Text style={styles.companyInfo}>
+                {orderDetails.drop_company_name}
+              </Text>
+            ) : null}
             {dropOffLocation &&
               dropOffLocation?.address &&
               dropOffLocation.city &&
@@ -237,7 +237,7 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           <View style={{marginLeft: 10}}>
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>
-                {localizationText('Common', 'orderFare')}
+                {localizationText('Common', 'totalOrderFare')}
               </Text>
               <Text style={styles.totalmoney}>
                 € {orderDetails.delivery_boy_amount.toFixed(2)}
@@ -266,24 +266,24 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>
-                {localizationText('Common', 'waiting')}
+                {localizationText('Common', 'commission')} @{orderDetails.commission_percentage ? orderDetails.commission_percentage : ''}%
               </Text>
               <Text style={styles.value}>
-                €{' '}
-                {orderDetails.waiting_fare
-                  ? orderDetails.waiting_fare.toFixed(2)
+              €{' '}
+                {orderDetails.commission_amount
+                  ? orderDetails.commission_amount.toFixed(2)
                   : '0.00'}
               </Text>
             </View>
 
-            <View style={styles.cardHeader}>
+            {/* <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>
                 {localizationText('Common', 'promo')}
               </Text>
               <Text style={styles.value}>
                 {orderDetails.promo_value ? orderDetails.promo_value : '0%'}
               </Text>
-            </View>
+            </View> */}
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>
@@ -291,7 +291,9 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
               </Text>
               <Text style={styles.value}>
                 €{' '}
-                {orderDetails.delivery_boy_amount ? orderDetails.delivery_boy_amount.toFixed(2) : '0.00'}
+                {orderDetails.delivery_boy_amount
+                  ? orderDetails.delivery_boy_amount.toFixed(2)
+                  : '0.00'}
               </Text>
             </View>
 
@@ -309,18 +311,22 @@ const DeliveryboyMainDeliveryDetails = ({route, navigation}) => {
           <Text style={styles.packageTitle}>
             {localizationText('Main', 'packageInformation')}
           </Text>
-          <Text style={styles.orderdetails}>
-            {localizationText('Common', 'orderID')}:{' '}
+          <View style={styles.cardHeader}>
+            <Text style={styles.orderdetails}>
+              {localizationText('Common', 'orderID')} :
+            </Text>
             <Text style={styles.detailsId}>
               {orderDetails.order_number ? orderDetails.order_number : ''}
             </Text>
-          </Text>
-          <Text style={styles.orderdetails}>
-            {localizationText('Common', 'vehicle')}:{' '}
+          </View>
+          <View style={styles.cardHeader}>
+            <Text style={styles.orderdetails}>
+              {localizationText('Common', 'vehicleRequested')} :
+            </Text>
             <Text style={styles.detailsId}>
               {orderDetails.vehicle_type ? orderDetails.vehicle_type : ''}
             </Text>
-          </Text>
+          </View>
         </View>
 
         <TouchableOpacity
@@ -383,10 +389,10 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Add this line
+    justifyContent: 'space-between', 
   },
   orderFare: {
-    width: '75%',
+    width: '73%',
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: '#131314',
@@ -447,16 +453,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Montserrat-Medium',
     color: colors.text,
+    marginBottom: 5,
   },
   orderdetails: {
     fontSize: 12,
     fontFamily: 'Montserrat-Regular',
     color: colors.subText,
-    marginVertical: 3,
   },
   detailsId: {
+    fontSize: 12,
     color: colors.text,
     fontFamily: 'Montserrat-Medium',
+    marginVertical: 4,
   },
   invoiceCard: {
     flexDirection: 'row',

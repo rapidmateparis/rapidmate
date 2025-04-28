@@ -77,6 +77,8 @@ const DeliveryDetails = ({ navigation, route }) => {
     localizationText('Common', 'downloadInvoice') || 'Download invoice';
   const cancelRequest =
     localizationText('Common', 'cancelRequest') || 'Cancel request';
+  const orderStatus =
+    localizationText('Common', 'OrderStatus') || 'Status';
 
   const enterpriseDestinationList = route?.params?.orderItem?.locations || [];
 
@@ -516,8 +518,8 @@ const DeliveryDetails = ({ navigation, route }) => {
                 <Text style={styles.truckInfo}>{vehicle?.plat_no}</Text>
               </View>
             </View>
-          ) : order?.service_type_id ===
-            1 ? null : order?.is_delivery_boy_allocated === 0 ? (
+          ) : order?.service_type_id === 
+            1 ? null : (order?.is_delivery_boy_allocated === 0 && order?.order_status === 'ORDER_PLACED')? (
               <View style={{ alignContent: 'flex-end' }}>
                 <Button
                   title="Allocate Driver"
@@ -658,6 +660,11 @@ const DeliveryDetails = ({ navigation, route }) => {
                   : '****'}
               </Text>
             </View>
+
+            <View style={styles.cardHeaderValues}>
+              <Text style={styles.orderFareValue}>{orderStatus}:</Text>
+              <Text style={styles.value}>{route.params?.orderItem?.order_status}</Text>
+            </View>
           </View>
         </View>
 
@@ -695,12 +702,12 @@ const DeliveryDetails = ({ navigation, route }) => {
               </Text>
             </View>
 
-            <View style={styles.cardHeader}>
+            {/* <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{promo}</Text>
               <Text style={styles.value}>
                 {order.promo_value ? order.promo_value : '0'}
               </Text>
-            </View>
+            </View> */}
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{`Discount @${order.discount}%`}</Text>
