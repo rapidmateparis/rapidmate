@@ -37,6 +37,7 @@ import {useStripe} from '@stripe/stripe-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {localizationText, localToUTC} from '../../utils/common';
 import {API} from '../../utils/constant';
+import moment from 'moment';
 
 const EnterpriseOrderPayment = ({route, navigation}) => {
   const params = route.params;
@@ -92,7 +93,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       } else {
         if (params.is_scheduled_order === 1) {
           navigation.navigate('ScheduleOrderSuccess', {
-            schedule_date_time: scheduledDateTime,
+            schedule_date_time: moment.utc(scheduledDateTime).local().format('YYYY-MM-DD hh:mm A'),
             serviceTypeId: 1,
           });
         } else {
@@ -220,7 +221,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         if (successResponse[0]._success) {
           if (params.is_scheduled_order === 1) {
             navigation.navigate('ScheduleOrderSuccess', {
-              schedule_date_time: params.schedule_date_time,
+              schedule_date_time: moment.utc(params.schedule_date_time).local().format('YYYY-MM-DD hh:mm A'),
               serviceTypeId: params.delivery_type_id,
             });
           } else {
