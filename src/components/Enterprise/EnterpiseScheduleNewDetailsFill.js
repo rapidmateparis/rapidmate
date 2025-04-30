@@ -1389,7 +1389,13 @@ const GetTotalAmount = (Type, Distance) => {
                   );
                   return;
                 }
-
+                let scheduleDataTimeForNonInstant = '';
+                if(date && time){
+                  scheduleDataTimeForNonInstant = moment(date).format('YYYY-MM-DD') + " " + moment(time).format('hh:mm A');
+                  console.log(scheduleDataTimeForNonInstant); // Local Time
+                  console.log(localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate())); // UTC
+                }
+               
                 let sourceOfBranchLocationId =
                   routeParams.sourceBranch.location_id;
 
@@ -1414,7 +1420,7 @@ const GetTotalAmount = (Type, Distance) => {
                       company_name: company,
                       pickup_notes: pickupNotes,
                       pickup_date: moment(date).format('YYYY-MM-DD'),
-                      pickup_time: moment(time).format('HH:mm'),
+                      pickup_time: moment(time).format('hh:mm A'),
                       is_repeat_mode: promoEmails ? 1 : 0,
                       package_id: orderid,
                       amount: Number(totalAmount).toFixed(2),
@@ -1426,10 +1432,8 @@ const GetTotalAmount = (Type, Distance) => {
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
                       is_scheduled_order: isInstantDate ? 0 : 1,
-                      schedule_date_time:
-                        moment(date).format('YYYY-MM-DD') +
-                        ' ' +
-                        moment(time).format('hh:mm'),
+                      order_date: isInstantDate?moment(new Date()).format('YYYY-MM-DD HH:mm:ss'): '',
+                      schedule_date_time : isInstantDate ? '' : localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate()),
                     };
 
                     navigation.navigate('EnterpriseAddMultpleDropDetails', {
@@ -1457,7 +1461,7 @@ const GetTotalAmount = (Type, Distance) => {
                       company_name: company,
                       pickup_notes: pickupNotes,
                       pickup_date: moment(date).format('YYYY-MM-DD'),
-                      pickup_time: moment(time).format('HH:mm'),
+                      pickup_time: moment(time).format('hh:mm A'),
                       is_repeat_mode: promoEmails ? 1 : 0,
                       package_id: orderid,
                       amount: Totalamount,
@@ -1467,16 +1471,11 @@ const GetTotalAmount = (Type, Distance) => {
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
-                      order_date: isInstantDate
-                        ? moment(isInstantDate).format('YYYY-MM-DD hh:mm')
-                        : '',
-                      schedule_date_time:
-                        moment(date).format('YYYY-MM-DD') +
-                        ' ' +
-                        moment(time).format('hh:mm'),
+                      order_date: isInstantDate?moment(new Date()).format('YYYY-MM-DD HH:mm:ss'): '',
                       is_scheduled_order: isInstantDate ? 0 : 1,
+                      schedule_date_time : isInstantDate ? '' : localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate())
                     };
-
+                    
                     navigation.navigate('AddDropDetails', {
                       props: params,
                       component: 'ENTERPRISE',
