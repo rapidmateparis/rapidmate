@@ -246,7 +246,7 @@ const PickupSignup = ({navigation}) => {
               style={[styles.loginput, {fontFamily: 'Montserrat-Regular'}]}
               placeholder={localizationText('Common', 'fullName')}
               placeholderTextColor="#999"
-              maxLength={15}
+              maxLength={30}
               value={name}
               onChangeText={text => setName(text)}
             />
