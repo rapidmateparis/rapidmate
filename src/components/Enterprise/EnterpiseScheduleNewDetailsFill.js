@@ -1392,8 +1392,6 @@ const GetTotalAmount = (Type, Distance) => {
                 let scheduleDataTimeForNonInstant = '';
                 if(date && time){
                   scheduleDataTimeForNonInstant = moment(date).format('YYYY-MM-DD') + " " + moment(time).format('hh:mm A');
-                  console.log(scheduleDataTimeForNonInstant); // Local Time
-                  console.log(localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate())); // UTC
                 }
                
                 let sourceOfBranchLocationId =
@@ -1432,8 +1430,8 @@ const GetTotalAmount = (Type, Distance) => {
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
                       is_scheduled_order: isInstantDate ? 0 : 1,
-                      order_date: isInstantDate?moment(new Date()).format('YYYY-MM-DD HH:mm:ss'): '',
-                      schedule_date_time : isInstantDate ? '' : localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate()),
+                      order_date: isInstantDate?moment(new Date()).format('YYYY-MM-DD HH:mm:ss'): null,
+                      schedule_date_time : isInstantDate ? null : localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate()),
                     };
 
                     navigation.navigate('EnterpriseAddMultpleDropDetails', {
@@ -1471,9 +1469,9 @@ const GetTotalAmount = (Type, Distance) => {
                       repeat_every: selectedRepeatEvery,
                       repeat_until: moment(untilDate).format('YYYY-MM-DD'),
                       imageId: imageViewId,
-                      order_date: isInstantDate?moment(new Date()).format('YYYY-MM-DD HH:mm:ss'): '',
+                      order_date: isInstantDate?moment(new Date()).format('YYYY-MM-DD HH:mm:ss'): null,
                       is_scheduled_order: isInstantDate ? 0 : 1,
-                      schedule_date_time : isInstantDate ? '' : localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate())
+                      schedule_date_time : isInstantDate ? null : localToUTC(moment(scheduleDataTimeForNonInstant, 'YYYY-MM-DD hh:mm A').toDate())
                     };
                     
                     navigation.navigate('AddDropDetails', {

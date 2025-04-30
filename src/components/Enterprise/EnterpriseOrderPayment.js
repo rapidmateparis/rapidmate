@@ -287,6 +287,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
         repeat_mode: params.repeat_mode,
         repeat_every: params.repeat_every,
         repeat_until: params.repeat_until,
+        schedule_date_time : params.schedule_date_time,
         // pickup_date: moment(localToUTC(params.pickup_date)).format('YYYY-MM-DD'),  //**
         // pickup_time: moment(localToUTC(params.pickup_time)).format('hh:mm'),  //
         is_scheduled_order: params.is_scheduled_order,
