@@ -143,6 +143,7 @@ const ConsumerManageProfile = ({navigation}) => {
             style={styles.inputTextStyle}
             placeholder="Type here"
             placeholderTextColor={'#999'}
+            maxLength={30}
             value={vehicleModel}
             onChangeText={text => setVehicleModel(text)}
           />
