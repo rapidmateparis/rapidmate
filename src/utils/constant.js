@@ -22,9 +22,9 @@ export const HTTPMethod = {
 };
 
 export const PORT = {
-  qa: '3009',
-  uat: '3041',
-  prod: '3906',
+  qa: '3002',
+  uat: '3005',
+  prod: '3909',
 };
 
 export const BASE_URL = `http://16.171.224.246:${PORT.qa}/api/`;
