@@ -27,13 +27,10 @@ export const PORT = {
   prod: '3909',
 };
 
-export const BASE_URL = `http://16.171.224.246:${PORT.qa}/api/`;
+export const BASE_URL = `https://api.rapidmate.fr/api/`;
 
 export const apiHost = {
-  // baseURL: 'http://10.0.2.2:3005/api/',
-  // baseURL: "http://www.api.astafa.in/api/",
-  // baseURL: "https://api.astafa.in/api/",
-  baseURL: 'http://16.171.224.246:3000/api/',
+  baseURL: 'https://api.rapidmate.fr/api/',
   apiKey: '',
 };
 
