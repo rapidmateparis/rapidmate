@@ -27,6 +27,7 @@ import {
   getLocations,
   getViewEnterpriseOrderDetail,
   getViewOrderDetail,
+  consumerDeliveredOTP,
 } from '../../data_manager';
 import { useLoader } from '../../utils/loaderContext';
 import CancellationModal from '../commonComponent/CancellationModal';
@@ -51,6 +52,7 @@ const DeliveryDetails = ({ navigation, route }) => {
   const { userDetails } = useUserDetails();
   const [locations, setLocations] = useState([]);
   const [multipleOrderLocation, setMultipleOrderLocation] = useState([]);
+  const [deliveredOtp, setDeliveredOtp] = useState('****');
   const pickupInformation =
     localizationText('Main', 'pickupInformation') || 'Pickup Information';
   const dropOffInformation =
@@ -134,7 +136,31 @@ const DeliveryDetails = ({ navigation, route }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (order?.order_number) {
+      fetchDeliveredOtp(order?.order_number);
+    }
+  }, [order?.order_number]);
+
   useEffect(() => { }, [locations]);
+
+  const fetchDeliveredOtp = (orderId) => {
+    setLoading(true);
+    consumerDeliveredOTP(
+      orderId,
+      null,
+      (response) => {
+        setLoading(false);
+        if (response[0]?._success) {
+          setDeliveredOtp(response[0]?._response[0]?.delivered_otp || '****');
+        }
+      },
+      (error) => {
+        setLoading(false);
+        console.error('Error fetching delivered OTP:', error);
+      }
+    );
+  };
 
   const enterpriseOrderDetail = () => {
     setLoading(true);
@@ -654,11 +680,12 @@ const DeliveryDetails = ({ navigation, route }) => {
 
             <View style={styles.cardHeaderValues}>
               <Text style={styles.orderFareValue}>{deliveredOTP}:</Text>
-              <Text style={styles.value}>
-                {order?.delivered_otp?.length > 0
-                  ? order?.delivered_otp
-                  : '****'}
-              </Text>
+              <TouchableOpacity onPress={() => fetchDeliveredOtp(order?.order_number)}>
+                <Text style={{color: colors.primary, textDecorationLine: 'underline', marginTop: 3, fontFamily: 'Montserrat-SemiBold', fontSize: 10}}>
+                  Click here to refresh
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.value}>{deliveredOtp}</Text>
             </View>
 
             <View style={styles.cardHeaderValues}>
@@ -845,7 +872,7 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '71%',
+    width: '74%',
   },
   cardHeaderValues: {
     flexDirection: 'row',
