@@ -1576,5 +1576,34 @@ export const deleteEnterpriseBranch = (
   );
 };
 
+export const consumerDeliveredOTP = (orderId, params, successCallback, errorCallback) => {
+  console.log("consumerUrl", API.consumerDeliveredOTP + orderId)
+  axiosCall(
+    API.consumerDeliveredOTP + orderId,
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
+
+export const enterpriseMultipleOTP = (orderId, params, successCallback, errorCallback) => {
+  console.log("EnterpriseBlocks", API.enterpriseMultipleOTP + orderId + '?line=1')
+  axiosCall(
+    API.enterpriseMultipleOTP + orderId + '?line=1',
+    HTTPMethod.GET,
+    params,
+    response => {
+      successCallback(response);
+    },
+    errorResponse => {
+      errorCallback(errorResponse);
+    },
+  );
+};
 
 

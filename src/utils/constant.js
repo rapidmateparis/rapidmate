@@ -118,6 +118,8 @@ export const API = {
   billingAddressDetails: BASE_URL+'enterprise/billing/address/',
   billingAddressDetailsUpdate: BASE_URL+'enterprise/billing/address/create',
   enterpriseBranchDeleteUrl: BASE_URL + 'enterprisebranch/',
+  consumerDeliveredOTP: BASE_URL + 'order/delivery/otp/',
+  enterpriseMultipleOTP: BASE_URL + 'enterprise/order/delivery/otp/',
   appVersion: BASE_URL+'version'
 };
 

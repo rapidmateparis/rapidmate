@@ -15,7 +15,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import {colors} from '../../colors';
 import MapDeliveryDetails from '../commonComponent/MapDeliveryDetails';
 import {useLoader} from '../../utils/loaderContext';
-import {downloadInvoiceOrder, getLocationById} from '../../data_manager';
+import {
+  downloadInvoiceOrder,
+  getLocationById,
+  enterpriseMultipleOTP,
+} from '../../data_manager';
 import {API} from '../../utils/constant';
 import RNFS from 'react-native-fs';
 import FileViewer from 'react-native-file-viewer';
@@ -27,6 +31,7 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
   const {setLoading} = useLoader();
   const [pickUpLocation, setPickUpLocation] = useState({});
   const [dropOffLocation, setDropOffLocation] = useState({});
+  const [deliveredOtp, setDeliveredOtp] = useState('****');
   const pickupOTP = localizationText('Common', 'pickupOTP') || 'Pickup OTP';
   const deliveredOTP =
     localizationText('Common', 'deliveredOTP') || 'Delivered OTP';
@@ -44,8 +49,7 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
   const paidWith = localizationText('Common', 'paidWith') || 'Paid with';
   const downloadInvoice =
     localizationText('Common', 'downloadInvoice') || 'Download invoice';
-    const orderStatus =
-    localizationText('Common', 'OrderStatus') || 'Status';
+  const orderStatus = localizationText('Common', 'OrderStatus') || 'Status';
 
   useEffect(() => {
     if (route?.params?.orderItem) {
@@ -85,6 +89,25 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
     setShowDetails(!showDetails);
   };
 
+  const fetchDeliveredOtp = async orderNumber => {
+    setLoading(true);
+    enterpriseMultipleOTP(
+      orderNumber,
+      null,
+      response => {
+        setLoading(false);
+        console.log("first response", response);
+        if (response[0]?._success) {
+          setDeliveredOtp(response[0]?._response?.otp || '****');
+        }
+      },
+      error => {
+        setLoading(false);
+        console.error('Error fetching delivered OTP:', error);
+      },
+    );
+  };
+
   const downloadInvoiceFile = async () => {
     setLoading(true);
     try {
@@ -104,33 +127,6 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
         'deliveryboy' +
         '?show=true';
       downloadFile(pdf);
-      // const invoiceData = successResponse;
-      // const filePath =
-      //   Platform.OS === 'android'
-      //     ? `${RNFS.ExternalDirectoryPath}/invoice_${orderDetails.order_number}.pdf`
-      //     : `${RNFS.DocumentDirectoryPath}/invoice_${orderDetails.order_number}.pdf`;
-
-      // // Convert binary data to base64
-      // const base64Data = Buffer.from(invoiceData, 'binary').toString('base64');
-
-      // // Write the file to the document directory
-      // await RNFS.writeFile(filePath, base64Data, 'base64');
-
-      // // Verify the file exists
-      // const fileExists = await RNFS.exists(filePath);
-      // if (fileExists) {
-      //   Alert.alert('Success', 'Invoice saved successfully.', [
-      //     {
-      //       text: 'Open Invoice',
-      //       onPress: () => {
-      //         openPDFWithNativeViewer(filePath);
-      //       },
-      //     },
-      //   ]);
-      //   console.log('Invoice saved to: ', filePath);
-      // } else {
-      //   Alert.alert('Error', 'Failed to save invoice file.');
-      // }
     } catch (error) {
       Alert.alert('Error', 'Failed to save invoice file.');
       console.error('File saving error:', error);
@@ -222,36 +218,28 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
                   <View style={styles.otpHeadCard}>
                     <Text style={styles.otpTitleText}>{deliveredOTP}:</Text>
                     <Text style={styles.otpText}>
-                      {location.delivered_otp || 'Gendrate if completed pickup'}
+                      {deliveredOtp || '****'}
                     </Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        fetchDeliveredOtp(orderDetails.order_number)
+                      }>
+                      <Text
+                        style={{
+                          color: colors.primary,
+                          textDecorationLine: 'underline',
+                          marginTop: 3,
+                          fontFamily: 'Montserrat-SemiBold',
+                          fontSize: 10,
+                        }}>
+                        Click here to refresh
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
             );
           })}
-
-        {/* <View style={styles.packageCard}>
-          <Image
-            style={styles.packageManager}
-            source={require('../../image/package-img.png')}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text style={styles.dropInfo}>Drop off 2 information</Text>
-            <Text style={styles.companyInfo}>Company Name</Text>
-            <Text style={styles.dropInfo}>
-              22 Rue de la Liberté, Paris, Île-de-France.
-            </Text>
-            <Text style={styles.pickupNotes}>Pickup Notes</Text>
-            <View style={styles.otpHeadCard}>
-              <Text style={styles.otpTitleText}>Pickup OTP:</Text>
-              <Text style={styles.otpText}>0444</Text>
-            </View>
-            <View style={styles.otpHeadCard}>
-              <Text style={styles.otpTitleText}>Deliverd OTP:</Text>
-              <Text style={styles.otpText}>0333</Text>
-            </View>
-          </View>
-        </View> */}
 
         <View style={styles.invoiceMainCard}>
           <View>
@@ -290,7 +278,7 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>{totalOrderFare}</Text>
               <Text style={styles.totalmoney}>
-              €{Number(orderDetails.amount || 0).toFixed(2)}
+                €{Number(orderDetails.amount || 0).toFixed(2)}
               </Text>
             </View>
 
@@ -311,11 +299,6 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
                   : '0.00'}
               </Text>
             </View>
-
-            {/* <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>Platform fee</Text>
-              <Text style={styles.value}>€01.00</Text>
-            </View> */}
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{amountCharged}</Text>
