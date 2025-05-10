@@ -101,6 +101,7 @@ const LogInScreen = ({navigation}) => {
       authenticateUser(
         params,
         successResponse => {
+          console.log(successResponse, "Success respose")
           if (successResponse[0]._success) {
             setLoading(false);
             if (successResponse[0]._response) {
@@ -115,6 +116,7 @@ const LogInScreen = ({navigation}) => {
               } else if (
                 successResponse[0]._response.name == 'UserNotConfirmedException'
               ) {
+                // console.log(successResponse)
                 Alert.alert('Error Alert', 'Delivery Boy Verfication Pending', [
                   {text: 'OK', onPress: () => {}},
                 ]);
@@ -167,10 +169,27 @@ const LogInScreen = ({navigation}) => {
           }
         },
         errorResponse => {
-          setLoading(false);
-          Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            {text: 'OK', onPress: () => {}},
-          ]);
+          setLoading(false)
+          const error = errorResponse[0]?._errors;
+          if(error?.code === 1010){
+             
+               const errorData = error?.message?.[0];
+               const username = errorData?.username;
+               const role = errorData?.role;
+
+               let routeParam = {
+                  username, 
+                  role
+               }
+               
+              console.log("Redirect to Verify Code page")
+              navigation.navigate('SignUpVerify', routeParam)
+          }else{
+            console.log(errorResponse[0]._errors.target, "Success respose")
+            Alert.alert('Error Alert', errorResponse[0]._errors.message, [
+              {text: 'OK', onPress: () => {}},
+            ]);
+          }
         },
       );
     } else {
