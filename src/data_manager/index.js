@@ -1606,4 +1606,18 @@ export const enterpriseMultipleOTP = (orderId, params, successCallback, errorCal
   );
 };
 
+export const deleteAccount = (params,successCallback,errorCallback) =>{
+  axiosCall(
+    API.deleteAccount,
+    HTTPMethod.POST,
+    params,
+    response =>{
+      successCallback(response)
+    },
+    errorResponse =>{
+      errorCallback(errorResponse)
+    }
+  );
+}
+
 

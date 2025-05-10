@@ -18,7 +18,7 @@ import {API} from '../../../utils/constant';
 import {localizationText} from '../../../utils/common';
 import i18n from '../../../localization/localizationUtils';
 import {getAppVersion} from '../../../data_manager';
-import { getCachedAppVersion } from '../../../utils/asyncStorage';
+import {getCachedAppVersion} from '../../../utils/asyncStorage';
 
 const DeliveryboySettings = ({navigation}) => {
   const {userDetails} = useUserDetails();
@@ -229,6 +229,15 @@ const DeliveryboySettings = ({navigation}) => {
             <Text style={styles.cardTitle}>
               {localizationText('Common', 'faqs')}
             </Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeleteYourAccount')}
+            style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Delete Account</Text>
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View>
