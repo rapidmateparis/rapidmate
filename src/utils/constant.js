@@ -120,7 +120,8 @@ export const API = {
   enterpriseBranchDeleteUrl: BASE_URL + 'enterprisebranch/',
   consumerDeliveredOTP: BASE_URL + 'order/delivery/otp/',
   enterpriseMultipleOTP: BASE_URL + 'enterprise/order/delivery/otp/',
-  appVersion: BASE_URL+'version'
+  appVersion: BASE_URL+'version',
+  deleteAccount : BASE_URL + '/delete/account',
 };
 
 export const DATE_FORMAT ={

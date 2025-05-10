@@ -18,7 +18,7 @@ import {API} from '../../../utils/constant';
 import i18n from '../../../localization/localizationUtils';
 import {localizationText} from '../../../utils/common';
 import {getAppVersion} from '../../../data_manager';
-import { getCachedAppVersion } from '../../../utils/asyncStorage';
+import {getCachedAppVersion} from '../../../utils/asyncStorage';
 
 const Settings = ({navigation}) => {
   const {userDetails} = useUserDetails();
@@ -186,15 +186,6 @@ const Settings = ({navigation}) => {
         </View>
 
         <View style={styles.addressCard}>
-          <TouchableOpacity style={styles.bookAddress} onPress={handlePress}>
-            <Text style={styles.cardTitle}>
-              {localizationText('Common', 'help')}
-            </Text>
-            <AntDesign name="right" size={13} color="#909090" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.addressCard}>
           <TouchableOpacity
             onPress={() => navigation.navigate('AboutUs')}
             style={styles.bookAddress}>
@@ -213,6 +204,24 @@ const Settings = ({navigation}) => {
             <AntDesign name="right" size={13} color="#909090" />
           </TouchableOpacity>
         </View> */}
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity style={styles.bookAddress} onPress={handlePress}>
+            <Text style={styles.cardTitle}>
+              {localizationText('Common', 'help')}
+            </Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.addressCard}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DeleteYourAccount')}
+            style={styles.bookAddress}>
+            <Text style={styles.cardTitle}>Delete Account</Text>
+            <AntDesign name="right" size={13} color="#909090" />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.addressCard}>
           <TouchableOpacity

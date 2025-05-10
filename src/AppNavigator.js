@@ -135,6 +135,7 @@ import EnterpriseShiftAddDetsils from './components/Enterprise/EnterpriseShiftAd
 import EnterpriseShiftOrderPreview from './components/Enterprise/EnterpriseShiftOrderPreview';
 import EnterpriseShiftDeliveryboyAssigned from './components/Enterprise/EnterpriseShiftDeliveryboyAssigned';
 import DeliveryboyMainShiftDetails from './components/DeliveryBoy/DeliveryboyMainShiftDetails';
+import DeleteYourAccount from './components/commonComponent/DeleteYourAccount';
 
 const Stack = createStackNavigator();
 
@@ -293,6 +294,34 @@ const AppNavigator = () => {
                 name="DeliveryboyBottomNav"
                 component={DeliveryboyBottomNav}
                 options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="DeleteYourAccount"
+                component={DeleteYourAccount}
+                options={({navigation}) => ({
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{paddingLeft: 10}}>
+                      <MaterialIcons
+                        name="keyboard-backspace"
+                        size={25}
+                        color={colors.text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: 'Delete Your Account',
+                  headerTitleStyle: {
+                    fontFamily: 'Montserrat-SemiBold',
+                    fontSize: 16,
+                  },
+                  headerTintColor: colors.text,
+                  headerTitleAlign: 'center',
+                  headerStyle: {
+                    borderBottomWidth: 0,
+                    elevation: 0,
+                  },
+                })}
               />
               <Stack.Screen
                 name="PickupTakeSelfie"
