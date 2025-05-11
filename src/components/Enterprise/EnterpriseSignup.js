@@ -31,6 +31,7 @@ import {
 } from '../../data_manager';
 import { useLoader } from '../../utils/loaderContext';
 import { useSignUpDetails } from '../commonComponent/StoreContext';
+import { encrypt } from '../commonComponent/PasswordEncrypt';
 // import DropDownDropdown from '../common component/dropdown';
 
 const EnterpriseSignup = ({ navigation }) => {
@@ -66,6 +67,7 @@ const EnterpriseSignup = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
   const [countryCodeList, setCountryCodeList] = useState([]);
+  const encrypted = encrypt(password);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -295,7 +297,7 @@ const EnterpriseSignup = ({ navigation }) => {
           userName: email,
           email: email,
           phoneNumber: dropdownValue + number,
-          password: password,
+          password: encrypted.encryptedData,
           userrole: signUpDetails.profile,
           firstName: name,
           lastName: lastname,

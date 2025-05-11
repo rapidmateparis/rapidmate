@@ -19,6 +19,7 @@ import {useSignUpDetails} from '../commonComponent/StoreContext';
 import {getCountryList, signUpUser} from '../../data_manager';
 import {useLoader} from '../../utils/loaderContext';
 import {localizationText} from '../../utils/common';
+import { encrypt } from '../commonComponent/PasswordEncrypt';
 // import DropDownDropdown from '../common component/dropdown';
 
 const PickupSignup = ({navigation}) => {
@@ -41,6 +42,7 @@ const PickupSignup = ({navigation}) => {
   const [masterCountryList, setMasterCountryList] = useState(null);
   const [countryList, setCountryList] = useState([]);
   const [countryCodeList, setCountryCodeList] = useState([]);
+  const encrypted = encrypt(password);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -166,7 +168,7 @@ const PickupSignup = ({navigation}) => {
           userName: email,
           email: email,
           phoneNumber: number,
-          password: password,
+          password: encrypted.encryptedData,
           userrole: 'CONSUMER',
           firstName: name,
           lastName: '',

@@ -25,6 +25,7 @@ import {
 } from '../../data_manager';
 import { useSignUpDetails } from '../commonComponent/StoreContext';
 import { localizationText } from '../../utils/common';
+import { encrypt } from '../commonComponent/PasswordEncrypt';
 
 const DeliveryBoySignup = ({ navigation }) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -56,6 +57,7 @@ const DeliveryBoySignup = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const { signUpDetails, saveSignUpDetails } = useSignUpDetails();
   const [countryCodeList, setCountryCodeList] = useState([]);
+  const encrypted = encrypt(password);
 
   const togglePasswordVisibility = field => {
     if (field === 'password') {
@@ -240,7 +242,7 @@ const DeliveryBoySignup = ({ navigation }) => {
           userName: email,
           email: email,
           phoneNumber: dropdownValue + number,
-          password: password,
+          password: encrypted.encryptedData,
           userrole: 'DELIVERY_BOY',
           firstName: name,
           lastName: lastname,
