@@ -15,6 +15,7 @@ import {useUserDetails} from '../../commonComponent/StoreContext';
 import {changeUserPassword} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import {localizationText} from '../../../utils/common';
+import encrypt from '../../commonComponent/PasswordEncrypt';
 
 const PickupChangePassword = ({navigation}) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -37,28 +38,28 @@ const PickupChangePassword = ({navigation}) => {
   };
 
   const handleResetPassword = () => {
-    if (currentPassword == '' || newPassword == '') {
+    if (currentPassword === '' || newPassword === '') {
       Alert.alert('Error', 'Password fill the required password fields.', [
-        {
-          text: 'OK',
-          onPress: () => {},
-        },
+        {text: 'OK', onPress: () => {}},
       ]);
-    } else if (newPassword != confirmNewPassword) {
+    } else if (newPassword !== confirmNewPassword) {
       Alert.alert('Error', 'Passwords do not match.', [
-        {
-          text: 'OK',
-          onPress: () => {},
-        },
+        {text: 'OK', onPress: () => {}},
       ]);
     } else {
+      const encryptedOldPassword = encrypt(currentPassword);
+      const encryptedNewPassword = encrypt(newPassword);
+      const encryptedConfirmPassword = encrypt(confirmNewPassword);
+
       let params = {
         info: {
           userName: userDetails.userDetails[0].username,
-          oldPassword: currentPassword,
-          newPassword: newPassword,
+          oldPassword: JSON.stringify(encryptedOldPassword),
+          newPassword: JSON.stringify(encryptedNewPassword),
+          confirmPassword: JSON.stringify(encryptedConfirmPassword), // add this if your backend needs it
         },
       };
+
       setLoading(true);
       changeUserPassword(
         params,
@@ -170,7 +171,9 @@ const PickupChangePassword = ({navigation}) => {
           <TouchableOpacity
             style={[styles.button, {backgroundColor: colors.primary}]}
             onPress={handleResetPassword}>
-            <Text style={styles.buttonText}>{localizationText('Common', 'submit')}</Text>
+            <Text style={styles.buttonText}>
+              {localizationText('Common', 'submit')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

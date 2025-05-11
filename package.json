@@ -1,6 +1,6 @@
 {
   "name": "nativeproject",
-  "version": "0.0.1",
+  "version": "R.25.5.1.0.2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,6 +25,7 @@
     "@react-navigation/stack": "^6.3.9",
     "@stripe/stripe-react-native": "^0.38.3",
     "axios": "^1.6.8",
+    "crypto-js": "^4.2.0",
     "geolib": "^3.3.4",
     "i18next": "^24.2.0",
     "moment": "^2.30.1",
