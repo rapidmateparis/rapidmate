@@ -32,7 +32,7 @@ const SignUpVerify = ({route, navigation}) => {
   const [code, setCode] = useState('');
   const {setLoading} = useLoader();
   const [fcmToken, setFcmToken] = useState('');
- 
+
   useEffect(async () => {
     var permission = true;
     if (Platform.Version >= 33) {
@@ -72,29 +72,22 @@ const SignUpVerify = ({route, navigation}) => {
     console.log('signUpDetails', signUpDetails);
     if (code) {
       // Perform login action here based on email or phone number
-      const userName = signUpDetails?.userName || route.params?.username;
-      const role = signUpDetails?.profile || route.params?.role;
-      let params ={
-        info : {
-          userName,
-          code,
-          role
-        }
-      }
-     
+      let params = {
+        info: {
+          userName: signUpDetails.userName,
+          code: code,
+          role: signUpDetails.profile,
+        },
+      };
       setLoading(true);
       signUpVerifyApi(
         params,
         successResponse => {
-        
-          if(signUpDetails === null){
-             navigation.navigate('LogInScreen');
-          }
           setLoading(false);
           if (successResponse[0]._success) {
             let loginParams = {
               info: {
-                userName: signUpDetails?.userName,
+                userName: signUpDetails.userName,
                 password: signUpDetails.password,
                 token: fcmToken,
               },
