@@ -44,7 +44,7 @@ const DeleteYourAccount = () => {
               setLoading(true);
 
               // Encrypt password
-              const {encryptedData} = encrypt(password);
+              const encryptedData = encrypt(password);
 
               const postParams = {
                 info: {

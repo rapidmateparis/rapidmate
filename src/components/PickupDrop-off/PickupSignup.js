@@ -150,7 +150,7 @@ const PickupSignup = ({navigation}) => {
         }
       },
       errorResponse => {
-        console.log('errorResponse', errorResponse[0]._errors.message);
+        console.log('errorResponse', errorResponse);
         setLoading(false);
         Alert.alert('Error Alert', errorResponse[0]._errors.message, [
           {text: 'OK', onPress: () => {}},
@@ -161,14 +161,14 @@ const PickupSignup = ({navigation}) => {
 
   const handleSignUp = async () => {
     const isValid = validateForm();
-
+    setLoading(true);
     if (isValid) {
       let params = {
         info: {
           userName: email,
           email: email,
           phoneNumber: number,
-          password: encrypted.encryptedData,
+          password: encrypted,
           userrole: 'CONSUMER',
           firstName: name,
           lastName: '',
@@ -176,7 +176,7 @@ const PickupSignup = ({navigation}) => {
           country: dropdownCountryValue.toString(),
         },
       };
-      setLoading(true);
+      console.log("Params::::::::::::::::::::::::;;>",params)
       signUpUser(
         params,
         successResponse => {
@@ -203,6 +203,7 @@ const PickupSignup = ({navigation}) => {
         },
         errorResponse => {
           setLoading(false);
+          console.log(errorResponse)
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
             {text: 'OK', onPress: () => {}},
           ]);

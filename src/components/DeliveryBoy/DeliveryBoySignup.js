@@ -242,7 +242,7 @@ const DeliveryBoySignup = ({ navigation }) => {
           userName: email,
           email: email,
           phoneNumber: dropdownValue + number,
-          password: encrypted.encryptedData,
+          password: encrypted,
           userrole: 'DELIVERY_BOY',
           firstName: name,
           lastName: lastname,

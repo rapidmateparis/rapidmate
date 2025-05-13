@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../../colors';
-import {authenticateUser} from '../../data_manager';
-import {useUserDetails} from '../commonComponent/StoreContext';
-import {useLoader} from '../../utils/loaderContext';
+import { colors } from '../../colors';
+import { authenticateUser, getAppVersion } from '../../data_manager';
+import { useUserDetails } from '../commonComponent/StoreContext';
+import { useLoader } from '../../utils/loaderContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   localizationText,
@@ -23,6 +23,7 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 import { encrypt } from '../commonComponent/PasswordEncrypt';
+
 
 const LogInScreen = ({ navigation }) => {
   const { saveUserDetails } = useUserDetails();
@@ -40,6 +41,7 @@ const LogInScreen = ({ navigation }) => {
   };
 
   useEffect(async () => {
+    console.log("WORks")
     var permission = true;
     if (Platform.Version >= 33) {
       permission = await requestNotificationPermission();
@@ -51,6 +53,16 @@ const LogInScreen = ({ navigation }) => {
         setFcmToken(fcmToken);
       }
     }
+
+    // getAppVersion(
+    //   (response) => {
+    //     console.log('App Version:', response);
+    //   },
+    //   (error) => {
+    //     console.log('App Version Error:', error);
+    //   }
+    // );
+
   }, []);
 
   const validateForm = () => {
@@ -92,16 +104,19 @@ const LogInScreen = ({ navigation }) => {
       // Perform login action here based on email or phone number
       setLoading(true);
 
-      // Encrypt the password before sending it
+     
       const encryptedPassword = encrypt(password);
 
+      
       let params = {
         info: {
           userName: emailPhone,
-          password: encryptedPassword.encryptedData,  
+          password: encryptedPassword,
           token: fcmToken,
         },
       };
+
+      console.log('Params::::::::::::::::::::::::::::;>', params)
 
       authenticateUser(
         params,
@@ -115,13 +130,13 @@ const LogInScreen = ({ navigation }) => {
                 Alert.alert(
                   'Error Alert',
                   'Username or password is incorrect',
-                  [{ text: 'OK', onPress: () => {} }],
+                  [{ text: 'OK', onPress: () => { } }],
                 );
               } else if (
                 successResponse[0]._response.name == 'UserNotConfirmedException'
               ) {
                 Alert.alert('Error Alert', 'Delivery Boy Verification Pending', [
-                  { text: 'OK', onPress: () => {} },
+                  { text: 'OK', onPress: () => { } },
                 ]);
               } else {
                 saveUserDetails({
@@ -164,14 +179,14 @@ const LogInScreen = ({ navigation }) => {
           } else {
             setLoading(false);
             Alert.alert('Error Alert', 'Invalid credentials', [
-              { text: 'OK', onPress: () => {} },
+              { text: 'OK', onPress: () => { } },
             ]);
           }
         },
         errorResponse => {
           setLoading(false);
           Alert.alert('Error Alert', errorResponse[0]._errors.message, [
-            { text: 'OK', onPress: () => {} },
+            { text: 'OK', onPress: () => { } },
           ]);
         },
       );

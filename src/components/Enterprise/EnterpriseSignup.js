@@ -297,7 +297,7 @@ const EnterpriseSignup = ({ navigation }) => {
           userName: email,
           email: email,
           phoneNumber: dropdownValue + number,
-          password: encrypted.encryptedData,
+          password: encrypted,
           userrole: signUpDetails.profile,
           firstName: name,
           lastName: lastname,

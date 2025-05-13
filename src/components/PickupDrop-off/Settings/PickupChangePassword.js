@@ -15,7 +15,7 @@ import {useUserDetails} from '../../commonComponent/StoreContext';
 import {changeUserPassword} from '../../../data_manager';
 import {useLoader} from '../../../utils/loaderContext';
 import {localizationText} from '../../../utils/common';
-import encrypt from '../../commonComponent/PasswordEncrypt';
+import {encrypt} from '../../commonComponent/PasswordEncrypt';
 
 const PickupChangePassword = ({navigation}) => {
   const [currentPassword, setCurrentPassword] = useState('');
