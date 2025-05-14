@@ -194,7 +194,7 @@ const PickupSignup = ({navigation}) => {
                 saveSignUpDetails({
                   ...signUpDetails,
                   userName: email,
-                  password: password,
+                  password: encrypted,
                 });
                 navigation.navigate('SignUpVerify');
               }
