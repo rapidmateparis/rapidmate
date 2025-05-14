@@ -25,6 +25,7 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import crashlytics from '@react-native-firebase/crashlytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {encrypt} from '../commonComponent/PasswordEncrypt'
 
 const SignUpVerify = ({route, navigation}) => {
   const {saveUserDetails, userDetails} = useUserDetails();
@@ -32,6 +33,8 @@ const SignUpVerify = ({route, navigation}) => {
   const [code, setCode] = useState('');
   const {setLoading} = useLoader();
   const [fcmToken, setFcmToken] = useState('');
+
+  console.log("SIGNUP   DETAILS:::::::::::::::::::::>", signUpDetails)
 
   useEffect(async () => {
     var permission = true;

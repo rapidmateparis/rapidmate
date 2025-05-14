@@ -271,7 +271,7 @@ const DeliveryBoySignup = ({ navigation }) => {
                 saveSignUpDetails({
                   ...signUpDetails,
                   userName: email,
-                  password: password,
+                  password: encrypted,
                 });
                 navigation.navigate('SignUpVerify', {
                   delivery_boy_details: successResponse[0]._response,
