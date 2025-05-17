@@ -338,7 +338,7 @@ const DeliveryboyShiftDetails = ({navigation, route}) => {
             <Text style={styles.swipeInfo}>
               {localizationText('Main', 'shiftDetailsSwipeDescription')}
             </Text>
-            {!!checkStartAction()?.id && (
+            {!checkStartAction()?.id && (
               <>
                 <SwipeButton
                   onSwipeFail={() =>
