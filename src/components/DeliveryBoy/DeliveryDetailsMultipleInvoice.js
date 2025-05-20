@@ -96,7 +96,7 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
       null,
       response => {
         setLoading(false);
-        console.log("first response", response);
+        console.log('first response', response);
         if (response[0]?._success) {
           setDeliveredOtp(response[0]?._response?.otp || '****');
         }
@@ -217,9 +217,7 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
                   </View>
                   <View style={styles.otpHeadCard}>
                     <Text style={styles.otpTitleText}>{deliveredOTP}:</Text>
-                    <Text style={styles.otpText}>
-                      {deliveredOtp || '****'}
-                    </Text>
+                    <Text style={styles.otpText}>{deliveredOtp || '****'}</Text>
                     <TouchableOpacity
                       onPress={() =>
                         fetchDeliveredOtp(orderDetails.order_number)
@@ -278,7 +276,7 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
             <View style={styles.cardHeader}>
               <Text style={styles.orderFare}>{totalOrderFare}</Text>
               <Text style={styles.totalmoney}>
-                €{Number(orderDetails.amount || 0).toFixed(2)}
+                €{Number(orderDetails.delivery_boy_amount || 0).toFixed(2)}
               </Text>
             </View>
 
@@ -301,10 +299,30 @@ const DeliveryDetailsMultipleInvoice = ({route, navigation}) => {
             </View>
 
             <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>{amountCharged}</Text>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'commission')} @
+                {orderDetails.commission_percentage
+                  ? orderDetails.commission_percentage
+                  : ''}
+                %
+              </Text>
               <Text style={styles.value}>
                 €{' '}
-                {orderDetails.amount ? orderDetails.amount.toFixed(2) : '0.00'}
+                {orderDetails.commission_amount
+                  ? orderDetails.commission_amount.toFixed(2)
+                  : '0.00'}
+              </Text>
+            </View>
+
+            <View style={styles.cardHeader}>
+              <Text style={styles.orderFareValue}>
+                {localizationText('Common', 'amountCharged')}
+              </Text>
+              <Text style={styles.value}>
+                €{' '}
+                {orderDetails.delivery_boy_amount
+                  ? orderDetails.delivery_boy_amount.toFixed(2)
+                  : '0.00'}
               </Text>
             </View>
 
