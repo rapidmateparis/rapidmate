@@ -738,7 +738,10 @@ const DeliveryDetails = ({ navigation, route }) => {
               </Text>
             </View>
 
-            {console.log("Oder ================>", order)}
+            <View style={styles.cardHeader}>
+              <Text style={styles.orderFareValue}>{`Discount @${order.discount}%`}</Text>
+              <Text style={styles.value}>€ {(order.order_amount * (order.discount / 100)).toFixed(2)}</Text>
+            </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{`${tax} @20%`}</Text>
@@ -753,11 +756,6 @@ const DeliveryDetails = ({ navigation, route }) => {
                 {order.promo_value ? order.promo_value : '0'}
               </Text>
             </View> */}
-
-            <View style={styles.cardHeader}>
-              <Text style={styles.orderFareValue}>{`Discount @${order.discount}%`}</Text>
-              <Text style={styles.value}>€ {(order.order_amount * (order.discount / 100)).toFixed(2)}</Text>
-            </View>
 
             <View style={styles.cardHeader}>
               <Text style={styles.orderFareValue}>{amountCharged}</Text>
