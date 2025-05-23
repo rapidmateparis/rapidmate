@@ -150,17 +150,35 @@ const DeliveryDetails = ({ navigation, route }) => {
       orderId,
       null,
       (response) => {
+        console.log("Delivery boy OTP::::::::::::::;>success", JSON.stringify(response));
         setLoading(false);
+  
         if (response[0]?._success) {
-          setDeliveredOtp(response[0]?._response[0]?.delivered_otp || '****');
+          const otpList = response[0]?._response || [];
+  
+        
+          const validOtps = otpList.filter(item => item.delivered_otp !== '****');
+  
+          if (validOtps.length > 0) {
+          
+            const selectedOtp = validOtps.length >= 2
+              ? validOtps[1].delivered_otp
+              : validOtps[0].delivered_otp;
+  
+            setDeliveredOtp(selectedOtp);
+          } else {
+            setDeliveredOtp('****');
+          }
         }
       },
       (error) => {
         setLoading(false);
-        console.error('Error fetching delivered OTP:', error);
+        console.log("Delivery boy OTP::::::::::::::;>error", error);
+        console.error('Error fetching delivered OTP:', JSON.stringify(error));
       }
     );
   };
+  
 
   const enterpriseOrderDetail = () => {
     setLoading(true);
