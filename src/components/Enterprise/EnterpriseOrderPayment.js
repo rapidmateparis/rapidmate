@@ -212,7 +212,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       amount: params.amount,
       order_type: 2,
     };
-    console.log('requestParams', params);
+    console.log('requestParams', params, requestParams);
     setLoading(true);
     addPayment(
       requestParams,
@@ -295,7 +295,7 @@ const EnterpriseOrderPayment = ({route, navigation}) => {
       requestParams.order_amount = parseFloat(params.amount);
       const amount = typeof params.amount === 'number' ? params.amount.toFixed(2): parseFloat(params.amount);
       const taxAmount = (parseFloat(amount) * parseFloat(20)) / 100;
-      let taxValue = taxAmount ? taxAmount.toFixed(2) : 0;
+      let taxValue = vechicleTax ? vechicleTax : 0
       requestParams.tax = parseFloat(taxValue);
       if (params?.drop_details) {
         requestParams = {

@@ -296,7 +296,7 @@ const PickupPayment = ({route, navigation}) => {
       drop_company_name: params.drop_details.drop_company_name,
       order_date: localToUTC(),
       package_photo: params.userDetails.package_photo,
-      tax_value: vechicleTax,
+      tax: vechicleTax,
     };
 
     console.log('LOCAL to UTC ==:', localToUTC());
@@ -308,7 +308,7 @@ const PickupPayment = ({route, navigation}) => {
     }
 
     setLoading(true);
-
+    
     createPickupOrder(
       requestParams,
       successResponse => {
