@@ -144,6 +144,13 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
               </View>
 
               <View style={styles.cardHeader}>
+                <Text style={styles.orderFareValue}>Discount</Text>
+                <Text style={styles.value}>
+                  €{params.shiftItem.discount.toFixed(2)}
+                </Text>
+              </View>
+
+              <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Tax {''}(20%)</Text>
                 <Text style={styles.value}>
                   €{params.shiftItem.tax.toFixed(2)}
@@ -154,13 +161,6 @@ const EnterpriseShiftDetails = ({route, navigation}) => {
                 <Text style={styles.orderFareValue}>Promo</Text>
                 <Text style={styles.value}>€00.00</Text> 
               </View> */}
-
-              <View style={styles.cardHeader}>
-                <Text style={styles.orderFareValue}>Discount</Text>
-                <Text style={styles.value}>
-                  €{params.shiftItem.discount.toFixed(2)}
-                </Text>
-              </View>
 
               <View style={styles.cardHeader}>
                 <Text style={styles.orderFareValue}>Amount charged</Text>
